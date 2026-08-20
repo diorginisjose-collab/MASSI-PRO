@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from "recharts";
-import logoImg from "./assets/logo.png.jpn";
+import logoImg from "./assets/logo.png.jpg";
 
 // ---------------------------------------------------------------
 // Compatibilidade: window.storage só existe dentro do ambiente do
