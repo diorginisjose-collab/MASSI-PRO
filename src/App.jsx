@@ -1,6 +1,34 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from "recharts";
-import logoImg from "./assets/logo.png.jpg";
+import logoImg from "./assets/logo.png";
+
+// ---------------------------------------------------------------
+// Compatibilidade: window.storage só existe dentro do ambiente do
+// Claude. Fora dele (ex: app publicado na Vercel), esse polyfill
+// usa o localStorage do próprio navegador pra guardar os dados.
+// ---------------------------------------------------------------
+if (typeof window !== "undefined" && !window.storage) {
+  window.storage = {
+    async get(key) {
+      const value = window.localStorage.getItem(key);
+      if (value === null) throw new Error("chave não encontrada: " + key);
+      return { key, value };
+    },
+    async set(key, value) {
+      window.localStorage.setItem(key, value);
+      return { key, value };
+    },
+    async delete(key) {
+      window.localStorage.removeItem(key);
+      return { key, deleted: true };
+    },
+    async list(prefix) {
+      const keys = Object.keys(window.localStorage).filter((k) => !prefix || k.startsWith(prefix));
+      return { keys };
+    },
+  };
+}
+
 
 // ---------- Biblioteca de exercícios (base para iniciantes) ----------
 // cada exercício traz opções de máquina/equipamento alternativas
@@ -731,6 +759,7 @@ export default function App() {
   const [exercicioAberto, setExercicioAberto] = useState(null);
   const [cronometro, setCronometro] = useState(null); // { totalSeg, restanteSeg, rodando, label }
   const [historico, setHistorico] = useState([]);
+  const [mensagemSucesso, setMensagemSucesso] = useState(null);
 
   useEffect(() => {
     (async () => {
@@ -896,9 +925,11 @@ export default function App() {
     setHistorico(novoHistorico);
     try {
       await window.storage.set("historico-treinos", JSON.stringify(novoHistorico));
+      setMensagemSucesso("Bom treino! Concluído com sucesso e já salvo no histórico de treinos.");
     } catch (e) {
-      // segue mesmo se falhar salvar
+      setMensagemSucesso("Treino concluído, mas não consegui salvar no histórico agora.");
     }
+    setTimeout(() => setMensagemSucesso(null), 3000);
     // TODO ADMOB: bom ponto pra exibir um intersticial, ex: mostrarInterstitial();
     // Deixado comentado de propósito — decida a frequência ideal antes de ativar.
   };
@@ -989,6 +1020,15 @@ export default function App() {
           onReiniciar={() => setCronometro((c) => (c ? { ...c, restanteSeg: c.totalSeg, rodando: true } : c))}
           onFechar={() => setCronometro(null)}
         />
+      )}
+
+      {mensagemSucesso && (
+        <div style={styles.toastOverlay} onClick={() => setMensagemSucesso(null)}>
+          <div style={styles.toastCard}>
+            <div style={styles.toastIcone}>✓</div>
+            <div style={styles.toastTexto}>{mensagemSucesso}</div>
+          </div>
+        </div>
       )}
 
       <div style={styles.tabRow}>
@@ -2612,4 +2652,37 @@ const styles = {
     marginBottom: 14,
   },
   notaTexto: { fontSize: 13.5, color: INK, lineHeight: 1.5, margin: "6px 0 10px" },
+
+  toastOverlay: {
+    position: "fixed",
+    inset: 0,
+    background: "rgba(19,26,29,0.55)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 200,
+    padding: 24,
+  },
+  toastCard: {
+    background: "#FFFFFF",
+    borderRadius: 18,
+    padding: "28px 26px",
+    maxWidth: 340,
+    textAlign: "center",
+    boxShadow: "0 20px 50px -12px rgba(19,26,29,0.4)",
+  },
+  toastIcone: {
+    width: 52,
+    height: 52,
+    borderRadius: "50%",
+    background: HIGHLIGHT,
+    color: GRAPHITE,
+    fontSize: 26,
+    fontWeight: 800,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    margin: "0 auto 14px",
+  },
+  toastTexto: { fontSize: 15, color: INK, lineHeight: 1.45, fontWeight: 600 },
 };
