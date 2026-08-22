@@ -1,0 +1,21 @@
+{
+  "name": "Massi Pro",
+  "short_name": "Massi Pro",
+  "description": "Treino, evolução e execução — tudo num só lugar.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#131A1D",
+  "theme_color": "#131A1D",
+  "icons": [
+    {
+      "src": "/1000355504.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "/1000355504.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg"
+    }
+  ]
+}
