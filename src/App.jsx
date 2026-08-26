@@ -1,6 +1,19 @@
+Nenhum selecionado
+
+Saltar para o conteúdo
+A utilizar Gmail com leitores de ecrã
+Sem armazenamento disponível
+Vai deixar de poder enviar e receber emails a 07/09/2026
+Usufrua de 30 GB por 4,50 R$ 1 R$ durante 3 meses
+15,02 GB de 15 GB usado(s)
+Conversas
+100% de 15 GB usados
+Termos de Utilização · Privacidade · Políticas de programa
+Última atividade da conta: há 2 minutos
+Esta conta está aberta noutro local · Detalhes
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from "recharts";
-import logoImg from "./assets/logo.png.jpg";
+import logoImg from "./assets/logo.png";
 
 // ---------------------------------------------------------------
 // Compatibilidade: window.storage só existe dentro do ambiente do
@@ -760,6 +773,17 @@ export default function App() {
   const [cronometro, setCronometro] = useState(null); // { totalSeg, restanteSeg, rodando, label }
   const [historico, setHistorico] = useState([]);
   const [mensagemSucesso, setMensagemSucesso] = useState(null);
+  const [splashVisivel, setSplashVisivel] = useState(true);
+  const [splashSaindo, setSplashSaindo] = useState(false);
+
+  useEffect(() => {
+    const t1 = setTimeout(() => setSplashSaindo(true), 1700);
+    const t2 = setTimeout(() => setSplashVisivel(false), 2100);
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -974,7 +998,39 @@ export default function App() {
           outline: 2px solid #B8433A; outline-offset: 2px;
         }
         @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+
+        .splashPulsoPath {
+          fill: none; stroke-width: 5; stroke-linecap: round; stroke-linejoin: round;
+          stroke-dasharray: 260; stroke-dashoffset: 260;
+          animation: splashDraw 1.1s ease-out forwards, splashGlow 2.4s ease-in-out 1.1s infinite;
+        }
+        @keyframes splashDraw { to { stroke-dashoffset: 0; } }
+        @keyframes splashGlow { 0%,100% { filter: drop-shadow(0 0 0px #1FD1A6); } 50% { filter: drop-shadow(0 0 8px #1FD1A6); } }
+        .splashFadeUp { opacity: 0; animation: splashFadeUp .7s ease-out .9s forwards; }
+        .splashFadeUp2 { opacity: 0; animation: splashFadeUp .7s ease-out 1.15s forwards; }
+        @keyframes splashFadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
       `}</style>
+
+      {splashVisivel && (
+        <div style={{ ...styles.splashOverlay, opacity: splashSaindo ? 0 : 1 }}>
+          <svg viewBox="0 0 180 90" style={styles.splashSvg}>
+            <path
+              className="splashPulsoPath"
+              d="M5,45 L55,45 L72,15 L90,70 L108,30 L125,45 L175,45"
+              stroke="url(#splashGrad)"
+            />
+            <defs>
+              <linearGradient id="splashGrad" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stopColor="#1CA7E0" />
+                <stop offset="55%" stopColor="#1FD1A6" />
+                <stop offset="100%" stopColor="#8BDB4B" />
+              </linearGradient>
+            </defs>
+          </svg>
+          <div className="splashFadeUp" style={styles.splashWordmark}>MASSI PRO</div>
+          <div className="splashFadeUp2" style={styles.splashSubtitulo}>TREINO · EVOLUÇÃO · EXECUÇÃO</div>
+        </div>
+      )}
 
       <header style={styles.hero}>
         <div style={styles.heroOverlay} />
@@ -2685,4 +2741,37 @@ const styles = {
     margin: "0 auto 14px",
   },
   toastTexto: { fontSize: 15, color: INK, lineHeight: 1.45, fontWeight: 600 },
+
+  splashOverlay: {
+    position: "fixed",
+    inset: 0,
+    zIndex: 500,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 22,
+    background:
+      "radial-gradient(120% 90% at 20% 10%, rgba(28,167,224,0.2) 0%, transparent 55%), " +
+      "radial-gradient(120% 90% at 85% 90%, rgba(139,219,75,0.2) 0%, transparent 55%), " +
+      `linear-gradient(160deg, ${GRAPHITE} 0%, #182226 100%)`,
+    transition: "opacity 0.4s ease",
+  },
+  splashSvg: { width: 190, height: 95 },
+  splashWordmark: {
+    fontFamily: monoFont,
+    fontWeight: 800,
+    fontSize: 20,
+    letterSpacing: "0.16em",
+    color: "#F6F7F9",
+  },
+  splashSubtitulo: {
+    fontFamily: sansFont,
+    fontSize: 11,
+    letterSpacing: "0.08em",
+    color: "#8b95a1",
+    marginTop: -12,
+  },
 };
+DOC-20260825-WA0002.txt
+A mostrar DOC-20260825-WA0002.txt.
