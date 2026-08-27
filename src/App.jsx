@@ -1,16 +1,6 @@
 
 
-Saltar para o conteúdo
-A utilizar Gmail com leitores de ecrã
-Sem armazenamento disponível
-Vai deixar de poder enviar e receber emails a 07/09/2026
-Usufrua de 30 GB por 4,50 R$ 1 R$ durante 3 meses
-15,02 GB de 15 GB usado(s)
-Conversas
-100% de 15 GB usados
-Termos de Utilização · Privacidade · Políticas de programa
-Última atividade da conta: há 3 minutos
-Detalhes
+
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from "recharts";
 import logoImg from "./assets/logo.png";
