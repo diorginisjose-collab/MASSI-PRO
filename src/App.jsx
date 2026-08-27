@@ -1850,7 +1850,7 @@ function CronometroDescanso({ cronometro, onPausarContinuar, onAjustar, onReinic
 
       <div style={styles.cronoBtnRow}>
         <button style={styles.cronoAjusteBtn} onClick={() => onAjustar(-15)}>-15s</button>
-        <button style={styles.cronoPrincipalBtn} onClick={onPausarContinuar}>
+        <button style={styles.cronoPrincipalBtn} onClick={acabou ? onFechar : onPausarContinuar}>
           {acabou ? "Concluído" : rodando ? "Pausar" : "Continuar"}
         </button>
         <button style={styles.cronoAjusteBtn} onClick={() => onAjustar(15)}>+15s</button>
@@ -3271,5 +3271,4 @@ const styles = {
     color: "#8b95a1",
     marginTop: -12,
   },
-};
-
+};.
