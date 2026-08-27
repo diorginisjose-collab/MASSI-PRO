@@ -79,7 +79,7 @@ const LIBRARY = {
 const FOCOS = ["Peito", "Costas", "Perna", "Ombro", "Braço", "Corpo inteiro", "Cardio", "Descanso"];
 const DIAS_SEMANA = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo"];
 const DIAS_ABREV = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
-const CARDIO_TIPOS = ["Esteira", "Bicicleta", "Elíptico", "Corrida ao ar livre", "Pular corda"];
+const CARDIO_TIPOS = ["Esteira", "Bicicleta", "Elíptico", "Corrida ao ar livre", "Pular corda", "Escada"];
 const DESCANSO_OPCOES = ["1 min", "1:30 min", "2 min", "2:30 min", "3 min"];
 const DESCANSO_PADRAO = "2 min";
 
@@ -212,6 +212,16 @@ const PLANOS = [
     economia: "Economize 50%",
     destaque: true,
   },
+];
+
+const CONQUISTAS = [
+  { id: "t5", label: "5 treinos", tipo: "total", valor: 5, emoji: "🥉" },
+  { id: "t10", label: "10 treinos", tipo: "total", valor: 10, emoji: "🥈" },
+  { id: "t25", label: "25 treinos", tipo: "total", valor: 25, emoji: "🥇" },
+  { id: "t50", label: "50 treinos", tipo: "total", valor: 50, emoji: "🏆" },
+  { id: "t100", label: "100 treinos", tipo: "total", valor: 100, emoji: "👑" },
+  { id: "s7", label: "7 dias seguidos", tipo: "streak", valor: 7, emoji: "🔥" },
+  { id: "s30", label: "30 dias seguidos", tipo: "streak", valor: 30, emoji: "💎" },
 ];
 
 const BENEFICIOS_PREMIUM = [
@@ -596,8 +606,30 @@ function uid() {
   return Math.random().toString(36).slice(2, 9);
 }
 
+function calcularStreak(historico) {
+  if (!historico || historico.length === 0) return 0;
+  const datasUnicas = [...new Set(historico.map((h) => h.data))].sort().reverse();
+  const hoje = new Date().toISOString().slice(0, 10);
+  const ontem = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+  if (datasUnicas[0] !== hoje && datasUnicas[0] !== ontem) return 0;
+  let streak = 1;
+  for (let i = 0; i < datasUnicas.length - 1; i++) {
+    const atual = new Date(datasUnicas[i]);
+    const anterior = new Date(datasUnicas[i + 1]);
+    const diffDias = Math.round((atual - anterior) / 86400000);
+    if (diffDias === 1) streak++;
+    else break;
+  }
+  return streak;
+}
+
+function calcularAguaLitros(pesoKg) {
+  if (!pesoKg || pesoKg <= 0) return null;
+  return +(pesoKg * 0.035).toFixed(1);
+}
+
 function toExercicio(base) {
-  return { id: uid(), ...base, maquina: base.maquinas[0], descanso: DESCANSO_PADRAO };
+  return { id: uid(), ...base, maquina: base.maquinas[0], descanso: DESCANSO_PADRAO, concluido: false };
 }
 
 function makeDayEntry(dia, foco) {
@@ -765,6 +797,11 @@ export default function App() {
   const [mensagemSucesso, setMensagemSucesso] = useState(null);
   const [splashVisivel, setSplashVisivel] = useState(true);
   const [splashSaindo, setSplashSaindo] = useState(false);
+  const [feedbackPendente, setFeedbackPendente] = useState(null);
+  const [dores, setDores] = useState([]);
+  const [dorPendente, setDorPendente] = useState(null); // nome do exercício
+  const [buscaExercicio, setBuscaExercicio] = useState("");
+  const [avisoSemTreinar, setAvisoSemTreinar] = useState(null);
 
   useEffect(() => {
     const t1 = setTimeout(() => setSplashSaindo(true), 1700);
@@ -800,6 +837,12 @@ export default function App() {
         if (histRes && histRes.value) setHistorico(JSON.parse(histRes.value));
       } catch (e) {
         // sem histórico salvo ainda
+      }
+      try {
+        const doresRes = await window.storage.get("dores-exercicios");
+        if (doresRes && doresRes.value) setDores(JSON.parse(doresRes.value));
+      } catch (e) {
+        // sem registros de dor ainda
       }
     })();
 
@@ -926,7 +969,7 @@ export default function App() {
     );
   };
 
-  const concluirTreino = async (diaEntry) => {
+  const concluirTreino = async (diaEntry, sentimento) => {
     const registro = {
       id: uid(),
       data: new Date().toISOString().slice(0, 10),
@@ -934,6 +977,7 @@ export default function App() {
       foco: diaEntry.foco,
       totalExercicios: diaEntry.exercicios.length,
       cardio: diaEntry.cardio ? { tipo: diaEntry.cardio.tipo, duracao: diaEntry.cardio.duracao } : null,
+      sentimento: sentimento || null,
     };
     const novoHistorico = [...historico, registro];
     setHistorico(novoHistorico);
@@ -947,6 +991,42 @@ export default function App() {
     // TODO ADMOB: bom ponto pra exibir um intersticial, ex: mostrarInterstitial();
     // Deixado comentado de propósito — decida a frequência ideal antes de ativar.
   };
+
+  const salvarDor = async (nota) => {
+    if (!dorPendente) return;
+    const registro = { id: uid(), exercicio: dorPendente, data: new Date().toISOString().slice(0, 10), nota };
+    const nova = [...dores, registro];
+    setDores(nova);
+    setDorPendente(null);
+    try {
+      await window.storage.set("dores-exercicios", JSON.stringify(nova));
+    } catch (e) {
+      // segue mesmo se falhar
+    }
+  };
+
+  const removerDor = async (id) => {
+    const nova = dores.filter((d) => d.id !== id);
+    setDores(nova);
+    try {
+      await window.storage.set("dores-exercicios", JSON.stringify(nova));
+    } catch (e) {
+      // segue mesmo se falhar
+    }
+  };
+
+  // alerta de 7+ dias sem treinar, calculado a partir do histórico já carregado
+  useEffect(() => {
+    if (!loaded) return;
+    if (historico.length === 0) {
+      setAvisoSemTreinar(null);
+      return;
+    }
+    const datas = historico.map((h) => new Date(h.data).getTime());
+    const ultimaData = Math.max(...datas);
+    const diasSemTreinar = Math.floor((Date.now() - ultimaData) / 86400000);
+    setAvisoSemTreinar(diasSemTreinar >= 7 ? diasSemTreinar : null);
+  }, [historico, loaded]);
 
   const editarExercicio = (dia, id, campo, valor) => {
     setRotina((prev) =>
@@ -1077,6 +1157,23 @@ export default function App() {
         </div>
       )}
 
+      {feedbackPendente && (
+        <FeedbackModal
+          onSelecionar={(sentimento) => {
+            concluirTreino(feedbackPendente, sentimento);
+            setFeedbackPendente(null);
+          }}
+          onPular={() => {
+            concluirTreino(feedbackPendente, null);
+            setFeedbackPendente(null);
+          }}
+        />
+      )}
+
+      {dorPendente && (
+        <DorModal exercicio={dorPendente} onSalvar={salvarDor} onFechar={() => setDorPendente(null)} />
+      )}
+
       <div style={styles.tabRow}>
         <button
           style={{ ...styles.tabBtn, ...(activeTab === "rotina" ? styles.tabBtnActive : {}) }}
@@ -1102,10 +1199,39 @@ export default function App() {
         >
           Avaliação
         </button>
+        <button
+          style={{ ...styles.tabBtn, ...(activeTab === "sobre" ? styles.tabBtnActive : {}) }}
+          onClick={() => setActiveTab("sobre")}
+        >
+          Sobre
+        </button>
       </div>
 
       {activeTab === "rotina" && (
         <>
+          {avisoSemTreinar && (
+            <div style={styles.avisoSemTreinarBox}>
+              ⏰ Já faz {avisoSemTreinar} dias que você não conclui um treino. Que tal retomar hoje?
+            </div>
+          )}
+
+          <input
+            type="text"
+            value={buscaExercicio}
+            onChange={(e) => setBuscaExercicio(e.target.value)}
+            placeholder="🔎 Buscar exercício rápido…"
+            style={styles.buscaInput}
+          />
+          {buscaExercicio.trim().length > 0 && (
+            <BuscaResultados
+              termo={buscaExercicio}
+              onAbrir={(ex) => {
+                setExercicioAberto(ex);
+                setBuscaExercicio("");
+              }}
+            />
+          )}
+
           <button style={styles.modelosBtn} onClick={() => setShowModelos(true)}>
             🔁 Trocar a semana inteira por um modelo pronto
           </button>
@@ -1150,7 +1276,8 @@ export default function App() {
                   onAbrirExercicio={(ex) => setExercicioAberto(ex)}
                   onIniciarDescanso={(descanso, nome) => iniciarDescanso(descanso, nome)}
                   onTrocarExercicio={(id) => trocarExercicio(d.dia, id)}
-                  onConcluirTreino={() => concluirTreino(d)}
+                  onConcluirTreino={() => setFeedbackPendente(d)}
+                  onRegistrarDor={(nome) => setDorPendente(nome)}
                 />
               ))}
           </div>
@@ -1175,6 +1302,8 @@ export default function App() {
           }}
         />
       )}
+
+      {activeTab === "sobre" && <SobreTab />}
       </div>
 
       {/* Banner do AdMob — inerte até ter ID configurado e o app estar
@@ -1342,6 +1471,16 @@ function EvolucaoTab({ onAplicarTreino }) {
         </button>
       </section>
 
+      {(peso || ultima) && (
+        <section style={styles.card}>
+          <div style={styles.cardLabel}>💧 Água recomendada por dia</div>
+          <div style={styles.historicoResumoNumero}>{calcularAguaLitros(Number(peso) || (ultima && ultima.peso))} L</div>
+          <p style={styles.modalDisclaimer}>
+            Estimativa de referência (35 ml por kg de peso corporal). Ajuste conforme clima, intensidade do treino e orientação profissional.
+          </p>
+        </section>
+      )}
+
       {ultima && (
         <section style={styles.card}>
           <div style={styles.cardLabel}>Sua evolução</div>
@@ -1400,6 +1539,169 @@ function EvolucaoTab({ onAplicarTreino }) {
   );
 }
 
+
+function FeedbackModal({ onSelecionar, onPular }) {
+  const opcoes = [
+    { emoji: "😫", label: "Difícil" },
+    { emoji: "😐", label: "Ok" },
+    { emoji: "💪", label: "Bem" },
+    { emoji: "🔥", label: "Ótimo" },
+  ];
+  return (
+    <div style={styles.modalOverlay}>
+      <div style={styles.modalCard} onClick={(e) => e.stopPropagation()}>
+        <h2 style={styles.modalTitle}>Como foi o treino?</h2>
+        <p style={styles.modalSubtitle}>Seu feedback fica registrado junto com esse treino no histórico.</p>
+        <div style={styles.feedbackRow}>
+          {opcoes.map((o) => (
+            <button key={o.label} style={styles.feedbackBtn} onClick={() => onSelecionar(o.label)}>
+              <span style={styles.feedbackEmoji}>{o.emoji}</span>
+              <span>{o.label}</span>
+            </button>
+          ))}
+        </div>
+        <button style={styles.removerHistoricoBtn} onClick={onPular}>Pular</button>
+      </div>
+    </div>
+  );
+}
+
+function BuscaResultados({ termo, onAbrir }) {
+  const termoLower = termo.trim().toLowerCase();
+  const encontrados = [];
+  const vistos = new Set();
+  Object.entries(LIBRARY).forEach(([grupo, exercicios]) => {
+    exercicios.forEach((ex) => {
+      if (!vistos.has(ex.name) && ex.name.toLowerCase().includes(termoLower)) {
+        vistos.add(ex.name);
+        encontrados.push({ grupo, ...ex });
+      }
+    });
+  });
+
+  if (encontrados.length === 0) {
+    return <div style={styles.restNote}>Nenhum exercício encontrado com esse nome.</div>;
+  }
+
+  return (
+    <div style={styles.buscaResultados}>
+      {encontrados.slice(0, 8).map((r) => (
+        <button key={r.name} style={styles.buscaResultItem} onClick={() => onAbrir(toExercicio(r))}>
+          <span>{r.name}</span>
+          <span style={styles.buscaResultGrupo}>{r.grupo}</span>
+        </button>
+      ))}
+    </div>
+  );
+}
+
+function DorModal({ exercicio, onSalvar, onFechar }) {
+  const [nota, setNota] = useState("");
+  return (
+    <div style={styles.modalOverlay} onClick={onFechar}>
+      <div style={styles.modalCard} onClick={(e) => e.stopPropagation()}>
+        <button style={styles.modalClose} onClick={onFechar} aria-label="Fechar">×</button>
+        <div style={styles.eyebrow}>REGISTRO DE DOR/DESCONFORTO</div>
+        <h2 style={styles.modalTitle}>{exercicio}</h2>
+        <p style={styles.modalSubtitle}>Descreva rapidamente onde sentiu dor ou desconforto (opcional).</p>
+        <textarea
+          value={nota}
+          onChange={(e) => setNota(e.target.value)}
+          style={styles.notaTextarea}
+          rows={3}
+          placeholder="ex: dor no ombro direito ao levantar o peso"
+        />
+        <button style={styles.saveButton} onClick={() => onSalvar(nota)}>Salvar registro</button>
+        <p style={styles.modalDisclaimer}>
+          Se a dor persistir ou for intensa, procure orientação de um profissional de saúde antes de continuar treinando esse movimento.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+const CHAVES_BACKUP = [
+  "rotina-treino",
+  "historico-treinos",
+  "avaliacoes-evolucao",
+  "notas-treino",
+  "status-premium",
+  "dores-exercicios",
+];
+
+function SobreTab() {
+  const [mensagemBackup, setMensagemBackup] = useState(null);
+
+  const exportarDados = async () => {
+    const dados = {};
+    for (const chave of CHAVES_BACKUP) {
+      try {
+        const res = await window.storage.get(chave);
+        if (res && res.value) dados[chave] = res.value;
+      } catch (e) {
+        // chave sem valor salvo, segue
+      }
+    }
+    const blob = new Blob([JSON.stringify(dados, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `massi-pro-backup-${new Date().toISOString().slice(0, 10)}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  const importarDados = async (e) => {
+    const arquivo = e.target.files && e.target.files[0];
+    if (!arquivo) return;
+    try {
+      const texto = await arquivo.text();
+      const dados = JSON.parse(texto);
+      for (const chave of CHAVES_BACKUP) {
+        if (dados[chave] !== undefined) {
+          await window.storage.set(chave, dados[chave]);
+        }
+      }
+      setMensagemBackup("Backup importado! Recarregue o app pra ver os dados atualizados.");
+    } catch (err) {
+      setMensagemBackup("Não consegui ler esse arquivo de backup. Confira se é o arquivo certo.");
+    }
+    e.target.value = "";
+  };
+
+  return (
+    <div>
+      <section style={styles.card}>
+        <div style={styles.cardLabel}>Sobre o Massi Pro</div>
+        <p style={styles.notaTexto}>
+          Massi Pro é um app pra ajudar quem está começando a montar e seguir uma rotina de treino de forma simples, com execução guiada, histórico e acompanhamento de evolução — tudo num só lugar.
+        </p>
+      </section>
+
+      <section style={styles.card}>
+        <div style={styles.cardLabel}>Backup dos dados</div>
+        <p style={styles.notaTexto}>Exporte um arquivo com sua rotina, histórico, avaliações e notas — ou importe um backup salvo antes.</p>
+        <button style={styles.saveButton} onClick={exportarDados}>⬇️ Exportar backup</button>
+        <label style={styles.addItemBtn}>
+          ⬆️ Importar backup
+          <input type="file" accept="application/json" onChange={importarDados} style={{ display: "none" }} />
+        </label>
+        {mensagemBackup && <p style={styles.modalDisclaimer}>{mensagemBackup}</p>}
+      </section>
+      <section style={styles.card}>
+        <div style={styles.cardLabel}>Termos de uso</div>
+        <p style={styles.notaTexto}>
+          O conteúdo deste app é educativo e não substitui a orientação de um profissional de educação física, nutricionista ou médico. Use por sua conta e respeite os limites do seu corpo — interrompa qualquer exercício que cause dor.
+        </p>
+        <p style={styles.notaTexto}>
+          Seus dados (rotina, histórico, avaliações e notas) são salvos localmente, no seu próprio navegador/dispositivo.
+        </p>
+      </section>
+    </div>
+  );
+}
 
 function PlanosModal({ isPremium, onAssinar, onClose }) {
   return (
@@ -1611,6 +1913,7 @@ function ModelosModal({ onEscolher, onClose }) {
 function HistoricoTab() {
   const [historico, setHistorico] = useState([]);
   const [carregado, setCarregado] = useState(false);
+  const [dores, setDores] = useState([]);
 
   useEffect(() => {
     (async () => {
@@ -1621,6 +1924,12 @@ function HistoricoTab() {
         // sem histórico ainda
       } finally {
         setCarregado(true);
+      }
+      try {
+        const doresRes = await window.storage.get("dores-exercicios");
+        if (doresRes && doresRes.value) setDores(JSON.parse(doresRes.value));
+      } catch (e) {
+        // sem registros de dor ainda
       }
     })();
   }, []);
@@ -1635,11 +1944,22 @@ function HistoricoTab() {
     }
   };
 
+  const removerDor = async (id) => {
+    const nova = dores.filter((d) => d.id !== id);
+    setDores(nova);
+    try {
+      await window.storage.set("dores-exercicios", JSON.stringify(nova));
+    } catch (e) {
+      // segue mesmo se falhar
+    }
+  };
+
   const totalTreinos = historico.length;
   const ultimos7dias = historico.filter((h) => {
     const dias = (Date.now() - new Date(h.data).getTime()) / 86400000;
     return dias <= 7;
   }).length;
+  const streakAtual = calcularStreak(historico);
 
   return (
     <div>
@@ -1653,6 +1973,25 @@ function HistoricoTab() {
             <div style={styles.historicoResumoNumero}>{ultimos7dias}</div>
             <div style={styles.historicoResumoLabel}>nos últimos 7 dias</div>
           </div>
+          <div style={styles.historicoResumoItem}>
+            <div style={styles.historicoResumoNumero}>{streakAtual}🔥</div>
+            <div style={styles.historicoResumoLabel}>dias seguidos</div>
+          </div>
+        </div>
+      </section>
+
+      <section style={styles.card}>
+        <div style={styles.cardLabel}>Conquistas</div>
+        <div style={styles.conquistasRow}>
+          {CONQUISTAS.map((c) => {
+            const desbloqueada = c.tipo === "total" ? totalTreinos >= c.valor : streakAtual >= c.valor;
+            return (
+              <div key={c.id} style={desbloqueada ? styles.conquistaItem : styles.conquistaItemBloqueada} title={c.label}>
+                <div style={styles.conquistaEmoji}>{c.emoji}</div>
+                <div style={styles.conquistaLabel}>{c.label}</div>
+              </div>
+            );
+          })}
         </div>
       </section>
 
@@ -1678,6 +2017,7 @@ function HistoricoTab() {
                 <div style={styles.historicoDetalhe}>
                   {h.totalExercicios > 0 && <span>{h.totalExercicios} exercícios</span>}
                   {h.cardio && <span> • {h.cardio.tipo} ({h.cardio.duracao} min)</span>}
+                  {h.sentimento && <span> • sentiu-se: {h.sentimento}</span>}
                 </div>
                 <button style={styles.removerHistoricoBtn} onClick={() => removerRegistro(h.id)}>
                   Remover registro
@@ -1686,6 +2026,24 @@ function HistoricoTab() {
             </div>
           ))}
       </div>
+
+      {dores.length > 0 && (
+        <section style={styles.card}>
+          <div style={styles.cardLabel}>⚠️ Registros de dor/desconforto</div>
+          <div style={styles.historicoLista}>
+            {[...dores].reverse().map((d) => (
+              <div key={d.id} style={styles.itemNotaRow}>
+                <div style={styles.historicoLinha}>
+                  <span>{d.exercicio}</span>
+                  <span>{d.data}</span>
+                </div>
+                {d.nota && <p style={styles.notaTexto}>{d.nota}</p>}
+                <button style={styles.removerItemBtn} onClick={() => removerDor(d.id)}>Remover registro</button>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   );
 }
@@ -1838,7 +2196,7 @@ function NotasTab() {
   );
 }
 
-function DayCard({ entry, onFoco, onAddExercicio, onRemoveExercicio, onEditExercicio, onEditCardio, onAbrirExercicio, onIniciarDescanso, onTrocarExercicio, onConcluirTreino }) {
+function DayCard({ entry, onFoco, onAddExercicio, onRemoveExercicio, onEditExercicio, onEditCardio, onAbrirExercicio, onIniciarDescanso, onTrocarExercicio, onConcluirTreino, onRegistrarDor }) {
   const { dia, foco, cardio, exercicios } = entry;
   const isDescanso = foco === "Descanso";
   const isCardio = foco === "Cardio";
@@ -1912,9 +2270,24 @@ function DayCard({ entry, onFoco, onAddExercicio, onRemoveExercicio, onEditExerc
 
         {!isDescanso && !isCardio && (
           <div>
+            <div style={styles.aquecimentoBox}>
+              🔥 Aquecimento sugerido: 5 min de cardio leve + mobilidade articular antes da primeira série.
+            </div>
             {exercicios.map((ex) => (
-              <div key={ex.id} style={styles.exRow}>
+              <div key={ex.id} style={ex.concluido ? { ...styles.exRow, ...styles.exRowConcluido } : styles.exRow}>
                 <div style={styles.exTopLine}>
+                  <button
+                    style={
+                      ex.concluido
+                        ? { ...styles.exConcluidoBtn, background: HIGHLIGHT, color: GRAPHITE }
+                        : styles.exConcluidoBtn
+                    }
+                    onClick={() => onEditExercicio(ex.id, "concluido", !ex.concluido)}
+                    aria-label={ex.concluido ? `Marcar ${ex.name} como não concluído` : `Marcar ${ex.name} como concluído`}
+                    title={ex.concluido ? "Concluído — toque para desmarcar" : "Marcar como concluído"}
+                  >
+                    {ex.concluido ? "✓" : ""}
+                  </button>
                   <button
                     style={styles.exNameBtn}
                     onClick={() => onAbrirExercicio(ex)}
@@ -1929,6 +2302,14 @@ function DayCard({ entry, onFoco, onAddExercicio, onRemoveExercicio, onEditExerc
                     title="Trocar exercício"
                   >
                     🔄 Trocar
+                  </button>
+                  <button
+                    style={styles.dorBtn}
+                    onClick={() => onRegistrarDor(ex.name)}
+                    aria-label={`Registrar dor ou desconforto em ${ex.name}`}
+                    title="Registrar dor/desconforto"
+                  >
+                    ⚠️
                   </button>
                   <button onClick={() => onRemoveExercicio(ex.id)} style={styles.removeBtn} aria-label={`Remover ${ex.name}`}>
                     ×
@@ -2388,6 +2769,134 @@ const styles = {
     whiteSpace: "nowrap",
   },
   removeBtn: { width: 22, height: 22, borderRadius: "50%", border: "none", background: "rgba(184,67,58,0.12)", color: MARGIN_RED, fontSize: 15, cursor: "pointer", lineHeight: 1, flexShrink: 0 },
+  exConcluidoBtn: {
+    width: 22,
+    height: 22,
+    borderRadius: "50%",
+    border: `2px solid ${HIGHLIGHT}`,
+    background: "transparent",
+    color: "#FFFFFF",
+    fontSize: 13,
+    fontWeight: 800,
+    cursor: "pointer",
+    lineHeight: 1,
+    flexShrink: 0,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 0,
+  },
+  exRowConcluido: {
+    background: "rgba(126,217,87,0.10)",
+    borderRadius: 10,
+    paddingLeft: 8,
+    paddingRight: 8,
+  },
+  aquecimentoBox: {
+    fontSize: 12.5,
+    color: "#8A5E12",
+    background: "rgba(217,164,65,0.14)",
+    border: "1px solid rgba(217,164,65,0.4)",
+    borderRadius: 8,
+    padding: "9px 11px",
+    marginBottom: 10,
+    lineHeight: 1.4,
+  },
+  feedbackRow: { display: "flex", gap: 8, justifyContent: "center", margin: "18px 0 14px" },
+  feedbackBtn: {
+    flex: 1,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    gap: 4,
+    padding: "12px 6px",
+    borderRadius: 12,
+    border: "1px solid rgba(43,42,40,0.15)",
+    background: "#FFFFFF",
+    fontFamily: "inherit",
+    fontSize: 11.5,
+    color: INK,
+    cursor: "pointer",
+  },
+  feedbackEmoji: { fontSize: 24 },
+  avisoSemTreinarBox: {
+    fontSize: 13,
+    color: "#8A5E12",
+    background: "rgba(217,164,65,0.18)",
+    border: "1px solid rgba(217,164,65,0.5)",
+    borderRadius: 10,
+    padding: "11px 14px",
+    marginBottom: 12,
+    fontWeight: 600,
+  },
+  buscaInput: {
+    width: "100%",
+    fontFamily: "inherit",
+    fontSize: 14,
+    padding: "11px 12px",
+    borderRadius: 10,
+    border: `1px solid ${PENCIL}`,
+    background: "#FFFFFF",
+    color: INK,
+    marginBottom: 8,
+  },
+  buscaResultados: { display: "flex", flexDirection: "column", gap: 6, marginBottom: 14 },
+  buscaResultItem: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    width: "100%",
+    fontFamily: "inherit",
+    fontSize: 13.5,
+    padding: "10px 12px",
+    borderRadius: 8,
+    border: "1px solid rgba(43,42,40,0.12)",
+    background: "#FFFFFF",
+    color: INK,
+    cursor: "pointer",
+    textAlign: "left",
+  },
+  buscaResultGrupo: { fontSize: 11.5, color: PENCIL },
+  dorBtn: {
+    width: 22,
+    height: 22,
+    borderRadius: "50%",
+    border: "none",
+    background: "rgba(217,164,65,0.18)",
+    color: "#8A5E12",
+    fontSize: 12,
+    cursor: "pointer",
+    lineHeight: 1,
+    flexShrink: 0,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 0,
+  },
+  conquistasRow: { display: "flex", flexWrap: "wrap", gap: 10 },
+  conquistaItem: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    gap: 3,
+    width: 74,
+    padding: "8px 4px",
+    borderRadius: 10,
+    background: "rgba(126,217,87,0.14)",
+  },
+  conquistaItemBloqueada: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    gap: 3,
+    width: 74,
+    padding: "8px 4px",
+    borderRadius: 10,
+    background: "rgba(43,42,40,0.06)",
+    opacity: 0.45,
+  },
+  conquistaEmoji: { fontSize: 22 },
+  conquistaLabel: { fontSize: 10, color: INK, textAlign: "center", lineHeight: 1.2 },
   addBtn: {
     fontFamily: monoFont,
     fontSize: 12.5,
@@ -2763,4 +3272,5 @@ const styles = {
     marginTop: -12,
   },
 };
-
+App.jsx.txt
+A mostrar App.jsx.txt.
