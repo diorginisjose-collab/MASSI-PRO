@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from "recharts";
 
@@ -1247,7 +1246,6 @@ export default function App() {
           entry={guiadoAtivo}
           onFechar={() => setGuiadoAtivo(null)}
           onAbrirExercicio={(ex) => setExercicioAberto(ex)}
-          onIniciarDescanso={(seg, nome) => iniciarDescanso(seg, nome)}
         />
       )}
 
@@ -1783,21 +1781,81 @@ const CHAVES_BACKUP = [
   "dores-exercicios",
 ];
 
-function ModoGuiadoOverlay({ entry, onFechar, onAbrirExercicio, onIniciarDescanso }) {
+function formatarMMSS(totalSeg) {
+  const m = Math.floor(totalSeg / 60);
+  const s = totalSeg % 60;
+  return `${m}:${String(s).padStart(2, "0")}`;
+}
+
+function ModoGuiadoOverlay({ entry, onFechar, onAbrirExercicio }) {
   const [indice, setIndice] = useState(0);
+  const [serieAtual, setSerieAtual] = useState(1);
+  const [estado, setEstado] = useState("serie"); // "serie" | "descanso" | "treinoConcluido"
+  const [restanteSeg, setRestanteSeg] = useState(0);
+
   const exercicios = entry.exercicios;
   const total = exercicios.length;
   const ex = exercicios[indice];
-  const ultimo = indice === total - 1;
+
+  // sempre que troca de exercício, reinicia a contagem de séries
+  useEffect(() => {
+    setSerieAtual(1);
+    setEstado("serie");
+  }, [indice]);
+
+  // contagem regressiva do descanso, com avanço automático quando zera
+  useEffect(() => {
+    if (estado !== "descanso") return;
+    if (restanteSeg <= 0) {
+      const totalSets = ex.sets || 1;
+      if (serieAtual < totalSets) {
+        setSerieAtual((s) => s + 1);
+        setEstado("serie");
+      } else if (indice < total - 1) {
+        setIndice((i) => i + 1); // reinicia série via effect acima
+      } else {
+        setEstado("treinoConcluido");
+      }
+      return;
+    }
+    const timer = setTimeout(() => setRestanteSeg((s) => s - 1), 1000);
+    return () => clearTimeout(timer);
+  }, [estado, restanteSeg, serieAtual, ex, indice, total]);
+
+  if (estado === "treinoConcluido") {
+    return (
+      <div style={styles.guiadoOverlay}>
+        <div style={styles.guiadoCorpo}>
+          <div style={styles.guiadoNome}>Treino concluído! 🎉</div>
+          <p style={styles.guiadoMaquina}>Todos os exercícios e séries foram finalizados.</p>
+          <button style={styles.guiadoConcluirBtn} onClick={onFechar}>
+            ✓ Fechar
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   if (!ex) return null;
+
+  const totalSets = ex.sets || 1;
+  const youtubeUrl = getVideoUrl(ex) || `https://www.youtube.com/results?search_query=${encodeURIComponent(ex.name + " execução correta")}`;
+
+  const irParaExercicio = (novoIndice) => {
+    setIndice(Math.max(0, Math.min(total - 1, novoIndice)));
+  };
+
+  const concluirSerie = () => {
+    setEstado("descanso");
+    setRestanteSeg(descansoParaSegundos(ex.descanso));
+  };
 
   return (
     <div style={styles.guiadoOverlay}>
       <div style={styles.guiadoTop}>
         <button style={styles.modalClose} onClick={onFechar} aria-label="Fechar treino guiado">×</button>
         <div style={styles.guiadoProgresso}>
-          {indice + 1} de {total}
+          Exercício {indice + 1} de {total}
         </div>
       </div>
 
@@ -1808,35 +1866,54 @@ function ModoGuiadoOverlay({ entry, onFechar, onAbrirExercicio, onIniciarDescans
       <div style={styles.guiadoCorpo}>
         <div style={styles.guiadoNome}>{ex.name}</div>
         <div style={styles.guiadoMaquina}>{ex.maquina}</div>
-        <div style={styles.guiadoSeriesReps}>
-          {ex.sets} séries × {ex.reps}
-        </div>
-        <button style={styles.guiadoVerBtn} onClick={() => onAbrirExercicio(ex)}>
-          Ver como executar
-        </button>
-        <button
-          style={styles.guiadoDescansoBtn}
-          onClick={() => onIniciarDescanso(ex.descanso, ex.name)}
-        >
-          ⏱ Iniciar descanso ({ex.descanso})
-        </button>
+
+        {estado === "serie" && (
+          <>
+            <div style={styles.guiadoSeriesReps}>
+              Série {serieAtual} de {totalSets} · {ex.reps}
+            </div>
+            <button style={styles.guiadoVerBtn} onClick={() => window.open(youtubeUrl, "_blank")}>
+              ▶ Assistir execução no YouTube
+            </button>
+            <button style={styles.guiadoDescansoBtn} onClick={concluirSerie}>
+              ✓ Concluí a série — descansar
+            </button>
+          </>
+        )}
+
+        {estado === "descanso" && (
+          <>
+            <div style={styles.guiadoSeriesReps}>Descansando…</div>
+            <div style={styles.guiadoTimerGrande}>{formatarMMSS(restanteSeg)}</div>
+            <p style={styles.guiadoMaquina}>
+              {serieAtual < totalSets
+                ? `Próxima: série ${serieAtual + 1} de ${totalSets}`
+                : indice < total - 1
+                ? "Depois disso, próximo exercício"
+                : "Última série do treino"}
+            </p>
+            <button style={styles.guiadoVerBtn} onClick={() => setRestanteSeg(0)}>
+              Pular descanso
+            </button>
+          </>
+        )}
       </div>
 
       <div style={styles.guiadoNav}>
         <button
           style={indice === 0 ? styles.guiadoNavBtnDesabilitado : styles.guiadoNavBtn}
-          onClick={() => setIndice((i) => Math.max(0, i - 1))}
+          onClick={() => irParaExercicio(indice - 1)}
           disabled={indice === 0}
         >
           ← Anterior
         </button>
-        {ultimo ? (
+        {indice === total - 1 ? (
           <button style={styles.guiadoConcluirBtn} onClick={onFechar}>
-            ✓ Concluir
+            ✓ Encerrar
           </button>
         ) : (
-          <button style={styles.guiadoNavBtn} onClick={() => setIndice((i) => Math.min(total - 1, i + 1))}>
-            Próximo →
+          <button style={styles.guiadoNavBtn} onClick={() => irParaExercicio(indice + 1)}>
+            Pular pro próximo →
           </button>
         )}
       </div>
@@ -2921,7 +2998,7 @@ const styles = {
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
-    zIndex: 100,
+    zIndex: 700,
     padding: 24,
   },
   cronoClose: {
@@ -3190,7 +3267,7 @@ const styles = {
     display: "flex",
     alignItems: "flex-end",
     justifyContent: "center",
-    zIndex: 50,
+    zIndex: 650,
     padding: 0,
   },
   modalCard: {
@@ -3441,6 +3518,7 @@ const styles = {
   guiadoNome: { fontFamily: monoFont, fontWeight: 800, fontSize: 24, color: "#F6F7F9" },
   guiadoMaquina: { fontSize: 13, color: "#8b95a1" },
   guiadoSeriesReps: { fontFamily: monoFont, fontSize: 16, color: HIGHLIGHT, marginBottom: 10 },
+  guiadoTimerGrande: { fontFamily: monoFont, fontSize: 56, fontWeight: 800, color: "#F6F7F9", marginBottom: 6 },
   guiadoVerBtn: {
     padding: "10px 18px",
     borderRadius: 10,
