@@ -1,9 +1,6 @@
 
-
-
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from "recharts";
-import logoImg from "./assets/logo.png.jpg";
 
 // ---------------------------------------------------------------
 // Compatibilidade: window.storage só existe dentro do ambiente do
@@ -40,12 +37,15 @@ const LIBRARY = {
     { name: "Supino reto", sets: 3, reps: "10-12", maquinas: ["Barra livre", "Halteres", "Máquina smith", "Máquina de supino (chest press)"] },
     { name: "Supino inclinado", sets: 3, reps: "10-12", maquinas: ["Halteres", "Barra livre", "Máquina smith"] },
     { name: "Crossover / peck deck", sets: 3, reps: "12-15", maquinas: ["Cabo (crossover)", "Peck deck (voador)"] },
+    { name: "Crucifixo", sets: 3, reps: "12-15", maquinas: ["Halteres", "Máquina (peck deck)"] },
     { name: "Flexão de braço", sets: 3, reps: "até a falha", maquinas: ["Peso corporal"] },
   ],
   Costas: [
     { name: "Puxada frontal", sets: 3, reps: "10-12", maquinas: ["Pulley (puxada alta)"] },
+    { name: "Puxada frontal triângulo", sets: 3, reps: "10-12", maquinas: ["Pulley (pegada triângulo)"] },
     { name: "Remada baixa", sets: 3, reps: "10-12", maquinas: ["Cabo (remada baixa)", "Máquina de remada"] },
     { name: "Remada curvada", sets: 3, reps: "10-12", maquinas: ["Halteres", "Barra livre"] },
+    { name: "Remada unilateral (serrote)", sets: 3, reps: "10-12", maquinas: ["Halteres"] },
     { name: "Puxada supinada", sets: 3, reps: "10-12", maquinas: ["Pulley (pegada supinada)"] },
   ],
   Perna: [
@@ -53,19 +53,29 @@ const LIBRARY = {
     { name: "Cadeira extensora", sets: 3, reps: "12-15", maquinas: ["Cadeira extensora"] },
     { name: "Mesa/cadeira flexora", sets: 3, reps: "12-15", maquinas: ["Mesa flexora", "Cadeira flexora"] },
     { name: "Agachamento", sets: 3, reps: "15", maquinas: ["Peso corporal", "Barra livre", "Máquina smith"] },
+    { name: "Agachamento búlgaro", sets: 3, reps: "10-12 cada perna", maquinas: ["Halteres", "Peso corporal"] },
+    { name: "Agachamento sumô", sets: 3, reps: "12-15", maquinas: ["Halteres", "Barra livre"] },
+    { name: "Agachamento hack (hack squat)", sets: 3, reps: "12-15", maquinas: ["Máquina hack squat"] },
+    { name: "Elevação pélvica (hip thrust)", sets: 3, reps: "12-15", maquinas: ["Barra livre", "Máquina smith", "Peso corporal"] },
     { name: "Panturrilha em pé", sets: 3, reps: "15-20", maquinas: ["Máquina de panturrilha", "Halteres"] },
+    { name: "Panturrilha sentado", sets: 3, reps: "15-20", maquinas: ["Máquina de panturrilha sentado", "Halteres"] },
   ],
   Ombro: [
     { name: "Desenvolvimento", sets: 3, reps: "10-12", maquinas: ["Halteres", "Máquina de desenvolvimento", "Barra livre"] },
     { name: "Elevação lateral", sets: 3, reps: "12-15", maquinas: ["Halteres", "Cabo (polia baixa)"] },
     { name: "Elevação frontal", sets: 3, reps: "12-15", maquinas: ["Halteres", "Barra", "Cabo"] },
     { name: "Remada alta", sets: 3, reps: "10-12", maquinas: ["Barra livre", "Cabo"] },
+    { name: "Voador invertido (deltoide posterior)", sets: 3, reps: "12-15", maquinas: ["Halteres", "Peck deck invertido", "Cabo"] },
   ],
   Braço: [
     { name: "Rosca bíceps", sets: 3, reps: "10-12", maquinas: ["Barra reta", "Barra W", "Halteres"] },
     { name: "Rosca alternada", sets: 3, reps: "10-12", maquinas: ["Halteres"] },
+    { name: "Rosca martelo", sets: 3, reps: "10-12", maquinas: ["Halteres"] },
+    { name: "Rosca no banco Scott", sets: 3, reps: "10-12", maquinas: ["Barra W", "Halteres", "Máquina Scott"] },
+    { name: "Rosca no banco inclinado", sets: 3, reps: "10-12", maquinas: ["Halteres"] },
     { name: "Tríceps corda", sets: 3, reps: "10-12", maquinas: ["Pulley (corda)"] },
     { name: "Tríceps testa", sets: 3, reps: "10-12", maquinas: ["Barra W", "Halteres"] },
+    { name: "Tríceps coice (kickback)", sets: 3, reps: "12-15", maquinas: ["Halteres"] },
   ],
   "Corpo inteiro": [
     { name: "Agachamento", sets: 3, reps: "12", maquinas: ["Peso corporal", "Barra livre", "Máquina smith"] },
@@ -74,9 +84,17 @@ const LIBRARY = {
     { name: "Desenvolvimento", sets: 3, reps: "10-12", maquinas: ["Halteres", "Barra livre"] },
     { name: "Prancha abdominal", sets: 3, reps: "30-40s", maquinas: ["Peso corporal"] },
   ],
+  Funcional: [
+    { name: "Agachamento na cadeira (sentar e levantar)", sets: 2, reps: "8-12", maquinas: ["Peso corporal", "Cadeira"] },
+    { name: "Elevação de perna sentado", sets: 2, reps: "10-15 cada perna", maquinas: ["Peso corporal", "Cadeira"] },
+    { name: "Marcha estacionária", sets: 2, reps: "30-45s", maquinas: ["Peso corporal"] },
+    { name: "Elevação de braço com faixa elástica", sets: 2, reps: "10-15", maquinas: ["Faixa elástica"] },
+    { name: "Ponte de glúteo (deitado)", sets: 2, reps: "10-15", maquinas: ["Peso corporal"] },
+    { name: "Rotação de tronco sentado", sets: 2, reps: "10-12 cada lado", maquinas: ["Peso corporal", "Cadeira"] },
+  ],
 };
 
-const FOCOS = ["Peito", "Costas", "Perna", "Ombro", "Braço", "Corpo inteiro", "Cardio", "Descanso"];
+const FOCOS = ["Peito", "Costas", "Perna", "Ombro", "Braço", "Corpo inteiro", "Funcional", "Cardio", "Descanso"];
 const DIAS_SEMANA = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo"];
 const DIAS_ABREV = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
 const CARDIO_TIPOS = ["Esteira", "Bicicleta", "Elíptico", "Corrida ao ar livre", "Pular corda", "Escada"];
@@ -602,6 +620,29 @@ function tocarBip() {
   }
 }
 
+function MassiLogoMark() {
+  return (
+    <svg viewBox="0 0 44 44" width="44" height="44" style={{ display: "block", flexShrink: 0 }}>
+      <defs>
+        <linearGradient id="massiLogoGrad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="#1CA7E0" />
+          <stop offset="55%" stopColor="#1FD1A6" />
+          <stop offset="100%" stopColor="#8BDB4B" />
+        </linearGradient>
+      </defs>
+      <rect x="0" y="0" width="44" height="44" rx="12" fill="#131A1D" />
+      <path
+        d="M8,26 L16,26 L20,15 L24,32 L28,20 L32,26 L36,26"
+        fill="none"
+        stroke="url(#massiLogoGrad)"
+        strokeWidth="3"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
 function uid() {
   return Math.random().toString(36).slice(2, 9);
 }
@@ -629,7 +670,7 @@ function calcularAguaLitros(pesoKg) {
 }
 
 function toExercicio(base) {
-  return { id: uid(), ...base, maquina: base.maquinas[0], descanso: DESCANSO_PADRAO, concluido: false };
+  return { id: uid(), ...base, maquina: base.maquinas[0], descanso: DESCANSO_PADRAO, concluido: false, carga: "" };
 }
 
 function makeDayEntry(dia, foco) {
@@ -802,6 +843,9 @@ export default function App() {
   const [dorPendente, setDorPendente] = useState(null); // nome do exercício
   const [buscaExercicio, setBuscaExercicio] = useState("");
   const [avisoSemTreinar, setAvisoSemTreinar] = useState(null);
+  const [guiadoAtivo, setGuiadoAtivo] = useState(null); // dia inteiro (entry) em modo guiado
+  const [progressao, setProgressao] = useState({}); // { [nomeExercicio]: contagem }
+  const [onboardingPendente, setOnboardingPendente] = useState(false);
 
   useEffect(() => {
     const t1 = setTimeout(() => setSplashSaindo(true), 1700);
@@ -843,6 +887,18 @@ export default function App() {
         if (doresRes && doresRes.value) setDores(JSON.parse(doresRes.value));
       } catch (e) {
         // sem registros de dor ainda
+      }
+      try {
+        const progRes = await window.storage.get("progressao-exercicios");
+        if (progRes && progRes.value) setProgressao(JSON.parse(progRes.value));
+      } catch (e) {
+        // sem progressão salva ainda
+      }
+      try {
+        const onboardingRes = await window.storage.get("onboarding-perfil");
+        if (!onboardingRes || !onboardingRes.value) setOnboardingPendente(true);
+      } catch (e) {
+        setOnboardingPendente(true);
       }
     })();
 
@@ -988,6 +1044,18 @@ export default function App() {
       setMensagemSucesso("Treino concluído, mas não consegui salvar no histórico agora.");
     }
     setTimeout(() => setMensagemSucesso(null), 3000);
+
+    // Progressão automática de carga: soma 1 na contagem de cada exercício desse treino
+    const novaProgressao = { ...progressao };
+    diaEntry.exercicios.forEach((ex) => {
+      novaProgressao[ex.name] = (novaProgressao[ex.name] || 0) + 1;
+    });
+    setProgressao(novaProgressao);
+    try {
+      await window.storage.set("progressao-exercicios", JSON.stringify(novaProgressao));
+    } catch (e) {
+      // segue mesmo se falhar
+    }
     // TODO ADMOB: bom ponto pra exibir um intersticial, ex: mostrarInterstitial();
     // Deixado comentado de propósito — decida a frequência ideal antes de ativar.
   };
@@ -1105,7 +1173,7 @@ export default function App() {
       <header style={styles.hero}>
         <div style={styles.heroOverlay} />
         <div style={styles.headerTop}>
-          <img src={logoImg} alt="Massi Pro" style={styles.logoMark} />
+          <MassiLogoMark />
           <button style={isPremium ? styles.premiumBadge : styles.freeBadge} onClick={() => setShowPlanos(true)}>
             {isPremium ? "★ Premium" : "Free — ver planos"}
           </button>
@@ -1172,6 +1240,28 @@ export default function App() {
 
       {dorPendente && (
         <DorModal exercicio={dorPendente} onSalvar={salvarDor} onFechar={() => setDorPendente(null)} />
+      )}
+
+      {guiadoAtivo && (
+        <ModoGuiadoOverlay
+          entry={guiadoAtivo}
+          onFechar={() => setGuiadoAtivo(null)}
+          onAbrirExercicio={(ex) => setExercicioAberto(ex)}
+          onIniciarDescanso={(seg, nome) => iniciarDescanso(seg, nome)}
+        />
+      )}
+
+      {onboardingPendente && !splashVisivel && (
+        <OnboardingModal
+          onConcluir={async (respostas) => {
+            setOnboardingPendente(false);
+            try {
+              await window.storage.set("onboarding-perfil", JSON.stringify(respostas));
+            } catch (e) {
+              // segue mesmo se falhar
+            }
+          }}
+        />
       )}
 
       <div style={styles.tabRow}>
@@ -1278,6 +1368,8 @@ export default function App() {
                   onTrocarExercicio={(id) => trocarExercicio(d.dia, id)}
                   onConcluirTreino={() => setFeedbackPendente(d)}
                   onRegistrarDor={(nome) => setDorPendente(nome)}
+                  onIniciarGuiado={(d) => setGuiadoAtivo(d)}
+                  progressao={progressao}
                 />
               ))}
           </div>
@@ -1540,6 +1632,68 @@ function EvolucaoTab({ onAplicarTreino }) {
 }
 
 
+function OnboardingModal({ onConcluir }) {
+  const [idade, setIdade] = useState("");
+  const [horario, setHorario] = useState("Manhã");
+  const [objetivo, setObjetivo] = useState("Hipertrofia");
+  const [nivel, setNivel] = useState("Iniciante");
+
+  return (
+    <div style={styles.modalOverlay}>
+      <div style={styles.modalCard} onClick={(e) => e.stopPropagation()}>
+        <div style={styles.eyebrow}>BEM-VINDO(A)</div>
+        <h2 style={styles.modalTitle}>Vamos personalizar seu treino</h2>
+        <p style={styles.modalSubtitle}>Leva 20 segundos — você pode mudar tudo isso depois.</p>
+
+        <div style={styles.onboardingField}>
+          <label style={styles.onboardingLabel}>Sua idade</label>
+          <input
+            type="number"
+            value={idade}
+            onChange={(e) => setIdade(e.target.value)}
+            placeholder="ex: 28"
+            style={styles.notaTextarea}
+          />
+        </div>
+
+        <div style={styles.onboardingField}>
+          <label style={styles.onboardingLabel}>Horário que costuma treinar</label>
+          <select value={horario} onChange={(e) => setHorario(e.target.value)} style={styles.select}>
+            {["Manhã", "Tarde", "Noite", "Varia"].map((h) => (
+              <option key={h} value={h}>{h}</option>
+            ))}
+          </select>
+        </div>
+
+        <div style={styles.onboardingField}>
+          <label style={styles.onboardingLabel}>Seu objetivo principal</label>
+          <select value={objetivo} onChange={(e) => setObjetivo(e.target.value)} style={styles.select}>
+            {["Hipertrofia", "Emagrecer", "Secar", "Saúde geral"].map((o) => (
+              <option key={o} value={o}>{o}</option>
+            ))}
+          </select>
+        </div>
+
+        <div style={styles.onboardingField}>
+          <label style={styles.onboardingLabel}>Seu nível</label>
+          <select value={nivel} onChange={(e) => setNivel(e.target.value)} style={styles.select}>
+            {["Iniciante", "Intermediário", "Avançado"].map((n) => (
+              <option key={n} value={n}>{n}</option>
+            ))}
+          </select>
+        </div>
+
+        <button
+          style={styles.saveButton}
+          onClick={() => onConcluir({ idade, horario, objetivo, nivel })}
+        >
+          Começar a treinar
+        </button>
+      </div>
+    </div>
+  );
+}
+
 function FeedbackModal({ onSelecionar, onPular }) {
   const opcoes = [
     { emoji: "😫", label: "Difícil" },
@@ -1628,6 +1782,67 @@ const CHAVES_BACKUP = [
   "status-premium",
   "dores-exercicios",
 ];
+
+function ModoGuiadoOverlay({ entry, onFechar, onAbrirExercicio, onIniciarDescanso }) {
+  const [indice, setIndice] = useState(0);
+  const exercicios = entry.exercicios;
+  const total = exercicios.length;
+  const ex = exercicios[indice];
+  const ultimo = indice === total - 1;
+
+  if (!ex) return null;
+
+  return (
+    <div style={styles.guiadoOverlay}>
+      <div style={styles.guiadoTop}>
+        <button style={styles.modalClose} onClick={onFechar} aria-label="Fechar treino guiado">×</button>
+        <div style={styles.guiadoProgresso}>
+          {indice + 1} de {total}
+        </div>
+      </div>
+
+      <div style={styles.guiadoBarraFundo}>
+        <div style={{ ...styles.guiadoBarraPreenchida, width: `${((indice + 1) / total) * 100}%` }} />
+      </div>
+
+      <div style={styles.guiadoCorpo}>
+        <div style={styles.guiadoNome}>{ex.name}</div>
+        <div style={styles.guiadoMaquina}>{ex.maquina}</div>
+        <div style={styles.guiadoSeriesReps}>
+          {ex.sets} séries × {ex.reps}
+        </div>
+        <button style={styles.guiadoVerBtn} onClick={() => onAbrirExercicio(ex)}>
+          Ver como executar
+        </button>
+        <button
+          style={styles.guiadoDescansoBtn}
+          onClick={() => onIniciarDescanso(ex.descanso, ex.name)}
+        >
+          ⏱ Iniciar descanso ({ex.descanso})
+        </button>
+      </div>
+
+      <div style={styles.guiadoNav}>
+        <button
+          style={indice === 0 ? styles.guiadoNavBtnDesabilitado : styles.guiadoNavBtn}
+          onClick={() => setIndice((i) => Math.max(0, i - 1))}
+          disabled={indice === 0}
+        >
+          ← Anterior
+        </button>
+        {ultimo ? (
+          <button style={styles.guiadoConcluirBtn} onClick={onFechar}>
+            ✓ Concluir
+          </button>
+        ) : (
+          <button style={styles.guiadoNavBtn} onClick={() => setIndice((i) => Math.min(total - 1, i + 1))}>
+            Próximo →
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
 
 function SobreTab() {
   const [mensagemBackup, setMensagemBackup] = useState(null);
@@ -2196,7 +2411,7 @@ function NotasTab() {
   );
 }
 
-function DayCard({ entry, onFoco, onAddExercicio, onRemoveExercicio, onEditExercicio, onEditCardio, onAbrirExercicio, onIniciarDescanso, onTrocarExercicio, onConcluirTreino, onRegistrarDor }) {
+function DayCard({ entry, onFoco, onAddExercicio, onRemoveExercicio, onEditExercicio, onEditCardio, onAbrirExercicio, onIniciarDescanso, onTrocarExercicio, onConcluirTreino, onRegistrarDor, onIniciarGuiado, progressao }) {
   const { dia, foco, cardio, exercicios } = entry;
   const isDescanso = foco === "Descanso";
   const isCardio = foco === "Cardio";
@@ -2368,6 +2583,20 @@ function DayCard({ entry, onFoco, onAddExercicio, onRemoveExercicio, onEditExerc
                     </button>
                   </div>
                 </div>
+
+                <div style={styles.cargaRow}>
+                  <span style={styles.cargaLabel}>Carga:</span>
+                  <input
+                    type="text"
+                    value={ex.carga || ""}
+                    placeholder="ex: 20kg"
+                    onChange={(e) => onEditExercicio(ex.id, "carga", e.target.value)}
+                    style={styles.cargaInput}
+                  />
+                  {progressao && progressao[ex.name] > 0 && progressao[ex.name] % 3 === 0 && (
+                    <span style={styles.progressaoTag}>🔺 Hora de aumentar a carga</span>
+                  )}
+                </div>
               </div>
             ))}
             {exercicios.length === 0 && <div style={styles.restNote}>Nenhum exercício adicionado ainda.</div>}
@@ -2377,6 +2606,12 @@ function DayCard({ entry, onFoco, onAddExercicio, onRemoveExercicio, onEditExerc
               </button>
             )}
           </div>
+        )}
+
+        {!isDescanso && exercicios.length > 0 && (
+          <button style={styles.guiadoBtn} onClick={() => onIniciarGuiado(entry)}>
+            ▶ Iniciar treino guiado
+          </button>
         )}
 
         {!isDescanso && (
@@ -2792,6 +3027,26 @@ const styles = {
     paddingLeft: 8,
     paddingRight: 8,
   },
+  cargaRow: { display: "flex", alignItems: "center", gap: 8, marginTop: 8, flexWrap: "wrap" },
+  cargaLabel: { fontSize: 11.5, color: PENCIL },
+  cargaInput: {
+    width: 90,
+    fontFamily: "inherit",
+    fontSize: 12.5,
+    padding: "5px 8px",
+    borderRadius: 7,
+    border: `1px solid rgba(43,42,40,0.18)`,
+    background: "#FFFFFF",
+    color: INK,
+  },
+  progressaoTag: {
+    fontSize: 11,
+    fontWeight: 700,
+    color: "#8A5E12",
+    background: "rgba(217,164,65,0.18)",
+    borderRadius: 6,
+    padding: "3px 8px",
+  },
   aquecimentoBox: {
     fontSize: 12.5,
     color: "#8A5E12",
@@ -2819,6 +3074,8 @@ const styles = {
     cursor: "pointer",
   },
   feedbackEmoji: { fontSize: 24 },
+  onboardingField: { marginBottom: 14, textAlign: "left" },
+  onboardingLabel: { display: "block", fontSize: 12, color: PENCIL, marginBottom: 5, fontWeight: 600 },
   avisoSemTreinarBox: {
     fontSize: 13,
     color: "#8A5E12",
@@ -3152,6 +3409,92 @@ const styles = {
     fontFamily: monoFont,
     fontWeight: 700,
     fontSize: 12.5,
+    cursor: "pointer",
+  },
+  guiadoBtn: {
+    width: "100%",
+    marginTop: 12,
+    padding: "11px",
+    borderRadius: 10,
+    border: "none",
+    background: `linear-gradient(90deg, ${MARGIN_RED}, ${HIGHLIGHT})`,
+    color: "#0E1214",
+    fontFamily: monoFont,
+    fontWeight: 800,
+    fontSize: 12.5,
+    cursor: "pointer",
+  },
+  guiadoOverlay: {
+    position: "fixed",
+    inset: 0,
+    zIndex: 600,
+    background: GRAPHITE,
+    display: "flex",
+    flexDirection: "column",
+    padding: "20px 20px 28px",
+  },
+  guiadoTop: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 },
+  guiadoProgresso: { fontFamily: monoFont, fontSize: 12, color: "#8b95a1" },
+  guiadoBarraFundo: { width: "100%", height: 6, borderRadius: 4, background: "rgba(255,255,255,0.1)", marginBottom: 24 },
+  guiadoBarraPreenchida: { height: "100%", borderRadius: 4, background: `linear-gradient(90deg, ${MARGIN_RED}, ${HIGHLIGHT})` },
+  guiadoCorpo: { flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 14, textAlign: "center" },
+  guiadoNome: { fontFamily: monoFont, fontWeight: 800, fontSize: 24, color: "#F6F7F9" },
+  guiadoMaquina: { fontSize: 13, color: "#8b95a1" },
+  guiadoSeriesReps: { fontFamily: monoFont, fontSize: 16, color: HIGHLIGHT, marginBottom: 10 },
+  guiadoVerBtn: {
+    padding: "10px 18px",
+    borderRadius: 10,
+    border: `1px solid rgba(255,255,255,0.2)`,
+    background: "transparent",
+    color: "#F6F7F9",
+    fontFamily: monoFont,
+    fontSize: 12.5,
+    cursor: "pointer",
+  },
+  guiadoDescansoBtn: {
+    padding: "10px 18px",
+    borderRadius: 10,
+    border: "none",
+    background: "rgba(28,167,224,0.18)",
+    color: "#7ED9F0",
+    fontFamily: monoFont,
+    fontSize: 12.5,
+    cursor: "pointer",
+  },
+  guiadoNav: { display: "flex", gap: 10, marginTop: 20 },
+  guiadoNavBtn: {
+    flex: 1,
+    padding: "13px",
+    borderRadius: 10,
+    border: "none",
+    background: "rgba(255,255,255,0.08)",
+    color: "#F6F7F9",
+    fontFamily: monoFont,
+    fontWeight: 700,
+    fontSize: 13,
+    cursor: "pointer",
+  },
+  guiadoNavBtnDesabilitado: {
+    flex: 1,
+    padding: "13px",
+    borderRadius: 10,
+    border: "none",
+    background: "rgba(255,255,255,0.03)",
+    color: "rgba(255,255,255,0.25)",
+    fontFamily: monoFont,
+    fontWeight: 700,
+    fontSize: 13,
+  },
+  guiadoConcluirBtn: {
+    flex: 1,
+    padding: "13px",
+    borderRadius: 10,
+    border: "none",
+    background: HIGHLIGHT,
+    color: GRAPHITE,
+    fontFamily: monoFont,
+    fontWeight: 800,
+    fontSize: 13,
     cursor: "pointer",
   },
   historicoResumoRow: { display: "flex", gap: 20 },
