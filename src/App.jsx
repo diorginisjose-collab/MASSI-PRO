@@ -1,4 +1,5 @@
 
+
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from "recharts";
 
@@ -1783,10 +1784,10 @@ function EvolucaoTab({ onAplicarTreino }) {
           {avaliacoes.length >= 2 && (
             <div style={styles.chartWrap}>
               <ResponsiveContainer width="100%" height={160}>
-                <LineChart data={dadosGrafico}>
+                <LineChart data={dadosGrafico} margin={{ left: 8, right: 8, top: 5, bottom: 15 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(43,42,40,0.1)" />
-                  <XAxis dataKey="data" tick={{ fontSize: 11, fill: PENCIL }} />
-                  <YAxis tick={{ fontSize: 11, fill: PENCIL }} domain={["auto", "auto"]} />
+                  <XAxis dataKey="data" tick={{ fontSize: 11, fill: PENCIL }} label={{ value: "Data", position: "insideBottom", offset: -5, fontSize: 11, fill: PENCIL }} />
+                  <YAxis tick={{ fontSize: 11, fill: PENCIL }} domain={["auto", "auto"]} label={{ value: "Peso (kg)", angle: -90, position: "insideLeft", fontSize: 11, fill: PENCIL }} />
                   <Tooltip />
                   <Line type="monotone" dataKey="peso" stroke={MARGIN_RED} strokeWidth={2} dot={{ r: 3 }} />
                 </LineChart>
