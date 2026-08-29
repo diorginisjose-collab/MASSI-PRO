@@ -664,6 +664,10 @@ function calcularStreak(historico) {
   return streak;
 }
 
+function normalizarDecimal(valor) {
+  return valor.replace(",", ".").replace(/[^0-9.]/g, "");
+}
+
 function calcularAguaLitros(pesoKg) {
   if (!pesoKg || pesoKg <= 0) return null;
   return +(pesoKg * 0.035).toFixed(1);
@@ -1166,7 +1170,10 @@ export default function App() {
   return (
     <div style={styles.page}>
       <style>{`
+        html, body { margin: 0; padding: 0; width: 100%; overflow-x: hidden; }
+        #root { overflow-x: hidden; }
         * { box-sizing: border-box; }
+        img, svg { max-width: 100%; }
         .chip { transition: background-color .15s ease, color .15s ease, border-color .15s ease; }
         .chip:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible {
           outline: 2px solid #B8433A; outline-offset: 2px;
@@ -1460,6 +1467,8 @@ function EvolucaoTab({ onAplicarTreino }) {
   const [avaliacoes, setAvaliacoes] = useState([]);
   const [carregado, setCarregado] = useState(false);
   const [salvando, setSalvando] = useState(false);
+  const [avaliacaoSalva, setAvaliacaoSalva] = useState(false);
+  const [erros, setErros] = useState({});
   const [fotos, setFotos] = useState([]);
 
   const [peso, setPeso] = useState("");
@@ -1520,8 +1529,31 @@ function EvolucaoTab({ onAplicarTreino }) {
     }
   };
 
+  const validarAvaliacao = () => {
+    const novosErros = {};
+    if (!peso || isNaN(parseFloat(peso)) || parseFloat(peso) <= 0) {
+      novosErros.peso = "Informe um peso válido";
+    }
+    if (!altura || isNaN(parseFloat(altura)) || parseFloat(altura) <= 0) {
+      novosErros.altura = "Informe uma altura válida";
+    }
+    [
+      ["cintura", cintura],
+      ["quadril", quadril],
+      ["peito", peito],
+      ["braco", braco],
+      ["coxa", coxa],
+    ].forEach(([campo, valor]) => {
+      if (valor && (isNaN(parseFloat(valor)) || parseFloat(valor) <= 0)) {
+        novosErros[campo] = "Valor inválido";
+      }
+    });
+    setErros(novosErros);
+    return Object.keys(novosErros).length === 0;
+  };
+
   const salvarAvaliacao = async () => {
-    if (!peso) return;
+    if (!validarAvaliacao()) return;
     const nova = {
       id: uid(),
       data: new Date().toISOString().slice(0, 10),
@@ -1547,6 +1579,9 @@ function EvolucaoTab({ onAplicarTreino }) {
       setPeito("");
       setBraco("");
       setCoxa("");
+      setErros({});
+      setAvaliacaoSalva(true);
+      setTimeout(() => setAvaliacaoSalva(false), 3000);
     } catch (e) {
       // segue mesmo se falhar o storage
     } finally {
@@ -1572,33 +1607,88 @@ function EvolucaoTab({ onAplicarTreino }) {
         <div style={styles.avalGrid}>
           <label style={styles.avalField}>
             Peso (kg) *
-            <input type="number" step="0.1" value={peso} onChange={(e) => setPeso(e.target.value)} style={styles.avalInput} placeholder="ex: 72.5" />
+            <input
+              type="text"
+              inputMode="decimal"
+              step="0.1"
+              value={peso}
+              onChange={(e) => setPeso(normalizarDecimal(e.target.value))}
+              style={erros.peso ? { ...styles.avalInput, ...styles.avalInputErro } : styles.avalInput}
+              placeholder="ex: 72,5"
+            />
+            {erros.peso && <span style={styles.avalErroMsg}>{erros.peso}</span>}
           </label>
           <label style={styles.avalField}>
-            Altura (cm)
-            <input type="number" value={altura} onChange={(e) => setAltura(e.target.value)} style={styles.avalInput} placeholder="ex: 175" />
+            Altura (cm) *
+            <input
+              type="text"
+              inputMode="decimal"
+              value={altura}
+              onChange={(e) => setAltura(normalizarDecimal(e.target.value))}
+              style={erros.altura ? { ...styles.avalInput, ...styles.avalInputErro } : styles.avalInput}
+              placeholder="ex: 175"
+            />
+            {erros.altura && <span style={styles.avalErroMsg}>{erros.altura}</span>}
           </label>
           <label style={styles.avalField}>
             Cintura (cm)
-            <input type="number" value={cintura} onChange={(e) => setCintura(e.target.value)} style={styles.avalInput} />
+            <input
+              type="text"
+              inputMode="decimal"
+              value={cintura}
+              onChange={(e) => setCintura(normalizarDecimal(e.target.value))}
+              style={erros.cintura ? { ...styles.avalInput, ...styles.avalInputErro } : styles.avalInput}
+            />
+            {erros.cintura && <span style={styles.avalErroMsg}>{erros.cintura}</span>}
           </label>
           <label style={styles.avalField}>
             Quadril (cm)
-            <input type="number" value={quadril} onChange={(e) => setQuadril(e.target.value)} style={styles.avalInput} />
+            <input
+              type="text"
+              inputMode="decimal"
+              value={quadril}
+              onChange={(e) => setQuadril(normalizarDecimal(e.target.value))}
+              style={erros.quadril ? { ...styles.avalInput, ...styles.avalInputErro } : styles.avalInput}
+            />
+            {erros.quadril && <span style={styles.avalErroMsg}>{erros.quadril}</span>}
           </label>
           <label style={styles.avalField}>
             Peito (cm)
-            <input type="number" value={peito} onChange={(e) => setPeito(e.target.value)} style={styles.avalInput} />
+            <input
+              type="text"
+              inputMode="decimal"
+              value={peito}
+              onChange={(e) => setPeito(normalizarDecimal(e.target.value))}
+              style={erros.peito ? { ...styles.avalInput, ...styles.avalInputErro } : styles.avalInput}
+            />
+            {erros.peito && <span style={styles.avalErroMsg}>{erros.peito}</span>}
           </label>
           <label style={styles.avalField}>
             Braço (cm)
-            <input type="number" value={braco} onChange={(e) => setBraco(e.target.value)} style={styles.avalInput} />
+            <input
+              type="text"
+              inputMode="decimal"
+              value={braco}
+              onChange={(e) => setBraco(normalizarDecimal(e.target.value))}
+              style={erros.braco ? { ...styles.avalInput, ...styles.avalInputErro } : styles.avalInput}
+            />
+            {erros.braco && <span style={styles.avalErroMsg}>{erros.braco}</span>}
           </label>
           <label style={styles.avalField}>
             Coxa (cm)
-            <input type="number" value={coxa} onChange={(e) => setCoxa(e.target.value)} style={styles.avalInput} />
+            <input
+              type="text"
+              inputMode="decimal"
+              value={coxa}
+              onChange={(e) => setCoxa(normalizarDecimal(e.target.value))}
+              style={erros.coxa ? { ...styles.avalInput, ...styles.avalInputErro } : styles.avalInput}
+            />
+            {erros.coxa && <span style={styles.avalErroMsg}>{erros.coxa}</span>}
           </label>
         </div>
+        {Object.keys(erros).length > 0 && (
+          <p style={styles.avalErroResumo}>⚠ Corrija os campos destacados em vermelho acima.</p>
+        )}
 
         <div style={styles.cardLabel}>Objetivo</div>
         <div style={styles.chipRow}>
@@ -1644,9 +1734,10 @@ function EvolucaoTab({ onAplicarTreino }) {
           ))}
         </div>
 
-        <button style={styles.saveButton} onClick={salvarAvaliacao} disabled={!peso || salvando}>
+        <button style={styles.saveButton} onClick={salvarAvaliacao} disabled={salvando}>
           {salvando ? "Salvando..." : "Salvar avaliação de hoje"}
         </button>
+        {avaliacaoSalva && <p style={styles.avaliacaoSalvaMsg}>✓ Avaliação salva! Confira sua evolução abaixo.</p>}
       </section>
 
       {(peso || ultima) && (
@@ -3509,19 +3600,32 @@ const styles = {
     cursor: "pointer",
   },
   modalDisclaimer: { fontSize: 11.5, color: PENCIL, marginTop: 18, lineHeight: 1.4, fontStyle: "italic" },
+  avaliacaoSalvaMsg: { fontSize: 12.5, color: "#2E7D32", fontWeight: 700, marginTop: 10, textAlign: "center" },
 
-  tabRow: { display: "flex", gap: 6, marginBottom: 18, background: PAPER_ALT, borderRadius: 10, padding: 4 },
+  tabRow: {
+    display: "flex",
+    gap: 6,
+    marginBottom: 18,
+    background: PAPER_ALT,
+    borderRadius: 10,
+    padding: 4,
+    overflowX: "auto",
+    WebkitOverflowScrolling: "touch",
+    flexWrap: "nowrap",
+  },
   tabBtn: {
-    flex: 1,
+    flex: "0 0 auto",
+    minWidth: 76,
     fontFamily: monoFont,
     fontSize: 12.5,
-    padding: "9px 6px",
+    padding: "9px 10px",
     borderRadius: 8,
     border: "none",
     background: "transparent",
     color: PENCIL,
     cursor: "pointer",
     fontWeight: 600,
+    whiteSpace: "nowrap",
   },
   tabBtnActive: { background: GRAPHITE, color: PAPER },
 
@@ -3594,8 +3698,10 @@ const styles = {
   },
 
   avalGrid: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 16 },
-  avalField: { display: "flex", flexDirection: "column", gap: 4, fontSize: 12, color: PENCIL },
+  avalField: { display: "flex", flexDirection: "column", gap: 4, fontSize: 12, color: PENCIL, minWidth: 0 },
   avalInput: {
+    width: "100%",
+    minWidth: 0,
     fontFamily: sansFont,
     fontSize: 14,
     padding: "8px 9px",
@@ -3604,6 +3710,12 @@ const styles = {
     background: PAPER,
     color: INK,
   },
+  avalInputErro: {
+    border: "1.5px solid #C0392B",
+    background: "rgba(192,57,43,0.06)",
+  },
+  avalErroMsg: { fontSize: 11, color: "#C0392B", fontWeight: 600, marginTop: 2 },
+  avalErroResumo: { fontSize: 12.5, color: "#C0392B", fontWeight: 700, marginTop: 8, textAlign: "center" },
   biotipoDescricao: { fontSize: 12, color: PENCIL, fontStyle: "italic", marginBottom: 16, marginTop: -6 },
   deltaPeso: {
     fontSize: 13,
