@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from "recharts";
 
@@ -1780,12 +1781,6 @@ const CHAVES_BACKUP = [
   "status-premium",
   "dores-exercicios",
 ];
-
-function formatarMMSS(totalSeg) {
-  const m = Math.floor(totalSeg / 60);
-  const s = totalSeg % 60;
-  return `${m}:${String(s).padStart(2, "0")}`;
-}
 
 function ModoGuiadoOverlay({ entry, onFechar, onAbrirExercicio }) {
   const [indice, setIndice] = useState(0);
