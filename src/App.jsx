@@ -1734,10 +1734,13 @@ function EvolucaoTab({ onAplicarTreino }) {
           ))}
         </div>
 
-        <button style={styles.saveButton} onClick={salvarAvaliacao} disabled={salvando}>
-          {salvando ? "Salvando..." : "Salvar avaliação de hoje"}
+        <button
+          style={avaliacaoSalva ? { ...styles.saveButton, ...styles.saveButtonSalvo } : styles.saveButton}
+          onClick={salvarAvaliacao}
+          disabled={salvando}
+        >
+          {salvando ? "Salvando..." : avaliacaoSalva ? "✓ Avaliação salva!" : "Salvar avaliação de hoje"}
         </button>
-        {avaliacaoSalva && <p style={styles.avaliacaoSalvaMsg}>✓ Avaliação salva! Confira sua evolução abaixo.</p>}
       </section>
 
       {(peso || ultima) && (
@@ -3504,6 +3507,10 @@ const styles = {
     fontSize: 15,
     letterSpacing: "0.03em",
     cursor: "pointer",
+  },
+  saveButtonSalvo: {
+    background: HIGHLIGHT,
+    color: GRAPHITE,
   },
   loadingNote: { textAlign: "center", color: PENCIL, fontSize: 12, marginTop: 10 },
 
