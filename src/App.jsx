@@ -669,6 +669,21 @@ function calcularAguaLitros(pesoKg) {
   return +(pesoKg * 0.035).toFixed(1);
 }
 
+const KCAL_CARDIO_POR_MINUTO = { Leve: 6, Moderada: 8, Intensa: 11 };
+
+function calcularCaloriasTreino(diaEntry) {
+  let kcal = 0;
+  diaEntry.exercicios.forEach((ex) => {
+    const sets = ex.sets || 3;
+    kcal += sets * 8; // estimativa média por série de musculação
+  });
+  if (diaEntry.cardio) {
+    const porMinuto = KCAL_CARDIO_POR_MINUTO[diaEntry.cardio.intensidade] || 7;
+    kcal += (diaEntry.cardio.duracao || 0) * porMinuto;
+  }
+  return Math.round(kcal);
+}
+
 function toExercicio(base) {
   return { id: uid(), ...base, maquina: base.maquinas[0], descanso: DESCANSO_PADRAO, concluido: false, carga: "" };
 }
@@ -836,6 +851,7 @@ export default function App() {
   const [cronometro, setCronometro] = useState(null); // { totalSeg, restanteSeg, rodando, label }
   const [historico, setHistorico] = useState([]);
   const [mensagemSucesso, setMensagemSucesso] = useState(null);
+  const [ultimoTreinoConcluido, setUltimoTreinoConcluido] = useState(null);
   const [splashVisivel, setSplashVisivel] = useState(true);
   const [splashSaindo, setSplashSaindo] = useState(false);
   const [feedbackPendente, setFeedbackPendente] = useState(null);
@@ -1025,7 +1041,25 @@ export default function App() {
     );
   };
 
+  const compartilharTreino = async (registro) => {
+    if (!registro) return;
+    const texto = `Acabei de concluir um treino de ${registro.foco} no Massi Pro${
+      registro.calorias ? ` — ~${registro.calorias} kcal` : ""
+    }! 💪`;
+    try {
+      if (navigator.share) {
+        await navigator.share({ text: texto });
+      } else {
+        await navigator.clipboard.writeText(texto);
+        setMensagemSucesso("Texto copiado! Cole onde quiser compartilhar.");
+      }
+    } catch (e) {
+      // usuário cancelou o compartilhamento, ou não suportado — sem problema
+    }
+  };
+
   const concluirTreino = async (diaEntry, sentimento) => {
+    const calorias = calcularCaloriasTreino(diaEntry);
     const registro = {
       id: uid(),
       data: new Date().toISOString().slice(0, 10),
@@ -1034,12 +1068,14 @@ export default function App() {
       totalExercicios: diaEntry.exercicios.length,
       cardio: diaEntry.cardio ? { tipo: diaEntry.cardio.tipo, duracao: diaEntry.cardio.duracao } : null,
       sentimento: sentimento || null,
+      calorias,
     };
     const novoHistorico = [...historico, registro];
     setHistorico(novoHistorico);
+    setUltimoTreinoConcluido(registro);
     try {
       await window.storage.set("historico-treinos", JSON.stringify(novoHistorico));
-      setMensagemSucesso("Bom treino! Concluído com sucesso e já salvo no histórico de treinos.");
+      setMensagemSucesso(`Bom treino! ~${calorias} kcal estimadas. Já salvo no histórico.`);
     } catch (e) {
       setMensagemSucesso("Treino concluído, mas não consegui salvar no histórico agora.");
     }
@@ -1218,9 +1254,17 @@ export default function App() {
 
       {mensagemSucesso && (
         <div style={styles.toastOverlay} onClick={() => setMensagemSucesso(null)}>
-          <div style={styles.toastCard}>
+          <div style={styles.toastCard} onClick={(e) => e.stopPropagation()}>
             <div style={styles.toastIcone}>✓</div>
             <div style={styles.toastTexto}>{mensagemSucesso}</div>
+            {ultimoTreinoConcluido && (
+              <button
+                style={styles.toastCompartilharBtn}
+                onClick={() => compartilharTreino(ultimoTreinoConcluido)}
+              >
+                📤 Compartilhar
+              </button>
+            )}
           </div>
         </div>
       )}
@@ -1287,6 +1331,12 @@ export default function App() {
           onClick={() => setActiveTab("evolucao")}
         >
           Avaliação
+        </button>
+        <button
+          style={{ ...styles.tabBtn, ...(activeTab === "premium" ? styles.tabBtnActive : {}) }}
+          onClick={() => setActiveTab("premium")}
+        >
+          ★ Premium
         </button>
         <button
           style={{ ...styles.tabBtn, ...(activeTab === "sobre" ? styles.tabBtnActive : {}) }}
@@ -1394,6 +1444,8 @@ export default function App() {
         />
       )}
 
+      {activeTab === "premium" && <PremiumTab isPremium={isPremium} onVerPlanos={() => setShowPlanos(true)} />}
+
       {activeTab === "sobre" && <SobreTab />}
       </div>
 
@@ -1408,6 +1460,7 @@ function EvolucaoTab({ onAplicarTreino }) {
   const [avaliacoes, setAvaliacoes] = useState([]);
   const [carregado, setCarregado] = useState(false);
   const [salvando, setSalvando] = useState(false);
+  const [fotos, setFotos] = useState([]);
 
   const [peso, setPeso] = useState("");
   const [altura, setAltura] = useState("");
@@ -1430,8 +1483,42 @@ function EvolucaoTab({ onAplicarTreino }) {
       } finally {
         setCarregado(true);
       }
+      try {
+        const fotosRes = await window.storage.get("fotos-progresso");
+        if (fotosRes && fotosRes.value) setFotos(JSON.parse(fotosRes.value));
+      } catch (e) {
+        // sem fotos salvas ainda
+      }
     })();
   }, []);
+
+  const adicionarFoto = async (e) => {
+    const arquivo = e.target.files && e.target.files[0];
+    if (!arquivo) return;
+    const leitor = new FileReader();
+    leitor.onload = async () => {
+      const nova = { id: uid(), data: new Date().toISOString().slice(0, 10), img: leitor.result };
+      const novasFotos = [...fotos, nova];
+      setFotos(novasFotos);
+      try {
+        await window.storage.set("fotos-progresso", JSON.stringify(novasFotos));
+      } catch (err) {
+        // segue mesmo se falhar
+      }
+    };
+    leitor.readAsDataURL(arquivo);
+    e.target.value = "";
+  };
+
+  const removerFoto = async (id) => {
+    const novasFotos = fotos.filter((f) => f.id !== id);
+    setFotos(novasFotos);
+    try {
+      await window.storage.set("fotos-progresso", JSON.stringify(novasFotos));
+    } catch (err) {
+      // segue mesmo se falhar
+    }
+  };
 
   const salvarAvaliacao = async () => {
     if (!peso) return;
@@ -1571,6 +1658,25 @@ function EvolucaoTab({ onAplicarTreino }) {
           </p>
         </section>
       )}
+
+      <section style={styles.card}>
+        <div style={styles.cardLabel}>📷 Fotos de progresso</div>
+        <label style={styles.addItemBtn}>
+          + Adicionar foto
+          <input type="file" accept="image/*" onChange={adicionarFoto} style={{ display: "none" }} />
+        </label>
+        {fotos.length > 0 && (
+          <div style={styles.fotosGaleria}>
+            {[...fotos].reverse().map((f) => (
+              <div key={f.id} style={styles.fotoItem}>
+                <img src={f.img} alt={`Progresso ${f.data}`} style={styles.fotoImg} />
+                <div style={styles.fotoData}>{f.data}</div>
+                <button style={styles.removerItemBtn} onClick={() => removerFoto(f.id)}>Remover</button>
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
 
       {ultima && (
         <section style={styles.card}>
@@ -1912,6 +2018,60 @@ function ModoGuiadoOverlay({ entry, onFechar, onAbrirExercicio }) {
           </button>
         )}
       </div>
+    </div>
+  );
+}
+
+const DICAS_DIETA = [
+  {
+    titulo: "Proteína em cada refeição",
+    texto: "Inclua uma fonte de proteína (frango, ovos, peixe, leguminosas) em cada refeição principal — ajuda na recuperação muscular e na saciedade.",
+  },
+  {
+    titulo: "Não corte carboidratos antes do treino",
+    texto: "Uma fonte de carboidrato de fácil digestão 1-2h antes do treino (banana, aveia, pão integral) melhora seu desempenho e energia.",
+  },
+  {
+    titulo: "Hidratação constante",
+    texto: "Beba água ao longo do dia, não só durante o treino. Use a calculadora de água da aba Avaliação como referência.",
+  },
+  {
+    titulo: "Priorize alimentos pouco processados",
+    texto: "Troque ultraprocessados por versões mais naturais sempre que possível — frutas em vez de sucos industrializados, por exemplo.",
+  },
+  {
+    titulo: "Sono também é dieta",
+    texto: "Dormir mal aumenta a fome e prejudica a recuperação muscular. Tente manter uma rotina de sono regular.",
+  },
+  {
+    titulo: "Ajuste conforme seu objetivo",
+    texto: "Hipertrofia pede leve superávit calórico; emagrecimento pede déficit moderado; manutenção da saúde geral pede equilíbrio. Ajuste devagar, sem extremos.",
+  },
+];
+
+function PremiumTab({ isPremium, onVerPlanos }) {
+  return (
+    <div>
+      <section style={styles.card}>
+        <div style={styles.cardLabel}>★ Dicas de dieta</div>
+        <p style={styles.modalDisclaimer}>
+          Conteúdo educativo geral — não substitui acompanhamento de um nutricionista.
+        </p>
+        {DICAS_DIETA.map((d) => (
+          <div key={d.titulo} style={styles.dicaDietaItem}>
+            <div style={styles.dicaDietaTitulo}>{d.titulo}</div>
+            <p style={styles.notaTexto}>{d.texto}</p>
+          </div>
+        ))}
+      </section>
+
+      {!isPremium && (
+        <section style={styles.card}>
+          <div style={styles.cardLabel}>Quer mais?</div>
+          <p style={styles.notaTexto}>Assinantes Premium têm acesso a conteúdo extra conforme o app evolui.</p>
+          <button style={styles.saveButton} onClick={onVerPlanos}>Ver planos</button>
+        </section>
+      )}
     </div>
   );
 }
@@ -2305,6 +2465,7 @@ function HistoricoTab() {
                   {h.totalExercicios > 0 && <span>{h.totalExercicios} exercícios</span>}
                   {h.cardio && <span> • {h.cardio.tipo} ({h.cardio.duracao} min)</span>}
                   {h.sentimento && <span> • sentiu-se: {h.sentimento}</span>}
+                  {h.calorias && <span> • ~{h.calorias} kcal</span>}
                 </div>
                 <button style={styles.removerHistoricoBtn} onClick={() => removerRegistro(h.id)}>
                   Remover registro
@@ -3656,6 +3817,25 @@ const styles = {
     margin: "0 auto 14px",
   },
   toastTexto: { fontSize: 15, color: INK, lineHeight: 1.45, fontWeight: 600 },
+  toastCompartilharBtn: {
+    marginTop: 16,
+    width: "100%",
+    padding: "11px",
+    borderRadius: 10,
+    border: "none",
+    background: HIGHLIGHT,
+    color: GRAPHITE,
+    fontFamily: monoFont,
+    fontWeight: 800,
+    fontSize: 12.5,
+    cursor: "pointer",
+  },
+  dicaDietaItem: { marginBottom: 14, paddingBottom: 14, borderBottom: "1px solid rgba(43,42,40,0.08)" },
+  dicaDietaTitulo: { fontWeight: 700, fontSize: 13.5, color: INK, marginBottom: 4 },
+  fotosGaleria: { display: "flex", flexWrap: "wrap", gap: 10, marginTop: 12 },
+  fotoItem: { width: 100, textAlign: "center" },
+  fotoImg: { width: 100, height: 130, objectFit: "cover", borderRadius: 10, border: "1px solid rgba(43,42,40,0.12)" },
+  fotoData: { fontSize: 10.5, color: PENCIL, marginTop: 4 },
 
   splashOverlay: {
     position: "fixed",
