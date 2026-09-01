@@ -1,5 +1,4 @@
 
-
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from "recharts";
 
@@ -26,6 +25,89 @@ if (typeof window !== "undefined" && !window.storage) {
     async list(prefix) {
       const keys = Object.keys(window.localStorage).filter((k) => !prefix || k.startsWith(prefix));
       return { keys };
+    },
+  };
+}
+
+// ---------------------------------------------------------------
+// Múltiplos perfis: envolve o window.storage acima pra guardar os
+// dados de cada perfil separados por prefixo, de forma transparente
+// pro resto do código (que continua chamando window.storage.get/set
+// normalmente, sem saber que existem perfis).
+// ---------------------------------------------------------------
+if (typeof window !== "undefined" && !window.storage.__comPerfis) {
+  const storageBase = window.storage;
+  const CHAVES_GLOBAIS_PERFIL = new Set(["perfis-lista", "perfil-ativo-id", "tema-app"]);
+  const CHAVES_PARA_MIGRAR = [
+    "rotina-treino",
+    "historico-treinos",
+    "avaliacoes-evolucao",
+    "notas-treino",
+    "status-premium",
+    "dores-exercicios",
+    "progressao-exercicios",
+    "fotos-progresso",
+    "onboarding-perfil",
+  ];
+
+  let prontoPromise = null;
+
+  async function garantirPerfilPronto() {
+    if (prontoPromise) return prontoPromise;
+    prontoPromise = (async () => {
+      let listaRes = null;
+      try {
+        listaRes = await storageBase.get("perfis-lista");
+      } catch (e) {
+        // ainda não existe — primeira vez usando perfis
+      }
+      if (!listaRes || !listaRes.value) {
+        const perfilPadrao = { id: "perfil-1", nome: "Eu" };
+        for (const chave of CHAVES_PARA_MIGRAR) {
+          try {
+            const antigo = await storageBase.get(chave);
+            if (antigo && antigo.value !== undefined) {
+              await storageBase.set(`${perfilPadrao.id}::${chave}`, antigo.value);
+            }
+          } catch (e) {
+            // essa chave não tinha dado salvo, segue
+          }
+        }
+        await storageBase.set("perfis-lista", JSON.stringify([perfilPadrao]));
+        await storageBase.set("perfil-ativo-id", perfilPadrao.id);
+        return perfilPadrao.id;
+      }
+      try {
+        const ativoRes = await storageBase.get("perfil-ativo-id");
+        if (ativoRes && ativoRes.value) return ativoRes.value;
+      } catch (e) {
+        // sem perfil ativo definido, cai no padrão abaixo
+      }
+      const lista = JSON.parse(listaRes.value);
+      return lista[0] ? lista[0].id : "perfil-1";
+    })();
+    return prontoPromise;
+  }
+
+  window.storage = {
+    __comPerfis: true,
+    async get(key) {
+      if (CHAVES_GLOBAIS_PERFIL.has(key)) return storageBase.get(key);
+      const perfilId = await garantirPerfilPronto();
+      return storageBase.get(`${perfilId}::${key}`);
+    },
+    async set(key, value) {
+      if (CHAVES_GLOBAIS_PERFIL.has(key)) return storageBase.set(key, value);
+      const perfilId = await garantirPerfilPronto();
+      return storageBase.set(`${perfilId}::${key}`, value);
+    },
+    async delete(key) {
+      if (CHAVES_GLOBAIS_PERFIL.has(key)) return storageBase.delete(key);
+      const perfilId = await garantirPerfilPronto();
+      return storageBase.delete(`${perfilId}::${key}`);
+    },
+    async list(prefix) {
+      return storageBase.list(prefix);
     },
   };
 }
@@ -840,6 +922,11 @@ function AdBanner({ posicao = "BOTTOM_CENTER" }) {
 }
 
 export default function App() {
+  const [chaveRemount, setChaveRemount] = useState(0);
+  return <AppMassiPro key={chaveRemount} onSolicitarRemount={() => setChaveRemount((c) => c + 1)} />;
+}
+
+function AppMassiPro({ onSolicitarRemount }) {
   const [rotina, setRotina] = useState(() =>
     DIAS_SEMANA.map((dia, i) =>
       makeDayEntry(dia, ["Corpo inteiro", "Cardio", "Corpo inteiro"][i] || "Descanso")
@@ -867,6 +954,11 @@ export default function App() {
   const [guiadoAtivo, setGuiadoAtivo] = useState(null); // dia inteiro (entry) em modo guiado
   const [progressao, setProgressao] = useState({}); // { [nomeExercicio]: contagem }
   const [onboardingPendente, setOnboardingPendente] = useState(false);
+  const [tema, setTema] = useState("claro");
+  const [perfis, setPerfis] = useState([{ id: "perfil-1", nome: "Eu" }]);
+  const [perfilAtivoId, setPerfilAtivoId] = useState("perfil-1");
+  const [showPerfis, setShowPerfis] = useState(false);
+  const perfilAtivoNome = (perfis.find((p) => p.id === perfilAtivoId) || {}).nome || "Você";
 
   useEffect(() => {
     const t1 = setTimeout(() => setSplashSaindo(true), 1700);
@@ -920,6 +1012,21 @@ export default function App() {
         if (!onboardingRes || !onboardingRes.value) setOnboardingPendente(true);
       } catch (e) {
         setOnboardingPendente(true);
+      }
+      try {
+        const temaRes = await window.storage.get("tema-app");
+        if (temaRes && temaRes.value) setTema(temaRes.value);
+      } catch (e) {
+        // usa o padrão "claro"
+      }
+      try {
+        // acessar qualquer chave normal primeiro garante que a migração de perfis já rodou
+        const perfisRes = await window.storage.get("perfis-lista");
+        if (perfisRes && perfisRes.value) setPerfis(JSON.parse(perfisRes.value));
+        const ativoRes = await window.storage.get("perfil-ativo-id");
+        if (ativoRes && ativoRes.value) setPerfilAtivoId(ativoRes.value);
+      } catch (e) {
+        // segue com os padrões
       }
     })();
 
@@ -1046,6 +1153,59 @@ export default function App() {
     );
   };
 
+  const trocarPerfil = async (id) => {
+    if (id === perfilAtivoId) return;
+    try {
+      await window.storage.set("perfil-ativo-id", id);
+    } catch (e) {
+      // segue mesmo se falhar
+    }
+    onSolicitarRemount();
+  };
+
+  const criarPerfil = async (nome) => {
+    const novo = { id: uid(), nome: nome.trim() || "Novo perfil" };
+    const novaLista = [...perfis, novo];
+    setPerfis(novaLista);
+    try {
+      await window.storage.set("perfis-lista", JSON.stringify(novaLista));
+    } catch (e) {
+      // segue mesmo se falhar
+    }
+    trocarPerfil(novo.id);
+  };
+
+  const renomearPerfil = async (id, novoNome) => {
+    const novaLista = perfis.map((p) => (p.id === id ? { ...p, nome: novoNome } : p));
+    setPerfis(novaLista);
+    try {
+      await window.storage.set("perfis-lista", JSON.stringify(novaLista));
+    } catch (e) {
+      // segue mesmo se falhar
+    }
+  };
+
+  const apagarPerfil = async (id) => {
+    if (id === perfilAtivoId) return; // não deixa apagar o perfil ativo
+    const novaLista = perfis.filter((p) => p.id !== id);
+    setPerfis(novaLista);
+    try {
+      await window.storage.set("perfis-lista", JSON.stringify(novaLista));
+    } catch (e) {
+      // segue mesmo se falhar
+    }
+  };
+
+  const alternarTema = async () => {
+    const novoTema = tema === "escuro" ? "claro" : "escuro";
+    setTema(novoTema);
+    try {
+      await window.storage.set("tema-app", novoTema);
+    } catch (e) {
+      // segue mesmo se falhar
+    }
+  };
+
   const compartilharTreino = async (registro) => {
     if (!registro) return;
     const texto = `Acabei de concluir um treino de ${registro.foco} no Massi Pro${
@@ -1169,9 +1329,21 @@ export default function App() {
   }, [diasSelecionados, rotina]);
 
   return (
-    <div style={styles.page}>
+    <div style={styles.page} data-tema={tema === "escuro" ? "escuro" : "claro"}>
       <style>{`
-        html, body { margin: 0; padding: 0; width: 100%; overflow-x: hidden; }
+        :root {
+          --paper: #F6F7F9;
+          --paper-alt: #EDEFF3;
+          --ink: #151A21;
+          --pencil: #6B7280;
+        }
+        [data-tema="escuro"] {
+          --paper: #14181B;
+          --paper-alt: #1E2327;
+          --ink: #EDEFF0;
+          --pencil: #9AA3AC;
+        }
+        html, body { margin: 0; padding: 0; width: 100%; overflow-x: hidden; background: var(--paper); }
         #root { overflow-x: hidden; }
         * { box-sizing: border-box; }
         img, svg { max-width: 100%; }
@@ -1218,10 +1390,19 @@ export default function App() {
         <div style={styles.heroOverlay} />
         <div style={styles.headerTop}>
           <MassiLogoMark />
-          <button style={isPremium ? styles.premiumBadge : styles.freeBadge} onClick={() => setShowPlanos(true)}>
-            {isPremium ? "★ Premium" : "Free — ver planos"}
-          </button>
+          <div style={styles.headerBotoesDireita}>
+            <button style={styles.perfilHeaderBtn} onClick={() => setShowPerfis(true)} aria-label="Trocar perfil" title="Perfil">
+              👤 {perfilAtivoNome}
+            </button>
+            <button style={styles.temaBtn} onClick={alternarTema} aria-label="Alternar modo claro/escuro" title="Alternar tema">
+              {tema === "escuro" ? "☀️" : "🌙"}
+            </button>
+            <button style={isPremium ? styles.premiumBadge : styles.freeBadge} onClick={() => setShowPlanos(true)}>
+              {isPremium ? "★ Premium" : "Free — ver planos"}
+            </button>
+          </div>
         </div>
+        <p style={styles.saudacaoNome}>Olá, {perfilAtivoNome}!</p>
         <h1 style={styles.title}>Massi Pro</h1>
         <p style={styles.subtitle}>Treino, evolução e execução — tudo num só lugar.</p>
       </header>
@@ -1294,6 +1475,18 @@ export default function App() {
         <DorModal exercicio={dorPendente} onSalvar={salvarDor} onFechar={() => setDorPendente(null)} />
       )}
 
+      {showPerfis && (
+        <PerfilModal
+          perfis={perfis}
+          perfilAtivoId={perfilAtivoId}
+          onTrocar={trocarPerfil}
+          onCriar={criarPerfil}
+          onApagar={apagarPerfil}
+          onRenomear={renomearPerfil}
+          onFechar={() => setShowPerfis(false)}
+        />
+      )}
+
       {guiadoAtivo && (
         <ModoGuiadoOverlay
           entry={guiadoAtivo}
@@ -1311,6 +1504,7 @@ export default function App() {
             } catch (e) {
               // segue mesmo se falhar
             }
+            renomearPerfil(perfilAtivoId, respostas.nome);
           }}
         />
       )}
@@ -1833,10 +2027,20 @@ function EvolucaoTab({ onAplicarTreino }) {
 
 
 function OnboardingModal({ onConcluir }) {
+  const [nome, setNome] = useState("");
   const [idade, setIdade] = useState("");
   const [horario, setHorario] = useState("Manhã");
   const [objetivo, setObjetivo] = useState("Hipertrofia");
   const [nivel, setNivel] = useState("Iniciante");
+  const [erroNome, setErroNome] = useState(false);
+
+  const confirmar = () => {
+    if (!nome.trim()) {
+      setErroNome(true);
+      return;
+    }
+    onConcluir({ nome: nome.trim(), idade, horario, objetivo, nivel });
+  };
 
   return (
     <div style={styles.modalOverlay}>
@@ -1844,6 +2048,22 @@ function OnboardingModal({ onConcluir }) {
         <div style={styles.eyebrow}>BEM-VINDO(A)</div>
         <h2 style={styles.modalTitle}>Vamos personalizar seu treino</h2>
         <p style={styles.modalSubtitle}>Leva 20 segundos — você pode mudar tudo isso depois.</p>
+
+        <div style={styles.onboardingField}>
+          <label style={styles.onboardingLabel}>Seu nome *</label>
+          <input
+            type="text"
+            value={nome}
+            onChange={(e) => {
+              setNome(e.target.value);
+              setErroNome(false);
+            }}
+            placeholder="ex: Diorginis"
+            style={erroNome ? { ...styles.notaTextarea, ...styles.avalInputErro } : styles.notaTextarea}
+            autoFocus
+          />
+          {erroNome && <span style={styles.avalErroMsg}>Digite seu nome pra continuar</span>}
+        </div>
 
         <div style={styles.onboardingField}>
           <label style={styles.onboardingLabel}>Sua idade</label>
@@ -1883,10 +2103,7 @@ function OnboardingModal({ onConcluir }) {
           </select>
         </div>
 
-        <button
-          style={styles.saveButton}
-          onClick={() => onConcluir({ idade, horario, objetivo, nivel })}
-        >
+        <button style={styles.saveButton} onClick={confirmar}>
           Começar a treinar
         </button>
       </div>
@@ -1945,6 +2162,86 @@ function BuscaResultados({ termo, onAbrir }) {
           <span style={styles.buscaResultGrupo}>{r.grupo}</span>
         </button>
       ))}
+    </div>
+  );
+}
+
+function PerfilModal({ perfis, perfilAtivoId, onTrocar, onCriar, onApagar, onRenomear, onFechar }) {
+  const [novoNome, setNovoNome] = useState("");
+  const [editandoId, setEditandoId] = useState(null);
+  const [nomeEditado, setNomeEditado] = useState("");
+
+  const iniciarEdicao = (p) => {
+    setEditandoId(p.id);
+    setNomeEditado(p.nome);
+  };
+
+  const confirmarEdicao = () => {
+    if (nomeEditado.trim()) onRenomear(editandoId, nomeEditado.trim());
+    setEditandoId(null);
+  };
+
+  return (
+    <div style={styles.modalOverlay} onClick={onFechar}>
+      <div style={styles.modalCard} onClick={(e) => e.stopPropagation()}>
+        <button style={styles.modalClose} onClick={onFechar} aria-label="Fechar">×</button>
+        <div style={styles.eyebrow}>PERFIS</div>
+        <h2 style={styles.modalTitle}>Quem está treinando?</h2>
+        <p style={styles.modalSubtitle}>Cada perfil tem sua própria rotina, histórico e avaliações. Toque no lápis pra colocar seu nome.</p>
+
+        <div style={styles.perfilLista}>
+          {perfis.map((p) =>
+            editandoId === p.id ? (
+              <div key={p.id} style={styles.perfilItem}>
+                <input
+                  type="text"
+                  value={nomeEditado}
+                  onChange={(e) => setNomeEditado(e.target.value)}
+                  style={styles.avalInput}
+                  autoFocus
+                  placeholder="Seu nome"
+                />
+                <button style={styles.saveButton} onClick={confirmarEdicao}>Salvar</button>
+              </div>
+            ) : (
+              <div key={p.id} style={p.id === perfilAtivoId ? { ...styles.perfilItem, ...styles.perfilItemAtivo } : styles.perfilItem}>
+                <button style={styles.perfilNomeBtn} onClick={() => onTrocar(p.id)}>
+                  {p.id === perfilAtivoId ? "✓ " : ""}
+                  {p.nome}
+                </button>
+                <button style={styles.perfilEditarBtn} onClick={() => iniciarEdicao(p)} aria-label={`Renomear ${p.nome}`}>
+                  ✏️
+                </button>
+                {p.id !== perfilAtivoId && perfis.length > 1 && (
+                  <button style={styles.removerItemBtn} onClick={() => onApagar(p.id)}>Apagar</button>
+                )}
+              </div>
+            )
+          )}
+        </div>
+
+        <div style={styles.perfilNovoRow}>
+          <input
+            type="text"
+            value={novoNome}
+            onChange={(e) => setNovoNome(e.target.value)}
+            placeholder="Nome do novo perfil"
+            style={styles.avalInput}
+          />
+          <button
+            style={styles.saveButton}
+            onClick={() => {
+              if (novoNome.trim()) {
+                onCriar(novoNome);
+                setNovoNome("");
+              }
+            }}
+          >
+            + Criar novo perfil
+          </button>
+        </div>
+        <p style={styles.modalDisclaimer}>Trocar de perfil recarrega o app pra carregar os dados certos.</p>
+      </div>
     </div>
   );
 }
@@ -2952,13 +3249,14 @@ function DayCard({ entry, onFoco, onAddExercicio, onRemoveExercicio, onEditExerc
   );
 }
 
-const INK = "#151A21";
-const PAPER = "#F6F7F9";
-const PAPER_ALT = "#EDEFF3";
+const INK = "var(--ink)";
+const PAPER = "var(--paper)";
+const PAPER_ALT = "var(--paper-alt)";
 const MARGIN_RED = "#1CA7E0";
-const PENCIL = "#6B7280";
+const PENCIL = "var(--pencil)";
 const HIGHLIGHT = "#7ED957";
 const GRAPHITE = "#131A1D";
+const TEXTO_CLARO_FIXO = "#F6F7F9";
 
 const monoFont = "'Helvetica Neue', Arial, sans-serif";
 const sansFont = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
@@ -3000,6 +3298,39 @@ const styles = {
     zIndex: 1,
   },
   headerTop: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18, position: "relative", zIndex: 1 },
+  headerBotoesDireita: { display: "flex", alignItems: "center", gap: 8 },
+  temaBtn: {
+    width: 34,
+    height: 34,
+    borderRadius: "50%",
+    border: `1px solid rgba(255,255,255,0.3)`,
+    background: "rgba(255,255,255,0.08)",
+    fontSize: 15,
+    cursor: "pointer",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 0,
+  },
+  perfilHeaderBtn: {
+    height: 34,
+    padding: "0 12px",
+    borderRadius: 17,
+    border: `1px solid rgba(255,255,255,0.3)`,
+    background: "rgba(255,255,255,0.08)",
+    color: TEXTO_CLARO_FIXO,
+    fontFamily: monoFont,
+    fontSize: 12,
+    fontWeight: 700,
+    cursor: "pointer",
+    display: "flex",
+    alignItems: "center",
+    gap: 4,
+    maxWidth: 130,
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
+  },
   freeBadge: {
     fontFamily: monoFont,
     fontSize: 11,
@@ -3041,6 +3372,15 @@ const styles = {
     position: "relative",
     zIndex: 1,
   },
+  saudacaoNome: {
+    margin: "0 0 4px",
+    color: HIGHLIGHT,
+    fontFamily: monoFont,
+    fontSize: 22,
+    fontWeight: 800,
+    position: "relative",
+    zIndex: 1,
+  },
   subtitle: { margin: 0, color: "rgba(255,255,255,0.72)", fontSize: 15, lineHeight: 1.4, maxWidth: 400, position: "relative", zIndex: 1 },
   card: {
     background: PAPER_ALT,
@@ -3049,7 +3389,7 @@ const styles = {
     padding: "16px 16px 14px",
     marginBottom: 16,
   },
-  cardLabel: { fontWeight: 600, fontSize: 14, marginBottom: 10, color: GRAPHITE },
+  cardLabel: { fontWeight: 600, fontSize: 14, marginBottom: 10, color: INK },
   chipRow: { display: "flex", gap: 8, flexWrap: "wrap" },
   chip: {
     fontFamily: monoFont,
@@ -3061,7 +3401,7 @@ const styles = {
     color: INK,
     cursor: "pointer",
   },
-  chipActive: { background: GRAPHITE, color: PAPER, borderColor: GRAPHITE },
+  chipActive: { background: GRAPHITE, color: TEXTO_CLARO_FIXO, borderColor: GRAPHITE },
   modelosBtn: {
     width: "100%",
     padding: "12px",
@@ -3081,7 +3421,7 @@ const styles = {
     border: `1px solid rgba(43,42,40,0.18)`,
     borderRadius: 12,
     padding: "14px 16px",
-    background: "#FFFFFF",
+    background: PAPER,
     cursor: "pointer",
   },
   voltarObjetivoBtn: {
@@ -3096,7 +3436,7 @@ const styles = {
   },
   restBanner: {
     fontSize: 12.5,
-    color: GRAPHITE,
+    color: INK,
     background: "rgba(217,164,65,0.22)",
     border: `1px solid rgba(217,164,65,0.55)`,
     borderRadius: 8,
@@ -3106,14 +3446,14 @@ const styles = {
   dayList: { display: "flex", flexDirection: "column", gap: 14 },
   dayCard: {
     display: "flex",
-    background: "#FFFFFF",
+    background: PAPER,
     borderRadius: 16,
     boxShadow: "0 1px 3px rgba(18,21,26,0.06), 0 8px 24px -12px rgba(18,21,26,0.12)",
     overflow: "hidden",
   },
   dayCardBody: { flex: 1, padding: "18px 18px 20px" },
   dayCardTop: { display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 },
-  dayName: { fontFamily: monoFont, fontWeight: 800, fontSize: 16, color: GRAPHITE, marginBottom: 6, letterSpacing: "-0.01em" },
+  dayName: { fontFamily: monoFont, fontWeight: 800, fontSize: 16, color: INK, marginBottom: 6, letterSpacing: "-0.01em" },
   focoLabel: { fontSize: 10.5, color: PENCIL, marginBottom: 3, textTransform: "uppercase", letterSpacing: "0.04em" },
   focoTag: {
     fontFamily: monoFont,
@@ -3175,7 +3515,7 @@ const styles = {
     borderRadius: 8,
     border: "none",
     background: MARGIN_RED,
-    color: PAPER,
+    color: TEXTO_CLARO_FIXO,
     fontFamily: monoFont,
     fontWeight: 700,
     fontSize: 13.5,
@@ -3202,7 +3542,7 @@ const styles = {
     borderRadius: 8,
     border: `2px solid ${GRAPHITE}`,
     background: "transparent",
-    color: GRAPHITE,
+    color: INK,
     fontFamily: monoFont,
     fontWeight: 700,
     fontSize: 13.5,
@@ -3261,7 +3601,7 @@ const styles = {
     borderRadius: "50%",
     border: `1px solid rgba(239,232,216,0.4)`,
     background: "transparent",
-    color: PAPER,
+    color: TEXTO_CLARO_FIXO,
     fontSize: 22,
     cursor: "pointer",
   },
@@ -3285,7 +3625,7 @@ const styles = {
     fontFamily: monoFont,
     fontSize: "clamp(40px, 12vw, 56px)",
     fontWeight: 700,
-    color: PAPER,
+    color: TEXTO_CLARO_FIXO,
   },
   cronoBtnRow: { display: "flex", alignItems: "center", gap: 16, marginTop: 32 },
   cronoAjusteBtn: {
@@ -3295,7 +3635,7 @@ const styles = {
     borderRadius: 10,
     border: `1px solid rgba(239,232,216,0.35)`,
     background: "transparent",
-    color: PAPER,
+    color: TEXTO_CLARO_FIXO,
     cursor: "pointer",
   },
   cronoPrincipalBtn: {
@@ -3364,7 +3704,7 @@ const styles = {
     padding: "5px 8px",
     borderRadius: 7,
     border: `1px solid rgba(43,42,40,0.18)`,
-    background: "#FFFFFF",
+    background: PAPER,
     color: INK,
   },
   progressaoTag: {
@@ -3395,13 +3735,45 @@ const styles = {
     padding: "12px 6px",
     borderRadius: 12,
     border: "1px solid rgba(43,42,40,0.15)",
-    background: "#FFFFFF",
+    background: PAPER,
     fontFamily: "inherit",
     fontSize: 11.5,
     color: INK,
     cursor: "pointer",
   },
   feedbackEmoji: { fontSize: 24 },
+  perfilLista: { display: "flex", flexDirection: "column", gap: 8, marginBottom: 16, textAlign: "left" },
+  perfilItem: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: "10px 12px",
+    borderRadius: 10,
+    border: "1px solid rgba(43,42,40,0.12)",
+    background: PAPER,
+  },
+  perfilItemAtivo: { border: `1.5px solid ${HIGHLIGHT}`, background: "rgba(126,217,87,0.10)" },
+  perfilNomeBtn: {
+    flex: 1,
+    textAlign: "left",
+    fontFamily: "inherit",
+    fontSize: 14,
+    fontWeight: 600,
+    color: INK,
+    background: "transparent",
+    border: "none",
+    cursor: "pointer",
+    padding: 0,
+  },
+  perfilEditarBtn: {
+    background: "transparent",
+    border: "none",
+    fontSize: 14,
+    cursor: "pointer",
+    padding: "4px 6px",
+    flexShrink: 0,
+  },
+  perfilNovoRow: { display: "flex", flexDirection: "column", gap: 8 },
   onboardingField: { marginBottom: 14, textAlign: "left" },
   onboardingLabel: { display: "block", fontSize: 12, color: PENCIL, marginBottom: 5, fontWeight: 600 },
   avisoSemTreinarBox: {
@@ -3421,7 +3793,7 @@ const styles = {
     padding: "11px 12px",
     borderRadius: 10,
     border: `1px solid ${PENCIL}`,
-    background: "#FFFFFF",
+    background: PAPER,
     color: INK,
     marginBottom: 8,
   },
@@ -3436,7 +3808,7 @@ const styles = {
     padding: "10px 12px",
     borderRadius: 8,
     border: "1px solid rgba(43,42,40,0.12)",
-    background: "#FFFFFF",
+    background: PAPER,
     color: INK,
     cursor: "pointer",
     textAlign: "left",
@@ -3490,7 +3862,7 @@ const styles = {
     borderRadius: 6,
     border: `1px dashed ${PENCIL}`,
     background: "transparent",
-    color: GRAPHITE,
+    color: INK,
     cursor: "pointer",
     width: "100%",
     textAlign: "left",
@@ -3550,7 +3922,7 @@ const styles = {
     cursor: "pointer",
     lineHeight: 1,
   },
-  modalTitle: { fontFamily: monoFont, fontSize: 26, fontWeight: 700, color: GRAPHITE, margin: "4px 0 8px" },
+  modalTitle: { fontFamily: monoFont, fontSize: 26, fontWeight: 700, color: INK, margin: "4px 0 8px" },
   modalMaquinaTag: { fontSize: 12.5, color: PENCIL, marginBottom: 14, fontStyle: "italic" },
   modalSubtitle: { color: PENCIL, fontSize: 14, lineHeight: 1.45, margin: "0 0 14px", maxWidth: 420 },
   benefitList: { listStyle: "none", padding: 0, margin: "0 0 20px", display: "flex", flexDirection: "column", gap: 8 },
@@ -3561,7 +3933,7 @@ const styles = {
     border: `1px solid rgba(43,42,40,0.18)`,
     borderRadius: 12,
     padding: "14px 16px",
-    background: "#FFFFFF",
+    background: PAPER,
     position: "relative",
   },
   planCardDestaque: { border: `2px solid ${MARGIN_RED}`, background: "#FDF6EF" },
@@ -3572,13 +3944,13 @@ const styles = {
     fontFamily: monoFont,
     fontSize: 10.5,
     fontWeight: 700,
-    color: PAPER,
+    color: TEXTO_CLARO_FIXO,
     background: MARGIN_RED,
     padding: "3px 8px",
     borderRadius: 10,
   },
   planNome: { fontFamily: monoFont, fontSize: 13, color: PENCIL, marginBottom: 4, letterSpacing: "0.04em", textTransform: "uppercase" },
-  planPreco: { fontSize: 24, fontWeight: 700, color: GRAPHITE, marginBottom: 2 },
+  planPreco: { fontSize: 24, fontWeight: 700, color: INK, marginBottom: 2 },
   planPeriodo: { fontSize: 13, fontWeight: 400, color: PENCIL, marginLeft: 3 },
   planTotalNota: { fontSize: 12, color: PENCIL, marginBottom: 10 },
   planBtn: {
@@ -3588,7 +3960,7 @@ const styles = {
     borderRadius: 8,
     border: `1px solid ${GRAPHITE}`,
     background: "transparent",
-    color: GRAPHITE,
+    color: INK,
     fontFamily: monoFont,
     fontWeight: 700,
     fontSize: 13,
@@ -3635,7 +4007,7 @@ const styles = {
     fontWeight: 600,
     whiteSpace: "nowrap",
   },
-  tabBtnActive: { background: GRAPHITE, color: PAPER },
+  tabBtnActive: { background: GRAPHITE, color: TEXTO_CLARO_FIXO },
 
   premiumNote: {
     fontSize: 12.5,
@@ -3653,7 +4025,7 @@ const styles = {
     padding: "10px 16px",
     borderRadius: 8,
     border: `1px dashed ${PENCIL}`,
-    color: GRAPHITE,
+    color: INK,
     cursor: "pointer",
     textAlign: "center",
   },
@@ -3675,13 +4047,13 @@ const styles = {
   erroNote: { marginTop: 10, fontSize: 13, color: MARGIN_RED },
   resultCard: {
     display: "flex",
-    background: "#FFFFFF",
+    background: PAPER,
     borderRadius: 16,
     boxShadow: "0 1px 3px rgba(18,21,26,0.06), 0 8px 24px -12px rgba(18,21,26,0.12)",
     overflow: "hidden",
     marginTop: 16,
   },
-  resultNome: { fontFamily: monoFont, fontWeight: 800, fontSize: 19, color: GRAPHITE, marginBottom: 6, letterSpacing: "-0.01em" },
+  resultNome: { fontFamily: monoFont, fontWeight: 800, fontSize: 19, color: INK, marginBottom: 6, letterSpacing: "-0.01em" },
   resultTag: {
     display: "inline-block",
     fontSize: 11.5,
@@ -3693,7 +4065,7 @@ const styles = {
     marginBottom: 14,
   },
   resultSection: { marginBottom: 14 },
-  resultSectionTitle: { fontWeight: 700, fontSize: 13, color: GRAPHITE, marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.03em" },
+  resultSectionTitle: { fontWeight: 700, fontSize: 13, color: INK, marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.03em" },
   resultList: { margin: 0, paddingLeft: 18, fontSize: 13.5, color: INK, lineHeight: 1.6 },
   resultListOrdered: { margin: 0, paddingLeft: 18, fontSize: 13.5, color: INK, lineHeight: 1.6 },
   dicaBox: {
@@ -3884,7 +4256,7 @@ const styles = {
     borderRadius: 8,
     border: `1px dashed ${PENCIL}`,
     background: "transparent",
-    color: GRAPHITE,
+    color: INK,
     cursor: "pointer",
     width: "100%",
     textAlign: "left",
@@ -3916,7 +4288,7 @@ const styles = {
     padding: 24,
   },
   toastCard: {
-    background: "#FFFFFF",
+    background: PAPER,
     borderRadius: 18,
     padding: "28px 26px",
     maxWidth: 340,
