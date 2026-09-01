@@ -1,4 +1,5 @@
 
+
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from "recharts";
 
@@ -1336,13 +1337,16 @@ function AppMassiPro({ onSolicitarRemount }) {
           --paper-alt: #EDEFF3;
           --ink: #151A21;
           --pencil: #6B7280;
+          color-scheme: light;
         }
         [data-tema="escuro"] {
           --paper: #14181B;
           --paper-alt: #1E2327;
           --ink: #EDEFF0;
           --pencil: #9AA3AC;
+          color-scheme: dark;
         }
+        input, select, textarea { background: var(--paper); color: var(--ink); }
         html, body { margin: 0; padding: 0; width: 100%; overflow-x: hidden; background: var(--paper); }
         #root { overflow-x: hidden; }
         * { box-sizing: border-box; }
