@@ -118,47 +118,77 @@ if (typeof window !== "undefined" && !window.storage.__comPerfis) {
 const LIBRARY = {
   Peito: [
     { name: "Supino reto", sets: 3, reps: "10-12", maquinas: ["Barra livre", "Halteres", "Máquina smith", "Máquina de supino (chest press)"] },
-    { name: "Supino inclinado", sets: 3, reps: "10-12", maquinas: ["Halteres", "Barra livre", "Máquina smith"] },
-    { name: "Crossover / peck deck", sets: 3, reps: "12-15", maquinas: ["Cabo (crossover)", "Peck deck (voador)"] },
-    { name: "Crucifixo", sets: 3, reps: "12-15", maquinas: ["Halteres", "Máquina (peck deck)"] },
-    { name: "Flexão de braço", sets: 3, reps: "até a falha", maquinas: ["Peso corporal"] },
+    { name: "Supino inclinado", sets: 3, reps: "10-12", maquinas: ["Halteres", "Barra livre", "Máquina smith", "Máquina"] },
+    { name: "Supino declinado", sets: 3, reps: "10-12", maquinas: ["Barra livre", "Halteres", "Máquina"] },
+    { name: "Crossover / peck deck", sets: 3, reps: "12-15", maquinas: ["Cabo (crossover)", "Peck deck (voador)", "Cabo (crossover) - parte inferior", "Cabo (crossover) - parte superior", "Cabo (crossover) - inclinado"] },
+    { name: "Crucifixo", sets: 3, reps: "12-15", maquinas: ["Halteres", "Máquina (peck deck)", "Cabo (unilateral, em pé)"] },
+    { name: "Pullover", sets: 3, reps: "12-15", maquinas: ["Halteres", "Máquina"] },
+    { name: "Paralelas (mergulho)", sets: 3, reps: "8-12", maquinas: ["Peso corporal"] },
+    { name: "Flexão de braço", sets: 3, reps: "até a falha", maquinas: ["Peso corporal", "Peso corporal (apoio no joelho)", "Peso corporal (inclinado)"] },
   ],
   Costas: [
-    { name: "Puxada frontal", sets: 3, reps: "10-12", maquinas: ["Pulley (puxada alta)"] },
+    { name: "Puxada frontal", sets: 3, reps: "10-12", maquinas: ["Pulley (puxada alta)", "Pulldown (pegada aberta)", "Máquina (puxada alta)", "Máquina (puxada frente)", "Graviton (assistida)"] },
     { name: "Puxada frontal triângulo", sets: 3, reps: "10-12", maquinas: ["Pulley (pegada triângulo)"] },
-    { name: "Remada baixa", sets: 3, reps: "10-12", maquinas: ["Cabo (remada baixa)", "Máquina de remada"] },
-    { name: "Remada curvada", sets: 3, reps: "10-12", maquinas: ["Halteres", "Barra livre"] },
-    { name: "Remada unilateral (serrote)", sets: 3, reps: "10-12", maquinas: ["Halteres"] },
+    { name: "Remada baixa", sets: 3, reps: "10-12", maquinas: ["Cabo (remada baixa)", "Máquina de remada", "Máquina (pegada supinada)", "Cabo (unilateral)"] },
+    { name: "Remada curvada", sets: 3, reps: "10-12", maquinas: ["Halteres", "Barra livre", "Barra (pronada)", "Halteres (supinada)"] },
+    { name: "Remada unilateral (serrote)", sets: 3, reps: "10-12", maquinas: ["Halteres", "Máquina"] },
     { name: "Puxada supinada", sets: 3, reps: "10-12", maquinas: ["Pulley (pegada supinada)"] },
+    { name: "Remada cavalinho", sets: 3, reps: "10-12", maquinas: ["Barra", "Cabo"] },
+    { name: "Face pull", sets: 3, reps: "12-15", maquinas: ["Cabo"] },
+    { name: "Encolhimento (trapézio)", sets: 3, reps: "12-15", maquinas: ["Halteres", "Barra", "Polia"] },
+    { name: "Barra fixa", sets: 3, reps: "até a falha", maquinas: ["Peso corporal", "Peso corporal (com elástico assistido)"] },
   ],
   Perna: [
-    { name: "Leg press", sets: 3, reps: "12-15", maquinas: ["Leg press 45°"] },
+    { name: "Leg press", sets: 3, reps: "12-15", maquinas: ["Leg press 45°", "Leg press horizontal"] },
     { name: "Cadeira extensora", sets: 3, reps: "12-15", maquinas: ["Cadeira extensora"] },
     { name: "Mesa/cadeira flexora", sets: 3, reps: "12-15", maquinas: ["Mesa flexora", "Cadeira flexora"] },
     { name: "Agachamento", sets: 3, reps: "15", maquinas: ["Peso corporal", "Barra livre", "Máquina smith"] },
+    { name: "Agachamento afundo (lunge)", sets: 3, reps: "10-12 cada perna", maquinas: ["Peso corporal"] },
     { name: "Agachamento búlgaro", sets: 3, reps: "10-12 cada perna", maquinas: ["Halteres", "Peso corporal"] },
     { name: "Agachamento sumô", sets: 3, reps: "12-15", maquinas: ["Halteres", "Barra livre"] },
     { name: "Agachamento hack (hack squat)", sets: 3, reps: "12-15", maquinas: ["Máquina hack squat"] },
-    { name: "Elevação pélvica (hip thrust)", sets: 3, reps: "12-15", maquinas: ["Barra livre", "Máquina smith", "Peso corporal"] },
+    { name: "Agachamento articulado (hack invertido)", sets: 3, reps: "12-15", maquinas: ["Máquina"] },
+    { name: "Agachamento pêndulo", sets: 3, reps: "12-15", maquinas: ["Máquina"] },
+    { name: "Stiff (levantamento terra romeno)", sets: 3, reps: "10-12", maquinas: ["Halteres", "Barra"] },
+    { name: "Levantamento terra", sets: 3, reps: "8-10", maquinas: ["Barra (sumô)", "Barra (convencional)"] },
+    { name: "Elevação pélvica (hip thrust)", sets: 3, reps: "12-15", maquinas: ["Barra livre", "Máquina smith", "Peso corporal", "Máquina"] },
+    { name: "Cadeira adutora", sets: 3, reps: "15-20", maquinas: ["Máquina", "Cabo (polia baixa)"] },
+    { name: "Cadeira abdutora", sets: 3, reps: "15-20", maquinas: ["Máquina", "Máquina (inclinada)", "Cabo (polia baixa)"] },
+    { name: "Glúteo no cabo (coice)", sets: 3, reps: "12-15 cada perna", maquinas: ["Cabo (perna flexionada)"] },
+    { name: "Coice (glúteo) na máquina", sets: 3, reps: "12-15", maquinas: ["Máquina"] },
     { name: "Panturrilha em pé", sets: 3, reps: "15-20", maquinas: ["Máquina de panturrilha", "Halteres"] },
     { name: "Panturrilha sentado", sets: 3, reps: "15-20", maquinas: ["Máquina de panturrilha sentado", "Halteres"] },
   ],
   Ombro: [
-    { name: "Desenvolvimento", sets: 3, reps: "10-12", maquinas: ["Halteres", "Máquina de desenvolvimento", "Barra livre"] },
-    { name: "Elevação lateral", sets: 3, reps: "12-15", maquinas: ["Halteres", "Cabo (polia baixa)"] },
-    { name: "Elevação frontal", sets: 3, reps: "12-15", maquinas: ["Halteres", "Barra", "Cabo"] },
+    { name: "Desenvolvimento", sets: 3, reps: "10-12", maquinas: ["Halteres", "Máquina de desenvolvimento", "Barra livre", "Máquina smith", "Halteres (Arnold press)"] },
+    { name: "Elevação lateral", sets: 3, reps: "12-15", maquinas: ["Halteres", "Cabo (polia baixa)", "Máquina (sentado)", "Cabo (unilateral, inclinado)", "Halteres (sentado)", "Halteres (deitado banco 45°)"] },
+    { name: "Elevação frontal", sets: 3, reps: "12-15", maquinas: ["Halteres", "Barra", "Cabo", "Corda (polia)", "Halteres (sentado, com rotação)", "Cabo (unilateral)"] },
     { name: "Remada alta", sets: 3, reps: "10-12", maquinas: ["Barra livre", "Cabo"] },
     { name: "Voador invertido (deltoide posterior)", sets: 3, reps: "12-15", maquinas: ["Halteres", "Peck deck invertido", "Cabo"] },
   ],
   Braço: [
-    { name: "Rosca bíceps", sets: 3, reps: "10-12", maquinas: ["Barra reta", "Barra W", "Halteres"] },
+    { name: "Rosca bíceps", sets: 3, reps: "10-12", maquinas: ["Barra reta", "Barra W", "Halteres", "Polia baixa", "Polia baixa (unilateral)", "Polia alta (unilateral)"] },
     { name: "Rosca alternada", sets: 3, reps: "10-12", maquinas: ["Halteres"] },
-    { name: "Rosca martelo", sets: 3, reps: "10-12", maquinas: ["Halteres"] },
-    { name: "Rosca no banco Scott", sets: 3, reps: "10-12", maquinas: ["Barra W", "Halteres", "Máquina Scott"] },
-    { name: "Rosca no banco inclinado", sets: 3, reps: "10-12", maquinas: ["Halteres"] },
-    { name: "Tríceps corda", sets: 3, reps: "10-12", maquinas: ["Pulley (corda)"] },
-    { name: "Tríceps testa", sets: 3, reps: "10-12", maquinas: ["Barra W", "Halteres"] },
-    { name: "Tríceps coice (kickback)", sets: 3, reps: "12-15", maquinas: ["Halteres"] },
+    { name: "Rosca martelo", sets: 3, reps: "10-12", maquinas: ["Halteres", "Corda (polia)"] },
+    { name: "Rosca no banco Scott", sets: 3, reps: "10-12", maquinas: ["Barra W", "Halteres", "Máquina Scott", "Halteres (unilateral)"] },
+    { name: "Rosca no banco inclinado", sets: 3, reps: "10-12", maquinas: ["Halteres", "Halteres (alternada)"] },
+    { name: "Rosca concentrada", sets: 3, reps: "10-12", maquinas: ["Halteres"] },
+    { name: "Rosca invertida (pegada pronada)", sets: 3, reps: "10-12", maquinas: ["Halteres", "Polia"] },
+    { name: "Flexão de punho", sets: 3, reps: "15-20", maquinas: ["Barra"] },
+    { name: "Tríceps corda", sets: 3, reps: "10-12", maquinas: ["Pulley (corda)", "Pulley (barra reta)", "Pulley (barra W)"] },
+    { name: "Tríceps francês", sets: 3, reps: "10-12", maquinas: ["Halteres (sentado)", "Corda (polia baixa)", "Barra W"] },
+    { name: "Tríceps testa", sets: 3, reps: "10-12", maquinas: ["Barra W", "Halteres", "Polia baixa", "Corda (polia alta)"] },
+    { name: "Tríceps coice (kickback)", sets: 3, reps: "12-15", maquinas: ["Halteres", "Cabo (polia)"] },
+    { name: "Tríceps no banco (mergulho)", sets: 3, reps: "10-15", maquinas: ["Peso corporal (banco)", "Máquina"] },
+  ],
+  Abdômen: [
+    { name: "Abdominal máquina", sets: 3, reps: "15-20", maquinas: ["Máquina"] },
+    { name: "Abdominal na paralela", sets: 3, reps: "10-15", maquinas: ["Peso corporal (paralelas)"] },
+    { name: "Elevação de pernas (infra)", sets: 3, reps: "12-15", maquinas: ["Suspenso/paralela", "Solo/banco"] },
+    { name: "Prancha", sets: 3, reps: "30-40s", maquinas: ["Peso corporal"] },
+    { name: "Abdominal bicicleta", sets: 3, reps: "15-20", maquinas: ["Peso corporal"] },
+    { name: "Abdominal na polia (cable crunch)", sets: 3, reps: "15-20", maquinas: ["Cabo"] },
+    { name: "Abdominal no chão", sets: 3, reps: "15-20", maquinas: ["Peso corporal"] },
   ],
   "Corpo inteiro": [
     { name: "Agachamento", sets: 3, reps: "12", maquinas: ["Peso corporal", "Barra livre", "Máquina smith"] },
@@ -173,11 +203,13 @@ const LIBRARY = {
     { name: "Marcha estacionária", sets: 2, reps: "30-45s", maquinas: ["Peso corporal"] },
     { name: "Elevação de braço com faixa elástica", sets: 2, reps: "10-15", maquinas: ["Faixa elástica"] },
     { name: "Ponte de glúteo (deitado)", sets: 2, reps: "10-15", maquinas: ["Peso corporal"] },
+    { name: "Ponte de glúteo (sentado)", sets: 2, reps: "10-15", maquinas: ["Peso corporal"] },
     { name: "Rotação de tronco sentado", sets: 2, reps: "10-12 cada lado", maquinas: ["Peso corporal", "Cadeira"] },
+    { name: "Funcional livre (escolha no canal)", sets: 2, reps: "conforme o vídeo escolhido", maquinas: ["Canal Women 3D Workouts"] },
   ],
 };
 
-const FOCOS = ["Peito", "Costas", "Perna", "Ombro", "Braço", "Corpo inteiro", "Funcional", "Cardio", "Descanso"];
+const FOCOS = ["Peito", "Costas", "Perna", "Ombro", "Braço", "Abdômen", "Corpo inteiro", "Funcional", "Cardio", "Descanso"];
 const DIAS_SEMANA = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo"];
 const DIAS_ABREV = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
 const CARDIO_TIPOS = ["Esteira", "Bicicleta", "Elíptico", "Corrida ao ar livre", "Pular corda", "Escada"];
@@ -333,91 +365,279 @@ const BENEFICIOS_PREMIUM = [
 // Vídeos curtos (shorts), um específico por combinação de exercício + equipamento escolhido
 const VIDEOS_EXERCICIO = {
   "Supino reto": {
-    "Barra livre": "https://www.youtube.com/shorts/Dgya0jXreXk",
-    "Halteres": "https://www.youtube.com/shorts/kgZwiUZvhOU",
-    "Máquina smith": "https://www.youtube.com/watch?v=RS_AkiwHtu0",
-    "Máquina de supino (chest press)": "https://www.youtube.com/shorts/3nKRhr_fYME",
+    "Barra livre": "https://www.youtube.com/shorts/_WI8KhXfrJI",
+    "Halteres": "https://www.youtube.com/shorts/NIzt_fAXL2w",
+    "Máquina de supino (chest press)": "https://www.youtube.com/shorts/HNaDJTSrI8s",
   },
   "Supino inclinado": {
-    "Halteres": "https://www.youtube.com/shorts/oN48at2Zw7s",
-    "Barra livre": "https://www.youtube.com/shorts/01hWm0_TxmU",
-    "Máquina smith": "https://www.youtube.com/shorts/3pV9sa-kHvg",
+    "Halteres": "https://www.youtube.com/shorts/TCpq9yFXea4",
+    "Barra livre": "https://www.youtube.com/shorts/XSiWdufUFQ8",
+    "Máquina smith": "https://www.youtube.com/shorts/r39cVRTjFU8",
+    "Máquina": "https://www.youtube.com/shorts/KK5ZSj22h7s",
   },
   "Crossover / peck deck": {
-    "Cabo (crossover)": "https://www.youtube.com/shorts/zUpoL205xcI",
-    "Peck deck (voador)": "https://www.youtube.com/shorts/iQD461A66CM",
+    "Cabo (crossover)": "https://www.youtube.com/shorts/PlBLZLbe7DY",
+    "Cabo (crossover) - parte inferior": "https://www.youtube.com/shorts/LY90W4TS18c",
+    "Cabo (crossover) - parte superior": "https://www.youtube.com/shorts/Od9914tc8sg",
+    "Cabo (crossover) - inclinado": "https://www.youtube.com/shorts/AX6QUGLnhpQ",
   },
   "Flexão de braço": {
-    "Peso corporal": "https://www.youtube.com/shorts/cmH9E_DEEKo",
+    "Peso corporal": "https://www.youtube.com/shorts/SovA8L60l6A",
+    "Peso corporal (apoio no joelho)": "https://www.youtube.com/shorts/QJ7cqXaAp8w",
+    "Peso corporal (inclinado)": "https://www.youtube.com/shorts/yMjNpLqQ8Wk",
   },
   "Puxada frontal": {
-    "Pulley (puxada alta)": "https://www.youtube.com/shorts/y8hwkR2Puwg",
+    "Pulley (puxada alta)": "https://www.youtube.com/shorts/gUfVYr5AaYE",
+    "Pulldown (pegada aberta)": "https://www.youtube.com/shorts/B4E5mDSWyKc",
+    "Máquina (puxada alta)": "https://www.youtube.com/shorts/jIuOQRw577s",
+    "Máquina (puxada frente)": "https://www.youtube.com/shorts/bly0tu3YM-E",
+    "Graviton (assistida)": "https://www.youtube.com/shorts/l9URfqutMnk",
   },
   "Remada baixa": {
-    "Cabo (remada baixa)": "https://www.youtube.com/shorts/eM0iMLxRIlM",
-    "Máquina de remada": "https://www.youtube.com/shorts/Rol3VyfWzJ8",
+    "Cabo (remada baixa)": "https://www.youtube.com/shorts/b5I0YVK3U-g",
+    "Máquina (pegada supinada)": "https://www.youtube.com/shorts/8EoXjJreuUk",
+    "Cabo (unilateral)": "https://www.youtube.com/shorts/LpQMEygJfNY",
   },
   "Remada curvada": {
-    "Halteres": "https://www.youtube.com/shorts/krw3W1_PM18",
-    "Barra livre": "https://www.youtube.com/shorts/r2BIpnqmoJA",
-  },
-  "Puxada supinada": {
-    "Pulley (pegada supinada)": "https://www.youtube.com/shorts/5afXrSb51Ak",
+    "Halteres": "https://www.youtube.com/shorts/r6fkfU_wnVI",
+    "Barra (pronada)": "https://www.youtube.com/shorts/e53vSzibkO0",
+    "Halteres (supinada)": "https://www.youtube.com/shorts/EPsW8xZ27FI",
   },
   "Leg press": {
-    "Leg press 45°": "https://www.youtube.com/shorts/ydEAJPDckm4",
+    "Leg press 45°": "https://www.youtube.com/shorts/is4vRMSIkjw",
+    "Leg press horizontal": "https://www.youtube.com/shorts/F8m05d2upOA",
+  },
+  "Puxada supinada": {
+    "Pulley (pegada supinada)": "https://www.youtube.com/shorts/b5RkrNs_EGM",
   },
   "Cadeira extensora": {
-    "Cadeira extensora": "https://www.youtube.com/shorts/s_5HG9UWIj4",
+    "Cadeira extensora": "https://www.youtube.com/shorts/hqH5eYJAn4g",
   },
   "Mesa/cadeira flexora": {
-    "Mesa flexora": "https://www.youtube.com/shorts/ne-J--fK0tE",
-    "Cadeira flexora": "https://www.youtube.com/shorts/BrVJvDECpWM",
+    "Mesa flexora": "https://www.youtube.com/shorts/oHdWhQBV79U",
+    "Cadeira flexora": "https://www.youtube.com/shorts/T46yKiz8laY",
   },
   "Agachamento": {
-    "Peso corporal": "https://www.youtube.com/shorts/m3MYREmGL1I",
-    "Barra livre": "https://www.youtube.com/shorts/7DzHTQC2Rek",
-    "Máquina smith": "https://www.youtube.com/shorts/8pjN_4fkxgU",
+    "Barra livre": "https://www.youtube.com/shorts/rq5y8zHeWjM",
+    "Máquina smith": "https://www.youtube.com/shorts/U4BMdqPBVLs",
   },
   "Panturrilha em pé": {
-    "Máquina de panturrilha": "https://www.youtube.com/shorts/aDebZhb6beQ",
-    "Halteres": "https://www.youtube.com/shorts/Yv-HBl6VUpA",
+    "Máquina de panturrilha": "https://www.youtube.com/shorts/o1CyKLbUPAM",
+    "Halteres": "https://www.youtube.com/shorts/fVGkOlkOrnA",
   },
   "Desenvolvimento": {
-    "Halteres": "https://www.youtube.com/shorts/NgrouG-wQZk",
-    "Máquina de desenvolvimento": "https://www.youtube.com/shorts/JzicyWYUw0c",
-    "Barra livre": "https://www.youtube.com/shorts/tZH8QkgWkL0",
+    "Halteres": "https://www.youtube.com/shorts/5I7ogOjvdnc",
+    "Máquina de desenvolvimento": "https://www.youtube.com/shorts/uh0oZorifmM",
+    "Barra livre": "https://www.youtube.com/shorts/930c6LGuO6Q",
+    "Máquina smith": "https://www.youtube.com/shorts/hejuwn4kffM",
+    "Halteres (Arnold press)": "https://www.youtube.com/shorts/VOyrlpBHjuQ",
   },
   "Elevação lateral": {
-    "Halteres": "https://www.youtube.com/shorts/L80dGu0bTV8",
-    "Cabo (polia baixa)": "https://www.youtube.com/shorts/Xnd-vzXqQSY",
+    "Halteres": "https://www.youtube.com/shorts/ot9nwSC1JnA",
+    "Máquina (sentado)": "https://www.youtube.com/shorts/-vzaGAaUDjg",
+    "Cabo (unilateral, inclinado)": "https://www.youtube.com/shorts/dgpts8LHOLc",
+    "Halteres (sentado)": "https://www.youtube.com/shorts/YbqbspnFnfo",
+    "Halteres (deitado banco 45°)": "https://www.youtube.com/shorts/2a4yANFdNys",
   },
   "Elevação frontal": {
-    "Halteres": "https://www.youtube.com/shorts/upvQnASGckQ",
-    "Barra": "https://www.youtube.com/shorts/wZ6R1Egg4w8",
-    "Cabo": "https://www.youtube.com/shorts/fD6PMQLVdPQ",
+    "Halteres": "https://www.youtube.com/shorts/nPYUWLDKl2k",
+    "Corda (polia)": "https://www.youtube.com/shorts/7jIaWstlQSI",
+    "Halteres (sentado, com rotação)": "https://www.youtube.com/shorts/igVfogfTwHY",
+    "Cabo (unilateral)": "https://www.youtube.com/shorts/t7r-yljzlws",
   },
   "Remada alta": {
-    "Barra livre": "https://www.youtube.com/shorts/csF_uw7niTI",
-    "Cabo": "https://www.youtube.com/shorts/VW_QBk-Ls1U",
+    "Barra livre": "https://www.youtube.com/shorts/emPow6X_a_E",
   },
   "Rosca bíceps": {
-    "Barra reta": "https://www.youtube.com/shorts/_eoH4C5HAzQ",
-    "Barra W": "https://www.youtube.com/shorts/OlhyhVmtL_c",
-    "Halteres": "https://www.youtube.com/shorts/WL9wrobiAbo",
+    "Barra reta": "https://www.youtube.com/shorts/dc330H9yN3Y",
+    "Halteres": "https://www.youtube.com/shorts/MfsDC0ymFm8",
+    "Polia baixa": "https://www.youtube.com/shorts/x6JCKfdzPJE",
+    "Polia alta (unilateral)": "https://www.youtube.com/shorts/ZTzF54mFEgI",
+    "Polia baixa (unilateral)": "https://www.youtube.com/shorts/ckoG5M9bkZI",
   },
   "Rosca alternada": {
-    "Halteres": "https://www.youtube.com/shorts/1LpnsHK6uMw",
+    "Halteres": "https://www.youtube.com/shorts/WUrn8iFf1js",
   },
   "Tríceps corda": {
-    "Pulley (corda)": "https://www.youtube.com/shorts/44bGFYA6DmI",
+    "Pulley (corda)": "https://www.youtube.com/shorts/jPl9_JHGxA8",
+    "Pulley (barra reta)": "https://www.youtube.com/shorts/M88Bt4MMpkI",
   },
   "Tríceps testa": {
-    "Barra W": "https://www.youtube.com/shorts/LTHWfSZSa2Q",
-    "Halteres": "https://www.youtube.com/shorts/NNx0w_PDumY",
+    "Halteres": "https://www.youtube.com/shorts/Cd0-tP9utgM",
+    "Polia baixa": "https://www.youtube.com/shorts/PfK51UcnHW0",
+    "Corda (polia alta)": "https://www.youtube.com/shorts/etTuALjH3bo",
+  },
+  "Supino declinado": {
+    "Barra livre": "https://www.youtube.com/shorts/v79c-eDjBv8",
+    "Halteres": "https://www.youtube.com/shorts/JByJ3hwyRVE",
+    "Máquina": "https://www.youtube.com/shorts/0I5WPRsU5TY",
+  },
+  "Crucifixo": {
+    "Máquina (peck deck)": "https://www.youtube.com/shorts/b3EzlAHSM3E",
+    "Halteres": "https://www.youtube.com/shorts/cxpTP_WaENw",
+    "Cabo (unilateral, em pé)": "https://www.youtube.com/shorts/TyTYjz6dMMs",
+  },
+  "Pullover": {
+    "Halteres": "https://www.youtube.com/shorts/vKCQHaG0Rj0",
+    "Máquina": "https://www.youtube.com/shorts/k7tRf_d3WKI",
+  },
+  "Remada unilateral (serrote)": {
+    "Halteres": "https://www.youtube.com/shorts/Ub8-llUEf6c",
+    "Máquina": "https://www.youtube.com/shorts/C2U7EB3G3bk",
+  },
+  "Remada cavalinho": {
+    "Barra": "https://www.youtube.com/shorts/Y52OkGQXVCU",
+    "Cabo": "https://www.youtube.com/shorts/6NBBrNhX3kA",
+  },
+  "Puxada frontal triângulo": {
+    "Pulley (pegada triângulo)": "https://www.youtube.com/shorts/ySLFHxmJ_Sc",
+  },
+  "Face pull": {
+    "Cabo": "https://www.youtube.com/shorts/wwBcRZgNTkk",
+  },
+  "Voador invertido (deltoide posterior)": {
+    "Halteres": "https://www.youtube.com/shorts/uaBsmPlVyVo",
+    "Peck deck invertido": "https://www.youtube.com/shorts/wUT3hmnzq3c",
+    "Cabo": "https://www.youtube.com/shorts/VxGLc_ZL_04",
+  },
+  "Encolhimento (trapézio)": {
+    "Halteres": "https://www.youtube.com/shorts/6WQuOJ6DSLU",
+    "Barra": "https://www.youtube.com/shorts/9lb8UiMeYrQ",
+    "Polia": "https://www.youtube.com/shorts/cQWT11R22Qw",
+  },
+  "Abdominal máquina": {
+    "Máquina": "https://www.youtube.com/shorts/uAe1Uj3Y05k",
+  },
+  "Abdominal na paralela": {
+    "Peso corporal (paralelas)": "https://www.youtube.com/shorts/vmqDIz3dVK4",
+  },
+  "Elevação de pernas (infra)": {
+    "Suspenso/paralela": "https://www.youtube.com/shorts/In0EzoOAILw",
+    "Solo/banco": "https://www.youtube.com/shorts/MC5hF4JDLm4",
+  },
+  "Prancha": {
+    "Peso corporal": "https://www.youtube.com/shorts/uxPlAbWFUDs",
+  },
+  "Abdominal bicicleta": {
+    "Peso corporal": "https://www.youtube.com/shorts/OnQNhK0Ekgk",
+  },
+  "Paralelas (mergulho)": {
+    "Peso corporal": "https://www.youtube.com/shorts/qvmH-TpRLBE",
+  },
+  "Abdominal na polia (cable crunch)": {
+    "Cabo": "https://www.youtube.com/shorts/48fdqLhDZy0",
+  },
+  "Agachamento afundo (lunge)": {
+    "Peso corporal": "https://www.youtube.com/shorts/upW_2Tt8-_w",
+  },
+  "Agachamento hack (hack squat)": {
+    "Máquina hack squat": "https://www.youtube.com/shorts/5CJ0Ss--BpY",
+  },
+  "Stiff (levantamento terra romeno)": {
+    "Halteres": "https://www.youtube.com/shorts/SRVkwwXk7I4",
+    "Barra": "https://www.youtube.com/shorts/raMtPJQ5f9A",
+  },
+  "Cadeira adutora": {
+    "Máquina": "https://www.youtube.com/shorts/TB4BwvHaK9o",
+    "Cabo (polia baixa)": "https://www.youtube.com/shorts/MlzuZq3yC8I",
+  },
+  "Cadeira abdutora": {
+    "Máquina": "https://www.youtube.com/shorts/nabhYLtz8Gg",
+    "Máquina (inclinada)": "https://www.youtube.com/shorts/CblCvLRAPB8",
+    "Cabo (polia baixa)": "https://www.youtube.com/shorts/1P-k8s2gmGQ",
+  },
+  "Glúteo no cabo (coice)": {
+    "Cabo (perna flexionada)": "https://www.youtube.com/shorts/XqQlpJhB8xU",
+  },
+  "Levantamento terra": {
+    "Barra (sumô)": "https://www.youtube.com/shorts/m6IIorkQe8E",
+    "Barra (convencional)": "https://www.youtube.com/shorts/DjsLHZ4jxTU",
+  },
+  "Agachamento sumô": {
+    "Halteres": "https://www.youtube.com/shorts/Jo1DFefVdrg",
+  },
+  "Elevação pélvica (hip thrust)": {
+    "Máquina": "https://www.youtube.com/shorts/Nuoo1XgRtGY",
+  },
+  "Agachamento búlgaro": {
+    "Halteres": "https://www.youtube.com/shorts/cCTC06-Yjqk",
+  },
+  "Panturrilha sentado": {
+    "Máquina de panturrilha sentado": "https://www.youtube.com/shorts/9fIw0ue8iQE",
+  },
+  "Coice (glúteo) na máquina": {
+    "Máquina": "https://www.youtube.com/shorts/A555PryCZ3g",
+  },
+  "Rosca martelo": {
+    "Halteres": "https://www.youtube.com/shorts/0rRpv6o140o",
+    "Corda (polia)": "https://www.youtube.com/shorts/EdsGRhdAye0",
+  },
+  "Rosca no banco Scott": {
+    "Máquina Scott": "https://www.youtube.com/shorts/90_d-DsrOkE",
+    "Barra W": "https://www.youtube.com/shorts/QkNciumGy14",
+    "Halteres (unilateral)": "https://www.youtube.com/shorts/qhRLio6bCRo",
+    "Halteres": "https://www.youtube.com/shorts/qkrVKiAadNk",
+  },
+  "Rosca no banco inclinado": {
+    "Halteres": "https://www.youtube.com/shorts/a1NPJFmCJ5o",
+    "Halteres (alternada)": "https://www.youtube.com/shorts/N1niow42B5I",
+  },
+  "Rosca concentrada": {
+    "Halteres": "https://www.youtube.com/shorts/c0vYYI_mbXU",
+  },
+  "Tríceps francês": {
+    "Halteres (sentado)": "https://www.youtube.com/shorts/_dtPoiFWZT4",
+    "Corda (polia baixa)": "https://www.youtube.com/shorts/dMYGgTbtRIQ",
+    "Barra W": "https://www.youtube.com/shorts/_laUZhzeLNc",
+  },
+  "Tríceps coice (kickback)": {
+    "Halteres": "https://www.youtube.com/shorts/IkB040VfrVI",
+    "Cabo (polia)": "https://www.youtube.com/shorts/7Gdbq0aq3SA",
+  },
+  "Tríceps no banco (mergulho)": {
+    "Peso corporal (banco)": "https://www.youtube.com/shorts/z_T5hn0fqCE",
+    "Máquina": "https://www.youtube.com/shorts/y6_x2qf2VWQ",
+  },
+  "Rosca invertida (pegada pronada)": {
+    "Halteres": "https://www.youtube.com/shorts/nuCsXf93-1A",
+    "Polia": "https://www.youtube.com/shorts/-2IqzqP3j1Q",
+  },
+  "Flexão de punho": {
+    "Barra": "https://www.youtube.com/shorts/QvebRmLyEBQ",
+  },
+  "Agachamento articulado (hack invertido)": {
+    "Máquina": "https://www.youtube.com/shorts/j4WcueuCAvU",
+  },
+  "Agachamento pêndulo": {
+    "Máquina": "https://www.youtube.com/shorts/8Ux4MZUvPLo",
+  },
+  "Barra fixa": {
+    "Peso corporal": "https://www.youtube.com/shorts/pdf7tRrVNYc",
+    "Peso corporal (com elástico assistido)": "https://www.youtube.com/shorts/JjWJGwbLJ8s",
+  },
+  "Abdominal no chão": {
+    "Peso corporal": "https://www.youtube.com/shorts/bQBDgKEmRN0",
   },
   "Prancha abdominal": {
-    "Peso corporal": "https://www.youtube.com/shorts/XqPlCDe37lA",
+    "Peso corporal": "https://www.youtube.com/shorts/uxPlAbWFUDs",
+  },
+  "Agachamento na cadeira (sentar e levantar)": {
+    "Cadeira": "https://www.youtube.com/shorts/3uZE_E11eg4",
+  },
+  "Elevação de perna sentado": {
+    "Cadeira": "https://www.youtube.com/shorts/UzyBeMHCN0w",
+  },
+  "Marcha estacionária": {
+    "Peso corporal": "https://www.youtube.com/shorts/yhSQGianV68",
+  },
+  "Rotação de tronco sentado": {
+    "Cadeira": "https://www.youtube.com/shorts/X1GGfsKtD5I",
+  },
+  "Elevação de braço com faixa elástica": {
+    "Faixa elástica": "https://www.youtube.com/shorts/WrsLEE6shGE",
+  },
+  "Ponte de glúteo (sentado)": {
+    "Peso corporal": "https://www.youtube.com/shorts/swTwr189Z08",
   },
 };
 
@@ -428,6 +648,24 @@ function getVideoUrl(exercicio) {
   // fallback: primeira opção cadastrada, caso a máquina exata não tenha vídeo específico ainda
   const primeira = Object.values(porMaquina)[0];
   return primeira || null;
+}
+
+// Exercícios da categoria Funcional: quando não há vídeo específico cadastrado,
+// a pessoa é direcionada aos vídeos do canal (em vez de uma busca genérica).
+const NOMES_FUNCIONAL = new Set(LIBRARY.Funcional.map((e) => e.name));
+const CANAL_FUNCIONAL_URL = "https://www.youtube.com/@Women-3D-Workouts/videos";
+
+function getVideoOuCanalUrl(exercicio) {
+  const videoEspecifico = getVideoUrl(exercicio);
+  if (videoEspecifico) return { url: videoEspecifico, especifico: true };
+  if (NOMES_FUNCIONAL.has(exercicio.name)) {
+    return { url: CANAL_FUNCIONAL_URL, especifico: false, canal: true };
+  }
+  return {
+    url: `https://www.youtube.com/results?search_query=${encodeURIComponent(exercicio.name + " execução correta")}`,
+    especifico: false,
+    canal: false,
+  };
 }
 
 const GUIA_EXECUCAO = {
@@ -668,6 +906,534 @@ const GUIA_EXECUCAO = {
     ],
     errosComuns: ["Deixar o quadril cair ou subir demais", "Prender a respiração"],
     dica: "Respire normalmente enquanto mantém a contração do abdômen.",
+  },
+  "Supino declinado": {
+    grupoMuscular: "Peito inferior, tríceps",
+    comoExecutar: [
+      "Deite no banco declinado com os pés presos no apoio",
+      "Segure a barra/halteres na altura do peito inferior",
+      "Desça controlado até quase tocar o peito",
+      "Empurre para cima em linha reta",
+    ],
+    errosComuns: ["Descer rápido demais sem controle", "Usar amplitude curta"],
+    dica: "Foca mais na parte inferior do peito do que o supino reto.",
+  },
+  "Pullover": {
+    grupoMuscular: "Peito, costas (grande dorsal), serrátil",
+    comoExecutar: [
+      "Deite perpendicular ao banco, só os ombros apoiados",
+      "Segure o peso com os dois braços acima do peito",
+      "Desça o peso atrás da cabeça mantendo leve flexão no cotovelo",
+      "Traga de volta contraindo o peito/costas",
+    ],
+    errosComuns: ["Descer demais e forçar o ombro", "Dobrar muito o cotovelo (vira mais tríceps)"],
+    dica: "Mantenha o abdômen contraído pra proteger a lombar durante a descida.",
+  },
+  "Paralelas (mergulho)": {
+    grupoMuscular: "Peito inferior, tríceps, ombro",
+    comoExecutar: [
+      "Apoie-se nas barras paralelas com os braços estendidos",
+      "Incline levemente o tronco à frente pra focar no peito",
+      "Desça até sentir alongamento no peito/ombro",
+      "Empurre de volta até estender os braços",
+    ],
+    errosComuns: ["Descer demais e forçar o ombro", "Manter o tronco ereto demais (vira mais tríceps que peito)"],
+    dica: "Quanto mais inclinado à frente, mais foco no peito; mais ereto, mais foco no tríceps.",
+  },
+  "Remada cavalinho": {
+    grupoMuscular: "Costas, bíceps",
+    comoExecutar: [
+      "Posicione a barra no canto/suporte com um lado fixo",
+      "Segure a ponta livre com as duas mãos (ou pegador em V)",
+      "Puxe a barra em direção ao abdômen",
+      "Volte controlado até quase estender os braços",
+    ],
+    errosComuns: ["Usar impulso do corpo pra puxar", "Curvar demais as costas"],
+    dica: "Mantenha o peito aberto e leve o cotovelo pra trás, não pra cima.",
+  },
+  "Face pull": {
+    grupoMuscular: "Deltoide posterior, trapézio, rotadores do ombro",
+    comoExecutar: [
+      "Ajuste a polia na altura do rosto/pescoço",
+      "Segure a corda com as duas mãos",
+      "Puxe em direção ao rosto abrindo os cotovelos",
+      "Volte controlado até quase estender os braços",
+    ],
+    errosComuns: ["Puxar baixo demais (vira mais costas que ombro)", "Usar peso alto e perder a forma"],
+    dica: "Ótimo pra saúde do ombro — priorize controle, não carga.",
+  },
+  "Encolhimento (trapézio)": {
+    grupoMuscular: "Trapézio",
+    comoExecutar: [
+      "Segure o peso (halteres/barra) ao lado ou à frente do corpo",
+      "Eleve os ombros em direção às orelhas",
+      "Segure 1 segundo no topo",
+      "Desça controlado",
+    ],
+    errosComuns: ["Rodar os ombros (aumenta risco de lesão)", "Usar impulso das pernas"],
+    dica: "O movimento é só de subir e descer os ombros, sem girar.",
+  },
+  "Barra fixa": {
+    grupoMuscular: "Costas, bíceps",
+    comoExecutar: [
+      "Segure a barra com pegada um pouco mais aberta que os ombros",
+      "Puxe o corpo para cima até o queixo passar da barra",
+      "Desça controlado até os braços quase estenderem",
+      "Evite balançar o corpo",
+    ],
+    errosComuns: ["Usar impulso/balanço", "Amplitude curta (não descer totalmente)"],
+    dica: "Se ainda não consegue completar sozinho, use elástico de assistência ou a versão assistida na máquina.",
+  },
+  "Agachamento afundo (lunge)": {
+    grupoMuscular: "Quadríceps, glúteo",
+    comoExecutar: [
+      "Dê um passo à frente",
+      "Desça até o joelho de trás quase tocar o chão",
+      "Mantenha o tronco ereto",
+      "Empurre de volta à posição inicial",
+    ],
+    errosComuns: ["Deixar o joelho da frente passar muito da ponta do pé", "Perder o equilíbrio por dar um passo curto demais"],
+    dica: "Mantenha o peso mais no calcanhar da perna da frente.",
+  },
+  "Agachamento articulado (hack invertido)": {
+    grupoMuscular: "Quadríceps, glúteo",
+    comoExecutar: [
+      "Posicione-se no aparelho com as costas apoiadas",
+      "Pés na largura dos ombros na plataforma",
+      "Desça controlado flexionando o joelho",
+      "Empurre de volta sem travar o joelho no topo",
+    ],
+    errosComuns: ["Descer rápido demais", "Tirar o calcanhar da plataforma"],
+    dica: "Ajuste a posição dos pés mais alta ou baixa pra focar mais em glúteo ou quadríceps.",
+  },
+  "Agachamento pêndulo": {
+    grupoMuscular: "Quadríceps, glúteo",
+    comoExecutar: [
+      "Posicione-se no aparelho com o encosto nas costas",
+      "Desça controlado seguindo o trajeto do aparelho",
+      "Mantenha os joelhos alinhados com os pés",
+      "Empurre de volta até quase estender o joelho",
+    ],
+    errosComuns: ["Usar amplitude curta", "Deixar o joelho cair pra dentro"],
+    dica: "O trajeto em arco do aparelho protege bastante a lombar — bom pra quem sente dor nas costas no agachamento livre.",
+  },
+  "Stiff (levantamento terra romeno)": {
+    grupoMuscular: "Posterior de coxa, glúteo, lombar",
+    comoExecutar: [
+      "Segure o peso à frente do corpo, joelhos levemente flexionados",
+      "Desça o peso deslizando perto das pernas, quadril pra trás",
+      "Desça até sentir alongar o posterior da coxa",
+      "Suba contraindo o glúteo",
+    ],
+    errosComuns: ["Curvar as costas", "Dobrar demais o joelho (vira mais agachamento)"],
+    dica: "O movimento vem do quadril, não da coluna — mantenha as costas retas o tempo todo.",
+  },
+  "Levantamento terra": {
+    grupoMuscular: "Posterior de coxa, glúteo, lombar, costas",
+    comoExecutar: [
+      "Posicione a barra perto das canelas, pés na largura do quadril",
+      "Segure a barra, quadril pra baixo, costas retas",
+      "Suba estendendo quadril e joelho ao mesmo tempo",
+      "Desça controlado retornando a barra ao chão",
+    ],
+    errosComuns: ["Curvar a lombar", "Deixar a barra se afastar do corpo durante o movimento"],
+    dica: "Mantenha a barra sempre próxima às pernas durante toda a subida e descida.",
+  },
+  "Cadeira adutora": {
+    grupoMuscular: "Adutores (parte interna da coxa)",
+    comoExecutar: [
+      "Sente-se no aparelho com as pernas nas almofadas",
+      "Feche as pernas contra a resistência",
+      "Volte controlado até o alongamento máximo confortável",
+      "Repita sem usar impulso",
+    ],
+    errosComuns: ["Usar amplitude exagerada que force a articulação", "Movimento rápido demais"],
+    dica: "Foque em sentir a parte interna da coxa trabalhando, não force a amplitude.",
+  },
+  "Cadeira abdutora": {
+    grupoMuscular: "Glúteo médio, abdutores",
+    comoExecutar: [
+      "Sente-se no aparelho com as pernas nas almofadas",
+      "Abra as pernas contra a resistência",
+      "Volte controlado",
+      "Mantenha o tronco estável durante o movimento",
+    ],
+    errosComuns: ["Usar impulso do tronco", "Amplitude curta"],
+    dica: "Ótimo pra fortalecer o glúteo médio e estabilizar o quadril.",
+  },
+  "Glúteo no cabo (coice)": {
+    grupoMuscular: "Glúteo",
+    comoExecutar: [
+      "Prenda o cabo no tornozelo",
+      "Apoie-se no aparelho/parede",
+      "Empurre a perna pra trás contraindo o glúteo",
+      "Volte controlado sem deixar o peso bater",
+    ],
+    errosComuns: ["Usar as costas pra dar impulso", "Amplitude exagerada que tira o foco do glúteo"],
+    dica: "Segure 1 segundo no ponto de contração máxima do glúteo.",
+  },
+  "Coice (glúteo) na máquina": {
+    grupoMuscular: "Glúteo",
+    comoExecutar: [
+      "Posicione-se no aparelho conforme as instruções",
+      "Empurre a plataforma/apoio pra trás contraindo o glúteo",
+      "Segure a contração no topo",
+      "Volte controlado",
+    ],
+    errosComuns: ["Usar a lombar pra empurrar", "Movimento rápido sem controle"],
+    dica: "Foque em empurrar com o calcanhar, não com a ponta do pé.",
+  },
+  "Rosca concentrada": {
+    grupoMuscular: "Bíceps",
+    comoExecutar: [
+      "Sente-se e apoie o cotovelo na parte interna da coxa",
+      "Segure o halter com o braço estendido",
+      "Flexione o cotovelo trazendo o peso até o ombro",
+      "Desça controlado",
+    ],
+    errosComuns: ["Balançar o corpo pra ajudar", "Não estender totalmente o braço na descida"],
+    dica: "É um exercício de isolamento — priorize a conexão mente-músculo com carga leve/moderada.",
+  },
+  "Rosca invertida (pegada pronada)": {
+    grupoMuscular: "Antebraço, bíceps braquial",
+    comoExecutar: [
+      "Segure a barra/halter com as palmas voltadas pra baixo",
+      "Flexione o cotovelo mantendo o braço junto ao corpo",
+      "Suba controlado",
+      "Desça sem estender totalmente com força",
+    ],
+    errosComuns: ["Usar peso muito alto (a pegada pronada é naturalmente mais fraca)", "Balançar o corpo"],
+    dica: "Ótimo pra fortalecer o antebraço, mas use cargas bem mais leves que a rosca normal.",
+  },
+  "Flexão de punho": {
+    grupoMuscular: "Antebraço",
+    comoExecutar: [
+      "Apoie o antebraço numa superfície com o punho pra fora",
+      "Segure a barra/halter e flexione o punho pra cima",
+      "Desça controlado até o alongamento",
+      "Repita sem mover o antebraço",
+    ],
+    errosComuns: ["Mover o cotovelo/antebraço junto (deve ficar só o punho se movendo)", "Usar peso alto demais"],
+    dica: "Movimento pequeno e controlado — a amplitude é curta por natureza.",
+  },
+  "Tríceps francês": {
+    grupoMuscular: "Tríceps",
+    comoExecutar: [
+      "Segure o peso acima da cabeça (sentado ou em pé)",
+      "Desça o peso atrás da cabeça flexionando só o cotovelo",
+      "Mantenha os cotovelos apontando pra frente/cima, sem abrir",
+      "Estenda de volta contraindo o tríceps",
+    ],
+    errosComuns: ["Abrir os cotovelos durante o movimento", "Usar o ombro pra ajudar"],
+    dica: "Mantenha os cotovelos fixos e próximos à cabeça o tempo todo.",
+  },
+  "Tríceps no banco (mergulho)": {
+    grupoMuscular: "Tríceps, ombro",
+    comoExecutar: [
+      "Apoie as mãos no banco atrás do corpo, pernas estendidas ou flexionadas",
+      "Desça o corpo flexionando os cotovelos",
+      "Desça até sentir alongar o tríceps/ombro",
+      "Empurre de volta até quase estender os braços",
+    ],
+    errosComuns: ["Descer demais e forçar o ombro", "Deixar os cotovelos abrirem pros lados"],
+    dica: "Quanto mais esticadas as pernas, mais difícil o exercício.",
+  },
+  "Abdominal máquina": {
+    grupoMuscular: "Abdômen (reto abdominal)",
+    comoExecutar: [
+      "Sente-se no aparelho e ajuste o apoio",
+      "Flexione o tronco contraindo o abdômen",
+      "Segure a contração no topo",
+      "Volte controlado sem soltar o peso",
+    ],
+    errosComuns: ["Puxar com os braços em vez de contrair o abdômen", "Movimento rápido demais"],
+    dica: "Pense em 'encolher' o abdômen, não só dobrar o tronco.",
+  },
+  "Abdominal na paralela": {
+    grupoMuscular: "Abdômen, flexores do quadril",
+    comoExecutar: [
+      "Apoie os antebraços nas paralelas/apoio",
+      "Eleve os joelhos em direção ao peito contraindo o abdômen",
+      "Desça controlado sem balançar",
+      "Evite usar impulso do corpo",
+    ],
+    errosComuns: ["Balançar o corpo pra ganhar impulso", "Amplitude curta"],
+    dica: "Controle a descida — é onde o abdômen trabalha mais.",
+  },
+  "Elevação de pernas (infra)": {
+    grupoMuscular: "Abdômen inferior",
+    comoExecutar: [
+      "Deite ou suspenda-se conforme a variação",
+      "Eleve as pernas estendidas ou flexionadas em direção ao tronco",
+      "Segure a contração no topo",
+      "Desça controlado sem deixar as pernas baterem",
+    ],
+    errosComuns: ["Usar impulso das pernas em vez do abdômen", "Arquear a lombar durante a descida"],
+    dica: "Se sentir na lombar em vez do abdômen, flexione mais os joelhos pra reduzir a alavanca.",
+  },
+  "Prancha": {
+    grupoMuscular: "Abdômen, core, lombar",
+    comoExecutar: [
+      "Apoie os antebraços e as pontas dos pés no chão",
+      "Mantenha o corpo alinhado da cabeça aos pés",
+      "Contraia o abdômen e o glúteo",
+      "Segure a posição pelo tempo determinado",
+    ],
+    errosComuns: ["Deixar o quadril cair ou subir demais", "Prender a respiração"],
+    dica: "Respire normalmente durante o exercício — não prenda o ar.",
+  },
+  "Abdominal bicicleta": {
+    grupoMuscular: "Abdômen, oblíquos",
+    comoExecutar: [
+      "Deite com as mãos atrás da cabeça",
+      "Leve o cotovelo em direção ao joelho oposto, alternando",
+      "Estenda a perna oposta enquanto gira o tronco",
+      "Mantenha o movimento controlado, sem puxar o pescoço",
+    ],
+    errosComuns: ["Puxar a cabeça com as mãos", "Movimento rápido demais sem controle"],
+    dica: "Foque em girar o tronco, não só mover os braços.",
+  },
+  "Abdominal na polia (cable crunch)": {
+    grupoMuscular: "Abdômen",
+    comoExecutar: [
+      "Ajoelhe-se de frente pra polia alta segurando a corda",
+      "Flexione o tronco pra baixo contraindo o abdômen",
+      "Mantenha o quadril parado, o movimento é só do tronco",
+      "Volte controlado",
+    ],
+    errosComuns: ["Mover o quadril pra trás em vez de flexionar o tronco", "Usar os braços pra puxar"],
+    dica: "Imagine que está 'enrolando' a coluna, vértebra por vértebra.",
+  },
+  "Abdominal no chão": {
+    grupoMuscular: "Abdômen",
+    comoExecutar: [
+      "Deite com os joelhos flexionados e pés no chão",
+      "Flexione o tronco em direção aos joelhos",
+      "Contraia o abdômen no topo do movimento",
+      "Desça controlado",
+    ],
+    errosComuns: ["Puxar o pescoço com as mãos", "Levantar o tronco todo (vira mais quadril que abdômen)"],
+    dica: "Suba só até as escápulas saírem do chão — não precisa sentar completamente.",
+  },
+  "Agachamento búlgaro": {
+    grupoMuscular: "Quadríceps, glúteo",
+    comoExecutar: [
+      "Coloque o pé de trás apoiado num banco atrás do corpo",
+      "Desça controlado flexionando o joelho da frente",
+      "Mantenha o tronco levemente inclinado à frente",
+      "Empurre de volta usando a perna da frente",
+    ],
+    errosComuns: ["Deixar o joelho da frente passar demais da ponta do pé", "Apoiar peso demais na perna de trás"],
+    dica: "É normal sentir dificuldade de equilíbrio no início — apoie-se em algo se precisar.",
+  },
+  "Agachamento hack (hack squat)": {
+    grupoMuscular: "Quadríceps, glúteo",
+    comoExecutar: [
+      "Posicione-se no aparelho com as costas apoiadas",
+      "Pés na largura dos ombros, levemente à frente do corpo",
+      "Desça controlado flexionando o joelho",
+      "Empurre de volta sem travar o joelho no topo",
+    ],
+    errosComuns: ["Descer rápido demais", "Tirar o calcanhar da plataforma"],
+    dica: "Pés mais baixos na plataforma focam mais no quadríceps; mais altos, mais no glúteo.",
+  },
+  "Agachamento sumô": {
+    grupoMuscular: "Quadríceps, glúteo, adutores",
+    comoExecutar: [
+      "Pés bem mais afastados que a largura dos ombros, pontas viradas pra fora",
+      "Segure o peso à frente ou entre as pernas",
+      "Desça mantendo o tronco ereto",
+      "Empurre de volta contraindo o glúteo",
+    ],
+    errosComuns: ["Joelhos caindo pra dentro na subida", "Não abrir o suficiente o quadril"],
+    dica: "A postura mais aberta ativa mais a parte interna da coxa (adutores) que o agachamento tradicional.",
+  },
+  "Crucifixo": {
+    grupoMuscular: "Peito",
+    comoExecutar: [
+      "Deite no banco segurando um halter em cada mão acima do peito",
+      "Abra os braços em arco, cotovelos levemente flexionados",
+      "Desça até sentir o alongamento no peito",
+      "Feche os braços de volta contraindo o peito",
+    ],
+    errosComuns: ["Descer demais e forçar o ombro", "Esticar totalmente o cotovelo"],
+    dica: "O movimento é em arco, como um abraço — não é o mesmo trajeto do supino.",
+  },
+  "Elevação pélvica (hip thrust)": {
+    grupoMuscular: "Glúteo, posterior de coxa",
+    comoExecutar: [
+      "Apoie a parte superior das costas num banco, pés no chão",
+      "Posicione a barra/peso sobre o quadril",
+      "Suba o quadril contraindo o glúteo até formar uma linha reta",
+      "Desça controlado sem tocar o chão",
+    ],
+    errosComuns: ["Arquear demais a lombar no topo", "Empurrar com os pés muito à frente ou muito perto"],
+    dica: "Segure a contração no topo por 1-2 segundos antes de descer.",
+  },
+  "Panturrilha sentado": {
+    grupoMuscular: "Panturrilha (sóleo)",
+    comoExecutar: [
+      "Sente-se no aparelho com os joelhos sob o apoio",
+      "Apoie a ponta dos pés na plataforma",
+      "Eleve os calcanhares o máximo possível",
+      "Desça controlado até alongar bem a panturrilha",
+    ],
+    errosComuns: ["Amplitude curta", "Movimento rápido sem controle"],
+    dica: "Sentado, o foco vai mais pro sóleo (parte de baixo da panturrilha) do que em pé.",
+  },
+  "Puxada frontal triângulo": {
+    grupoMuscular: "Costas, bíceps",
+    comoExecutar: [
+      "Sente-se e prenda as pernas sob o apoio",
+      "Segure o triângulo com as duas mãos",
+      "Puxe até a altura do peito, cotovelos pra baixo e pra trás",
+      "Suba controlado sem deixar o peso bater",
+    ],
+    errosComuns: ["Puxar com o corpo em vez das costas", "Usar impulso"],
+    dica: "A pegada neutra (triângulo) costuma ser mais confortável pro ombro que a pegada aberta.",
+  },
+  "Remada unilateral (serrote)": {
+    grupoMuscular: "Costas, bíceps",
+    comoExecutar: [
+      "Apoie um joelho e uma mão no banco",
+      "Segure o halter com o braço estendido",
+      "Puxe o halter até a altura do quadril, cotovelo pra trás",
+      "Desça controlado",
+    ],
+    errosComuns: ["Girar o tronco pra ajudar a puxar", "Usar impulso"],
+    dica: "Mantenha as costas paralelas ao chão durante todo o movimento.",
+  },
+  "Rosca martelo": {
+    grupoMuscular: "Bíceps, antebraço",
+    comoExecutar: [
+      "Segure os halteres com as palmas voltadas uma pra outra",
+      "Flexione o cotovelo mantendo o pulso neutro",
+      "Suba até o ombro sem girar o punho",
+      "Desça controlado",
+    ],
+    errosComuns: ["Balançar o corpo pra ajudar", "Girar o punho durante o movimento"],
+    dica: "A pegada neutra ativa mais o antebraço que a rosca tradicional.",
+  },
+  "Rosca no banco Scott": {
+    grupoMuscular: "Bíceps",
+    comoExecutar: [
+      "Apoie os braços no banco Scott com as axilas encostadas no topo",
+      "Segure a barra/halter",
+      "Flexione o cotovelo levando o peso até o ombro",
+      "Desça controlado sem estender rápido demais",
+    ],
+    errosComuns: ["Não descer até quase estender o braço", "Levantar as axilas do apoio"],
+    dica: "O apoio impede o balanço do corpo — ótimo pra isolar o bíceps.",
+  },
+  "Rosca no banco inclinado": {
+    grupoMuscular: "Bíceps (foco na porção longa)",
+    comoExecutar: [
+      "Sente-se no banco inclinado com os braços soltos ao lado do corpo",
+      "Segure os halteres com os braços estendidos pra trás",
+      "Flexione o cotovelo trazendo o peso até o ombro",
+      "Desça controlado até o alongamento completo",
+    ],
+    errosComuns: ["Balançar o ombro pra frente durante a subida", "Amplitude curta"],
+    dica: "O braço atrás do corpo alonga mais o bíceps — ótimo pra sentir o alongamento completo.",
+  },
+  "Tríceps coice (kickback)": {
+    grupoMuscular: "Tríceps",
+    comoExecutar: [
+      "Apoie um joelho e uma mão no banco, tronco paralelo ao chão",
+      "Segure o halter com o cotovelo fixo junto ao corpo",
+      "Estenda o braço pra trás até ficar reto",
+      "Volte controlado sem descer demais",
+    ],
+    errosComuns: ["Deixar o cotovelo cair durante o movimento", "Usar peso alto e balançar o corpo"],
+    dica: "Mantenha o braço sempre paralelo ao chão durante o movimento — só o antebraço se move.",
+  },
+  "Voador invertido (deltoide posterior)": {
+    grupoMuscular: "Deltoide posterior, trapézio",
+    comoExecutar: [
+      "Incline o tronco à frente (ou sente-se de frente pro peck deck invertido)",
+      "Segure os halteres/manoplas com os braços levemente flexionados",
+      "Abra os braços pra trás e pros lados, contraindo os ombros",
+      "Volte controlado",
+    ],
+    errosComuns: ["Usar impulso do corpo", "Fechar demais o cotovelo (vira mais tríceps)"],
+    dica: "Pense em 'juntar as escápulas' no topo do movimento.",
+  },
+  "Agachamento na cadeira (sentar e levantar)": {
+    grupoMuscular: "Quadríceps, glúteo",
+    comoExecutar: [
+      "Sente na ponta de uma cadeira firme",
+      "Incline levemente o tronco à frente",
+      "Levante-se usando as pernas, sem usar as mãos se possível",
+      "Sente de volta controlado, sem deixar o corpo cair",
+    ],
+    errosComuns: ["Usar impulso das mãos nos joelhos", "Deixar o corpo cair na cadeira em vez de descer controlado"],
+    dica: "Ótimo pra treinar a força que você usa no dia a dia pra levantar de qualquer lugar.",
+  },
+  "Elevação de perna sentado": {
+    grupoMuscular: "Quadríceps, quadril",
+    comoExecutar: [
+      "Sente-se numa cadeira com as costas retas",
+      "Estenda uma perna até ficar reta na frente do corpo",
+      "Segure 1-2 segundos no topo",
+      "Desça controlado sem bater o pé no chão",
+    ],
+    errosComuns: ["Balançar o tronco pra ajudar", "Movimento rápido demais"],
+    dica: "Pode alternar as pernas ou fazer todas as repetições de um lado antes de trocar.",
+  },
+  "Marcha estacionária": {
+    grupoMuscular: "Cardio, quadríceps, core",
+    comoExecutar: [
+      "Fique em pé com os pés na largura do quadril",
+      "Eleve os joelhos alternadamente, como se estivesse marchando no lugar",
+      "Balance os braços naturalmente",
+      "Mantenha um ritmo constante",
+    ],
+    errosComuns: ["Curvar as costas", "Marchar rápido demais sem controle e perder a postura"],
+    dica: "Ótimo aquecimento ou exercício cardio de baixo impacto — ajuste o ritmo conforme seu condicionamento.",
+  },
+  "Rotação de tronco sentado": {
+    grupoMuscular: "Oblíquos, core",
+    comoExecutar: [
+      "Sente-se numa cadeira com as costas retas",
+      "Segure as mãos à frente do peito (ou um peso leve)",
+      "Gire o tronco pra um lado, depois pro outro",
+      "Mantenha o quadril parado durante o giro",
+    ],
+    errosComuns: ["Girar só os braços em vez do tronco", "Movimento rápido demais sem controle"],
+    dica: "O quadril fica fixo — só a parte de cima do corpo gira.",
+  },
+  "Elevação de braço com faixa elástica": {
+    grupoMuscular: "Ombro",
+    comoExecutar: [
+      "Pise na faixa elástica ou prenda numa base fixa",
+      "Segure as pontas com as mãos",
+      "Eleve os braços à frente ou pros lados até a altura do ombro",
+      "Desça controlado sem deixar a faixa puxar de volta rápido",
+    ],
+    errosComuns: ["Usar impulso do corpo", "Soltar rápido demais na volta (perde tensão e controle)"],
+    dica: "Quanto mais curta a faixa, maior a resistência — ajuste conforme sua força.",
+  },
+  "Ponte de glúteo (sentado)": {
+    grupoMuscular: "Glúteo",
+    comoExecutar: [
+      "Sente-se na ponta de uma cadeira",
+      "Apoie os pés firmes no chão",
+      "Empurre o quadril pra frente/cima contraindo o glúteo",
+      "Volte controlado sem sentar totalmente",
+    ],
+    errosComuns: ["Usar a lombar em vez do glúteo pra empurrar", "Movimento rápido demais"],
+    dica: "Boa alternativa pra quem tem dificuldade de fazer a ponte de glúteo deitado no chão.",
+  },
+  "Funcional livre (escolha no canal)": {
+    grupoMuscular: "Livre — você escolhe",
+    comoExecutar: [
+      "Toque no botão pra abrir os vídeos do canal Women 3D Workouts",
+      "Escolha o exercício que quiser dentro do canal",
+      "Siga o vídeo escolhido",
+      "Registre a série normalmente aqui no app depois de terminar",
+    ],
+    errosComuns: ["Nenhum erro fixo — siga a explicação do vídeo que você escolher"],
+    dica: "Use essa opção quando quiser variar o treino funcional com exercícios que ainda não estão cadastrados no app.",
   },
 };
 
@@ -939,11 +1705,21 @@ function AppMassiPro({ onSolicitarRemount }) {
   const [showPlanos, setShowPlanos] = useState(false);
   const [showModelos, setShowModelos] = useState(false);
   const [activeTab, setActiveTab] = useState("rotina");
+  const tabRowRef = useRef(null);
+  const tabBtnRefs = useRef({});
+  const [showTabScrollHint, setShowTabScrollHint] = useState(true);
+  useEffect(() => {
+    const el = tabBtnRefs.current[activeTab];
+    if (el && typeof el.scrollIntoView === "function") {
+      el.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+    }
+  }, [activeTab]);
   const [exercicioAberto, setExercicioAberto] = useState(null);
   const [cronometro, setCronometro] = useState(null); // { totalSeg, restanteSeg, rodando, label }
   const [historico, setHistorico] = useState([]);
   const [mensagemSucesso, setMensagemSucesso] = useState(null);
   const [ultimoTreinoConcluido, setUltimoTreinoConcluido] = useState(null);
+  const [mostrarOpcoesCompartilhar, setMostrarOpcoesCompartilhar] = useState(false);
   const [splashVisivel, setSplashVisivel] = useState(true);
   const [splashSaindo, setSplashSaindo] = useState(false);
   const [feedbackPendente, setFeedbackPendente] = useState(null);
@@ -1206,17 +1982,67 @@ function AppMassiPro({ onSolicitarRemount }) {
     }
   };
 
-  const compartilharTreino = async (registro) => {
-    if (!registro) return;
-    const texto = `Acabei de concluir um treino de ${registro.foco} no Massi Pro${
+  const APP_URL = "https://massi-pro.vercel.app";
+
+  const textoCompartilhamento = (registro) =>
+    `Acabei de concluir um treino de ${registro.foco} no Massi Pro${
       registro.calorias ? ` — ~${registro.calorias} kcal` : ""
     }! 💪`;
+
+  const copiarTextoTreino = async (registro) => {
+    if (!registro) return;
+    try {
+      await navigator.clipboard.writeText(textoCompartilhamento(registro));
+      setMostrarOpcoesCompartilhar(false);
+      setMensagemSucesso("Texto copiado! Cole onde quiser compartilhar.");
+    } catch (e) {
+      // não suportado — sem problema
+    }
+  };
+
+  const compartilharWhatsapp = (registro) => {
+    if (!registro) return;
+    const url = `https://wa.me/?text=${encodeURIComponent(textoCompartilhamento(registro) + " " + APP_URL)}`;
+    window.open(url, "_blank", "noopener,noreferrer");
+    setMostrarOpcoesCompartilhar(false);
+  };
+
+  const compartilharFacebook = (registro) => {
+    if (!registro) return;
+    const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(APP_URL)}&quote=${encodeURIComponent(
+      textoCompartilhamento(registro)
+    )}`;
+    window.open(url, "_blank", "noopener,noreferrer");
+    setMostrarOpcoesCompartilhar(false);
+  };
+
+  const compartilharTwitter = (registro) => {
+    if (!registro) return;
+    const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
+      textoCompartilhamento(registro) + " " + APP_URL
+    )}`;
+    window.open(url, "_blank", "noopener,noreferrer");
+    setMostrarOpcoesCompartilhar(false);
+  };
+
+  const compartilharTelegram = (registro) => {
+    if (!registro) return;
+    const url = `https://t.me/share/url?url=${encodeURIComponent(APP_URL)}&text=${encodeURIComponent(
+      textoCompartilhamento(registro)
+    )}`;
+    window.open(url, "_blank", "noopener,noreferrer");
+    setMostrarOpcoesCompartilhar(false);
+  };
+
+  const compartilharTreino = async (registro) => {
+    if (!registro) return;
+    const texto = textoCompartilhamento(registro);
     try {
       if (navigator.share) {
         await navigator.share({ text: texto });
+        setMostrarOpcoesCompartilhar(false);
       } else {
-        await navigator.clipboard.writeText(texto);
-        setMensagemSucesso("Texto copiado! Cole onde quiser compartilhar.");
+        await copiarTextoTreino(registro);
       }
     } catch (e) {
       // usuário cancelou o compartilhamento, ou não suportado — sem problema
@@ -1244,7 +2070,6 @@ function AppMassiPro({ onSolicitarRemount }) {
     } catch (e) {
       setMensagemSucesso("Treino concluído, mas não consegui salvar no histórico agora.");
     }
-    setTimeout(() => setMensagemSucesso(null), 3000);
 
     // Progressão automática de carga: soma 1 na contagem de cada exercício desse treino
     const novaProgressao = { ...progressao };
@@ -1336,14 +2161,17 @@ function AppMassiPro({ onSolicitarRemount }) {
           --paper-alt: #EDEFF3;
           --ink: #151A21;
           --pencil: #6B7280;
+          color-scheme: light;
         }
         [data-tema="escuro"] {
           --paper: #14181B;
           --paper-alt: #1E2327;
           --ink: #EDEFF0;
           --pencil: #9AA3AC;
+          color-scheme: dark;
         }
-        html, body { margin: 0; padding: 0; width: 100%; overflow-x: hidden; background: var(--paper); }
+        input, select, textarea { background: var(--paper); color: var(--ink); }
+        html, body { margin: 0; padding: 0; width: 100%; overflow-x: hidden; background: var(--paper); -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
         #root { overflow-x: hidden; }
         * { box-sizing: border-box; }
         img, svg { max-width: 100%; }
@@ -1442,17 +2270,94 @@ function AppMassiPro({ onSolicitarRemount }) {
       )}
 
       {mensagemSucesso && (
-        <div style={styles.toastOverlay} onClick={() => setMensagemSucesso(null)}>
+        <div
+          style={styles.toastOverlay}
+          onClick={() => {
+            setMensagemSucesso(null);
+            setMostrarOpcoesCompartilhar(false);
+          }}
+        >
           <div style={styles.toastCard} onClick={(e) => e.stopPropagation()}>
-            <div style={styles.toastIcone}>✓</div>
+            {ultimoTreinoConcluido && mostrarOpcoesCompartilhar ? (
+              <div style={styles.toastMarca}>
+                <MassiLogoMark />
+                <div style={styles.toastMarcaNome}>Massi Pro</div>
+              </div>
+            ) : (
+              <div style={styles.toastIcone}>✓</div>
+            )}
             <div style={styles.toastTexto}>{mensagemSucesso}</div>
-            {ultimoTreinoConcluido && (
-              <button
-                style={styles.toastCompartilharBtn}
-                onClick={() => compartilharTreino(ultimoTreinoConcluido)}
-              >
-                📤 Compartilhar
-              </button>
+
+            {ultimoTreinoConcluido && !mostrarOpcoesCompartilhar && (
+              <div style={styles.toastBotoesRow}>
+                <button
+                  style={styles.toastCompartilharBtn}
+                  onClick={() => setMostrarOpcoesCompartilhar(true)}
+                >
+                  📤 Compartilhar
+                </button>
+                <button
+                  style={styles.toastOkBtn}
+                  onClick={() => setMensagemSucesso(null)}
+                >
+                  OK
+                </button>
+              </div>
+            )}
+
+            {ultimoTreinoConcluido && mostrarOpcoesCompartilhar && (
+              <div style={styles.toastOpcoesCompartilhar}>
+                <div style={styles.tostPreviewCard}>
+                  <div style={styles.toastPreviewLabel}>Prévia do que vai ser compartilhado</div>
+                  <div style={styles.toastPreviewTexto}>{textoCompartilhamento(ultimoTreinoConcluido)}</div>
+                </div>
+
+                <div style={styles.toastRedesGrid}>
+                  <button
+                    style={{ ...styles.toastRedeBtn, background: "#25D366" }}
+                    onClick={() => compartilharWhatsapp(ultimoTreinoConcluido)}
+                  >
+                    💬 WhatsApp
+                  </button>
+                  <button
+                    style={{ ...styles.toastRedeBtn, background: "#1877F2" }}
+                    onClick={() => compartilharFacebook(ultimoTreinoConcluido)}
+                  >
+                    📘 Facebook
+                  </button>
+                  <button
+                    style={{ ...styles.toastRedeBtn, background: "#000000" }}
+                    onClick={() => compartilharTwitter(ultimoTreinoConcluido)}
+                  >
+                    ✕ X / Twitter
+                  </button>
+                  <button
+                    style={{ ...styles.toastRedeBtn, background: "#26A5E4" }}
+                    onClick={() => compartilharTelegram(ultimoTreinoConcluido)}
+                  >
+                    ✈ Telegram
+                  </button>
+                </div>
+
+                {typeof navigator !== "undefined" && navigator.share && (
+                  <button style={styles.toastOpcaoBtn} onClick={() => compartilharTreino(ultimoTreinoConcluido)}>
+                    📤 Mais opções (Instagram e outros apps do celular)
+                  </button>
+                )}
+                <button style={styles.toastOpcaoBtn} onClick={() => copiarTextoTreino(ultimoTreinoConcluido)}>
+                  📋 Copiar texto
+                </button>
+
+                <button
+                  style={styles.toastOkBtn}
+                  onClick={() => {
+                    setMostrarOpcoesCompartilhar(false);
+                    setMensagemSucesso(null);
+                  }}
+                >
+                  OK, fechar
+                </button>
+              </div>
             )}
           </div>
         </div>
@@ -1509,43 +2414,62 @@ function AppMassiPro({ onSolicitarRemount }) {
         />
       )}
 
-      <div style={styles.tabRow}>
-        <button
-          style={{ ...styles.tabBtn, ...(activeTab === "rotina" ? styles.tabBtnActive : {}) }}
-          onClick={() => setActiveTab("rotina")}
+      <div style={styles.tabRowWrapper}>
+        <div
+          ref={tabRowRef}
+          style={styles.tabRow}
+          onScroll={() => setShowTabScrollHint(false)}
+          onTouchStart={() => setShowTabScrollHint(false)}
+          onPointerDown={() => setShowTabScrollHint(false)}
         >
-          Rotina
-        </button>
-        <button
-          style={{ ...styles.tabBtn, ...(activeTab === "historico" ? styles.tabBtnActive : {}) }}
-          onClick={() => setActiveTab("historico")}
-        >
-          Histórico
-        </button>
-        <button
-          style={{ ...styles.tabBtn, ...(activeTab === "notas" ? styles.tabBtnActive : {}) }}
-          onClick={() => setActiveTab("notas")}
-        >
-          Notas
-        </button>
-        <button
-          style={{ ...styles.tabBtn, ...(activeTab === "evolucao" ? styles.tabBtnActive : {}) }}
-          onClick={() => setActiveTab("evolucao")}
-        >
-          Avaliação
-        </button>
-        <button
-          style={{ ...styles.tabBtn, ...(activeTab === "premium" ? styles.tabBtnActive : {}) }}
-          onClick={() => setActiveTab("premium")}
-        >
-          ★ Premium
-        </button>
-        <button
-          style={{ ...styles.tabBtn, ...(activeTab === "sobre" ? styles.tabBtnActive : {}) }}
-          onClick={() => setActiveTab("sobre")}
-        >
-          Sobre
-        </button>
+          <button
+            ref={(el) => (tabBtnRefs.current["rotina"] = el)}
+            style={{ ...styles.tabBtn, ...(activeTab === "rotina" ? styles.tabBtnActive : {}) }}
+            onClick={() => setActiveTab("rotina")}
+          >
+            Rotina
+          </button>
+          <button
+            ref={(el) => (tabBtnRefs.current["historico"] = el)}
+            style={{ ...styles.tabBtn, ...(activeTab === "historico" ? styles.tabBtnActive : {}) }}
+            onClick={() => setActiveTab("historico")}
+          >
+            Histórico
+          </button>
+          <button
+            ref={(el) => (tabBtnRefs.current["notas"] = el)}
+            style={{ ...styles.tabBtn, ...(activeTab === "notas" ? styles.tabBtnActive : {}) }}
+            onClick={() => setActiveTab("notas")}
+          >
+            Notas
+          </button>
+          <button
+            ref={(el) => (tabBtnRefs.current["evolucao"] = el)}
+            style={{ ...styles.tabBtn, ...(activeTab === "evolucao" ? styles.tabBtnActive : {}) }}
+            onClick={() => setActiveTab("evolucao")}
+          >
+            Avaliação
+          </button>
+          <button
+            ref={(el) => (tabBtnRefs.current["premium"] = el)}
+            style={{ ...styles.tabBtn, ...(activeTab === "premium" ? styles.tabBtnActive : {}) }}
+            onClick={() => setActiveTab("premium")}
+          >
+            ★ Premium
+          </button>
+          <button
+            ref={(el) => (tabBtnRefs.current["sobre"] = el)}
+            style={{ ...styles.tabBtn, ...(activeTab === "sobre" ? styles.tabBtnActive : {}) }}
+            onClick={() => setActiveTab("sobre")}
+          >
+            Sobre
+          </button>
+        </div>
+        {showTabScrollHint && (
+          <div style={styles.tabScrollHint} aria-hidden="true">
+            →
+          </div>
+        )}
       </div>
 
       {activeTab === "rotina" && (
@@ -2332,7 +3256,7 @@ function ModoGuiadoOverlay({ entry, onFechar, onAbrirExercicio }) {
   if (!ex) return null;
 
   const totalSets = ex.sets || 1;
-  const youtubeUrl = getVideoUrl(ex) || `https://www.youtube.com/results?search_query=${encodeURIComponent(ex.name + " execução correta")}`;
+  const { url: youtubeUrl, canal: isCanalFuncional } = getVideoOuCanalUrl(ex);
 
   const irParaExercicio = (novoIndice) => {
     setIndice(Math.max(0, Math.min(total - 1, novoIndice)));
@@ -2366,7 +3290,7 @@ function ModoGuiadoOverlay({ entry, onFechar, onAbrirExercicio }) {
               Série {serieAtual} de {totalSets} · {ex.reps}
             </div>
             <button style={styles.guiadoVerBtn} onClick={() => window.open(youtubeUrl, "_blank")}>
-              ▶ Assistir execução no YouTube
+              {isCanalFuncional ? "▶ Ver exercícios no canal (escolha o seu)" : "▶ Assistir execução no YouTube"}
             </button>
             <button style={styles.guiadoDescansoBtn} onClick={concluirSerie}>
               ✓ Concluí a série — descansar
@@ -2588,7 +3512,7 @@ function PlanosModal({ isPremium, onAssinar, onClose }) {
 
 function ExercicioModal({ exercicio, onClose, onIniciarDescanso }) {
   const guia = GUIA_EXECUCAO[exercicio.name];
-  const videoUrl = getVideoUrl(exercicio);
+  const { url: videoUrl, especifico: videoEspecifico, canal: isCanalFuncional } = getVideoOuCanalUrl(exercicio);
 
   return (
     <div style={styles.modalOverlay} onClick={onClose}>
@@ -2600,15 +3524,21 @@ function ExercicioModal({ exercicio, onClose, onIniciarDescanso }) {
 
         {guia ? (
           <>
-            {videoUrl && (
+            {(videoEspecifico || isCanalFuncional) && (
               <>
                 <button
                   style={styles.videoLinkBtn}
                   onClick={() => window.open(videoUrl, "_blank", "noopener,noreferrer")}
                 >
-                  ▶ Ver vídeo curto ({exercicio.maquina.toLowerCase()})
+                  {videoEspecifico
+                    ? `▶ Ver vídeo curto (${exercicio.maquina.toLowerCase()})`
+                    : "▶ Ver exercícios no canal (escolha o seu)"}
                 </button>
-                <div style={styles.videoNote}>Vídeo de ~20-30s, específico dessa variação do exercício.</div>
+                <div style={styles.videoNote}>
+                  {videoEspecifico
+                    ? "Vídeo de ~20-30s, específico dessa variação do exercício."
+                    : "Sem vídeo específico ainda — escolha o exercício parecido no canal."}
+                </div>
               </>
             )}
 
@@ -2643,7 +3573,20 @@ function ExercicioModal({ exercicio, onClose, onIniciarDescanso }) {
             </div>
           </>
         ) : (
-          <p style={styles.modalSubtitle}>Ainda não tenho o passo a passo desse exercício. Peça pra eu adicionar.</p>
+          <>
+            {isCanalFuncional && (
+              <>
+                <button
+                  style={styles.videoLinkBtn}
+                  onClick={() => window.open(videoUrl, "_blank", "noopener,noreferrer")}
+                >
+                  ▶ Ver exercícios no canal (escolha o seu)
+                </button>
+                <div style={styles.videoNote}>Sem vídeo específico ainda — escolha o exercício parecido no canal.</div>
+              </>
+            )}
+            <p style={styles.modalSubtitle}>Ainda não tenho o passo a passo desse exercício. Peça pra eu adicionar.</p>
+          </>
         )}
       </div>
     </div>
@@ -3982,16 +4925,41 @@ const styles = {
   modalDisclaimer: { fontSize: 11.5, color: PENCIL, marginTop: 18, lineHeight: 1.4, fontStyle: "italic" },
   avaliacaoSalvaMsg: { fontSize: 12.5, color: "#2E7D32", fontWeight: 700, marginTop: 10, textAlign: "center" },
 
+  tabRowWrapper: {
+    position: "relative",
+    marginBottom: 18,
+    maxWidth: "100%",
+  },
   tabRow: {
     display: "flex",
     gap: 6,
-    marginBottom: 18,
     background: PAPER_ALT,
     borderRadius: 10,
     padding: 4,
+    maxWidth: "100%",
     overflowX: "auto",
+    overflowY: "hidden",
     WebkitOverflowScrolling: "touch",
+    scrollBehavior: "smooth",
     flexWrap: "nowrap",
+  },
+  tabScrollHint: {
+    position: "absolute",
+    top: 4,
+    bottom: 4,
+    right: 0,
+    width: 34,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "flex-end",
+    paddingRight: 6,
+    borderRadius: "0 10px 10px 0",
+    background: `linear-gradient(to right, transparent, ${PAPER_ALT} 55%)`,
+    color: PENCIL,
+    fontSize: 14,
+    fontWeight: 700,
+    pointerEvents: "none",
+    transition: "opacity 0.25s ease",
   },
   tabBtn: {
     flex: "0 0 auto",
@@ -4310,8 +5278,7 @@ const styles = {
   },
   toastTexto: { fontSize: 15, color: INK, lineHeight: 1.45, fontWeight: 600 },
   toastCompartilharBtn: {
-    marginTop: 16,
-    width: "100%",
+    flex: 1,
     padding: "11px",
     borderRadius: 10,
     border: "none",
@@ -4321,6 +5288,93 @@ const styles = {
     fontWeight: 800,
     fontSize: 12.5,
     cursor: "pointer",
+  },
+  toastBotoesRow: {
+    marginTop: 16,
+    display: "flex",
+    gap: 8,
+  },
+  toastOkBtn: {
+    flex: 1,
+    padding: "11px",
+    borderRadius: 10,
+    border: `1px solid ${PENCIL}`,
+    background: "transparent",
+    color: INK,
+    fontFamily: monoFont,
+    fontWeight: 800,
+    fontSize: 12.5,
+    cursor: "pointer",
+  },
+  toastOpcoesCompartilhar: {
+    marginTop: 16,
+    display: "flex",
+    flexDirection: "column",
+    gap: 8,
+  },
+  toastOpcaoBtn: {
+    width: "100%",
+    padding: "11px",
+    borderRadius: 10,
+    border: `1px solid rgba(43,42,40,0.18)`,
+    background: PAPER_ALT,
+    color: INK,
+    fontFamily: monoFont,
+    fontWeight: 700,
+    fontSize: 12.5,
+    cursor: "pointer",
+    textAlign: "left",
+  },
+  toastMarca: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    gap: 8,
+    marginBottom: 4,
+  },
+  toastMarcaNome: {
+    fontFamily: monoFont,
+    fontWeight: 800,
+    fontSize: 13,
+    letterSpacing: 0.5,
+    color: INK,
+  },
+  tostPreviewCard: {
+    border: `1px solid rgba(43,42,40,0.14)`,
+    borderRadius: 12,
+    padding: "12px 14px",
+    background: PAPER_ALT,
+    textAlign: "left",
+  },
+  toastPreviewLabel: {
+    fontSize: 10.5,
+    fontWeight: 800,
+    letterSpacing: 0.6,
+    textTransform: "uppercase",
+    color: PENCIL,
+    marginBottom: 6,
+  },
+  toastPreviewTexto: {
+    fontSize: 13,
+    color: INK,
+    lineHeight: 1.4,
+    fontWeight: 600,
+  },
+  toastRedesGrid: {
+    display: "grid",
+    gridTemplateColumns: "1fr 1fr",
+    gap: 8,
+  },
+  toastRedeBtn: {
+    padding: "12px 8px",
+    borderRadius: 10,
+    border: "none",
+    color: "#FFFFFF",
+    fontFamily: monoFont,
+    fontWeight: 800,
+    fontSize: 12,
+    cursor: "pointer",
+    textAlign: "center",
   },
   dicaDietaItem: { marginBottom: 14, paddingBottom: 14, borderBottom: "1px solid rgba(43,42,40,0.08)" },
   dicaDietaTitulo: { fontWeight: 700, fontSize: 13.5, color: INK, marginBottom: 4 },
