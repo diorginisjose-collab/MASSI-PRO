@@ -3202,6 +3202,8 @@ const CHAVES_BACKUP = [
   "notas-treino",
   "status-premium",
   "dores-exercicios",
+  "progressao-exercicios",
+  "fotos-progresso",
 ];
 
 function ModoGuiadoOverlay({ entry, onFechar, onAbrirExercicio }) {
