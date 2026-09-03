@@ -1492,6 +1492,35 @@ function MassiLogoMark() {
   );
 }
 
+function MarcaCompartilhamento({ foto }) {
+  if (!foto) return <MassiLogoMark />;
+  return (
+    <div style={styles.marcaFotoWrap}>
+      <div style={{ ...styles.marcaFotoRing, backgroundImage: `url(${foto})` }} />
+      <div style={styles.marcaFotoLogoBadge}>
+        <svg viewBox="0 0 44 44" width="20" height="20" style={{ display: "block" }}>
+          <defs>
+            <linearGradient id="massiLogoGradBadge" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stopColor="#1CA7E0" />
+              <stop offset="55%" stopColor="#1FD1A6" />
+              <stop offset="100%" stopColor="#8BDB4B" />
+            </linearGradient>
+          </defs>
+          <rect x="0" y="0" width="44" height="44" rx="12" fill="#131A1D" />
+          <path
+            d="M8,26 L16,26 L20,15 L24,32 L28,20 L32,26 L36,26"
+            fill="none"
+            stroke="url(#massiLogoGradBadge)"
+            strokeWidth="4"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </div>
+    </div>
+  );
+}
+
 function uid() {
   return Math.random().toString(36).slice(2, 9);
 }
@@ -1725,6 +1754,7 @@ function AppMassiPro({ onSolicitarRemount }) {
   const [feedbackPendente, setFeedbackPendente] = useState(null);
   const [dores, setDores] = useState([]);
   const [dorPendente, setDorPendente] = useState(null); // nome do exercício
+  const [fotoCompartilhamento, setFotoCompartilhamento] = useState(null); // base64 da foto opcional pro card de compartilhar
   const [buscaExercicio, setBuscaExercicio] = useState("");
   const [avisoSemTreinar, setAvisoSemTreinar] = useState(null);
   const [guiadoAtivo, setGuiadoAtivo] = useState(null); // dia inteiro (entry) em modo guiado
@@ -1776,6 +1806,12 @@ function AppMassiPro({ onSolicitarRemount }) {
         if (doresRes && doresRes.value) setDores(JSON.parse(doresRes.value));
       } catch (e) {
         // sem registros de dor ainda
+      }
+      try {
+        const fotoRes = await window.storage.get("foto-compartilhamento");
+        if (fotoRes && fotoRes.value) setFotoCompartilhamento(fotoRes.value);
+      } catch (e) {
+        // sem foto salva ainda
       }
       try {
         const progRes = await window.storage.get("progressao-exercicios");
@@ -2099,6 +2135,44 @@ function AppMassiPro({ onSolicitarRemount }) {
     }
   };
 
+  const escolherFotoCompartilhamento = (arquivo) => {
+    if (!arquivo || !arquivo.type.startsWith("image/")) return;
+    const leitor = new FileReader();
+    leitor.onload = () => {
+      const img = new Image();
+      img.onload = async () => {
+        // reduz a foto pra um quadrado pequeno antes de salvar, evita pesar o armazenamento local
+        const tamanho = 240;
+        const canvas = document.createElement("canvas");
+        canvas.width = tamanho;
+        canvas.height = tamanho;
+        const ctx = canvas.getContext("2d");
+        const lado = Math.min(img.width, img.height);
+        const sx = (img.width - lado) / 2;
+        const sy = (img.height - lado) / 2;
+        ctx.drawImage(img, sx, sy, lado, lado, 0, 0, tamanho, tamanho);
+        const dataUrl = canvas.toDataURL("image/jpeg", 0.85);
+        setFotoCompartilhamento(dataUrl);
+        try {
+          await window.storage.set("foto-compartilhamento", dataUrl);
+        } catch (e) {
+          // segue mesmo se falhar
+        }
+      };
+      img.src = leitor.result;
+    };
+    leitor.readAsDataURL(arquivo);
+  };
+
+  const removerFotoCompartilhamento = async () => {
+    setFotoCompartilhamento(null);
+    try {
+      await window.storage.delete("foto-compartilhamento");
+    } catch (e) {
+      // segue mesmo se falhar
+    }
+  };
+
   const removerDor = async (id) => {
     const nova = dores.filter((d) => d.id !== id);
     setDores(nova);
@@ -2280,7 +2354,7 @@ function AppMassiPro({ onSolicitarRemount }) {
           <div style={styles.toastCard} onClick={(e) => e.stopPropagation()}>
             {ultimoTreinoConcluido && mostrarOpcoesCompartilhar ? (
               <div style={styles.toastMarca}>
-                <MassiLogoMark />
+                <MarcaCompartilhamento foto={fotoCompartilhamento} />
                 <div style={styles.toastMarcaNome}>Massi Pro</div>
               </div>
             ) : (
@@ -2307,6 +2381,23 @@ function AppMassiPro({ onSolicitarRemount }) {
 
             {ultimoTreinoConcluido && mostrarOpcoesCompartilhar && (
               <div style={styles.toastOpcoesCompartilhar}>
+                <div style={styles.fotoCompartilharRow}>
+                  <label style={styles.fotoCompartilharBtn}>
+                    📷 {fotoCompartilhamento ? "Trocar foto" : "Adicionar foto (opcional)"}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      style={{ display: "none" }}
+                      onChange={(e) => escolherFotoCompartilhamento(e.target.files && e.target.files[0])}
+                    />
+                  </label>
+                  {fotoCompartilhamento && (
+                    <button style={styles.fotoCompartilharRemover} onClick={removerFotoCompartilhamento}>
+                      Remover foto
+                    </button>
+                  )}
+                </div>
+
                 <div style={styles.tostPreviewCard}>
                   <div style={styles.toastPreviewLabel}>Prévia do que vai ser compartilhado</div>
                   <div style={styles.toastPreviewTexto}>{textoCompartilhamento(ultimoTreinoConcluido)}</div>
@@ -2545,6 +2636,7 @@ function AppMassiPro({ onSolicitarRemount }) {
                   onRegistrarDor={(nome) => setDorPendente(nome)}
                   onIniciarGuiado={(d) => setGuiadoAtivo(d)}
                   progressao={progressao}
+                  dores={dores}
                 />
               ))}
           </div>
@@ -3204,6 +3296,7 @@ const CHAVES_BACKUP = [
   "dores-exercicios",
   "progressao-exercicios",
   "fotos-progresso",
+  "foto-compartilhamento",
 ];
 
 function ModoGuiadoOverlay({ entry, onFechar, onAbrirExercicio }) {
@@ -3981,7 +4074,32 @@ function NotasTab() {
   );
 }
 
-function DayCard({ entry, onFoco, onAddExercicio, onRemoveExercicio, onEditExercicio, onEditCardio, onAbrirExercicio, onIniciarDescanso, onTrocarExercicio, onConcluirTreino, onRegistrarDor, onIniciarGuiado, progressao }) {
+function getUltimaDorRelacionada(nomeExercicio, dores) {
+  if (!dores || dores.length === 0) return null;
+  // Prioridade 1: dor registrada nesse exercício exato
+  const mesmoExercicio = [...dores]
+    .filter((d) => d.exercicio === nomeExercicio)
+    .sort((a, b) => (a.data < b.data ? 1 : -1))[0];
+  if (mesmoExercicio) return { ...mesmoExercicio, mesmoGrupo: false };
+
+  // Prioridade 2: dor registrada em outro exercício do mesmo grupo muscular
+  const grupoAtual = GUIA_EXECUCAO[nomeExercicio] && GUIA_EXECUCAO[nomeExercicio].grupoMuscular;
+  if (!grupoAtual) return null;
+  const gruposAtuais = grupoAtual.split(",").map((g) => g.trim().toLowerCase());
+
+  const mesmoGrupo = [...dores]
+    .filter((d) => {
+      if (d.exercicio === nomeExercicio) return false;
+      const grupoOutro = GUIA_EXECUCAO[d.exercicio] && GUIA_EXECUCAO[d.exercicio].grupoMuscular;
+      if (!grupoOutro) return false;
+      const gruposOutro = grupoOutro.split(",").map((g) => g.trim().toLowerCase());
+      return gruposAtuais.some((g) => gruposOutro.includes(g));
+    })
+    .sort((a, b) => (a.data < b.data ? 1 : -1))[0];
+  return mesmoGrupo ? { ...mesmoGrupo, mesmoGrupo: true } : null;
+}
+
+function DayCard({ entry, onFoco, onAddExercicio, onRemoveExercicio, onEditExercicio, onEditCardio, onAbrirExercicio, onIniciarDescanso, onTrocarExercicio, onConcluirTreino, onRegistrarDor, onIniciarGuiado, progressao, dores }) {
   const { dia, foco, cardio, exercicios } = entry;
   const isDescanso = foco === "Descanso";
   const isCardio = foco === "Cardio";
@@ -4101,6 +4219,20 @@ function DayCard({ entry, onFoco, onAddExercicio, onRemoveExercicio, onEditExerc
                   </button>
                 </div>
 
+                {(() => {
+                  const ultimaDor = getUltimaDorRelacionada(ex.name, dores);
+                  if (!ultimaDor) return null;
+                  return (
+                    <div style={styles.dorAlertBox}>
+                      ⚠️ {ultimaDor.mesmoGrupo
+                        ? `Dor registrada recentemente em "${ultimaDor.exercicio}" (mesmo grupo muscular)`
+                        : "Você já registrou dor/desconforto nesse exercício antes"}
+                      {" "}— {new Date(ultimaDor.data + "T00:00:00").toLocaleDateString("pt-BR")}
+                      {ultimaDor.nota ? `: "${ultimaDor.nota}"` : ""}
+                    </div>
+                  );
+                })()}
+
                 {ex.maquinas.length > 1 ? (
                   <select
                     value={ex.maquina}
@@ -4117,14 +4249,38 @@ function DayCard({ entry, onFoco, onAddExercicio, onRemoveExercicio, onEditExerc
 
                 <div style={styles.exFieldsRow}>
                   <div style={styles.exFieldGroup}>
-                    <input
-                      type="number"
-                      value={ex.sets}
-                      min={1}
-                      max={10}
-                      onChange={(e) => onEditExercicio(ex.id, "sets", Number(e.target.value))}
-                      style={styles.numMini}
-                    />
+                    <div style={styles.setsStepper}>
+                      <button
+                        type="button"
+                        onClick={() => onEditExercicio(ex.id, "sets", Math.max(1, (Number(ex.sets) || 1) - 1))}
+                        style={styles.stepperBtn}
+                        aria-label={`Diminuir número de séries de ${ex.name}`}
+                      >
+                        −
+                      </button>
+                      <input
+                        type="number"
+                        inputMode="numeric"
+                        value={ex.sets}
+                        min={1}
+                        max={10}
+                        onFocus={(e) => e.target.select()}
+                        onChange={(e) => onEditExercicio(ex.id, "sets", e.target.value === "" ? "" : Number(e.target.value))}
+                        onBlur={(e) => {
+                          const v = Number(e.target.value);
+                          onEditExercicio(ex.id, "sets", Number.isFinite(v) && v > 0 ? Math.min(10, v) : 1);
+                        }}
+                        style={styles.numMini}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => onEditExercicio(ex.id, "sets", Math.min(10, (Number(ex.sets) || 0) + 1))}
+                        style={styles.stepperBtn}
+                        aria-label={`Aumentar número de séries de ${ex.name}`}
+                      >
+                        +
+                      </button>
+                    </div>
                     <span style={styles.times}>×</span>
                     <input
                       type="text"
@@ -4509,6 +4665,23 @@ const styles = {
   exFieldsRow: { display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8 },
   exFieldGroup: { display: "flex", alignItems: "center", gap: 4 },
   numMini: { width: 34, fontSize: 13, padding: "4px", borderRadius: 5, border: `1px solid ${PENCIL}`, textAlign: "center" },
+  setsStepper: { display: "flex", alignItems: "center", gap: 4 },
+  stepperBtn: {
+    width: 26,
+    height: 26,
+    borderRadius: 6,
+    border: `1px solid ${PENCIL}`,
+    background: PAPER,
+    color: PENCIL,
+    fontSize: 15,
+    lineHeight: 1,
+    cursor: "pointer",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 0,
+    flexShrink: 0,
+  },
   times: { color: PENCIL, fontSize: 13 },
   repsMini: { width: 56, fontSize: 13, padding: "4px", borderRadius: 5, border: `1px solid ${PENCIL}`, textAlign: "center" },
   restIcon: { fontSize: 13, color: MARGIN_RED },
@@ -4774,6 +4947,17 @@ const styles = {
     alignItems: "center",
     justifyContent: "center",
     padding: 0,
+  },
+  dorAlertBox: {
+    fontSize: 12,
+    color: "#8A5E12",
+    background: "rgba(217,164,65,0.14)",
+    border: "1px solid rgba(217,164,65,0.35)",
+    borderRadius: 8,
+    padding: "6px 10px",
+    marginTop: 6,
+    marginBottom: 4,
+    lineHeight: 1.4,
   },
   conquistasRow: { display: "flex", flexWrap: "wrap", gap: 10 },
   conquistaItem: {
@@ -5340,6 +5524,63 @@ const styles = {
     fontSize: 13,
     letterSpacing: 0.5,
     color: INK,
+  },
+  marcaFotoWrap: {
+    position: "relative",
+    width: 56,
+    height: 56,
+  },
+  marcaFotoRing: {
+    width: 56,
+    height: 56,
+    borderRadius: "50%",
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+    border: "3px solid transparent",
+    backgroundImage: "linear-gradient(#fff,#fff), linear-gradient(135deg, #1CA7E0 0%, #1FD1A6 55%, #8BDB4B 100%)",
+    backgroundOrigin: "border-box",
+    backgroundClip: "content-box, border-box",
+    boxShadow: "0 2px 8px rgba(0,0,0,0.18)",
+  },
+  marcaFotoLogoBadge: {
+    position: "absolute",
+    bottom: -2,
+    right: -2,
+    width: 24,
+    height: 24,
+    borderRadius: 8,
+    background: "#131A1D",
+    border: "2px solid " + PAPER,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  fotoCompartilharRow: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 10,
+    flexWrap: "wrap",
+    marginBottom: 4,
+  },
+  fotoCompartilharBtn: {
+    fontSize: 12.5,
+    fontWeight: 700,
+    color: INK,
+    background: PAPER_ALT,
+    border: `1px solid rgba(43,42,40,0.18)`,
+    borderRadius: 20,
+    padding: "7px 14px",
+    cursor: "pointer",
+  },
+  fotoCompartilharRemover: {
+    fontSize: 12,
+    color: MARGIN_RED,
+    background: "transparent",
+    border: "none",
+    cursor: "pointer",
+    textDecoration: "underline",
+    padding: "4px 2px",
   },
   tostPreviewCard: {
     border: `1px solid rgba(43,42,40,0.14)`,
