@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from "recharts";
 
@@ -213,7 +212,7 @@ const FOCOS = ["Peito", "Costas", "Perna", "Ombro", "Braço", "Abdômen", "Corpo
 const DIAS_SEMANA = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo"];
 const DIAS_ABREV = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
 const CARDIO_TIPOS = ["Esteira", "Bicicleta", "Elíptico", "Corrida ao ar livre", "Pular corda", "Escada"];
-const DESCANSO_OPCOES = ["1 min", "1:30 min", "2 min", "2:30 min", "3 min"];
+const DESCANSO_OPCOES = ["1 min", "1:30 min", "2 min", "2:30 min", "3 min", "3:30 min", "4 min", "4:30 min", "5 min"];
 const DESCANSO_PADRAO = "2 min";
 
 // ---------- Modelos prontos de semana ----------
@@ -648,6 +647,16 @@ function getVideoUrl(exercicio) {
   // fallback: primeira opção cadastrada, caso a máquina exata não tenha vídeo específico ainda
   const primeira = Object.values(porMaquina)[0];
   return primeira || null;
+}
+
+// Capa (thumbnail) do vídeo cadastrado pro exercício/aparelho atual, extraída do próprio link do YouTube
+function getThumbnailExercicio(exercicio) {
+  const url = getVideoUrl(exercicio);
+  if (!url) return null;
+  const match = url.match(/(?:shorts\/|v=|youtu\.be\/)([a-zA-Z0-9_-]{6,})/);
+  const id = match && match[1];
+  if (!id) return null;
+  return `https://img.youtube.com/vi/${id}/mqdefault.jpg`;
 }
 
 // Exercícios da categoria Funcional: quando não há vídeo específico cadastrado,
@@ -1438,7 +1447,17 @@ const GUIA_EXECUCAO = {
 };
 
 function descansoParaSegundos(str) {
-  const mapa = { "1 min": 60, "1:30 min": 90, "2 min": 120, "2:30 min": 150, "3 min": 180 };
+  const mapa = {
+    "1 min": 60,
+    "1:30 min": 90,
+    "2 min": 120,
+    "2:30 min": 150,
+    "3 min": 180,
+    "3:30 min": 210,
+    "4 min": 240,
+    "4:30 min": 270,
+    "5 min": 300,
+  };
   return mapa[str] || 120;
 }
 
@@ -1467,6 +1486,59 @@ function tocarBip() {
   } catch (e) {
     // ambiente sem suporte a áudio — segue só com vibração/visual
   }
+}
+
+function desenharLogoMassi(ctx, cx, cy, tamanho) {
+  const metade = tamanho / 2;
+  const raioCanto = tamanho * 0.27;
+  ctx.save();
+  ctx.beginPath();
+  ctx.moveTo(cx - metade + raioCanto, cy - metade);
+  ctx.arcTo(cx + metade, cy - metade, cx + metade, cy + metade, raioCanto);
+  ctx.arcTo(cx + metade, cy + metade, cx - metade, cy + metade, raioCanto);
+  ctx.arcTo(cx - metade, cy + metade, cx - metade, cy - metade, raioCanto);
+  ctx.arcTo(cx - metade, cy - metade, cx + metade, cy - metade, raioCanto);
+  ctx.closePath();
+  ctx.fillStyle = "#131A1D";
+  ctx.fill();
+
+  const grad = ctx.createLinearGradient(cx - metade, cy, cx + metade, cy);
+  grad.addColorStop(0, "#1CA7E0");
+  grad.addColorStop(0.55, "#1FD1A6");
+  grad.addColorStop(1, "#8BDB4B");
+  const escala = tamanho / 44;
+  const pontos = [[8, 26], [16, 26], [20, 15], [24, 32], [28, 20], [32, 26], [36, 26]];
+  ctx.beginPath();
+  pontos.forEach(([x, y], i) => {
+    const px = cx - metade + x * escala;
+    const py = cy - metade + y * escala;
+    if (i === 0) ctx.moveTo(px, py);
+    else ctx.lineTo(px, py);
+  });
+  ctx.strokeStyle = grad;
+  ctx.lineWidth = 3 * escala;
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+  ctx.stroke();
+  ctx.restore();
+}
+
+function quebrarLinhasCanvas(ctx, texto, x, y, larguraMax, alturaLinha) {
+  const palavras = texto.split(" ");
+  const linhas = [];
+  let linha = "";
+  palavras.forEach((palavra) => {
+    const teste = linha ? `${linha} ${palavra}` : palavra;
+    if (ctx.measureText(teste).width > larguraMax && linha) {
+      linhas.push(linha);
+      linha = palavra;
+    } else {
+      linha = teste;
+    }
+  });
+  if (linha) linhas.push(linha);
+  const inicioY = y - ((linhas.length - 1) * alturaLinha) / 2;
+  linhas.forEach((l, i) => ctx.fillText(l, x, inicioY + i * alturaLinha));
 }
 
 function MassiLogoMark() {
@@ -1567,7 +1639,7 @@ function calcularCaloriasTreino(diaEntry) {
 }
 
 function toExercicio(base) {
-  return { id: uid(), ...base, maquina: base.maquinas[0], descanso: DESCANSO_PADRAO, concluido: false, carga: "" };
+  return { id: uid(), ...base, maquina: base.maquinas[0], descanso: DESCANSO_PADRAO, concluido: false, carga: "", cargas: Array(base.sets || 1).fill("") };
 }
 
 function makeDayEntry(dia, foco) {
@@ -2025,6 +2097,77 @@ function AppMassiPro({ onSolicitarRemount }) {
       registro.calorias ? ` — ~${registro.calorias} kcal` : ""
     }! 💪`;
 
+  const gerarImagemCompartilhamento = (registro) =>
+    new Promise((resolve) => {
+      const W = 1080;
+      const H = 1080;
+      const canvas = document.createElement("canvas");
+      canvas.width = W;
+      canvas.height = H;
+      const ctx = canvas.getContext("2d");
+
+      const fundo = ctx.createLinearGradient(0, 0, W, H);
+      fundo.addColorStop(0, "#182226");
+      fundo.addColorStop(1, "#0F1417");
+      ctx.fillStyle = fundo;
+      ctx.fillRect(0, 0, W, H);
+
+      const brilho1 = ctx.createRadialGradient(W * 0.12, H * 0.08, 0, W * 0.12, H * 0.08, W * 0.65);
+      brilho1.addColorStop(0, "rgba(28,167,224,0.35)");
+      brilho1.addColorStop(1, "rgba(28,167,224,0)");
+      ctx.fillStyle = brilho1;
+      ctx.fillRect(0, 0, W, H);
+
+      const brilho2 = ctx.createRadialGradient(W * 0.9, H * 0.92, 0, W * 0.9, H * 0.92, W * 0.65);
+      brilho2.addColorStop(0, "rgba(139,219,75,0.3)");
+      brilho2.addColorStop(1, "rgba(139,219,75,0)");
+      ctx.fillStyle = brilho2;
+      ctx.fillRect(0, 0, W, H);
+
+      const finalizar = () => {
+        ctx.textAlign = "center";
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "bold 66px system-ui, sans-serif";
+        ctx.fillText("Massi Pro", W / 2, H * 0.66);
+
+        ctx.font = "500 34px system-ui, sans-serif";
+        ctx.fillStyle = "#c9d6da";
+        quebrarLinhasCanvas(ctx, textoCompartilhamento(registro), W / 2, H * 0.74, W * 0.78, 46);
+
+        canvas.toBlob((blob) => resolve(blob), "image/jpeg", 0.92);
+      };
+
+      if (fotoCompartilhamento) {
+        const img = new Image();
+        img.onload = () => {
+          const cx = W / 2;
+          const cy = H * 0.36;
+          const r = W * 0.22;
+          const anel = ctx.createLinearGradient(cx - r, cy - r, cx + r, cy + r);
+          anel.addColorStop(0, "#1CA7E0");
+          anel.addColorStop(0.55, "#1FD1A6");
+          anel.addColorStop(1, "#8BDB4B");
+          ctx.beginPath();
+          ctx.arc(cx, cy, r + 10, 0, Math.PI * 2);
+          ctx.fillStyle = anel;
+          ctx.fill();
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(cx, cy, r, 0, Math.PI * 2);
+          ctx.closePath();
+          ctx.clip();
+          ctx.drawImage(img, cx - r, cy - r, r * 2, r * 2);
+          ctx.restore();
+          desenharLogoMassi(ctx, cx + r * 0.68, cy + r * 0.68, 96);
+          finalizar();
+        };
+        img.src = fotoCompartilhamento;
+      } else {
+        desenharLogoMassi(ctx, W / 2, H * 0.34, 200);
+        finalizar();
+      }
+    });
+
   const copiarTextoTreino = async (registro) => {
     if (!registro) return;
     try {
@@ -2075,6 +2218,19 @@ function AppMassiPro({ onSolicitarRemount }) {
     const texto = textoCompartilhamento(registro);
     try {
       if (navigator.share) {
+        if (fotoCompartilhamento && navigator.canShare) {
+          try {
+            const blob = await gerarImagemCompartilhamento(registro);
+            const arquivo = new File([blob], "massi-pro-treino.jpg", { type: "image/jpeg" });
+            if (navigator.canShare({ files: [arquivo] })) {
+              await navigator.share({ files: [arquivo], text: texto });
+              setMostrarOpcoesCompartilhar(false);
+              return;
+            }
+          } catch (e) {
+            // geração/compartilhamento de imagem falhou — segue com texto simples abaixo
+          }
+        }
         await navigator.share({ text: texto });
         setMostrarOpcoesCompartilhar(false);
       } else {
@@ -2202,7 +2358,36 @@ function AppMassiPro({ onSolicitarRemount }) {
         d.dia === dia
           ? {
               ...d,
-              exercicios: d.exercicios.map((e) => (e.id === id ? { ...e, [campo]: valor } : e)),
+              exercicios: d.exercicios.map((e) => {
+                if (e.id !== id) return e;
+                if (campo === "sets") {
+                  const novoTotal = Math.max(1, Number(valor) || 1);
+                  const cargasAtual = e.cargas && e.cargas.length ? e.cargas : [e.carga || ""];
+                  const novasCargas = Array.from({ length: novoTotal }, (_, i) => cargasAtual[i] || cargasAtual[cargasAtual.length - 1] || "");
+                  return { ...e, sets: novoTotal, cargas: novasCargas };
+                }
+                return { ...e, [campo]: valor };
+              }),
+            }
+          : d
+      )
+    );
+  };
+
+  const editarCargaSerie = (dia, id, indiceSerie, valor) => {
+    setRotina((prev) =>
+      prev.map((d) =>
+        d.dia === dia
+          ? {
+              ...d,
+              exercicios: d.exercicios.map((e) => {
+                if (e.id !== id) return e;
+                const totalSets = e.sets || 1;
+                const cargasAtual = e.cargas && e.cargas.length === totalSets ? e.cargas : Array.from({ length: totalSets }, (_, i) => (e.cargas && e.cargas[i]) || e.carga || "");
+                const novasCargas = [...cargasAtual];
+                novasCargas[indiceSerie] = valor;
+                return { ...e, cargas: novasCargas, carga: novasCargas[0] };
+              }),
             }
           : d
       )
@@ -2398,6 +2583,12 @@ function AppMassiPro({ onSolicitarRemount }) {
                   )}
                 </div>
 
+                {fotoCompartilhamento && (
+                  <div style={styles.fotoCompartilharDica}>
+                    A foto só vai junto pelo botão "Mais opções" abaixo (é como o celular consegue anexar imagem). Nos botões diretos de WhatsApp/Facebook/X/Telegram, só o texto é enviado.
+                  </div>
+                )}
+
                 <div style={styles.tostPreviewCard}>
                   <div style={styles.toastPreviewLabel}>Prévia do que vai ser compartilhado</div>
                   <div style={styles.toastPreviewTexto}>{textoCompartilhamento(ultimoTreinoConcluido)}</div>
@@ -2488,6 +2679,22 @@ function AppMassiPro({ onSolicitarRemount }) {
           entry={guiadoAtivo}
           onFechar={() => setGuiadoAtivo(null)}
           onAbrirExercicio={(ex) => setExercicioAberto(ex)}
+          onEditCarga={(exId, serieIndex, valor) => {
+            editarCargaSerie(guiadoAtivo.dia, exId, serieIndex, valor);
+            setGuiadoAtivo((prev) =>
+              prev && {
+                ...prev,
+                exercicios: prev.exercicios.map((e) => {
+                  if (e.id !== exId) return e;
+                  const totalSets = e.sets || 1;
+                  const atual = e.cargas && e.cargas.length === totalSets ? e.cargas : Array.from({ length: totalSets }, (_, i) => (e.cargas && e.cargas[i]) || e.carga || "");
+                  const novas = [...atual];
+                  novas[serieIndex] = valor;
+                  return { ...e, cargas: novas, carga: novas[0] };
+                }),
+              }
+            );
+          }}
         />
       )}
 
@@ -2628,6 +2835,7 @@ function AppMassiPro({ onSolicitarRemount }) {
                   onAddExercicio={() => addExercicio(d.dia, d.foco)}
                   onRemoveExercicio={(id) => removerExercicio(d.dia, id)}
                   onEditExercicio={(id, campo, valor) => editarExercicio(d.dia, id, campo, valor)}
+                  onEditCargaSerie={(id, indiceSerie, valor) => editarCargaSerie(d.dia, id, indiceSerie, valor)}
                   onEditCardio={(campo, valor) => editarCardio(d.dia, campo, valor)}
                   onAbrirExercicio={(ex) => setExercicioAberto(ex)}
                   onIniciarDescanso={(descanso, nome) => iniciarDescanso(descanso, nome)}
@@ -3299,7 +3507,7 @@ const CHAVES_BACKUP = [
   "foto-compartilhamento",
 ];
 
-function ModoGuiadoOverlay({ entry, onFechar, onAbrirExercicio }) {
+function ModoGuiadoOverlay({ entry, onFechar, onAbrirExercicio, onEditCarga }) {
   const [indice, setIndice] = useState(0);
   const [serieAtual, setSerieAtual] = useState(1);
   const [estado, setEstado] = useState("serie"); // "serie" | "descanso" | "treinoConcluido"
@@ -3384,6 +3592,21 @@ function ModoGuiadoOverlay({ entry, onFechar, onAbrirExercicio }) {
             <div style={styles.guiadoSeriesReps}>
               Série {serieAtual} de {totalSets} · {ex.reps}
             </div>
+            {(() => {
+              const cargasAtual = ex.cargas && ex.cargas.length === totalSets ? ex.cargas : Array.from({ length: totalSets }, (_, i) => (ex.cargas && ex.cargas[i]) || ex.carga || "");
+              return (
+                <div style={styles.guiadoCargaRow}>
+                  <span style={styles.guiadoCargaLabel}>Carga desta série:</span>
+                  <input
+                    type="text"
+                    value={cargasAtual[serieAtual - 1] || ""}
+                    placeholder="ex: 20kg"
+                    onChange={(e) => onEditCarga(ex.id, serieAtual - 1, e.target.value)}
+                    style={styles.guiadoCargaInput}
+                  />
+                </div>
+              );
+            })()}
             <button style={styles.guiadoVerBtn} onClick={() => window.open(youtubeUrl, "_blank")}>
               {isCanalFuncional ? "▶ Ver exercícios no canal (escolha o seu)" : "▶ Assistir execução no YouTube"}
             </button>
@@ -3404,6 +3627,13 @@ function ModoGuiadoOverlay({ entry, onFechar, onAbrirExercicio }) {
                 ? "Depois disso, próximo exercício"
                 : "Última série do treino"}
             </p>
+            {serieAtual < totalSets && (() => {
+              const cargasAtual = ex.cargas && ex.cargas.length === totalSets ? ex.cargas : Array.from({ length: totalSets }, (_, i) => (ex.cargas && ex.cargas[i]) || ex.carga || "");
+              const proximaCarga = cargasAtual[serieAtual];
+              return proximaCarga ? (
+                <p style={styles.guiadoProximaCarga}>Carga da próxima série: {proximaCarga}</p>
+              ) : null;
+            })()}
             <button style={styles.guiadoVerBtn} onClick={() => setRestanteSeg(0)}>
               Pular descanso
             </button>
@@ -4099,7 +4329,7 @@ function getUltimaDorRelacionada(nomeExercicio, dores) {
   return mesmoGrupo ? { ...mesmoGrupo, mesmoGrupo: true } : null;
 }
 
-function DayCard({ entry, onFoco, onAddExercicio, onRemoveExercicio, onEditExercicio, onEditCardio, onAbrirExercicio, onIniciarDescanso, onTrocarExercicio, onConcluirTreino, onRegistrarDor, onIniciarGuiado, progressao, dores }) {
+function DayCard({ entry, onFoco, onAddExercicio, onRemoveExercicio, onEditExercicio, onEditCargaSerie, onEditCardio, onAbrirExercicio, onIniciarDescanso, onTrocarExercicio, onConcluirTreino, onRegistrarDor, onIniciarGuiado, progressao, dores }) {
   const { dia, foco, cardio, exercicios } = entry;
   const isDescanso = foco === "Descanso";
   const isCardio = foco === "Cardio";
@@ -4248,80 +4478,120 @@ function DayCard({ entry, onFoco, onAddExercicio, onRemoveExercicio, onEditExerc
                 )}
 
                 <div style={styles.exFieldsRow}>
-                  <div style={styles.exFieldGroup}>
-                    <div style={styles.setsStepper}>
-                      <button
-                        type="button"
-                        onClick={() => onEditExercicio(ex.id, "sets", Math.max(1, (Number(ex.sets) || 1) - 1))}
-                        style={styles.stepperBtn}
-                        aria-label={`Diminuir número de séries de ${ex.name}`}
-                      >
-                        −
-                      </button>
-                      <input
-                        type="number"
-                        inputMode="numeric"
-                        value={ex.sets}
-                        min={1}
-                        max={10}
-                        onFocus={(e) => e.target.select()}
-                        onChange={(e) => onEditExercicio(ex.id, "sets", e.target.value === "" ? "" : Number(e.target.value))}
-                        onBlur={(e) => {
-                          const v = Number(e.target.value);
-                          onEditExercicio(ex.id, "sets", Number.isFinite(v) && v > 0 ? Math.min(10, v) : 1);
-                        }}
-                        style={styles.numMini}
+                  {(() => {
+                    const thumb = getThumbnailExercicio(ex);
+                    if (!thumb) return null;
+                    return (
+                      <img
+                        src={thumb}
+                        alt={`Capa do vídeo de ${ex.name}`}
+                        style={styles.exThumb}
+                        loading="lazy"
+                        onClick={() => onAbrirExercicio(ex)}
+                        onError={(e) => { e.target.style.display = "none"; }}
                       />
-                      <button
-                        type="button"
-                        onClick={() => onEditExercicio(ex.id, "sets", Math.min(10, (Number(ex.sets) || 0) + 1))}
-                        style={styles.stepperBtn}
-                        aria-label={`Aumentar número de séries de ${ex.name}`}
-                      >
-                        +
-                      </button>
+                    );
+                  })()}
+                  <div style={styles.exFieldGroup}>
+                    <div style={styles.exFieldLabeled}>
+                      <span style={styles.exFieldLabel}>Séries</span>
+                      <div style={styles.setsStepper}>
+                        <button
+                          type="button"
+                          onClick={() => onEditExercicio(ex.id, "sets", Math.max(1, (Number(ex.sets) || 1) - 1))}
+                          style={styles.stepperBtn}
+                          aria-label={`Diminuir número de séries de ${ex.name}`}
+                        >
+                          −
+                        </button>
+                        <input
+                          type="number"
+                          inputMode="numeric"
+                          value={ex.sets}
+                          min={1}
+                          max={10}
+                          onFocus={(e) => e.target.select()}
+                          onChange={(e) => onEditExercicio(ex.id, "sets", e.target.value === "" ? "" : Number(e.target.value))}
+                          onBlur={(e) => {
+                            const v = Number(e.target.value);
+                            onEditExercicio(ex.id, "sets", Number.isFinite(v) && v > 0 ? Math.min(10, v) : 1);
+                          }}
+                          style={styles.numMini}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => onEditExercicio(ex.id, "sets", Math.min(10, (Number(ex.sets) || 0) + 1))}
+                          style={styles.stepperBtn}
+                          aria-label={`Aumentar número de séries de ${ex.name}`}
+                        >
+                          +
+                        </button>
+                      </div>
                     </div>
                     <span style={styles.times}>×</span>
-                    <input
-                      type="text"
-                      value={ex.reps}
-                      onChange={(e) => onEditExercicio(ex.id, "reps", e.target.value)}
-                      style={styles.repsMini}
-                    />
+                    <div style={styles.exFieldLabeled}>
+                      <span style={styles.exFieldLabel}>Repetições</span>
+                      <input
+                        type="text"
+                        value={ex.reps}
+                        onChange={(e) => onEditExercicio(ex.id, "reps", e.target.value)}
+                        style={styles.repsMini}
+                      />
+                    </div>
                   </div>
                   <div style={styles.exFieldGroup}>
-                    <span style={styles.restIcon}>⏱</span>
-                    <select
-                      value={ex.descanso}
-                      onChange={(e) => onEditExercicio(ex.id, "descanso", e.target.value)}
-                      style={styles.restSelect}
-                    >
-                      {DESCANSO_OPCOES.map((r) => (
-                        <option key={r} value={r}>{r}</option>
-                      ))}
-                    </select>
-                    <button
-                      style={styles.startTimerBtn}
-                      onClick={() => onIniciarDescanso(ex.descanso, ex.name)}
-                      aria-label={`Iniciar descanso de ${ex.name}`}
-                    >
-                      ▶
-                    </button>
+                    <div style={styles.exFieldLabeled}>
+                      <span style={styles.exFieldLabel}>Descanso</span>
+                      <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                        <span style={styles.restIcon}>⏱</span>
+                        <select
+                          value={ex.descanso}
+                          onChange={(e) => onEditExercicio(ex.id, "descanso", e.target.value)}
+                          style={styles.restSelect}
+                        >
+                          {DESCANSO_OPCOES.map((r) => (
+                            <option key={r} value={r}>{r}</option>
+                          ))}
+                        </select>
+                        <button
+                          style={styles.startTimerBtn}
+                          onClick={() => onIniciarDescanso(ex.descanso, ex.name)}
+                          aria-label={`Iniciar descanso de ${ex.name}`}
+                        >
+                          ▶
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
-                <div style={styles.cargaRow}>
-                  <span style={styles.cargaLabel}>Carga:</span>
-                  <input
-                    type="text"
-                    value={ex.carga || ""}
-                    placeholder="ex: 20kg"
-                    onChange={(e) => onEditExercicio(ex.id, "carga", e.target.value)}
-                    style={styles.cargaInput}
-                  />
-                  {progressao && progressao[ex.name] > 0 && progressao[ex.name] % 3 === 0 && (
-                    <span style={styles.progressaoTag}>🔺 Hora de aumentar a carga</span>
-                  )}
+                <div style={styles.cargaSeriesBox}>
+                  <div style={styles.cargaSeriesTitulo}>
+                    Carga por série
+                    {progressao && progressao[ex.name] > 0 && progressao[ex.name] % 3 === 0 && (
+                      <span style={styles.progressaoTag}>🔺 Hora de aumentar a carga</span>
+                    )}
+                  </div>
+                  <div style={styles.cargaSeriesGrid}>
+                    {Array.from({ length: ex.sets || 1 }, (_, i) => {
+                      const cargasAtual = ex.cargas && ex.cargas.length === (ex.sets || 1) ? ex.cargas : Array.from({ length: ex.sets || 1 }, (_, j) => (ex.cargas && ex.cargas[j]) || ex.carga || "");
+                      return (
+                        <div key={i} style={styles.cargaSerieItem}>
+                          <span style={styles.cargaSerieNum}>Série {i + 1}</span>
+                          <input
+                            type="text"
+                            value={cargasAtual[i] || ""}
+                            placeholder="ex: 20kg"
+                            onChange={(e) => onEditCargaSerie(ex.id, i, e.target.value)}
+                            style={styles.cargaInput}
+                          />
+                        </div>
+                      );
+                    })}
+                  </div>
+                  <div style={styles.cargaSeriesDica}>
+                    Diferente em cada série? Ajuste aqui — no treino guiado, a carga certa aparece automaticamente quando você mudar de série.
+                  </div>
                 </div>
               </div>
             ))}
@@ -4663,6 +4933,15 @@ const styles = {
   },
   machineFixed: { fontSize: 12.5, color: PENCIL, marginBottom: 6, fontStyle: "italic" },
   exFieldsRow: { display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8 },
+  exThumb: {
+    width: 52,
+    height: 52,
+    borderRadius: 8,
+    objectFit: "cover",
+    flexShrink: 0,
+    cursor: "pointer",
+    border: `1px solid rgba(43,42,40,0.14)`,
+  },
   exFieldGroup: { display: "flex", alignItems: "center", gap: 4 },
   numMini: { width: 34, fontSize: 13, padding: "4px", borderRadius: 5, border: `1px solid ${PENCIL}`, textAlign: "center" },
   setsStepper: { display: "flex", alignItems: "center", gap: 4 },
@@ -4824,6 +5103,42 @@ const styles = {
     border: `1px solid rgba(43,42,40,0.18)`,
     background: PAPER,
     color: INK,
+  },
+  exFieldLabeled: { display: "flex", flexDirection: "column", gap: 3, alignItems: "flex-start" },
+  exFieldLabel: {
+    fontSize: 10,
+    fontWeight: 800,
+    letterSpacing: 0.4,
+    textTransform: "uppercase",
+    color: PENCIL,
+    opacity: 0.75,
+  },
+  cargaSeriesBox: {
+    marginTop: 10,
+    padding: "10px 12px",
+    borderRadius: 10,
+    background: PAPER_ALT,
+    border: `1px solid rgba(43,42,40,0.1)`,
+  },
+  cargaSeriesTitulo: {
+    fontSize: 11.5,
+    fontWeight: 800,
+    color: PENCIL,
+    marginBottom: 8,
+    display: "flex",
+    alignItems: "center",
+    gap: 8,
+    flexWrap: "wrap",
+  },
+  cargaSeriesGrid: { display: "flex", flexWrap: "wrap", gap: 8 },
+  cargaSerieItem: { display: "flex", flexDirection: "column", gap: 3 },
+  cargaSerieNum: { fontSize: 10.5, color: PENCIL, opacity: 0.8 },
+  cargaSeriesDica: {
+    fontSize: 10.5,
+    color: PENCIL,
+    opacity: 0.7,
+    marginTop: 8,
+    lineHeight: 1.4,
   },
   progressaoTag: {
     fontSize: 11,
@@ -5320,6 +5635,20 @@ const styles = {
   guiadoNome: { fontFamily: monoFont, fontWeight: 800, fontSize: 24, color: "#F6F7F9" },
   guiadoMaquina: { fontSize: 13, color: "#8b95a1" },
   guiadoSeriesReps: { fontFamily: monoFont, fontSize: 16, color: HIGHLIGHT, marginBottom: 10 },
+  guiadoCargaRow: { display: "flex", alignItems: "center", justifyContent: "center", gap: 8, marginBottom: 14 },
+  guiadoCargaLabel: { fontSize: 12.5, color: "#8b95a1" },
+  guiadoCargaInput: {
+    width: 100,
+    fontFamily: "inherit",
+    fontSize: 14,
+    padding: "6px 10px",
+    borderRadius: 8,
+    border: "1px solid rgba(255,255,255,0.25)",
+    background: "rgba(255,255,255,0.08)",
+    color: "#fff",
+    textAlign: "center",
+  },
+  guiadoProximaCarga: { fontSize: 12.5, color: HIGHLIGHT, marginTop: -4, marginBottom: 8 },
   guiadoTimerGrande: { fontFamily: monoFont, fontSize: 56, fontWeight: 800, color: "#F6F7F9", marginBottom: 6 },
   guiadoVerBtn: {
     padding: "10px 18px",
@@ -5581,6 +5910,14 @@ const styles = {
     cursor: "pointer",
     textDecoration: "underline",
     padding: "4px 2px",
+  },
+  fotoCompartilharDica: {
+    fontSize: 11,
+    color: PENCIL,
+    opacity: 0.75,
+    textAlign: "center",
+    lineHeight: 1.4,
+    marginBottom: 4,
   },
   tostPreviewCard: {
     border: `1px solid rgba(43,42,40,0.14)`,
