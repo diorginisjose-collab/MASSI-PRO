@@ -116,14 +116,14 @@ if (typeof window !== "undefined" && !window.storage.__comPerfis) {
 // cada exercício traz opções de máquina/equipamento alternativas
 const LIBRARY = {
   Peito: [
-    { name: "Supino reto", sets: 3, reps: "10-12", maquinas: ["Barra livre", "Halteres", "Máquina smith", "Máquina de supino (chest press)"] },
-    { name: "Supino inclinado", sets: 3, reps: "10-12", maquinas: ["Halteres", "Barra livre", "Máquina smith", "Máquina"] },
-    { name: "Supino declinado", sets: 3, reps: "10-12", maquinas: ["Barra livre", "Halteres", "Máquina"] },
-    { name: "Crossover / peck deck", sets: 3, reps: "12-15", maquinas: ["Cabo (crossover)", "Peck deck (voador)", "Cabo (crossover) - parte inferior", "Cabo (crossover) - parte superior", "Cabo (crossover) - inclinado"] },
-    { name: "Crucifixo", sets: 3, reps: "12-15", maquinas: ["Halteres", "Máquina (peck deck)", "Cabo (unilateral, em pé)"] },
-    { name: "Pullover", sets: 3, reps: "12-15", maquinas: ["Halteres", "Máquina"] },
-    { name: "Paralelas (mergulho)", sets: 3, reps: "8-12", maquinas: ["Peso corporal"] },
-    { name: "Flexão de braço", sets: 3, reps: "até a falha", maquinas: ["Peso corporal", "Peso corporal (apoio no joelho)", "Peso corporal (inclinado)"] },
+    { name: "Supino reto", sets: 3, reps: "10-12", maquinas: ["Barra livre", "Halteres", "Máquina smith", "Máquina de supino (chest press)"], regiao: "medial" },
+    { name: "Supino inclinado", sets: 3, reps: "10-12", maquinas: ["Halteres", "Barra livre", "Máquina smith", "Máquina"], regiao: "superior" },
+    { name: "Supino declinado", sets: 3, reps: "10-12", maquinas: ["Barra livre", "Halteres", "Máquina"], regiao: "inferior" },
+    { name: "Crossover / peck deck", sets: 3, reps: "12-15", maquinas: ["Cabo (crossover)", "Peck deck (voador)", "Cabo (crossover) - parte inferior", "Cabo (crossover) - parte superior", "Cabo (crossover) - inclinado"], regiao: "medial" },
+    { name: "Crucifixo", sets: 3, reps: "12-15", maquinas: ["Halteres", "Máquina (peck deck)", "Cabo (unilateral, em pé)"], regiao: "medial" },
+    { name: "Pullover", sets: 3, reps: "12-15", maquinas: ["Halteres", "Máquina"], regiao: "superior" },
+    { name: "Paralelas (mergulho)", sets: 3, reps: "8-12", maquinas: ["Peso corporal"], regiao: "inferior" },
+    { name: "Flexão de braço", sets: 3, reps: "até a falha", maquinas: ["Peso corporal", "Peso corporal (apoio no joelho)", "Peso corporal (inclinado)"], regiao: "medial" },
   ],
   Costas: [
     { name: "Puxada frontal", sets: 3, reps: "10-12", maquinas: ["Pulley (puxada alta)", "Pulldown (pegada aberta)", "Máquina (puxada alta)", "Máquina (puxada frente)", "Graviton (assistida)"] },
@@ -208,10 +208,61 @@ const LIBRARY = {
   ],
 };
 
-const FOCOS = ["Peito", "Costas", "Perna", "Ombro", "Braço", "Abdômen", "Corpo inteiro", "Funcional", "Cardio", "Descanso"];
+// ---------- Grupos derivados, usados pela composição automática dos treinos ----------
+// (agonista principal + sinergista + estabilizador, conforme as regras de montagem)
+const TRICEPS_POOL = LIBRARY.Braço.filter((e) => e.name.startsWith("Tríceps"));
+const BICEPS_POOL = LIBRARY.Braço.filter((e) => e.name.startsWith("Rosca"));
+const OMBRO_POSTERIOR_POOL = LIBRARY.Ombro.filter((e) => e.name.includes("posterior"));
+const OMBRO_PRINCIPAL_POOL = LIBRARY.Ombro.filter((e) => !e.name.includes("posterior"));
+// perna completa: cobre quadríceps, posterior de coxa, glúteo e panturrilha
+const PERNA_COMPLETA_POOL = [
+  LIBRARY.Perna.find((e) => e.name === "Leg press"),
+  LIBRARY.Perna.find((e) => e.name === "Cadeira extensora"),
+  LIBRARY.Perna.find((e) => e.name === "Mesa/cadeira flexora"),
+  LIBRARY.Perna.find((e) => e.name === "Stiff (levantamento terra romeno)"),
+  LIBRARY.Perna.find((e) => e.name === "Elevação pélvica (hip thrust)"),
+  LIBRARY.Perna.find((e) => e.name === "Panturrilha em pé"),
+].filter(Boolean);
+
+LIBRARY.Superior = [
+  ...LIBRARY.Peito.slice(0, 2),
+  ...LIBRARY.Costas.slice(0, 2),
+  ...OMBRO_PRINCIPAL_POOL.slice(0, 1),
+  ...TRICEPS_POOL.slice(0, 1),
+  ...BICEPS_POOL.slice(0, 1),
+];
+
+const FOCOS = ["Peito", "Costas", "Perna", "Ombro", "Braço", "Abdômen", "Corpo inteiro", "Funcional", "Superior", "Cardio", "Descanso"];
 const DIAS_SEMANA = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo"];
 const DIAS_ABREV = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
 const CARDIO_TIPOS = ["Esteira", "Bicicleta", "Elíptico", "Corrida ao ar livre", "Pular corda", "Escada"];
+
+// Vídeo curto de execução por tipo de cardio — mesmo esquema dos exercícios.
+// Preencha aqui os links (formato "https://www.youtube.com/shorts/ID") conforme forem enviados.
+const VIDEOS_CARDIO = {
+  "Esteira": "https://www.youtube.com/shorts/VBMqOiiIZAA",
+  "Bicicleta": "https://www.youtube.com/shorts/eZPSwRImpfY",
+  "Elíptico": "https://www.youtube.com/shorts/wF9uAXm3p70",
+  "Corrida ao ar livre": "https://www.youtube.com/shorts/vkxFmxz_GWY",
+  "Pular corda": "https://www.youtube.com/shorts/VHgbIIJGBtU",
+  "Escada": "https://www.youtube.com/shorts/gpSVC7Y5RIY",
+};
+
+function getVideoCardioUrl(tipo) {
+  const url = VIDEOS_CARDIO[tipo];
+  if (url) return url;
+  // sem vídeo específico cadastrado ainda: cai numa busca do YouTube pela forma correta
+  return `https://www.youtube.com/results?search_query=${encodeURIComponent(tipo + " forma correta como fazer")}`;
+}
+
+function getThumbnailCardio(tipo) {
+  const url = VIDEOS_CARDIO[tipo];
+  if (!url) return null;
+  const match = url.match(/(?:shorts\/|v=|youtu\.be\/)([a-zA-Z0-9_-]{6,})/);
+  const id = match && match[1];
+  if (!id) return null;
+  return `https://img.youtube.com/vi/${id}/mqdefault.jpg`;
+}
 const DESCANSO_OPCOES = ["1 min", "1:30 min", "2 min", "2:30 min", "3 min", "3:30 min", "4 min", "4:30 min", "5 min"];
 const DESCANSO_PADRAO = "2 min";
 
@@ -226,14 +277,26 @@ const MODELOS_SEMANA = [
   {
     id: "abc",
     nome: "Divisão ABC",
-    descricao: "3 dias separando grupos: Peito, Costas e Perna, com cardio no meio.",
+    descricao: "Peito (com tríceps e ombro), Costas (com bíceps e posterior de ombro) e Perna completa, com cardio no meio.",
     focos: ["Peito", "Costas", "Cardio", "Perna", "Descanso", "Descanso", "Descanso"],
+  },
+  {
+    id: "ab",
+    nome: "Divisão AB (2x)",
+    descricao: "Alterna Perna completa e Superior (peito, costas, ombro e braço no mesmo dia), 2x cada por semana.",
+    focos: ["Perna", "Superior", "Descanso", "Perna", "Superior", "Descanso", "Descanso"],
   },
   {
     id: "upperlower",
     nome: "Upper / Lower (4x)",
     descricao: "Alterna parte superior e inferior do corpo, 4 dias por semana.",
     focos: ["Peito", "Perna", "Costas", "Perna", "Descanso", "Descanso", "Descanso"],
+  },
+  {
+    id: "abcd",
+    nome: "Divisão ABCD",
+    descricao: "Peito com tríceps, Costas com bíceps, Ombro sozinho completo, Perna completa — um grupo por dia.",
+    focos: ["Peito", "Costas", "Ombro", "Perna", "Descanso", "Descanso", "Descanso"],
   },
   {
     id: "abcde",
@@ -1642,13 +1705,70 @@ function toExercicio(base) {
   return { id: uid(), ...base, maquina: base.maquinas[0], descanso: DESCANSO_PADRAO, concluido: false, carga: "", cargas: Array(base.sets || 1).fill("") };
 }
 
-function makeDayEntry(dia, foco) {
+function makeDayEntry(dia, foco, nivel) {
   if (foco === "Cardio") {
     return { dia, foco, cardio: { tipo: "Esteira", duracao: 20, intensidade: "Moderada" }, exercicios: [] };
   }
   if (foco === "Descanso" || !foco) {
     return { dia, foco: foco || "Descanso", cardio: null, exercicios: [] };
   }
+
+  const avancado = nivel === "Intermediário" || nivel === "Avançado";
+
+  // ---- Regras de composição: agonista principal + sinergista + estabilizador ----
+  if (foco === "Peito") {
+    // agonista: 3 exercícios de peito cobrindo as 3 porções (inferior, medial, superior)
+    const porRegiao = ["superior", "medial", "inferior"].map(
+      (r) => LIBRARY.Peito.find((e) => e.regiao === r)
+    ).filter(Boolean);
+    const peitoEscolhido = porRegiao.length === 3 ? porRegiao : LIBRARY.Peito.slice(0, 3);
+    // sinergista: sempre 3 de tríceps
+    const tricepsEscolhido = TRICEPS_POOL.slice(0, 3);
+    // estabilizador: 1 ou 2 de ombro, conforme o nível
+    const ombroEscolhido = OMBRO_PRINCIPAL_POOL.slice(0, avancado ? 2 : 1);
+    return {
+      dia,
+      foco,
+      cardio: null,
+      exercicios: [...peitoEscolhido, ...tricepsEscolhido, ...ombroEscolhido].map(toExercicio),
+    };
+  }
+
+  if (foco === "Costas") {
+    // agonista: 2 ou 3 de costas, conforme o nível
+    const costasEscolhido = LIBRARY.Costas.slice(0, avancado ? 3 : 2);
+    // sinergista: o complemento em bíceps (3 ou 2)
+    const bicepsEscolhido = BICEPS_POOL.slice(0, avancado ? 2 : 3);
+    // estabilizador: sempre 1 de deltoide posterior
+    const posteriorEscolhido = OMBRO_POSTERIOR_POOL.slice(0, 1);
+    return {
+      dia,
+      foco,
+      cardio: null,
+      exercicios: [...costasEscolhido, ...bicepsEscolhido, ...posteriorEscolhido].map(toExercicio),
+    };
+  }
+
+  if (foco === "Ombro") {
+    // "ombro sozinho completo": todas as porções (frontal, lateral, posterior)
+    return {
+      dia,
+      foco,
+      cardio: null,
+      exercicios: LIBRARY.Ombro.map(toExercicio),
+    };
+  }
+
+  if (foco === "Perna") {
+    // "perna completa": quadríceps, posterior de coxa, glúteo e panturrilha
+    return {
+      dia,
+      foco,
+      cardio: null,
+      exercicios: PERNA_COMPLETA_POOL.map(toExercicio),
+    };
+  }
+
   const base = LIBRARY[foco] || [];
   return {
     dia,
@@ -1803,6 +1923,7 @@ function AppMassiPro({ onSolicitarRemount }) {
   const [saveState, setSaveState] = useState("idle");
   const [loaded, setLoaded] = useState(false);
   const [isPremium, setIsPremium] = useState(false);
+  const [nivelUsuario, setNivelUsuario] = useState(null); // nível do onboarding — usado pra montar peito/costas/ombro automaticamente
   const [showPlanos, setShowPlanos] = useState(false);
   const [showModelos, setShowModelos] = useState(false);
   const [activeTab, setActiveTab] = useState("rotina");
@@ -1894,6 +2015,10 @@ function AppMassiPro({ onSolicitarRemount }) {
       try {
         const onboardingRes = await window.storage.get("onboarding-perfil");
         if (!onboardingRes || !onboardingRes.value) setOnboardingPendente(true);
+        else {
+          const perfilSalvo = JSON.parse(onboardingRes.value);
+          if (perfilSalvo && perfilSalvo.nivel) setNivelUsuario(perfilSalvo.nivel);
+        }
       } catch (e) {
         setOnboardingPendente(true);
       }
@@ -1960,7 +2085,7 @@ function AppMassiPro({ onSolicitarRemount }) {
   };
 
   const mudarFoco = (dia, foco) => {
-    setRotina((prev) => prev.map((d) => (d.dia === dia ? makeDayEntry(dia, foco) : d)));
+    setRotina((prev) => prev.map((d) => (d.dia === dia ? makeDayEntry(dia, foco, nivelUsuario) : d)));
   };
 
   const aplicarModelo = (modeloId, objetivoId) => {
@@ -1976,7 +2101,7 @@ function AppMassiPro({ onSolicitarRemount }) {
 
     setRotina(
       DIAS_SEMANA.map((dia, i) => {
-        const entry = makeDayEntry(dia, focos[i] || "Descanso");
+        const entry = makeDayEntry(dia, focos[i] || "Descanso", nivelUsuario);
         if (!objetivo) return entry;
         if (entry.cardio) {
           entry.cardio = { ...entry.cardio, duracao: objetivo.cardioMin, intensidade: objetivo.cardioIntensidade };
@@ -2702,6 +2827,7 @@ function AppMassiPro({ onSolicitarRemount }) {
         <OnboardingModal
           onConcluir={async (respostas) => {
             setOnboardingPendente(false);
+            if (respostas.nivel) setNivelUsuario(respostas.nivel);
             try {
               await window.storage.set("onboarding-perfil", JSON.stringify(respostas));
             } catch (e) {
@@ -4357,6 +4483,27 @@ function DayCard({ entry, onFoco, onAddExercicio, onRemoveExercicio, onEditExerc
 
         {isCardio && cardio && (
           <div style={styles.cardioBlock}>
+            <div style={styles.cardioVideoRow}>
+              {(() => {
+                const thumb = getThumbnailCardio(cardio.tipo);
+                return thumb ? (
+                  <img
+                    src={thumb}
+                    alt={`Capa do vídeo de ${cardio.tipo}`}
+                    style={styles.exThumb}
+                    loading="lazy"
+                    onClick={() => window.open(getVideoCardioUrl(cardio.tipo), "_blank")}
+                    onError={(e) => { e.target.style.display = "none"; }}
+                  />
+                ) : null;
+              })()}
+              <button
+                style={styles.guiadoVerBtnMini}
+                onClick={() => window.open(getVideoCardioUrl(cardio.tipo), "_blank")}
+              >
+                ▶ {VIDEOS_CARDIO[cardio.tipo] ? "Assistir execução" : "Ver forma correta no YouTube"}
+              </button>
+            </div>
             <label style={styles.fieldLabel}>
               Tipo
               <div style={styles.cardioTipoRow}>
@@ -4848,6 +4995,17 @@ const styles = {
   },
   restNote: { color: PENCIL, fontSize: 13, fontStyle: "italic", padding: "6px 0" },
   cardioBlock: { display: "flex", flexDirection: "column", gap: 10, marginTop: 4 },
+  cardioVideoRow: { display: "flex", alignItems: "center", gap: 10 },
+  guiadoVerBtnMini: {
+    fontSize: 12,
+    fontWeight: 700,
+    color: HIGHLIGHT,
+    background: "transparent",
+    border: `1px solid ${HIGHLIGHT}`,
+    borderRadius: 20,
+    padding: "6px 12px",
+    cursor: "pointer",
+  },
   fieldLabel: { display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 13, color: PENCIL, gap: 10 },
   selectSmall: { fontFamily: sansFont, fontSize: 13, padding: "5px 7px", borderRadius: 6, border: `1px solid ${PENCIL}`, background: PAPER, color: INK, flex: "0 0 auto" },
   cardioTipoRow: { display: "flex", alignItems: "center", gap: 6 },
