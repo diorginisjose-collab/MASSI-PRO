@@ -232,6 +232,14 @@ LIBRARY.Superior = [
   ...BICEPS_POOL.slice(0, 1),
 ];
 
+// índice plano: nome do exercício -> objeto do exercício (usado pra trocar por uma alternativa)
+const LIBRARY_INDEX = {};
+Object.values(LIBRARY).forEach((lista) => {
+  lista.forEach((ex) => {
+    if (!LIBRARY_INDEX[ex.name]) LIBRARY_INDEX[ex.name] = ex;
+  });
+});
+
 const FOCOS = ["Peito", "Costas", "Perna", "Ombro", "Braço", "Abdômen", "Corpo inteiro", "Funcional", "Superior", "Cardio", "Descanso"];
 const DIAS_SEMANA = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo"];
 const DIAS_ABREV = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
@@ -1509,6 +1517,12 @@ const GUIA_EXECUCAO = {
   },
 };
 
+function extrairNumeroCarga(texto) {
+  if (!texto) return null;
+  const match = String(texto).replace(",", ".").match(/(\d+(\.\d+)?)/);
+  return match ? parseFloat(match[1]) : null;
+}
+
 function descansoParaSegundos(str) {
   const mapa = {
     "1 min": 60,
@@ -1675,6 +1689,35 @@ function calcularStreak(historico) {
     else break;
   }
   return streak;
+}
+
+function getChaveSemana(dataStr) {
+  const d = new Date(dataStr + "T00:00:00");
+  const inicioAno = new Date(d.getFullYear(), 0, 1);
+  const numSemana = Math.ceil(((d - inicioAno) / 86400000 + inicioAno.getDay() + 1) / 7);
+  return `${d.getFullYear()}-S${numSemana}`;
+}
+
+// conta quantas semanas seguidas (incluindo a atual) tiveram 3+ treinos, olhando pra trás
+function calcularSemanasConsistentes(historico) {
+  if (!historico || historico.length === 0) return 0;
+  const porSemana = {};
+  historico.forEach((h) => {
+    const chave = getChaveSemana(h.data);
+    porSemana[chave] = (porSemana[chave] || 0) + 1;
+  });
+  let streakSemanas = 0;
+  let cursor = new Date();
+  for (let i = 0; i < 20; i++) {
+    const chave = getChaveSemana(cursor.toISOString().slice(0, 10));
+    if ((porSemana[chave] || 0) >= 3) {
+      streakSemanas++;
+      cursor.setDate(cursor.getDate() - 7);
+    } else {
+      break;
+    }
+  }
+  return streakSemanas;
 }
 
 function normalizarDecimal(valor) {
@@ -1924,6 +1967,11 @@ function AppMassiPro({ onSolicitarRemount }) {
   const [loaded, setLoaded] = useState(false);
   const [isPremium, setIsPremium] = useState(false);
   const [nivelUsuario, setNivelUsuario] = useState(null); // nível do onboarding — usado pra montar peito/costas/ombro automaticamente
+  const [objetivoUsuario, setObjetivoUsuario] = useState(null); // objetivo do onboarding — usado pra pré-selecionar a dieta
+  const [recordes, setRecordes] = useState({}); // recorde pessoal (maior carga já registrada) por exercício
+  const [novoRecordeAviso, setNovoRecordeAviso] = useState(null); // texto do aviso de novo recorde, some sozinho
+  const [sugestaoTroca, setSugestaoTroca] = useState(null); // { dia, nomeAtual, nomeAlternativo } — sugestão após registrar dor
+  const [deloadRespostaSemana, setDeloadRespostaSemana] = useState(null); // semana em que a pessoa já aplicou ou dispensou a sugestão de deload
   const [showPlanos, setShowPlanos] = useState(false);
   const [showModelos, setShowModelos] = useState(false);
   const [activeTab, setActiveTab] = useState("rotina");
@@ -1946,7 +1994,7 @@ function AppMassiPro({ onSolicitarRemount }) {
   const [splashSaindo, setSplashSaindo] = useState(false);
   const [feedbackPendente, setFeedbackPendente] = useState(null);
   const [dores, setDores] = useState([]);
-  const [dorPendente, setDorPendente] = useState(null); // nome do exercício
+  const [dorPendente, setDorPendente] = useState(null); // { exercicio, dia }
   const [fotoCompartilhamento, setFotoCompartilhamento] = useState(null); // base64 da foto opcional pro card de compartilhar
   const [buscaExercicio, setBuscaExercicio] = useState("");
   const [avisoSemTreinar, setAvisoSemTreinar] = useState(null);
@@ -2013,11 +2061,18 @@ function AppMassiPro({ onSolicitarRemount }) {
         // sem progressão salva ainda
       }
       try {
+        const recRes = await window.storage.get("recordes-pessoais");
+        if (recRes && recRes.value) setRecordes(JSON.parse(recRes.value));
+      } catch (e) {
+        // sem recordes salvos ainda
+      }
+      try {
         const onboardingRes = await window.storage.get("onboarding-perfil");
         if (!onboardingRes || !onboardingRes.value) setOnboardingPendente(true);
         else {
           const perfilSalvo = JSON.parse(onboardingRes.value);
           if (perfilSalvo && perfilSalvo.nivel) setNivelUsuario(perfilSalvo.nivel);
+          if (perfilSalvo && perfilSalvo.objetivo) setObjetivoUsuario(perfilSalvo.objetivo);
         }
       } catch (e) {
         setOnboardingPendente(true);
@@ -2027,6 +2082,12 @@ function AppMassiPro({ onSolicitarRemount }) {
         if (temaRes && temaRes.value) setTema(temaRes.value);
       } catch (e) {
         // usa o padrão "claro"
+      }
+      try {
+        const deloadRes = await window.storage.get("deload-resposta-semana");
+        if (deloadRes && deloadRes.value) setDeloadRespostaSemana(deloadRes.value);
+      } catch (e) {
+        // sem resposta de deload salva ainda
       }
       try {
         // acessar qualquer chave normal primeiro garante que a migração de perfis já rodou
@@ -2403,9 +2464,31 @@ function AppMassiPro({ onSolicitarRemount }) {
     // Deixado comentado de propósito — decida a frequência ideal antes de ativar.
   };
 
+  const encontrarAlternativa = (dia, nomeExercicio) => {
+    const diaEntry = rotina.find((d) => d.dia === dia);
+    if (!diaEntry) return null;
+    const grupo = GUIA_EXECUCAO[nomeExercicio] && GUIA_EXECUCAO[nomeExercicio].grupoMuscular;
+    if (!grupo) return null;
+    const gruposAtuais = grupo.split(",").map((g) => g.trim().toLowerCase());
+    const usados = new Set(diaEntry.exercicios.map((e) => e.name));
+    let candidata = null;
+    Object.values(LIBRARY).forEach((lista) => {
+      if (candidata) return;
+      lista.forEach((cand) => {
+        if (candidata || cand.name === nomeExercicio || usados.has(cand.name)) return;
+        const grupoCand = GUIA_EXECUCAO[cand.name] && GUIA_EXECUCAO[cand.name].grupoMuscular;
+        if (!grupoCand) return;
+        const gruposCand = grupoCand.split(",").map((g) => g.trim().toLowerCase());
+        if (gruposAtuais.some((g) => gruposCand.includes(g))) candidata = cand;
+      });
+    });
+    return candidata;
+  };
+
   const salvarDor = async (nota) => {
     if (!dorPendente) return;
-    const registro = { id: uid(), exercicio: dorPendente, data: new Date().toISOString().slice(0, 10), nota };
+    const { exercicio, dia } = dorPendente;
+    const registro = { id: uid(), exercicio, data: new Date().toISOString().slice(0, 10), nota };
     const nova = [...dores, registro];
     setDores(nova);
     setDorPendente(null);
@@ -2414,6 +2497,131 @@ function AppMassiPro({ onSolicitarRemount }) {
     } catch (e) {
       // segue mesmo se falhar
     }
+    const alternativa = encontrarAlternativa(dia, exercicio);
+    if (alternativa) {
+      setSugestaoTroca({ dia, nomeAtual: exercicio, nomeAlternativo: alternativa.name });
+    }
+  };
+
+  const aplicarSugestaoTroca = () => {
+    if (!sugestaoTroca) return;
+    const { dia, nomeAtual, nomeAlternativo } = sugestaoTroca;
+    const nova = LIBRARY_INDEX[nomeAlternativo];
+    setRotina((prev) =>
+      prev.map((d) =>
+        d.dia === dia
+          ? {
+              ...d,
+              exercicios: d.exercicios.map((e) => (e.name === nomeAtual && nova ? toExercicio(nova) : e)),
+            }
+          : d
+      )
+    );
+    setSugestaoTroca(null);
+  };
+
+  const semanaAtualChave = getChaveSemana(new Date().toISOString().slice(0, 10));
+  const semanasConsistentes = calcularSemanasConsistentes(historico);
+  const mostrarSugestaoDeload = semanasConsistentes >= 6 && deloadRespostaSemana !== semanaAtualChave;
+
+  const registrarRespostaDeload = async () => {
+    setDeloadRespostaSemana(semanaAtualChave);
+    try {
+      await window.storage.set("deload-resposta-semana", semanaAtualChave);
+    } catch (e) {
+      // segue mesmo se falhar
+    }
+  };
+
+  const aplicarSemanaLeve = () => {
+    setRotina((prev) =>
+      prev.map((d) => ({
+        ...d,
+        exercicios: d.exercicios.map((e) => {
+          if (!e.sets) return e;
+          const novoTotal = Math.max(2, e.sets - 1);
+          const cargasAtual = e.cargas && e.cargas.length ? e.cargas : [e.carga || ""];
+          const novasCargas = Array.from({ length: novoTotal }, (_, i) => cargasAtual[i] || cargasAtual[cargasAtual.length - 1] || "");
+          return { ...e, sets: novoTotal, cargas: novasCargas };
+        }),
+      }))
+    );
+    registrarRespostaDeload();
+  };
+
+  const exportarRotinaImagem = () => {
+    const diasComConteudo = rotina.filter((d) => (d.exercicios && d.exercicios.length > 0) || d.cardio);
+    const LARGURA = 1000;
+    const MARGEM = 50;
+    const LINHA = 30;
+    let linhasTotal = 0;
+    diasComConteudo.forEach((d) => {
+      linhasTotal += 1; // título do dia
+      linhasTotal += d.cardio ? 1 : d.exercicios.length;
+      linhasTotal += 0.5; // respiro entre dias
+    });
+    const ALTURA_TOPO = 210;
+    const ALTURA_RODAPE = 70;
+    const altura = Math.max(700, ALTURA_TOPO + linhasTotal * LINHA + ALTURA_RODAPE);
+
+    const canvas = document.createElement("canvas");
+    canvas.width = LARGURA;
+    canvas.height = altura;
+    const ctx = canvas.getContext("2d");
+
+    const fundo = ctx.createLinearGradient(0, 0, LARGURA, altura);
+    fundo.addColorStop(0, "#182226");
+    fundo.addColorStop(1, "#0F1417");
+    ctx.fillStyle = fundo;
+    ctx.fillRect(0, 0, LARGURA, altura);
+
+    desenharLogoMassi(ctx, MARGEM + 34, 56, 68);
+    ctx.textAlign = "left";
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "bold 34px system-ui, sans-serif";
+    ctx.fillText("Minha rotina — Massi Pro", MARGEM + 80, 66);
+    ctx.font = "400 16px system-ui, sans-serif";
+    ctx.fillStyle = "#8b95a1";
+    ctx.fillText(new Date().toLocaleDateString("pt-BR"), MARGEM + 80, 92);
+
+    let y = ALTURA_TOPO;
+    diasComConteudo.forEach((d) => {
+      ctx.font = "bold 22px system-ui, sans-serif";
+      const corTitulo = ctx.createLinearGradient(MARGEM, y, MARGEM + 300, y);
+      corTitulo.addColorStop(0, "#1CA7E0");
+      corTitulo.addColorStop(1, "#8BDB4B");
+      ctx.fillStyle = corTitulo;
+      ctx.fillText(`${d.dia} — ${d.foco}`, MARGEM, y);
+      y += LINHA;
+
+      ctx.font = "400 17px system-ui, sans-serif";
+      ctx.fillStyle = "#e4e9ec";
+      if (d.cardio) {
+        ctx.fillText(`• ${d.cardio.tipo} — ${d.cardio.duracao} min (${d.cardio.intensidade})`, MARGEM + 16, y);
+        y += LINHA;
+      } else {
+        d.exercicios.forEach((ex) => {
+          ctx.fillText(`• ${ex.name} — ${ex.sets}x${ex.reps}`, MARGEM + 16, y);
+          y += LINHA;
+        });
+      }
+      y += LINHA * 0.5;
+    });
+
+    ctx.font = "italic 14px system-ui, sans-serif";
+    ctx.fillStyle = "#8b95a1";
+    ctx.fillText("Gerado no Massi Pro", MARGEM, altura - 30);
+
+    canvas.toBlob((blob) => {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "minha-rotina-massi-pro.jpg";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 5000);
+    }, "image/jpeg", 0.95);
   };
 
   const escolherFotoCompartilhamento = (arquivo) => {
@@ -2499,6 +2707,25 @@ function AppMassiPro({ onSolicitarRemount }) {
     );
   };
 
+  const registrarPossivelRecorde = (nomeExercicio, valorTexto) => {
+    const numero = extrairNumeroCarga(valorTexto);
+    if (numero === null) return;
+    setRecordes((prev) => {
+      const atual = prev[nomeExercicio];
+      if (atual && atual.valor >= numero) return prev;
+      const novo = { ...prev, [nomeExercicio]: { valor: numero, texto: valorTexto, data: new Date().toISOString().slice(0, 10) } };
+      window.storage.set("recordes-pessoais", JSON.stringify(novo)).catch(() => {});
+      setNovoRecordeAviso(`🏆 Novo recorde em ${nomeExercicio}: ${valorTexto}!`);
+      return novo;
+    });
+  };
+
+  useEffect(() => {
+    if (!novoRecordeAviso) return;
+    const t = setTimeout(() => setNovoRecordeAviso(null), 4000);
+    return () => clearTimeout(t);
+  }, [novoRecordeAviso]);
+
   const editarCargaSerie = (dia, id, indiceSerie, valor) => {
     setRotina((prev) =>
       prev.map((d) =>
@@ -2511,6 +2738,7 @@ function AppMassiPro({ onSolicitarRemount }) {
                 const cargasAtual = e.cargas && e.cargas.length === totalSets ? e.cargas : Array.from({ length: totalSets }, (_, i) => (e.cargas && e.cargas[i]) || e.carga || "");
                 const novasCargas = [...cargasAtual];
                 novasCargas[indiceSerie] = valor;
+                registrarPossivelRecorde(e.name, valor);
                 return { ...e, cargas: novasCargas, carga: novasCargas[0] };
               }),
             }
@@ -2653,6 +2881,12 @@ function AppMassiPro({ onSolicitarRemount }) {
         />
       )}
 
+      {novoRecordeAviso && (
+        <div style={styles.recordeToast} onClick={() => setNovoRecordeAviso(null)}>
+          {novoRecordeAviso}
+        </div>
+      )}
+
       {mensagemSucesso && (
         <div
           style={styles.toastOverlay}
@@ -2784,7 +3018,22 @@ function AppMassiPro({ onSolicitarRemount }) {
       )}
 
       {dorPendente && (
-        <DorModal exercicio={dorPendente} onSalvar={salvarDor} onFechar={() => setDorPendente(null)} />
+        <DorModal exercicio={dorPendente.exercicio} onSalvar={salvarDor} onFechar={() => setDorPendente(null)} />
+      )}
+
+      {sugestaoTroca && (
+        <div style={styles.modalOverlay} onClick={() => setSugestaoTroca(null)}>
+          <div style={styles.modalCard} onClick={(e) => e.stopPropagation()}>
+            <button style={styles.modalClose} onClick={() => setSugestaoTroca(null)} aria-label="Fechar">×</button>
+            <div style={styles.eyebrow}>SUGESTÃO</div>
+            <h2 style={styles.modalTitle}>Trocar exercício?</h2>
+            <p style={styles.modalSubtitle}>
+              Sentiu algo em "{sugestaoTroca.nomeAtual}"? "{sugestaoTroca.nomeAlternativo}" trabalha o mesmo grupo muscular e pode ser mais confortável.
+            </p>
+            <button style={styles.saveButton} onClick={aplicarSugestaoTroca}>Trocar por "{sugestaoTroca.nomeAlternativo}"</button>
+            <button style={styles.trocaManterBtn} onClick={() => setSugestaoTroca(null)}>Manter como está</button>
+          </div>
+        </div>
       )}
 
       {showPerfis && (
@@ -2828,6 +3077,7 @@ function AppMassiPro({ onSolicitarRemount }) {
           onConcluir={async (respostas) => {
             setOnboardingPendente(false);
             if (respostas.nivel) setNivelUsuario(respostas.nivel);
+            if (respostas.objetivo) setObjetivoUsuario(respostas.objetivo);
             try {
               await window.storage.set("onboarding-perfil", JSON.stringify(respostas));
             } catch (e) {
@@ -2925,6 +3175,23 @@ function AppMassiPro({ onSolicitarRemount }) {
             🔁 Trocar a semana inteira por um modelo pronto
           </button>
 
+          <button style={styles.exportarRotinaBtn} onClick={exportarRotinaImagem}>
+            📄 Exportar rotina como imagem
+          </button>
+
+          {mostrarSugestaoDeload && (
+            <section style={styles.deloadBox}>
+              <div style={styles.deloadTitulo}>💤 {semanasConsistentes} semanas seguidas treinando forte</div>
+              <p style={styles.deloadTexto}>
+                Que tal uma semana mais leve pra descansar e evitar overtraining? Isso reduz 1 série de cada exercício por essa semana — você pode ajustar de volta quando quiser.
+              </p>
+              <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+                <button style={styles.saveButton} onClick={aplicarSemanaLeve}>Aplicar semana leve</button>
+                <button style={styles.trocaManterBtn} onClick={registrarRespostaDeload}>Agora não</button>
+              </div>
+            </section>
+          )}
+
           <section style={styles.card}>
             <div style={styles.cardLabel}>Quais dias você treina? (toque pra ligar/desligar)</div>
             <div style={styles.chipRow}>
@@ -2967,10 +3234,11 @@ function AppMassiPro({ onSolicitarRemount }) {
                   onIniciarDescanso={(descanso, nome) => iniciarDescanso(descanso, nome)}
                   onTrocarExercicio={(id) => trocarExercicio(d.dia, id)}
                   onConcluirTreino={() => setFeedbackPendente(d)}
-                  onRegistrarDor={(nome) => setDorPendente(nome)}
+                  onRegistrarDor={(nome) => setDorPendente({ exercicio: nome, dia: d.dia })}
                   onIniciarGuiado={(d) => setGuiadoAtivo(d)}
                   progressao={progressao}
                   dores={dores}
+                  recordes={recordes}
                 />
               ))}
           </div>
@@ -2996,7 +3264,7 @@ function AppMassiPro({ onSolicitarRemount }) {
         />
       )}
 
-      {activeTab === "premium" && <PremiumTab isPremium={isPremium} onVerPlanos={() => setShowPlanos(true)} />}
+      {activeTab === "premium" && <PremiumTab isPremium={isPremium} onVerPlanos={() => setShowPlanos(true)} objetivoUsuario={objetivoUsuario} nivelUsuario={nivelUsuario} />}
 
       {activeTab === "sobre" && <SobreTab />}
       </div>
@@ -3631,6 +3899,7 @@ const CHAVES_BACKUP = [
   "progressao-exercicios",
   "fotos-progresso",
   "foto-compartilhamento",
+  "recordes-pessoais",
 ];
 
 function ModoGuiadoOverlay({ entry, onFechar, onAbrirExercicio, onEditCarga }) {
@@ -3816,13 +4085,205 @@ const DICAS_DIETA = [
   },
 ];
 
-function PremiumTab({ isPremium, onVerPlanos }) {
+// ---------- Dietas rotativas (Premium) ----------
+// O conteúdo das dietas fica em public/dietas.json (arquivo separado, buscado uma
+// vez via fetch — assim não pesa o pacote JS do app, mesmo com muitas dietas).
+// Formato de cada dieta: título + 2 opções (hipertrofia/emagrecimento), cada uma com 4 refeições.
+
+function PremiumTab({ isPremium, onVerPlanos, objetivoUsuario, nivelUsuario }) {
+  const objetivoPadrao = objetivoUsuario === "emagrecer" || objetivoUsuario === "secar" ? "emagrecer" : "hipertrofia";
+  const perfilPadrao = nivelUsuario ? nivelUsuario.toLowerCase() : "iniciante";
+
+  const [dietaIndice, setDietaIndice] = useState(0);
+  const [dietaCarregada, setDietaCarregada] = useState(false);
+  const [objetivoDieta, setObjetivoDieta] = useState(objetivoPadrao);
+  const [perfilDieta, setPerfilDieta] = useState(perfilPadrao);
+  const [faixaDieta, setFaixaDieta] = useState("18-60");
+  const [cliquesHoje, setCliquesHoje] = useState(0);
+  const [dietas, setDietas] = useState([]);
+  const [alternativasAbertas, setAlternativasAbertas] = useState({}); // { "Café da manhã": true }
+  const jaAplicouPadrao = useRef(false);
+
+  useEffect(() => {
+    // aplica o objetivo/nível do onboarding assim que chegarem, só uma vez —
+    // depois disso a pessoa pode trocar livremente pelos seletores
+    if (jaAplicouPadrao.current) return;
+    if (objetivoUsuario || nivelUsuario) {
+      setObjetivoDieta(objetivoPadrao);
+      setPerfilDieta(perfilPadrao);
+      jaAplicouPadrao.current = true;
+    }
+  }, [objetivoUsuario, nivelUsuario]);
+
+  const hojeStr = new Date().toISOString().slice(0, 10);
+  const LIMITE_DIARIO = 2;
+
+  useEffect(() => {
+    (async () => {
+      // busca as dietas só uma vez; o navegador guarda em cache depois disso
+      if (isPremium) {
+        try {
+          const resp = await fetch("/dietas.json");
+          if (resp.ok) {
+            const dados = await resp.json();
+            setDietas(dados.dietas || dados || []);
+          }
+        } catch (e) {
+          // sem conexão ou arquivo ainda não publicado — segue sem dietas
+        }
+      }
+      try {
+        const res = await window.storage.get("dieta-indice");
+        if (res && res.value !== undefined && res.value !== null) {
+          const n = parseInt(res.value, 10);
+          if (!isNaN(n)) setDietaIndice(n);
+        }
+      } catch (e) {
+        // primeira vez, começa na dieta 0
+      }
+      try {
+        const cliquesRes = await window.storage.get("dieta-cliques-hoje");
+        if (cliquesRes && cliquesRes.value) {
+          const salvo = JSON.parse(cliquesRes.value);
+          if (salvo.data === hojeStr) setCliquesHoje(salvo.contagem);
+        }
+      } catch (e) {
+        // sem cliques registrados hoje ainda
+      }
+      setDietaCarregada(true);
+    })();
+  }, [isPremium]);
+
+  const limiteAtingido = cliquesHoje >= LIMITE_DIARIO;
+
+  const dietasFiltradas = dietas.filter(
+    (d) => d.objetivo === objetivoDieta && d.perfil === perfilDieta && (d.faixa_etaria === faixaDieta || faixaDieta === "18-60")
+  );
+
+  const proximaDieta = () => {
+    if (dietasFiltradas.length === 0 || limiteAtingido) return;
+    const novoIndice = (dietaIndice + 1) % dietasFiltradas.length;
+    const novaContagem = cliquesHoje + 1;
+    setDietaIndice(novoIndice);
+    setCliquesHoje(novaContagem);
+    setAlternativasAbertas({});
+    window.storage.set("dieta-indice", String(novoIndice)).catch(() => {});
+    window.storage.set("dieta-cliques-hoje", JSON.stringify({ data: hojeStr, contagem: novaContagem })).catch(() => {});
+  };
+
+  const dietaAtual = dietasFiltradas.length > 0 ? dietasFiltradas[dietaIndice % dietasFiltradas.length] : null;
+
   return (
     <div>
       <section style={styles.card}>
-        <div style={styles.cardLabel}>★ Dicas de dieta</div>
+        <div style={styles.cardLabel}>🍽 Sua dieta</div>
+        {!isPremium ? (
+          <p style={styles.modalDisclaimer}>
+            Disponível pra quem assina o Premium — dietas prontas, uma por vez, no seu ritmo.
+          </p>
+        ) : !dietaCarregada ? null : dietas.length === 0 ? (
+          <p style={styles.modalDisclaimer}>Em breve — as dietas ainda estão sendo cadastradas.</p>
+        ) : (
+          <>
+            <p style={styles.modalDisclaimer}>
+              Conteúdo educativo — não substitui acompanhamento de um nutricionista.
+            </p>
+
+            <div style={styles.dietaOpcoesRow}>
+              <button
+                style={{ ...styles.dietaOpcaoBtn, ...(objetivoDieta === "hipertrofia" ? styles.dietaOpcaoBtnAtiva : {}) }}
+                onClick={() => { setObjetivoDieta("hipertrofia"); setDietaIndice(0); }}
+              >
+                Hipertrofia
+              </button>
+              <button
+                style={{ ...styles.dietaOpcaoBtn, ...(objetivoDieta === "emagrecer" ? styles.dietaOpcaoBtnAtiva : {}) }}
+                onClick={() => { setObjetivoDieta("emagrecer"); setDietaIndice(0); }}
+              >
+                Emagrecimento
+              </button>
+            </div>
+
+            <div style={styles.dietaFiltrosRow}>
+              <label style={styles.dietaFiltroLabel}>
+                Nível
+                <select
+                  value={perfilDieta}
+                  onChange={(e) => { setPerfilDieta(e.target.value); setDietaIndice(0); }}
+                  style={styles.dietaFiltroSelect}
+                >
+                  <option value="iniciante">Iniciante</option>
+                  <option value="intermediário">Intermediário</option>
+                  <option value="avançado">Avançado</option>
+                  <option value="prático">Prático</option>
+                </select>
+              </label>
+              <label style={styles.dietaFiltroLabel}>
+                Faixa etária
+                <select
+                  value={faixaDieta}
+                  onChange={(e) => { setFaixaDieta(e.target.value); setDietaIndice(0); }}
+                  style={styles.dietaFiltroSelect}
+                >
+                  <option value="18-60">Todas</option>
+                  <option value="18-30">18-30</option>
+                  <option value="31-45">31-45</option>
+                  <option value="46-60">46-60</option>
+                </select>
+              </label>
+            </div>
+
+            {!dietaAtual ? (
+              <p style={styles.modalDisclaimer}>Nenhuma dieta encontrada com esses filtros ainda.</p>
+            ) : (
+              <div style={styles.dietaCard}>
+                <div style={styles.dicaDietaTitulo}>{dietaAtual.nome}</div>
+                {dietaAtual.meta_nutricional && (
+                  <div style={styles.dietaMacros}>
+                    ~{dietaAtual.meta_nutricional.calorias_aprox} kcal · P {dietaAtual.meta_nutricional.proteinas_g}g · C {dietaAtual.meta_nutricional.carboidratos_g}g · G {dietaAtual.meta_nutricional.gorduras_g}g
+                  </div>
+                )}
+                {dietaAtual.refeicoes.map((r) => (
+                  <div key={r.nome} style={styles.dietaRefeicao}>
+                    <span style={styles.dietaRefeicaoNome}>{r.nome}:</span> {r.opcao_principal}
+                    {r.alternativas && r.alternativas.length > 0 && (
+                      <>
+                        <button
+                          style={styles.dietaAltToggle}
+                          onClick={() => setAlternativasAbertas((prev) => ({ ...prev, [r.nome]: !prev[r.nome] }))}
+                        >
+                          {alternativasAbertas[r.nome] ? "▲ ocultar opções" : "▼ ver outras opções"}
+                        </button>
+                        {alternativasAbertas[r.nome] && (
+                          <ul style={styles.dietaAltLista}>
+                            {r.alternativas.map((alt, i) => (
+                              <li key={i}>{alt}</li>
+                            ))}
+                          </ul>
+                        )}
+                      </>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <button style={styles.saveButton} onClick={proximaDieta} disabled={limiteAtingido || !dietaAtual}>
+              {limiteAtingido ? "Limite de hoje atingido — volte amanhã" : "🔁 Ver outra dieta"}
+            </button>
+            {!limiteAtingido && (
+              <p style={styles.dietaLimiteTexto}>
+                {LIMITE_DIARIO - cliquesHoje} de {LIMITE_DIARIO} trocas disponíveis hoje
+              </p>
+            )}
+          </>
+        )}
+      </section>
+
+      <section style={styles.card}>
+        <div style={styles.cardLabel}>★ Dicas gerais de dieta</div>
         <p style={styles.modalDisclaimer}>
-          Conteúdo educativo geral — não substitui acompanhamento de um nutricionista.
+          Conteúdo educativo geral, disponível pra todo mundo — não substitui acompanhamento de um nutricionista.
         </p>
         {DICAS_DIETA.map((d) => (
           <div key={d.titulo} style={styles.dicaDietaItem}>
@@ -4143,6 +4604,58 @@ function ModelosModal({ onEscolher, onClose }) {
   );
 }
 
+function ConsistenciaHeatmap({ historico }) {
+  const diasTreinados = new Set(historico.map((h) => h.data));
+  const hoje = new Date();
+  hoje.setHours(0, 0, 0, 0);
+
+  // últimas ~18 semanas, terminando na semana atual, alinhado por domingo
+  const TOTAL_SEMANAS = 18;
+  const fimSemana = new Date(hoje);
+  fimSemana.setDate(fimSemana.getDate() + (6 - fimSemana.getDay()));
+  const inicio = new Date(fimSemana);
+  inicio.setDate(inicio.getDate() - TOTAL_SEMANAS * 7 + 1);
+
+  const semanas = [];
+  let cursor = new Date(inicio);
+  for (let s = 0; s < TOTAL_SEMANAS; s++) {
+    const dias = [];
+    for (let d = 0; d < 7; d++) {
+      const chave = cursor.toISOString().slice(0, 10);
+      dias.push({ chave, treinado: diasTreinados.has(chave), futuro: cursor > hoje });
+      cursor.setDate(cursor.getDate() + 1);
+    }
+    semanas.push(dias);
+  }
+
+  return (
+    <div>
+      <div style={styles.heatmapGrid}>
+        {semanas.map((semana, i) => (
+          <div key={i} style={styles.heatmapCol}>
+            {semana.map((dia) => (
+              <div
+                key={dia.chave}
+                title={dia.chave}
+                style={{
+                  ...styles.heatmapCelula,
+                  background: dia.futuro ? "transparent" : dia.treinado ? HIGHLIGHT : "rgba(43,42,40,0.08)",
+                }}
+              />
+            ))}
+          </div>
+        ))}
+      </div>
+      <div style={styles.heatmapLegenda}>
+        <span>Menos</span>
+        <div style={{ ...styles.heatmapCelula, background: "rgba(43,42,40,0.08)" }} />
+        <div style={{ ...styles.heatmapCelula, background: HIGHLIGHT }} />
+        <span>Treinou</span>
+      </div>
+    </div>
+  );
+}
+
 function HistoricoTab() {
   const [historico, setHistorico] = useState([]);
   const [carregado, setCarregado] = useState(false);
@@ -4226,6 +4739,11 @@ function HistoricoTab() {
             );
           })}
         </div>
+      </section>
+
+      <section style={styles.card}>
+        <div style={styles.cardLabel}>Consistência</div>
+        <ConsistenciaHeatmap historico={historico} />
       </section>
 
       {carregado && historico.length === 0 && (
@@ -4455,7 +4973,7 @@ function getUltimaDorRelacionada(nomeExercicio, dores) {
   return mesmoGrupo ? { ...mesmoGrupo, mesmoGrupo: true } : null;
 }
 
-function DayCard({ entry, onFoco, onAddExercicio, onRemoveExercicio, onEditExercicio, onEditCargaSerie, onEditCardio, onAbrirExercicio, onIniciarDescanso, onTrocarExercicio, onConcluirTreino, onRegistrarDor, onIniciarGuiado, progressao, dores }) {
+function DayCard({ entry, onFoco, onAddExercicio, onRemoveExercicio, onEditExercicio, onEditCargaSerie, onEditCardio, onAbrirExercicio, onIniciarDescanso, onTrocarExercicio, onConcluirTreino, onRegistrarDor, onIniciarGuiado, progressao, dores, recordes }) {
   const { dia, foco, cardio, exercicios } = entry;
   const isDescanso = foco === "Descanso";
   const isCardio = foco === "Cardio";
@@ -4715,6 +5233,9 @@ function DayCard({ entry, onFoco, onAddExercicio, onRemoveExercicio, onEditExerc
                 <div style={styles.cargaSeriesBox}>
                   <div style={styles.cargaSeriesTitulo}>
                     Carga por série
+                    {recordes && recordes[ex.name] && (
+                      <span style={styles.recordeTag}>🏆 Recorde: {recordes[ex.name].texto}</span>
+                    )}
                     {progressao && progressao[ex.name] > 0 && progressao[ex.name] % 3 === 0 && (
                       <span style={styles.progressaoTag}>🔺 Hora de aumentar a carga</span>
                     )}
@@ -4934,6 +5455,19 @@ const styles = {
     marginBottom: 16,
   },
   modeloDescricao: { fontSize: 12.5, color: PENCIL, lineHeight: 1.4, marginBottom: 6 },
+  exportarRotinaBtn: {
+    width: "100%",
+    padding: "12px",
+    borderRadius: 10,
+    border: `1px dashed ${HIGHLIGHT}`,
+    background: "rgba(126,217,87,0.08)",
+    color: "#3F7A1E",
+    fontFamily: monoFont,
+    fontWeight: 700,
+    fontSize: 12.5,
+    cursor: "pointer",
+    marginBottom: 16,
+  },
   objetivoCard: {
     textAlign: "left",
     border: `1px solid rgba(43,42,40,0.18)`,
@@ -5250,6 +5784,23 @@ const styles = {
     paddingLeft: 8,
     paddingRight: 8,
   },
+  recordeToast: {
+    position: "fixed",
+    top: 14,
+    left: "50%",
+    transform: "translateX(-50%)",
+    zIndex: 800,
+    background: "#1B7A4A",
+    color: "#fff",
+    fontWeight: 700,
+    fontSize: 13,
+    padding: "10px 18px",
+    borderRadius: 24,
+    boxShadow: "0 4px 14px rgba(0,0,0,0.25)",
+    cursor: "pointer",
+    maxWidth: "90vw",
+    textAlign: "center",
+  },
   cargaRow: { display: "flex", alignItems: "center", gap: 8, marginTop: 8, flexWrap: "wrap" },
   cargaLabel: { fontSize: 11.5, color: PENCIL },
   cargaInput: {
@@ -5306,6 +5857,38 @@ const styles = {
     borderRadius: 6,
     padding: "3px 8px",
   },
+  recordeTag: {
+    fontSize: 11,
+    fontWeight: 700,
+    color: "#1B7A4A",
+    background: "rgba(31,209,166,0.18)",
+    borderRadius: 6,
+    padding: "3px 8px",
+  },
+  trocaManterBtn: {
+    marginTop: 8,
+    width: "100%",
+    background: "transparent",
+    border: "none",
+    color: PENCIL,
+    fontSize: 13,
+    textDecoration: "underline",
+    cursor: "pointer",
+    padding: "8px 0",
+  },
+  heatmapGrid: { display: "flex", gap: 3, overflowX: "auto", paddingBottom: 4 },
+  heatmapCol: { display: "flex", flexDirection: "column", gap: 3 },
+  heatmapCelula: { width: 11, height: 11, borderRadius: 3 },
+  heatmapLegenda: { display: "flex", alignItems: "center", gap: 6, marginTop: 8, fontSize: 11, color: PENCIL },
+  deloadBox: {
+    background: "rgba(28,167,224,0.08)",
+    border: "1px solid rgba(28,167,224,0.3)",
+    borderRadius: 12,
+    padding: "14px 16px",
+    marginBottom: 4,
+  },
+  deloadTitulo: { fontWeight: 800, fontSize: 14, color: INK, marginBottom: 6 },
+  deloadTexto: { fontSize: 12.5, color: PENCIL, lineHeight: 1.45, marginBottom: 10 },
   aquecimentoBox: {
     fontSize: 12.5,
     color: "#8A5E12",
@@ -6116,6 +6699,56 @@ const styles = {
   },
   dicaDietaItem: { marginBottom: 14, paddingBottom: 14, borderBottom: "1px solid rgba(43,42,40,0.08)" },
   dicaDietaTitulo: { fontWeight: 700, fontSize: 13.5, color: INK, marginBottom: 4 },
+  dietaCard: {
+    background: PAPER_ALT,
+    border: `1px solid rgba(43,42,40,0.1)`,
+    borderRadius: 10,
+    padding: "14px 16px",
+    marginBottom: 12,
+  },
+  dietaConteudo: { fontSize: 13, color: PENCIL, lineHeight: 1.55, whiteSpace: "pre-line", marginTop: 6 },
+  dietaOpcoesRow: { display: "flex", gap: 8, marginBottom: 12 },
+  dietaOpcaoBtn: {
+    flex: 1,
+    padding: "8px 10px",
+    borderRadius: 20,
+    border: `1px solid rgba(43,42,40,0.2)`,
+    background: PAPER,
+    color: PENCIL,
+    fontSize: 12.5,
+    fontWeight: 700,
+    cursor: "pointer",
+  },
+  dietaOpcaoBtnAtiva: {
+    background: HIGHLIGHT,
+    borderColor: HIGHLIGHT,
+    color: "#0F1417",
+  },
+  dietaRefeicao: { fontSize: 13, color: PENCIL, lineHeight: 1.55, marginTop: 8 },
+  dietaRefeicaoNome: { fontWeight: 700, color: INK },
+  dietaLimiteTexto: { fontSize: 11.5, color: PENCIL, opacity: 0.75, textAlign: "center", marginTop: 6 },
+  dietaFiltrosRow: { display: "flex", gap: 10, marginBottom: 12, flexWrap: "wrap" },
+  dietaFiltroLabel: { display: "flex", flexDirection: "column", gap: 4, fontSize: 11, fontWeight: 700, color: PENCIL, flex: 1, minWidth: 120 },
+  dietaFiltroSelect: {
+    padding: "7px 8px",
+    borderRadius: 8,
+    border: `1px solid rgba(43,42,40,0.2)`,
+    background: PAPER,
+    color: INK,
+    fontSize: 12.5,
+  },
+  dietaMacros: { fontSize: 11.5, fontWeight: 700, color: "#1B7A4A", marginBottom: 8 },
+  dietaAltToggle: {
+    display: "block",
+    background: "transparent",
+    border: "none",
+    color: "#3F7A1E",
+    fontSize: 11.5,
+    fontWeight: 700,
+    cursor: "pointer",
+    padding: "4px 0",
+  },
+  dietaAltLista: { margin: "4px 0 0", paddingLeft: 18, fontSize: 12.5, color: PENCIL, lineHeight: 1.6 },
   fotosGaleria: { display: "flex", flexWrap: "wrap", gap: 10, marginTop: 12 },
   fotoItem: { width: 100, textAlign: "center" },
   fotoImg: { width: 100, height: 130, objectFit: "cover", borderRadius: 10, border: "1px solid rgba(43,42,40,0.12)" },
