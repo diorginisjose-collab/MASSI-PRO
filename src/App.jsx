@@ -36,7 +36,7 @@ if (typeof window !== "undefined" && !window.storage) {
 // ---------------------------------------------------------------
 if (typeof window !== "undefined" && !window.storage.__comPerfis) {
   const storageBase = window.storage;
-  const CHAVES_GLOBAIS_PERFIL = new Set(["perfis-lista", "perfil-ativo-id", "tema-app"]);
+  const CHAVES_GLOBAIS_PERFIL = new Set(["perfis-lista", "perfil-ativo-id", "tema-app", "idioma-app"]);
   const CHAVES_PARA_MIGRAR = [
     "rotina-treino",
     "historico-treinos",
@@ -1951,6 +1951,265 @@ function AdBanner({ posicao = "BOTTOM_CENTER" }) {
   return null;
 }
 
+// ---------------------------------------------------------------
+// Idioma / Tradução (i18n)
+// Dicionário com as strings da interface (chrome do app: navegação,
+// cabeçalho, botões e telas principais). Conteúdo de dados (nomes de
+// exercícios, dietas, textos do Massi Cross) continua em português
+// por enquanto e será traduzido em etapas seguintes.
+// ---------------------------------------------------------------
+const IDIOMAS_DISPONIVEIS = ["pt", "en", "es"];
+const IDIOMA_BANDEIRA = { pt: "🇧🇷", en: "🇺🇸", es: "🇪🇸" };
+const IDIOMA_LABEL = { pt: "PT", en: "EN", es: "ES" };
+
+const TRADUCOES = {
+  pt: {
+    ola: "Olá",
+    subtituloApp: "Treino, evolução e execução — tudo num só lugar.",
+    offline: "📴 Sem conexão agora — seus dados continuam salvos no aparelho normalmente.",
+    perfil: "Perfil",
+    trocarPerfil: "Trocar perfil",
+    alternarTema: "Alternar tema",
+    alternarIdioma: "Trocar idioma",
+    premium: "★ Premium",
+    freeVerPlanos: "Free — ver planos",
+    tabInicio: "Início",
+    tabRotina: "Rotina",
+    tabHistorico: "Histórico",
+    tabNotas: "Notas",
+    tabAvaliacao: "Avaliação",
+    tabPremium: "Premium",
+    tabSobre: "Sobre",
+    tabCross: "Cross",
+    inicioOla: "Olá",
+    inicioNotificacoes: "Notificações",
+    inicioTreinoConcluido: "✅ Treino de hoje concluído",
+    inicioAindaNaoTreinou: "🕐 Ainda não treinado hoje",
+    inicioDiaDescanso: "😴 Dia de descanso",
+    inicioSeuTreinoHoje: "SEU TREINO DE HOJE",
+    inicioExercicios: "exercícios",
+    inicioBtnComecar: "COMEÇAR TREINO",
+    inicioHoje: "HOJE",
+    inicioTituloDescanso: "Dia de descanso",
+    inicioMetaDescanso: "Aproveite pra recuperar — ou dá uma olhada na Rotina pra ver a semana.",
+    inicioBtnVerRotina: "VER MINHA ROTINA",
+    inicioProgresso: "PROGRESSO",
+    inicioPesoRecente: "peso mais recente",
+    inicioProgressoVazio: "Adicione seu peso na aba Avaliação pra acompanhar sua evolução.",
+    inicioSequencia: "SEQUÊNCIA",
+    inicioDiasTreinando: "dias treinando",
+    inicioDiaTreinando: "dia treinando",
+    inicioTreineHoje: "treine hoje pra começar",
+    inicioResumoSemanal: "RESUMO SEMANAL",
+    inicioTreinos: "treinos",
+    inicioTreino: "treino",
+    inicioExerciciosConcluidos: "exercícios concluídos",
+    inicioEvolucaoPeso: "EVOLUÇÃO DO PESO",
+    inicioEvolucaoVazio: "Registre pelo menos duas avaliações na aba Avaliação pra ver seu gráfico de evolução aqui.",
+    sobreTitulo: "Sobre o Massi Pro",
+    sobreTexto: "Massi Pro é um app pra ajudar quem está começando a montar e seguir uma rotina de treino de forma simples, com execução guiada, histórico e acompanhamento de evolução — tudo num só lugar.",
+    sobreConviteTitulo: "📣 Convide um amigo",
+    sobreConviteTexto: "Treinar em dupla ajuda a manter a consistência. Chama alguém pra usar o Massi Pro também:",
+    sobreConviteWhats: "💬 WhatsApp",
+    sobreConviteMaisOpcoes: "↗ Mais opções",
+    sobreConviteCopiado: "✓ Copiado!",
+    sobreConviteCopiarLink: "🔗 Copiar link",
+    sobreBackupTitulo: "Backup dos dados",
+    sobreBackupTexto: "Exporte um arquivo com sua rotina, histórico, avaliações e notas — ou importe um backup salvo antes.",
+    sobreBackupExportar: "⬇️ Exportar backup",
+    sobreBackupImportar: "⬆️ Importar backup",
+    sobreBackupImportado: "Backup importado! Recarregue o app pra ver os dados atualizados.",
+    sobreBackupErro: "Não consegui ler esse arquivo de backup. Confira se é o arquivo certo.",
+    sobreTermosTitulo: "Termos de uso",
+    sobreTermosTexto1: "O conteúdo deste app é educativo e não substitui a orientação de um profissional de educação física, nutricionista ou médico. Use por sua conta e respeite os limites do seu corpo — interrompa qualquer exercício que cause dor.",
+    sobreTermosTexto2: "Seus dados (rotina, histórico, avaliações e notas) são salvos localmente, no seu próprio navegador/dispositivo.",
+    sobreTextoConvite: "Comecei a usar o Massi Pro pra organizar meus treinos — tem rotina personalizada, treino guiado com vídeo, histórico e até uma área de Cross Training. Dá uma olhada: https://massi-pro.vercel.app",
+    rotinaAvisoSemTreinarPre: "⏰ Já faz",
+    rotinaAvisoSemTreinarPos: "dias que você não conclui um treino. Que tal retomar hoje?",
+    rotinaBuscarPlaceholder: "🔎 Buscar exercício rápido…",
+    rotinaTrocarModelo: "🔁 Trocar a semana inteira por um modelo pronto",
+    rotinaExportarImagem: "📄 Exportar rotina como imagem",
+    rotinaDeloadTitulo: "💤 semanas seguidas treinando forte",
+    rotinaDeloadTexto: "Que tal uma semana mais leve pra descansar e evitar overtraining? Isso reduz 1 série de cada exercício por essa semana — você pode ajustar de volta quando quiser.",
+    rotinaDeloadAplicar: "Aplicar semana leve",
+    rotinaDeloadAgoraNao: "Agora não",
+    rotinaQuaisDias: "Quais dias você treina? (toque pra ligar/desligar)",
+    rotinaDescansoRecomendado: "Descanso recomendado entre séries:",
+    rotinaDescansoRecomendadoValor: "2 a 3 min",
+    rotinaDescansoAjuste: "Ajuste por exercício se precisar.",
+    rotinaSalvando: "Salvando...",
+    rotinaSalva: "✓ Rotina salva",
+    rotinaErroSalvar: "Erro ao salvar — tentar de novo",
+    rotinaSalvarBtn: "Salvar rotina",
+    rotinaCarregando: "Carregando sua última rotina salva…",
+  },
+  en: {
+    ola: "Hi",
+    subtituloApp: "Workouts, progress and execution — all in one place.",
+    offline: "📴 No connection right now — your data is still saved on this device.",
+    perfil: "Profile",
+    trocarPerfil: "Switch profile",
+    alternarTema: "Toggle theme",
+    alternarIdioma: "Change language",
+    premium: "★ Premium",
+    freeVerPlanos: "Free — see plans",
+    tabInicio: "Home",
+    tabRotina: "Routine",
+    tabHistorico: "History",
+    tabNotas: "Notes",
+    tabAvaliacao: "Assessment",
+    tabPremium: "Premium",
+    tabSobre: "About",
+    tabCross: "Cross",
+    inicioOla: "Hi",
+    inicioNotificacoes: "Notifications",
+    inicioTreinoConcluido: "✅ Today's workout completed",
+    inicioAindaNaoTreinou: "🕐 Haven't trained today yet",
+    inicioDiaDescanso: "😴 Rest day",
+    inicioSeuTreinoHoje: "YOUR WORKOUT TODAY",
+    inicioExercicios: "exercises",
+    inicioBtnComecar: "START WORKOUT",
+    inicioHoje: "TODAY",
+    inicioTituloDescanso: "Rest day",
+    inicioMetaDescanso: "Take time to recover — or check the Routine to see the week ahead.",
+    inicioBtnVerRotina: "VIEW MY ROUTINE",
+    inicioProgresso: "PROGRESS",
+    inicioPesoRecente: "most recent weight",
+    inicioProgressoVazio: "Add your weight in the Assessment tab to track your progress.",
+    inicioSequencia: "STREAK",
+    inicioDiasTreinando: "days training",
+    inicioDiaTreinando: "day training",
+    inicioTreineHoje: "train today to get started",
+    inicioResumoSemanal: "WEEKLY SUMMARY",
+    inicioTreinos: "workouts",
+    inicioTreino: "workout",
+    inicioExerciciosConcluidos: "exercises completed",
+    inicioEvolucaoPeso: "WEIGHT PROGRESS",
+    inicioEvolucaoVazio: "Log at least two assessments in the Assessment tab to see your progress chart here.",
+    sobreTitulo: "About Massi Pro",
+    sobreTexto: "Massi Pro is an app to help beginners build and follow a workout routine simply, with guided execution, history and progress tracking — all in one place.",
+    sobreConviteTitulo: "📣 Invite a friend",
+    sobreConviteTexto: "Training with a partner helps you stay consistent. Invite someone to use Massi Pro too:",
+    sobreConviteWhats: "💬 WhatsApp",
+    sobreConviteMaisOpcoes: "↗ More options",
+    sobreConviteCopiado: "✓ Copied!",
+    sobreConviteCopiarLink: "🔗 Copy link",
+    sobreBackupTitulo: "Data backup",
+    sobreBackupTexto: "Export a file with your routine, history, assessments and notes — or import a previously saved backup.",
+    sobreBackupExportar: "⬇️ Export backup",
+    sobreBackupImportar: "⬆️ Import backup",
+    sobreBackupImportado: "Backup imported! Reload the app to see the updated data.",
+    sobreBackupErro: "Couldn't read that backup file. Check if it's the right one.",
+    sobreTermosTitulo: "Terms of use",
+    sobreTermosTexto1: "This app's content is educational and doesn't replace guidance from a fitness professional, nutritionist or doctor. Use at your own discretion and respect your body's limits — stop any exercise that causes pain.",
+    sobreTermosTexto2: "Your data (routine, history, assessments and notes) is saved locally, on your own browser/device.",
+    sobreTextoConvite: "I started using Massi Pro to organize my workouts — it has a personalized routine, guided video workouts, history and even a Cross Training area. Check it out: https://massi-pro.vercel.app",
+    rotinaAvisoSemTreinarPre: "⏰ It's been",
+    rotinaAvisoSemTreinarPos: "days since your last completed workout. How about getting back to it today?",
+    rotinaBuscarPlaceholder: "🔎 Quick exercise search…",
+    rotinaTrocarModelo: "🔁 Swap the whole week for a ready-made template",
+    rotinaExportarImagem: "📄 Export routine as image",
+    rotinaDeloadTitulo: "💤 weeks in a row training hard",
+    rotinaDeloadTexto: "How about a lighter week to recover and avoid overtraining? This reduces 1 set per exercise for this week — you can switch it back anytime.",
+    rotinaDeloadAplicar: "Apply light week",
+    rotinaDeloadAgoraNao: "Not now",
+    rotinaQuaisDias: "Which days do you train? (tap to toggle)",
+    rotinaDescansoRecomendado: "Recommended rest between sets:",
+    rotinaDescansoRecomendadoValor: "2 to 3 min",
+    rotinaDescansoAjuste: "Adjust per exercise if needed.",
+    rotinaSalvando: "Saving...",
+    rotinaSalva: "✓ Routine saved",
+    rotinaErroSalvar: "Error saving — try again",
+    rotinaSalvarBtn: "Save routine",
+    rotinaCarregando: "Loading your last saved routine…",
+  },
+  es: {
+    ola: "Hola",
+    subtituloApp: "Entrenamiento, progreso y ejecución — todo en un solo lugar.",
+    offline: "📴 Sin conexión ahora — tus datos se siguen guardando en este dispositivo.",
+    perfil: "Perfil",
+    trocarPerfil: "Cambiar perfil",
+    alternarTema: "Cambiar tema",
+    alternarIdioma: "Cambiar idioma",
+    premium: "★ Premium",
+    freeVerPlanos: "Gratis — ver planes",
+    tabInicio: "Inicio",
+    tabRotina: "Rutina",
+    tabHistorico: "Historial",
+    tabNotas: "Notas",
+    tabAvaliacao: "Evaluación",
+    tabPremium: "Premium",
+    tabSobre: "Acerca de",
+    tabCross: "Cross",
+    inicioOla: "Hola",
+    inicioNotificacoes: "Notificaciones",
+    inicioTreinoConcluido: "✅ Entrenamiento de hoy completado",
+    inicioAindaNaoTreinou: "🕐 Aún no has entrenado hoy",
+    inicioDiaDescanso: "😴 Día de descanso",
+    inicioSeuTreinoHoje: "TU ENTRENAMIENTO DE HOY",
+    inicioExercicios: "ejercicios",
+    inicioBtnComecar: "EMPEZAR ENTRENAMIENTO",
+    inicioHoje: "HOY",
+    inicioTituloDescanso: "Día de descanso",
+    inicioMetaDescanso: "Aprovecha para recuperarte — o revisa la Rutina para ver la semana.",
+    inicioBtnVerRotina: "VER MI RUTINA",
+    inicioProgresso: "PROGRESO",
+    inicioPesoRecente: "peso más reciente",
+    inicioProgressoVazio: "Agrega tu peso en la pestaña Evaluación para seguir tu progreso.",
+    inicioSequencia: "RACHA",
+    inicioDiasTreinando: "días entrenando",
+    inicioDiaTreinando: "día entrenando",
+    inicioTreineHoje: "entrena hoy para empezar",
+    inicioResumoSemanal: "RESUMEN SEMANAL",
+    inicioTreinos: "entrenamientos",
+    inicioTreino: "entrenamiento",
+    inicioExerciciosConcluidos: "ejercicios completados",
+    inicioEvolucaoPeso: "PROGRESO DE PESO",
+    inicioEvolucaoVazio: "Registra al menos dos evaluaciones en la pestaña Evaluación para ver tu gráfico de progreso aquí.",
+    sobreTitulo: "Acerca de Massi Pro",
+    sobreTexto: "Massi Pro es una app para ayudar a principiantes a armar y seguir una rutina de entrenamiento de forma simple, con ejecución guiada, historial y seguimiento del progreso — todo en un solo lugar.",
+    sobreConviteTitulo: "📣 Invita a un amigo",
+    sobreConviteTexto: "Entrenar en pareja ayuda a mantener la constancia. Invita a alguien a usar Massi Pro también:",
+    sobreConviteWhats: "💬 WhatsApp",
+    sobreConviteMaisOpcoes: "↗ Más opciones",
+    sobreConviteCopiado: "✓ ¡Copiado!",
+    sobreConviteCopiarLink: "🔗 Copiar enlace",
+    sobreBackupTitulo: "Copia de seguridad de datos",
+    sobreBackupTexto: "Exporta un archivo con tu rutina, historial, evaluaciones y notas — o importa una copia guardada antes.",
+    sobreBackupExportar: "⬇️ Exportar copia",
+    sobreBackupImportar: "⬆️ Importar copia",
+    sobreBackupImportado: "¡Copia importada! Recarga la app para ver los datos actualizados.",
+    sobreBackupErro: "No pude leer ese archivo de copia. Verifica que sea el correcto.",
+    sobreTermosTitulo: "Términos de uso",
+    sobreTermosTexto1: "El contenido de esta app es educativo y no reemplaza la orientación de un profesional de educación física, nutricionista o médico. Úsalo bajo tu propio criterio y respeta los límites de tu cuerpo — detén cualquier ejercicio que cause dolor.",
+    sobreTermosTexto2: "Tus datos (rutina, historial, evaluaciones y notas) se guardan localmente, en tu propio navegador/dispositivo.",
+    sobreTextoConvite: "Empecé a usar Massi Pro para organizar mis entrenamientos — tiene rutina personalizada, entrenamiento guiado con video, historial y hasta un área de Cross Training. Échale un vistazo: https://massi-pro.vercel.app",
+    rotinaAvisoSemTreinarPre: "⏰ Ya pasaron",
+    rotinaAvisoSemTreinarPos: "días desde tu último entrenamiento completado. ¿Qué tal retomar hoy?",
+    rotinaBuscarPlaceholder: "🔎 Buscar ejercicio rápido…",
+    rotinaTrocarModelo: "🔁 Cambiar toda la semana por una plantilla lista",
+    rotinaExportarImagem: "📄 Exportar rutina como imagen",
+    rotinaDeloadTitulo: "💤 semanas seguidas entrenando fuerte",
+    rotinaDeloadTexto: "¿Qué tal una semana más ligera para descansar y evitar el sobreentrenamiento? Esto reduce 1 serie de cada ejercicio en esta semana — puedes ajustarlo de vuelta cuando quieras.",
+    rotinaDeloadAplicar: "Aplicar semana ligera",
+    rotinaDeloadAgoraNao: "Ahora no",
+    rotinaQuaisDias: "¿Qué días entrenas? (toca para activar/desactivar)",
+    rotinaDescansoRecomendado: "Descanso recomendado entre series:",
+    rotinaDescansoRecomendadoValor: "2 a 3 min",
+    rotinaDescansoAjuste: "Ajusta por ejercicio si lo necesitas.",
+    rotinaSalvando: "Guardando...",
+    rotinaSalva: "✓ Rutina guardada",
+    rotinaErroSalvar: "Error al guardar — intentar de nuevo",
+    rotinaSalvarBtn: "Guardar rutina",
+    rotinaCarregando: "Cargando tu última rutina guardada…",
+  },
+};
+
+function traduzir(idioma, chave) {
+  const dicionario = TRADUCOES[idioma] || TRADUCOES.pt;
+  return (dicionario[chave] !== undefined ? dicionario[chave] : TRADUCOES.pt[chave]) || chave;
+}
+
 export default function App() {
   const [chaveRemount, setChaveRemount] = useState(0);
   return <AppMassiPro key={chaveRemount} onSolicitarRemount={() => setChaveRemount((c) => c + 1)} />;
@@ -2014,6 +2273,8 @@ function AppMassiPro({ onSolicitarRemount }) {
   const [progressao, setProgressao] = useState({}); // { [nomeExercicio]: contagem }
   const [onboardingPendente, setOnboardingPendente] = useState(false);
   const [tema, setTema] = useState("claro");
+  const [idioma, setIdioma] = useState("pt");
+  const t = useCallback((chave) => traduzir(idioma, chave), [idioma]);
   const [perfis, setPerfis] = useState([{ id: "perfil-1", nome: "Eu" }]);
   const [perfilAtivoId, setPerfilAtivoId] = useState("perfil-1");
   const [showPerfis, setShowPerfis] = useState(false);
@@ -2094,6 +2355,14 @@ function AppMassiPro({ onSolicitarRemount }) {
         if (temaRes && temaRes.value) setTema(temaRes.value);
       } catch (e) {
         // usa o padrão "claro"
+      }
+      try {
+        const idiomaRes = await window.storage.get("idioma-app");
+        if (idiomaRes && idiomaRes.value && IDIOMAS_DISPONIVEIS.includes(idiomaRes.value)) {
+          setIdioma(idiomaRes.value);
+        }
+      } catch (e) {
+        // usa o padrão "pt"
       }
       try {
         const deloadRes = await window.storage.get("deload-resposta-semana");
@@ -2283,6 +2552,17 @@ function AppMassiPro({ onSolicitarRemount }) {
     setTema(novoTema);
     try {
       await window.storage.set("tema-app", novoTema);
+    } catch (e) {
+      // segue mesmo se falhar
+    }
+  };
+
+  const alternarIdioma = async () => {
+    const indiceAtual = IDIOMAS_DISPONIVEIS.indexOf(idioma);
+    const novoIdioma = IDIOMAS_DISPONIVEIS[(indiceAtual + 1) % IDIOMAS_DISPONIVEIS.length];
+    setIdioma(novoIdioma);
+    try {
+      await window.storage.set("idioma-app", novoIdioma);
     } catch (e) {
       // segue mesmo se falhar
     }
@@ -2843,7 +3123,7 @@ function AppMassiPro({ onSolicitarRemount }) {
 
       {!online && (
         <div style={styles.offlineBanner}>
-          📴 Sem conexão agora — seus dados continuam salvos no aparelho normalmente.
+          {t("offline")}
         </div>
       )}
 
@@ -2855,17 +3135,20 @@ function AppMassiPro({ onSolicitarRemount }) {
             <button style={styles.perfilHeaderBtn} onClick={() => setShowPerfis(true)} aria-label="Trocar perfil" title="Perfil">
               👤 {perfilAtivoNome}
             </button>
-            <button style={styles.temaBtn} onClick={alternarTema} aria-label="Alternar modo claro/escuro" title="Alternar tema">
+            <button style={styles.temaBtn} onClick={alternarTema} aria-label="Alternar modo claro/escuro" title={t("alternarTema")}>
               {tema === "escuro" ? "☀️" : "🌙"}
             </button>
+            <button style={styles.temaBtn} onClick={alternarIdioma} aria-label="Trocar idioma" title={t("alternarIdioma")}>
+              {IDIOMA_BANDEIRA[idioma]} {IDIOMA_LABEL[idioma]}
+            </button>
             <button style={isPremium ? styles.premiumBadge : styles.freeBadge} onClick={() => setShowPlanos(true)}>
-              {isPremium ? "★ Premium" : "Free — ver planos"}
+              {isPremium ? t("premium") : t("freeVerPlanos")}
             </button>
           </div>
         </div>
-        <p style={styles.saudacaoNome}>Olá, {perfilAtivoNome}!</p>
+        <p style={styles.saudacaoNome}>{t("ola")}, {perfilAtivoNome}!</p>
         <h1 style={styles.title}>Massi Pro</h1>
-        <p style={styles.subtitle}>Treino, evolução e execução — tudo num só lugar.</p>
+        <p style={styles.subtitle}>{t("subtituloApp")}</p>
       </header>
 
       <div style={styles.content}>
@@ -3132,7 +3415,7 @@ function AppMassiPro({ onSolicitarRemount }) {
             onClick={() => setActiveTab("inicio")}
           >
             <span style={styles.tabBtnIcone}>🏠</span>
-            Início
+            {t("tabInicio")}
           </button>
           <button
             ref={(el) => (tabBtnRefs.current["rotina"] = el)}
@@ -3140,7 +3423,7 @@ function AppMassiPro({ onSolicitarRemount }) {
             onClick={() => setActiveTab("rotina")}
           >
             <span style={styles.tabBtnIcone}>💪</span>
-            Rotina
+            {t("tabRotina")}
           </button>
           <button
             ref={(el) => (tabBtnRefs.current["historico"] = el)}
@@ -3148,7 +3431,7 @@ function AppMassiPro({ onSolicitarRemount }) {
             onClick={() => setActiveTab("historico")}
           >
             <span style={styles.tabBtnIcone}>📜</span>
-            Histórico
+            {t("tabHistorico")}
           </button>
           <button
             ref={(el) => (tabBtnRefs.current["notas"] = el)}
@@ -3156,7 +3439,7 @@ function AppMassiPro({ onSolicitarRemount }) {
             onClick={() => setActiveTab("notas")}
           >
             <span style={styles.tabBtnIcone}>📝</span>
-            Notas
+            {t("tabNotas")}
           </button>
           <button
             ref={(el) => (tabBtnRefs.current["evolucao"] = el)}
@@ -3164,7 +3447,7 @@ function AppMassiPro({ onSolicitarRemount }) {
             onClick={() => setActiveTab("evolucao")}
           >
             <span style={styles.tabBtnIcone}>📏</span>
-            Avaliação
+            {t("tabAvaliacao")}
           </button>
           <button
             ref={(el) => (tabBtnRefs.current["premium"] = el)}
@@ -3172,7 +3455,7 @@ function AppMassiPro({ onSolicitarRemount }) {
             onClick={() => setActiveTab("premium")}
           >
             <span style={styles.tabBtnIcone}>⭐</span>
-            Premium
+            {t("tabPremium")}
           </button>
           <button
             ref={(el) => (tabBtnRefs.current["sobre"] = el)}
@@ -3180,7 +3463,7 @@ function AppMassiPro({ onSolicitarRemount }) {
             onClick={() => setActiveTab("sobre")}
           >
             <span style={styles.tabBtnIcone}>ℹ️</span>
-            Sobre
+            {t("tabSobre")}
           </button>
           <button
             ref={(el) => (tabBtnRefs.current["cross"] = el)}
@@ -3188,7 +3471,7 @@ function AppMassiPro({ onSolicitarRemount }) {
             onClick={() => setActiveTab("cross")}
           >
             <span style={styles.tabBtnIcone}>🔥</span>
-            Cross
+            {t("tabCross")}
           </button>
         </div>
         {showTabScrollHint && (
@@ -3205,6 +3488,8 @@ function AppMassiPro({ onSolicitarRemount }) {
           diasSelecionados={diasSelecionados}
           historico={historico}
           onIrTreino={() => setActiveTab("rotina")}
+          t={t}
+          idioma={idioma}
         />
       )}
 
@@ -3212,7 +3497,7 @@ function AppMassiPro({ onSolicitarRemount }) {
         <>
           {avisoSemTreinar && (
             <div style={styles.avisoSemTreinarBox}>
-              ⏰ Já faz {avisoSemTreinar} dias que você não conclui um treino. Que tal retomar hoje?
+              {t("rotinaAvisoSemTreinarPre")} {avisoSemTreinar} {t("rotinaAvisoSemTreinarPos")}
             </div>
           )}
 
@@ -3220,7 +3505,7 @@ function AppMassiPro({ onSolicitarRemount }) {
             type="text"
             value={buscaExercicio}
             onChange={(e) => setBuscaExercicio(e.target.value)}
-            placeholder="🔎 Buscar exercício rápido…"
+            placeholder={t("rotinaBuscarPlaceholder")}
             style={styles.buscaInput}
           />
           {buscaExercicio.trim().length > 0 && (
@@ -3234,28 +3519,28 @@ function AppMassiPro({ onSolicitarRemount }) {
           )}
 
           <button style={styles.modelosBtn} onClick={() => setShowModelos(true)}>
-            🔁 Trocar a semana inteira por um modelo pronto
+            {t("rotinaTrocarModelo")}
           </button>
 
           <button style={styles.exportarRotinaBtn} onClick={exportarRotinaImagem}>
-            📄 Exportar rotina como imagem
+            {t("rotinaExportarImagem")}
           </button>
 
           {mostrarSugestaoDeload && (
             <section style={styles.deloadBox}>
-              <div style={styles.deloadTitulo}>💤 {semanasConsistentes} semanas seguidas treinando forte</div>
+              <div style={styles.deloadTitulo}>{semanasConsistentes} {t("rotinaDeloadTitulo")}</div>
               <p style={styles.deloadTexto}>
-                Que tal uma semana mais leve pra descansar e evitar overtraining? Isso reduz 1 série de cada exercício por essa semana — você pode ajustar de volta quando quiser.
+                {t("rotinaDeloadTexto")}
               </p>
               <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-                <button style={styles.saveButton} onClick={aplicarSemanaLeve}>Aplicar semana leve</button>
-                <button style={styles.trocaManterBtn} onClick={registrarRespostaDeload}>Agora não</button>
+                <button style={styles.saveButton} onClick={aplicarSemanaLeve}>{t("rotinaDeloadAplicar")}</button>
+                <button style={styles.trocaManterBtn} onClick={registrarRespostaDeload}>{t("rotinaDeloadAgoraNao")}</button>
               </div>
             </section>
           )}
 
           <section style={styles.card}>
-            <div style={styles.cardLabel}>Quais dias você treina? (toque pra ligar/desligar)</div>
+            <div style={styles.cardLabel}>{t("rotinaQuaisDias")}</div>
             <div style={styles.chipRow}>
               {DIAS_SEMANA.map((dia, i) => (
                 <button
@@ -3276,7 +3561,7 @@ function AppMassiPro({ onSolicitarRemount }) {
           {showModelos && <ModelosModal onEscolher={aplicarModelo} onClose={() => setShowModelos(false)} />}
 
           <div style={styles.restBanner}>
-            Descanso recomendado entre séries: <strong>2 a 3 min</strong>. Ajuste por exercício se precisar.
+            {t("rotinaDescansoRecomendado")} <strong>{t("rotinaDescansoRecomendadoValor")}</strong>. {t("rotinaDescansoAjuste")}
           </div>
 
           <div style={styles.dayList}>
@@ -3306,10 +3591,10 @@ function AppMassiPro({ onSolicitarRemount }) {
           </div>
 
           <button style={styles.saveButton} onClick={salvar}>
-            {saveState === "saving" ? "Salvando..." : saveState === "saved" ? "✓ Rotina salva" : saveState === "error" ? "Erro ao salvar — tentar de novo" : "Salvar rotina"}
+            {saveState === "saving" ? t("rotinaSalvando") : saveState === "saved" ? t("rotinaSalva") : saveState === "error" ? t("rotinaErroSalvar") : t("rotinaSalvarBtn")}
           </button>
 
-          {!loaded && <div style={styles.loadingNote}>Carregando sua última rotina salva…</div>}
+          {!loaded && <div style={styles.loadingNote}>{t("rotinaCarregando")}</div>}
         </>
       )}
 
@@ -3328,7 +3613,7 @@ function AppMassiPro({ onSolicitarRemount }) {
 
       {activeTab === "premium" && <PremiumTab isPremium={isPremium} onVerPlanos={() => setShowPlanos(true)} objetivoUsuario={objetivoUsuario} nivelUsuario={nivelUsuario} />}
 
-      {activeTab === "sobre" && <SobreTab />}
+      {activeTab === "sobre" && <SobreTab t={t} />}
 
       {activeTab === "cross" && <MassiCrossTab />}
       </div>
@@ -3363,24 +3648,45 @@ function estimarDuracaoMinPorRegistro(registro) {
   return Math.round(base + cardio);
 }
 
-const FRASES_MOTIVACIONAIS_INICIO = [
-  "Cada treino te deixa mais perto do seu objetivo.",
-  "Consistência vale mais que intensidade.",
-  "Hoje é um bom dia pra evoluir um pouco mais.",
-  "Seu único concorrente é quem você era ontem.",
-  "Disciplina é o que sustenta a motivação nos dias difíceis.",
-  "Um treino de cada vez constrói o resultado.",
-  "Aparecer já é metade da batalha — e você está aqui.",
-];
+const FRASES_MOTIVACIONAIS_INICIO = {
+  pt: [
+    "Cada treino te deixa mais perto do seu objetivo.",
+    "Consistência vale mais que intensidade.",
+    "Hoje é um bom dia pra evoluir um pouco mais.",
+    "Seu único concorrente é quem você era ontem.",
+    "Disciplina é o que sustenta a motivação nos dias difíceis.",
+    "Um treino de cada vez constrói o resultado.",
+    "Aparecer já é metade da batalha — e você está aqui.",
+  ],
+  en: [
+    "Every workout brings you closer to your goal.",
+    "Consistency beats intensity.",
+    "Today is a good day to improve a little more.",
+    "Your only competitor is who you were yesterday.",
+    "Discipline is what keeps motivation going on hard days.",
+    "One workout at a time builds the result.",
+    "Showing up is half the battle — and you're here.",
+  ],
+  es: [
+    "Cada entrenamiento te acerca más a tu objetivo.",
+    "La constancia vale más que la intensidad.",
+    "Hoy es un buen día para mejorar un poco más.",
+    "Tu único competidor es quien eras ayer.",
+    "La disciplina sostiene la motivación en los días difíciles.",
+    "Un entrenamiento a la vez construye el resultado.",
+    "Aparecer ya es la mitad de la batalla — y aquí estás.",
+  ],
+};
 
-function getFraseDoDiaInicio() {
+function getFraseDoDiaInicio(idioma) {
   const hoje = new Date();
   const semente = hoje.getDate() + hoje.getMonth() * 31;
-  return FRASES_MOTIVACIONAIS_INICIO[semente % FRASES_MOTIVACIONAIS_INICIO.length];
+  const frases = FRASES_MOTIVACIONAIS_INICIO[idioma] || FRASES_MOTIVACIONAIS_INICIO.pt;
+  return frases[semente % frases.length];
 }
 
 // ---------- INÍCIO — painel principal ----------
-function InicioTab({ perfilAtivoNome, rotina, diasSelecionados, historico, onIrTreino }) {
+function InicioTab({ perfilAtivoNome, rotina, diasSelecionados, historico, onIrTreino, t, idioma }) {
   const [avaliacoes, setAvaliacoes] = useState([]);
 
   useEffect(() => {
@@ -3432,10 +3738,10 @@ function InicioTab({ perfilAtivoNome, rotina, diasSelecionados, historico, onIrT
       <div style={styles.inicioHeader}>
         <div style={styles.inicioAvatar}>{(perfilAtivoNome || "V").charAt(0).toUpperCase()}</div>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={styles.inicioSaudacao}>Olá, {perfilAtivoNome} 👋</div>
-          <div style={styles.inicioFrase}>{getFraseDoDiaInicio()}</div>
+          <div style={styles.inicioSaudacao}>{t("inicioOla")}, {perfilAtivoNome} 👋</div>
+          <div style={styles.inicioFrase}>{getFraseDoDiaInicio(idioma)}</div>
         </div>
-        <div style={styles.inicioSino} title="Notificações">🔔</div>
+        <div style={styles.inicioSino} title={t("inicioNotificacoes")}>🔔</div>
       </div>
 
       <div style={styles.resumoDiaFaixa}>
@@ -3443,10 +3749,10 @@ function InicioTab({ perfilAtivoNome, rotina, diasSelecionados, historico, onIrT
         <span style={styles.resumoDiaSeparador}>•</span>
         <span style={styles.resumoDiaStatus}>
           {treinoHojeConcluido
-            ? "✅ Treino de hoje concluído"
+            ? t("inicioTreinoConcluido")
             : hojeEhDiaDeTreino
-            ? "🕐 Ainda não treinado hoje"
-            : "😴 Dia de descanso"}
+            ? t("inicioAindaNaoTreinou")
+            : t("inicioDiaDescanso")}
         </span>
         {streak > 0 && <span style={styles.resumoDiaStreak}>🔥 {streak}</span>}
       </div>
@@ -3454,51 +3760,51 @@ function InicioTab({ perfilAtivoNome, rotina, diasSelecionados, historico, onIrT
       <section style={styles.inicioHeroCard}>
         {hojeEhDiaDeTreino ? (
           <>
-            <div style={styles.inicioHeroLabel}>SEU TREINO DE HOJE</div>
+            <div style={styles.inicioHeroLabel}>{t("inicioSeuTreinoHoje")}</div>
             <div style={styles.inicioHeroTitulo}>{treinoHoje.foco}</div>
             <div style={styles.inicioHeroMeta}>
               {treinoHoje.exercicios.length > 0
-                ? `${treinoHoje.exercicios.length} exercícios`
+                ? `${treinoHoje.exercicios.length} ${t("inicioExercicios")}`
                 : treinoHoje.cardio
                 ? treinoHoje.cardio.tipo
                 : ""}
               {estimarDuracaoTreinoMin(treinoHoje) > 0 ? ` • ~${estimarDuracaoTreinoMin(treinoHoje)} min` : ""}
             </div>
-            <button style={styles.inicioHeroBtn} onClick={onIrTreino}>COMEÇAR TREINO</button>
+            <button style={styles.inicioHeroBtn} onClick={onIrTreino}>{t("inicioBtnComecar")}</button>
           </>
         ) : (
           <>
-            <div style={styles.inicioHeroLabel}>HOJE</div>
-            <div style={styles.inicioHeroTitulo}>Dia de descanso</div>
-            <div style={styles.inicioHeroMeta}>Aproveite pra recuperar — ou dá uma olhada na Rotina pra ver a semana.</div>
-            <button style={styles.inicioHeroBtn} onClick={onIrTreino}>VER MINHA ROTINA</button>
+            <div style={styles.inicioHeroLabel}>{t("inicioHoje")}</div>
+            <div style={styles.inicioHeroTitulo}>{t("inicioTituloDescanso")}</div>
+            <div style={styles.inicioHeroMeta}>{t("inicioMetaDescanso")}</div>
+            <button style={styles.inicioHeroBtn} onClick={onIrTreino}>{t("inicioBtnVerRotina")}</button>
           </>
         )}
       </section>
 
       <div style={styles.inicioCardsGrid}>
         <div style={styles.inicioCard}>
-          <div style={styles.inicioCardLabel}>PROGRESSO</div>
+          <div style={styles.inicioCardLabel}>{t("inicioProgresso")}</div>
           {avaliacoes.length > 0 ? (
             <>
               <div style={styles.inicioCardValor}>{avaliacoes[avaliacoes.length - 1].peso} kg</div>
-              <div style={styles.inicioCardSub}>peso mais recente</div>
+              <div style={styles.inicioCardSub}>{t("inicioPesoRecente")}</div>
             </>
           ) : (
-            <div style={styles.inicioCardVazio}>Adicione seu peso na aba Avaliação pra acompanhar sua evolução.</div>
+            <div style={styles.inicioCardVazio}>{t("inicioProgressoVazio")}</div>
           )}
         </div>
         <div style={styles.inicioCard}>
-          <div style={styles.inicioCardLabel}>SEQUÊNCIA</div>
+          <div style={styles.inicioCardLabel}>{t("inicioSequencia")}</div>
           <div style={styles.inicioCardValor}>{streak > 0 ? `🔥 ${streak}` : "—"}</div>
           <div style={styles.inicioCardSub}>
-            {streak > 0 ? `dia${streak > 1 ? "s" : ""} treinando` : "treine hoje pra começar"}
+            {streak > 0 ? (streak > 1 ? t("inicioDiasTreinando") : t("inicioDiaTreinando")) : t("inicioTreineHoje")}
           </div>
         </div>
       </div>
 
       <section style={styles.inicioCard}>
-        <div style={styles.inicioCardLabel}>RESUMO SEMANAL</div>
+        <div style={styles.inicioCardLabel}>{t("inicioResumoSemanal")}</div>
         <div style={styles.inicioSemanaRow}>
           {diasDaSemana.map((d) => (
             <div key={d.nomeDia} style={styles.inicioSemanaDia}>
@@ -3510,12 +3816,12 @@ function InicioTab({ perfilAtivoNome, rotina, diasSelecionados, historico, onIrT
           ))}
         </div>
         <div style={styles.inicioResumoLinha}>
-          {historicoSemana.length} treino{historicoSemana.length !== 1 ? "s" : ""} • ~{minutosSemana} min • {exerciciosSemana} exercícios concluídos
+          {historicoSemana.length} {historicoSemana.length !== 1 ? t("inicioTreinos") : t("inicioTreino")} • ~{minutosSemana} min • {exerciciosSemana} {t("inicioExerciciosConcluidos")}
         </div>
       </section>
 
       <section style={styles.inicioCard}>
-        <div style={styles.inicioCardLabel}>EVOLUÇÃO DO PESO</div>
+        <div style={styles.inicioCardLabel}>{t("inicioEvolucaoPeso")}</div>
         {dadosPeso.length >= 2 ? (
           <ResponsiveContainer width="100%" height={170}>
             <LineChart data={dadosPeso}>
@@ -3528,7 +3834,7 @@ function InicioTab({ perfilAtivoNome, rotina, diasSelecionados, historico, onIrT
           </ResponsiveContainer>
         ) : (
           <div style={styles.inicioCardVazio}>
-            Registre pelo menos duas avaliações na aba Avaliação pra ver seu gráfico de evolução aqui.
+            {t("inicioEvolucaoVazio")}
           </div>
         )}
       </section>
@@ -4596,7 +4902,7 @@ function PremiumTab({ isPremium, onVerPlanos, objetivoUsuario, nivelUsuario }) {
   );
 }
 
-function SobreTab() {
+function SobreTab({ t }) {
   const [mensagemBackup, setMensagemBackup] = useState(null);
 
   const exportarDados = async () => {
@@ -4631,15 +4937,15 @@ function SobreTab() {
           await window.storage.set(chave, dados[chave]);
         }
       }
-      setMensagemBackup("Backup importado! Recarregue o app pra ver os dados atualizados.");
+      setMensagemBackup(t("sobreBackupImportado"));
     } catch (err) {
-      setMensagemBackup("Não consegui ler esse arquivo de backup. Confira se é o arquivo certo.");
+      setMensagemBackup(t("sobreBackupErro"));
     }
     e.target.value = "";
   };
 
   const [copiadoConvite, setCopiadoConvite] = useState(false);
-  const textoConvite = "Comecei a usar o Massi Pro pra organizar meus treinos — tem rotina personalizada, treino guiado com vídeo, histórico e até uma área de Cross Training. Dá uma olhada: https://massi-pro.vercel.app";
+  const textoConvite = t("sobreTextoConvite");
 
   const convidarWhatsapp = () => {
     window.open(`https://wa.me/?text=${encodeURIComponent(textoConvite)}`, "_blank");
@@ -4668,43 +4974,43 @@ function SobreTab() {
   return (
     <div>
       <section style={styles.card}>
-        <div style={styles.cardLabel}>Sobre o Massi Pro</div>
+        <div style={styles.cardLabel}>{t("sobreTitulo")}</div>
         <p style={styles.notaTexto}>
-          Massi Pro é um app pra ajudar quem está começando a montar e seguir uma rotina de treino de forma simples, com execução guiada, histórico e acompanhamento de evolução — tudo num só lugar.
+          {t("sobreTexto")}
         </p>
       </section>
 
       <section style={styles.card}>
-        <div style={styles.cardLabel}>📣 Convide um amigo</div>
-        <p style={styles.notaTexto}>Treinar em dupla ajuda a manter a consistência. Chama alguém pra usar o Massi Pro também:</p>
+        <div style={styles.cardLabel}>{t("sobreConviteTitulo")}</div>
+        <p style={styles.notaTexto}>{t("sobreConviteTexto")}</p>
         <div style={styles.convidarBotoesRow}>
-          <button style={styles.convidarBtnWhats} onClick={convidarWhatsapp}>💬 WhatsApp</button>
+          <button style={styles.convidarBtnWhats} onClick={convidarWhatsapp}>{t("sobreConviteWhats")}</button>
           {typeof navigator !== "undefined" && navigator.share && (
-            <button style={styles.convidarBtnOutro} onClick={convidarMaisOpcoes}>↗ Mais opções</button>
+            <button style={styles.convidarBtnOutro} onClick={convidarMaisOpcoes}>{t("sobreConviteMaisOpcoes")}</button>
           )}
           <button style={styles.convidarBtnOutro} onClick={copiarConvite}>
-            {copiadoConvite ? "✓ Copiado!" : "🔗 Copiar link"}
+            {copiadoConvite ? t("sobreConviteCopiado") : t("sobreConviteCopiarLink")}
           </button>
         </div>
       </section>
 
       <section style={styles.card}>
-        <div style={styles.cardLabel}>Backup dos dados</div>
-        <p style={styles.notaTexto}>Exporte um arquivo com sua rotina, histórico, avaliações e notas — ou importe um backup salvo antes.</p>
-        <button style={styles.saveButton} onClick={exportarDados}>⬇️ Exportar backup</button>
+        <div style={styles.cardLabel}>{t("sobreBackupTitulo")}</div>
+        <p style={styles.notaTexto}>{t("sobreBackupTexto")}</p>
+        <button style={styles.saveButton} onClick={exportarDados}>{t("sobreBackupExportar")}</button>
         <label style={styles.addItemBtn}>
-          ⬆️ Importar backup
+          {t("sobreBackupImportar")}
           <input type="file" accept="application/json" onChange={importarDados} style={{ display: "none" }} />
         </label>
         {mensagemBackup && <p style={styles.modalDisclaimer}>{mensagemBackup}</p>}
       </section>
       <section style={styles.card}>
-        <div style={styles.cardLabel}>Termos de uso</div>
+        <div style={styles.cardLabel}>{t("sobreTermosTitulo")}</div>
         <p style={styles.notaTexto}>
-          O conteúdo deste app é educativo e não substitui a orientação de um profissional de educação física, nutricionista ou médico. Use por sua conta e respeite os limites do seu corpo — interrompa qualquer exercício que cause dor.
+          {t("sobreTermosTexto1")}
         </p>
         <p style={styles.notaTexto}>
-          Seus dados (rotina, histórico, avaliações e notas) são salvos localmente, no seu próprio navegador/dispositivo.
+          {t("sobreTermosTexto2")}
         </p>
       </section>
     </div>
@@ -5328,6 +5634,24 @@ const CROSS_EXERCICIOS = [
   { id: "situp", nome: "Sit-up", nivel: "Iniciante", equipamento: "Sem equipamento", musculos: "Abdômen", comoExecutar: "Deitado com os joelhos flexionados, suba o tronco até ficar sentado contraindo o abdômen, e desça com controle." },
   { id: "plank-cross", nome: "Prancha (Plank)", nivel: "Iniciante", equipamento: "Sem equipamento", musculos: "Core", comoExecutar: "Apoie antebraços e pontas dos pés no chão, mantendo o corpo reto da cabeça aos calcanhares, sem deixar o quadril cair." },
   { id: "jumping-jack", nome: "Polichinelo", nivel: "Iniciante", equipamento: "Sem equipamento", musculos: "Corpo inteiro e cardio", comoExecutar: "Salte abrindo pernas e braços simultaneamente, depois volte à posição inicial em um movimento contínuo." },
+  { id: "snatch", nome: "Snatch", nivel: "Avançado", equipamento: "Barra", musculos: "Corpo inteiro", comoExecutar: "Puxe a barra do chão num único movimento explosivo, levando-a acima da cabeça enquanto o corpo desce em agachamento overhead, finalizando com os braços estendidos." },
+  { id: "clean-and-jerk", nome: "Clean & Jerk", nivel: "Avançado", equipamento: "Barra", musculos: "Corpo inteiro", comoExecutar: "Puxe a barra do chão até os ombros descendo em agachamento (clean), depois empurre a barra acima da cabeça usando o impulso das pernas (jerk)." },
+  { id: "power-clean", nome: "Power Clean", nivel: "Avançado", equipamento: "Barra", musculos: "Costas, perna e ombro", comoExecutar: "Puxe a barra do chão até a altura dos ombros num movimento explosivo, recebendo-a em um quarto de agachamento, sem descer completamente." },
+  { id: "deadlift-cross", nome: "Deadlift", nivel: "Intermediário", equipamento: "Barra", musculos: "Posterior de coxa, glúteo e lombar", comoExecutar: "Com os pés na largura do quadril, dobre joelhos e quadril para segurar a barra, mantenha as costas retas e puxe o peso para cima estendendo quadril e joelhos ao mesmo tempo." },
+  { id: "back-squat", nome: "Back Squat", nivel: "Intermediário", equipamento: "Barra", musculos: "Perna e glúteo", comoExecutar: "Com a barra apoiada atrás dos ombros, agache flexionando quadril e joelhos até as coxas ficarem paralelas ao chão, mantendo o peito erguido, e suba controlando o movimento." },
+  { id: "front-squat", nome: "Front Squat", nivel: "Avançado", equipamento: "Barra", musculos: "Quadríceps e core", comoExecutar: "Com a barra apoiada na frente dos ombros e os cotovelos elevados, agache mantendo o tronco o mais ereto possível e suba com controle." },
+  { id: "overhead-squat", nome: "Overhead Squat", nivel: "Avançado", equipamento: "Barra", musculos: "Corpo inteiro", comoExecutar: "Com a barra travada acima da cabeça em pegada bem aberta, agache profundamente mantendo os braços estendidos e o tronco ereto, depois suba com controle." },
+  { id: "push-press", nome: "Push Press", nivel: "Intermediário", equipamento: "Barra ou halteres", musculos: "Ombro e perna", comoExecutar: "Com o peso na altura dos ombros, faça um leve agachamento e use o impulso das pernas para empurrar o peso acima da cabeça." },
+  { id: "chest-to-bar", nome: "Chest-to-Bar", nivel: "Avançado", equipamento: "Barra fixa", musculos: "Costas e bíceps", comoExecutar: "Pendurado na barra, puxe o corpo para cima com força até o peito tocar a barra, e desça com controle." },
+  { id: "toes-to-bar", nome: "Toes-to-Bar", nivel: "Avançado", equipamento: "Barra fixa", musculos: "Abdômen e core", comoExecutar: "Pendurado na barra, contraia o abdômen e eleve as pernas estendidas até os pés tocarem a barra, controlando a descida." },
+  { id: "muscle-up", nome: "Muscle-up", nivel: "Avançado", equipamento: "Barra fixa ou argolas", musculos: "Costas, ombro e tríceps", comoExecutar: "Puxe o corpo para cima como numa barra fixa e, no ponto mais alto, gire os punhos e empurre o corpo para cima, passando por cima da barra ou argola." },
+  { id: "handstand-pushup", nome: "Handstand Push-up", nivel: "Avançado", equipamento: "Sem equipamento (parede)", musculos: "Ombro e tríceps", comoExecutar: "Em parada de mãos apoiada na parede, flexione os cotovelos descendo a cabeça em direção ao chão e empurre de volta até estender os braços." },
+  { id: "handstand", nome: "Handstand", nivel: "Intermediário", equipamento: "Sem equipamento (parede)", musculos: "Ombro e core", comoExecutar: "Apoie as mãos no chão e suba as pernas até ficar de cabeça para baixo apoiado na parede, mantendo o corpo alinhado e o core contraído." },
+  { id: "pistol-squat", nome: "Pistol Squat", nivel: "Avançado", equipamento: "Peso corporal", musculos: "Perna e glúteo", comoExecutar: "Em pé sobre uma perna, agache o máximo possível mantendo a outra perna estendida à frente, e suba controlando o movimento." },
+  { id: "turkish-getup", nome: "Turkish Get-up", nivel: "Avançado", equipamento: "Kettlebell ou halter", musculos: "Corpo inteiro e core", comoExecutar: "Deitado com o peso estendido acima do ombro, levante o corpo em etapas até ficar em pé mantendo o braço sempre estendido acima da cabeça, depois retorne na ordem inversa." },
+  { id: "devil-press", nome: "Devil Press", nivel: "Avançado", equipamento: "Halteres", musculos: "Corpo inteiro", comoExecutar: "Com um halter em cada mão, faça um burpee e, ao subir, puxe os halteres do chão até acima da cabeça num movimento tipo snatch com os dois braços." },
+  { id: "sled-push", nome: "Sled Push", nivel: "Intermediário", equipamento: "Sled/trenó", musculos: "Perna e core", comoExecutar: "Posicione as mãos no trenó carregado e empurre com passadas curtas e potentes, mantendo o tronco inclinado à frente." },
+  { id: "assault-bike", nome: "Assault Bike", nivel: "Iniciante", equipamento: "Bicicleta ergométrica (air bike)", musculos: "Corpo inteiro e cardio", comoExecutar: "Pedale e empurre os braços simultaneamente contra a resistência do ar, mantendo ritmo constante ou em sprints conforme o treino." },
 ];
 
 // Paleta escura própria da Massi Cross (independente do tema claro/escuro do resto do app)
@@ -5346,7 +5670,42 @@ CROSS_EXERCICIOS.forEach((e) => (CROSS_EXERCICIOS_INDEX[e.nome] = e));
 // Preencha aqui os links (formato "https://www.youtube.com/shorts/ID") conforme forem enviados,
 // igual já é feito em VIDEOS_CARDIO/VIDEOS_EXERCICIO. Enquanto não tiver o link específico,
 // o botão cai automaticamente numa busca do YouTube pela forma correta de execução.
-const VIDEOS_CROSS = {};
+const VIDEOS_CROSS = {
+  "Burpee": "https://youtube.com/shorts/c9WmGhlhCrw?is=QKut9h5VegjGehoX",
+  "Box Jump": "https://youtube.com/shorts/KHnG6lVMSN0?is=EDyFILZ-84_MAftx",
+  "Kettlebell Swing": "https://youtube.com/shorts/CqfSRNsMuQE?is=kA7BvdY72g_FDKqi",
+  "Pull-up": "https://youtube.com/shorts/bxguzp1DCFw?is=rvOhmq6CU8BB2SZR",
+  "Push-up": "https://youtube.com/shorts/GA67NN_rj1s?is=paMOg0RVGBAkHWyP",
+  "Thruster": "https://youtube.com/shorts/8FhjyoAlaFg?is=4w2LpqWhyABV1dyu",
+  "Double Under": "https://youtube.com/shorts/Pti9UqnkbTc?is=dG0dvv532y9A1V0m",
+  "Mountain Climber": "https://youtube.com/shorts/lBymWgIam0k?is=SS7YxYlZUKGjNASs",
+  "Battle Rope": "https://youtube.com/shorts/J9p6gHnHFw8?is=L4KKQo9tT3Q5PUzE",
+  "Wall Ball": "https://youtube.com/shorts/WGM7FjbDJUA?is=rY5rk6CAUsx659pD",
+  "Agachamento": "https://youtube.com/shorts/3uZE_E11eg4?is=P03Cv9JwXmTP1SzL",
+  "Corrida": "https://youtube.com/shorts/Wsfu3yn_Cdc?is=oTFRRuyspGi729do",
+  "Remo": "https://youtube.com/shorts/soveq2xBNpo?is=1W0DIxEuqThJmxQv",
+  "Sit-up": "https://youtube.com/shorts/H8apFXZI500?is=87JhB1sixbJR3kI3",
+  "Prancha (Plank)": "https://youtube.com/shorts/uxPlAbWFUDs?is=KyJ4RhBIEqmadhfX",
+  "Polichinelo": "https://youtube.com/shorts/guvPySViG7o?is=pGBrpGpUhHm7ClJy",
+  "Snatch": "https://youtube.com/shorts/HctzQAQSJik?is=gpQUKTqLJkd1eL6P",
+  "Clean & Jerk": "https://youtube.com/shorts/q5rxcS9dl-I?is=vBB5m42VTj2U-gxA",
+  "Power Clean": "https://youtube.com/shorts/_q0dkHb89us?is=eBpO_mUUvzdjsNNC",
+  "Deadlift": "https://youtube.com/shorts/qyzWSrLC2jU?is=0T4dbWceu1xVvHmZ",
+  "Back Squat": "https://youtube.com/shorts/S9iWwaqbD3Q?is=vh8J_j2y2iGsHOkN",
+  "Front Squat": "https://youtube.com/shorts/k__r1_aB1Is?is=2iDG5kwnBtXSHDAf",
+  "Overhead Squat": "https://youtube.com/shorts/RnLdsx0ypOo?is=lExJwev4x7luAEAG",
+  "Push Press": "https://youtube.com/shorts/E08qfKbmFJk?is=WT9jxyQk8FFdfmo0",
+  "Chest-to-Bar": "https://youtube.com/shorts/2PVG4LS9PdQ?is=OzYMfAHMh1tBKnsB",
+  "Toes-to-Bar": "https://youtube.com/shorts/9Tx0QKP1A0I?is=RAR6b2R7idRzLL8y",
+  "Muscle-up": "https://youtube.com/shorts/yGGU7UbH1DM?is=WEfa2Gvzcp8tacwX",
+  "Handstand Push-up": "https://youtube.com/shorts/TFTkWsEwoYQ?is=vTea15VZnvY7IGHp",
+  "Handstand": "https://youtube.com/shorts/pWfYbWhbueM?is=YrZ0HGuyxpwQK4XH",
+  "Pistol Squat": "https://youtube.com/shorts/aYZnBGYloG4?is=RCcTsB0gplzpFgSa",
+  "Turkish Get-up": "https://youtube.com/shorts/CFD0C9gQ5t0?is=DtSuddFZShaGmNzq",
+  "Devil Press": "https://youtube.com/shorts/635XZ3r7Uhs?is=JjomeoaTLEWwaYfd",
+  "Sled Push": "https://youtube.com/shorts/DrBawxjH3eU?is=BOgxVIBVOiDICFwn",
+  "Assault Bike": "https://youtube.com/shorts/wF1N48xFcdQ?is=vFLlyOzuRna41sf_",
+};
 
 function getVideoCrossUrl(nomeExercicio) {
   const url = VIDEOS_CROSS[nomeExercicio];
@@ -5440,6 +5799,41 @@ const CROSS_WODS = [
     ] },
   { id: "w16", nome: "HELEN", tipo: "rounds", rounds: 3, duracaoMin: 15, nivel: "Intermediário", equipamento: "Kettlebell", categoria: "Benchmark", famoso: true, exercicios: [
       { exercicio: "Corrida", qtd: "400 m" }, { exercicio: "Kettlebell Swing", qtd: "21" }, { exercicio: "Pull-up", qtd: "12" },
+    ] },
+  // ---- Benchmarks novos (levantamento olímpico e ginástica) ----
+  { id: "w19", nome: "ISABEL", tipo: "fortime", duracaoMin: 10, nivel: "Avançado", equipamento: "Barra", categoria: "Benchmark", famoso: true, exercicios: [
+      { exercicio: "Snatch", qtd: "30" },
+    ] },
+  { id: "w20", nome: "GRACE", tipo: "fortime", duracaoMin: 10, nivel: "Avançado", equipamento: "Barra", categoria: "Benchmark", famoso: true, exercicios: [
+      { exercicio: "Clean & Jerk", qtd: "30" },
+    ] },
+  { id: "w21", nome: "DT", tipo: "rounds", rounds: 5, duracaoMin: 15, nivel: "Avançado", equipamento: "Barra", categoria: "Benchmark", famoso: true, exercicios: [
+      { exercicio: "Deadlift", qtd: "12" }, { exercicio: "Power Clean", qtd: "9" }, { exercicio: "Push Press", qtd: "6" },
+    ] },
+  { id: "w22", nome: "DIANE", tipo: "fortime", duracaoMin: 12, nivel: "Avançado", equipamento: "Barra", categoria: "Benchmark", famoso: true, exercicios: [
+      { exercicio: "Deadlift", qtd: "21-15-9" }, { exercicio: "Handstand Push-up", qtd: "21-15-9" },
+    ] },
+  { id: "w23", nome: "NASTY GIRLS", tipo: "rounds", rounds: 3, duracaoMin: 18, nivel: "Avançado", equipamento: "Barra fixa", categoria: "Benchmark", famoso: true, exercicios: [
+      { exercicio: "Back Squat", qtd: "50" }, { exercicio: "Muscle-up", qtd: "7" }, { exercicio: "Power Clean", qtd: "10" },
+    ] },
+  { id: "w24", nome: "AMANDA", tipo: "fortime", duracaoMin: 15, nivel: "Avançado", equipamento: "Barra fixa", categoria: "Benchmark", famoso: true, exercicios: [
+      { exercicio: "Muscle-up", qtd: "9-7-5" }, { exercicio: "Snatch", qtd: "9-7-5" },
+    ] },
+  // ---- Novos treinos com movimentos avançados (não são benchmarks oficiais) ----
+  { id: "w25", nome: "COMPLEXO DE GINÁSTICA", tipo: "rounds", rounds: 5, duracaoMin: 18, nivel: "Avançado", equipamento: "Barra fixa", categoria: "Metcon", exercicios: [
+      { exercicio: "Chest-to-Bar", qtd: "5" }, { exercicio: "Toes-to-Bar", qtd: "10" }, { exercicio: "Push-up", qtd: "15" },
+    ] },
+  { id: "w26", nome: "SÉRIE DE AGACHAMENTOS", tipo: "rounds", rounds: 4, duracaoMin: 20, nivel: "Avançado", equipamento: "Barra", categoria: "Força", exercicios: [
+      { exercicio: "Front Squat", qtd: "8" }, { exercicio: "Overhead Squat", qtd: "6" }, { exercicio: "Push Press", qtd: "8" },
+    ] },
+  { id: "w27", nome: "EQUILÍBRIO E CONTROLE", tipo: "rounds", rounds: 4, duracaoMin: 15, nivel: "Intermediário", equipamento: "Sem equipamento", categoria: "Metcon", exercicios: [
+      { exercicio: "Handstand", qtd: "30 seg" }, { exercicio: "Pistol Squat", qtd: "8 por perna" },
+    ] },
+  { id: "w28", nome: "FERA UNILATERAL", tipo: "fortime", duracaoMin: 15, nivel: "Avançado", equipamento: "Kettlebell", categoria: "Metcon", exercicios: [
+      { exercicio: "Turkish Get-up", qtd: "5 por lado" }, { exercicio: "Devil Press", qtd: "10" },
+    ] },
+  { id: "w29", nome: "CONSTRUTOR DE FÔLEGO", tipo: "rounds", rounds: 5, duracaoMin: 20, nivel: "Intermediário", equipamento: "Academia completa", categoria: "Metcon", exercicios: [
+      { exercicio: "Assault Bike", qtd: "15 cal" }, { exercicio: "Sled Push", qtd: "20 m" },
     ] },
 ];
 
