@@ -325,6 +325,9 @@ const OBJETIVOS = [
     cardioMin: 20,
     cardioIntensidade: "Moderada",
     adicionarCardioExtra: false,
+    cardioFinalFracao: 0.5, // metade dos dias de treino ganham cardio moderado no final
+    cardioFinalMin: 15,
+    cardioFinalIntensidade: "Moderada",
   },
   {
     id: "emagrecer",
@@ -335,6 +338,9 @@ const OBJETIVOS = [
     cardioMin: 30,
     cardioIntensidade: "Intensa",
     adicionarCardioExtra: true,
+    cardioFinalFracao: 1, // todos os dias de treino ganham cardio moderado no final
+    cardioFinalMin: 20,
+    cardioFinalIntensidade: "Moderada",
   },
   {
     id: "secar",
@@ -1985,6 +1991,7 @@ const TRADUCOES = {
     inicioNotificacoes: "Notificações",
     inicioTreinoConcluido: "✅ Treino de hoje concluído",
     inicioAindaNaoTreinou: "🕐 Ainda não treinado hoje",
+    inicioAindaNaoTreinouComFoco: "🕐 Ainda não treinado hoje — {foco}",
     inicioDiaDescanso: "😴 Dia de descanso",
     inicioSeuTreinoHoje: "SEU TREINO DE HOJE",
     inicioExercicios: "exercícios",
@@ -2065,6 +2072,7 @@ const TRADUCOES = {
     inicioNotificacoes: "Notifications",
     inicioTreinoConcluido: "✅ Today's workout completed",
     inicioAindaNaoTreinou: "🕐 Haven't trained today yet",
+    inicioAindaNaoTreinouComFoco: "🕐 Haven't trained today yet — {foco}",
     inicioDiaDescanso: "😴 Rest day",
     inicioSeuTreinoHoje: "YOUR WORKOUT TODAY",
     inicioExercicios: "exercises",
@@ -2145,6 +2153,7 @@ const TRADUCOES = {
     inicioNotificacoes: "Notificaciones",
     inicioTreinoConcluido: "✅ Entrenamiento de hoy completado",
     inicioAindaNaoTreinou: "🕐 Aún no has entrenado hoy",
+    inicioAindaNaoTreinouComFoco: "🕐 Aún no has entrenado hoy — {foco}",
     inicioDiaDescanso: "😴 Día de descanso",
     inicioSeuTreinoHoje: "TU ENTRENAMIENTO DE HOY",
     inicioExercicios: "ejercicios",
@@ -2205,9 +2214,15 @@ const TRADUCOES = {
   },
 };
 
-function traduzir(idioma, chave) {
+function traduzir(idioma, chave, vars) {
   const dicionario = TRADUCOES[idioma] || TRADUCOES.pt;
-  return (dicionario[chave] !== undefined ? dicionario[chave] : TRADUCOES.pt[chave]) || chave;
+  let texto = (dicionario[chave] !== undefined ? dicionario[chave] : TRADUCOES.pt[chave]) || chave;
+  if (vars) {
+    Object.keys(vars).forEach((k) => {
+      texto = texto.replace(`{${k}}`, vars[k]);
+    });
+  }
+  return texto;
 }
 
 export default function App() {
@@ -2248,6 +2263,8 @@ function AppMassiPro({ onSolicitarRemount }) {
   const [activeTab, setActiveTab] = useState("inicio");
   const tabRowRef = useRef(null);
   const tabBtnRefs = useRef({});
+  const dayCardRefs = useRef({});
+  const [diaParaFocar, setDiaParaFocar] = useState(null);
   const [showTabScrollHint, setShowTabScrollHint] = useState(true);
   useEffect(() => {
     const el = tabBtnRefs.current[activeTab];
@@ -2255,6 +2272,17 @@ function AppMassiPro({ onSolicitarRemount }) {
       el.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
     }
   }, [activeTab]);
+  useEffect(() => {
+    if (activeTab !== "rotina" || !diaParaFocar) return;
+    const timer = setTimeout(() => {
+      const el = dayCardRefs.current[diaParaFocar];
+      if (el && typeof el.scrollIntoView === "function") {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+      setDiaParaFocar(null);
+    }, 80);
+    return () => clearTimeout(timer);
+  }, [activeTab, diaParaFocar]);
   const [exercicioAberto, setExercicioAberto] = useState(null);
   const [cronometro, setCronometro] = useState(null); // { totalSeg, restanteSeg, rodando, label }
   const [historico, setHistorico] = useState([]);
@@ -2274,7 +2302,7 @@ function AppMassiPro({ onSolicitarRemount }) {
   const [onboardingPendente, setOnboardingPendente] = useState(false);
   const [tema, setTema] = useState("claro");
   const [idioma, setIdioma] = useState("pt");
-  const t = useCallback((chave) => traduzir(idioma, chave), [idioma]);
+  const t = useCallback((chave, vars) => traduzir(idioma, chave, vars), [idioma]);
   const [perfis, setPerfis] = useState([{ id: "perfil-1", nome: "Eu" }]);
   const [perfilAtivoId, setPerfilAtivoId] = useState("perfil-1");
   const [showPerfis, setShowPerfis] = useState(false);
@@ -2441,6 +2469,20 @@ function AppMassiPro({ onSolicitarRemount }) {
       if (idxDescanso !== -1) focos[idxDescanso] = "Cardio";
     }
 
+    // Define quais dias de treino (força) recebem um cardio moderado extra no final,
+    // conforme a fração definida no objetivo (ex: metade dos dias na Hipertrofia, todos no Emagrecer).
+    const diasDeTreino = focos
+      .map((f, i) => (f && f !== "Descanso" && f !== "Cardio" ? i : null))
+      .filter((i) => i !== null);
+    const diasComCardioFinal = new Set();
+    if (objetivo && objetivo.cardioFinalFracao && diasDeTreino.length > 0) {
+      const qtd = Math.max(1, Math.round(diasDeTreino.length * objetivo.cardioFinalFracao));
+      const passo = diasDeTreino.length / qtd;
+      for (let k = 0; k < qtd; k++) {
+        diasComCardioFinal.add(diasDeTreino[Math.floor(k * passo)]);
+      }
+    }
+
     setRotina(
       DIAS_SEMANA.map((dia, i) => {
         const entry = makeDayEntry(dia, focos[i] || "Descanso", nivelUsuario);
@@ -2454,6 +2496,13 @@ function AppMassiPro({ onSolicitarRemount }) {
             reps: objetivo.reps || ex.reps,
             descanso: objetivo.descanso,
           }));
+          if (diasComCardioFinal.has(i)) {
+            entry.cardio = {
+              tipo: "Esteira",
+              duracao: objetivo.cardioFinalMin || 15,
+              intensidade: objetivo.cardioFinalIntensidade || "Moderada",
+            };
+          }
         }
         return entry;
       })
@@ -3045,6 +3094,16 @@ function AppMassiPro({ onSolicitarRemount }) {
     );
   };
 
+  const adicionarCardioFinalDia = (dia) => {
+    setRotina((prev) =>
+      prev.map((d) => (d.dia === dia ? { ...d, cardio: { tipo: "Esteira", duracao: 15, intensidade: "Moderada" } } : d))
+    );
+  };
+
+  const removerCardioFinalDia = (dia) => {
+    setRotina((prev) => prev.map((d) => (d.dia === dia ? { ...d, cardio: null } : d)));
+  };
+
   const salvar = useCallback(async () => {
     setSaveState("saving");
     try {
@@ -3487,7 +3546,10 @@ function AppMassiPro({ onSolicitarRemount }) {
           rotina={rotina}
           diasSelecionados={diasSelecionados}
           historico={historico}
-          onIrTreino={() => setActiveTab("rotina")}
+          onIrTreino={(dia) => {
+            setActiveTab("rotina");
+            setDiaParaFocar(dia || null);
+          }}
           t={t}
           idioma={idioma}
         />
@@ -3568,8 +3630,8 @@ function AppMassiPro({ onSolicitarRemount }) {
             {rotina
               .filter((d) => diasSelecionados.includes(d.dia))
               .map((d) => (
+                <div key={d.dia} ref={(el) => (dayCardRefs.current[d.dia] = el)}>
                 <DayCard
-                  key={d.dia}
                   entry={d}
                   onFoco={(foco) => mudarFoco(d.dia, foco)}
                   onAddExercicio={() => addExercicio(d.dia, d.foco)}
@@ -3577,6 +3639,8 @@ function AppMassiPro({ onSolicitarRemount }) {
                   onEditExercicio={(id, campo, valor) => editarExercicio(d.dia, id, campo, valor)}
                   onEditCargaSerie={(id, indiceSerie, valor) => editarCargaSerie(d.dia, id, indiceSerie, valor)}
                   onEditCardio={(campo, valor) => editarCardio(d.dia, campo, valor)}
+                  onAdicionarCardioFinal={() => adicionarCardioFinalDia(d.dia)}
+                  onRemoverCardioFinal={() => removerCardioFinalDia(d.dia)}
                   onAbrirExercicio={(ex) => setExercicioAberto(ex)}
                   onIniciarDescanso={(descanso, nome) => iniciarDescanso(descanso, nome)}
                   onTrocarExercicio={(id) => trocarExercicio(d.dia, id)}
@@ -3587,6 +3651,7 @@ function AppMassiPro({ onSolicitarRemount }) {
                   dores={dores}
                   recordes={recordes}
                 />
+                </div>
               ))}
           </div>
 
@@ -3747,11 +3812,18 @@ function InicioTab({ perfilAtivoNome, rotina, diasSelecionados, historico, onIrT
       <div style={styles.resumoDiaFaixa}>
         <span style={styles.resumoDiaData}>{dataHojeFormatada}</span>
         <span style={styles.resumoDiaSeparador}>•</span>
-        <span style={styles.resumoDiaStatus}>
+        <span
+          style={{
+            ...styles.resumoDiaStatus,
+            ...(hojeEhDiaDeTreino ? { cursor: "pointer", textDecoration: "underline" } : {}),
+          }}
+          onClick={hojeEhDiaDeTreino ? () => onIrTreino(diaHoje) : undefined}
+          role={hojeEhDiaDeTreino ? "button" : undefined}
+        >
           {treinoHojeConcluido
             ? t("inicioTreinoConcluido")
             : hojeEhDiaDeTreino
-            ? t("inicioAindaNaoTreinou")
+            ? t("inicioAindaNaoTreinouComFoco", { foco: treinoHoje.foco })
             : t("inicioDiaDescanso")}
         </span>
         {streak > 0 && <span style={styles.resumoDiaStreak}>🔥 {streak}</span>}
@@ -3770,14 +3842,14 @@ function InicioTab({ perfilAtivoNome, rotina, diasSelecionados, historico, onIrT
                 : ""}
               {estimarDuracaoTreinoMin(treinoHoje) > 0 ? ` • ~${estimarDuracaoTreinoMin(treinoHoje)} min` : ""}
             </div>
-            <button style={styles.inicioHeroBtn} onClick={onIrTreino}>{t("inicioBtnComecar")}</button>
+            <button style={styles.inicioHeroBtn} onClick={() => onIrTreino(diaHoje)}>{t("inicioBtnComecar")}</button>
           </>
         ) : (
           <>
             <div style={styles.inicioHeroLabel}>{t("inicioHoje")}</div>
             <div style={styles.inicioHeroTitulo}>{t("inicioTituloDescanso")}</div>
             <div style={styles.inicioHeroMeta}>{t("inicioMetaDescanso")}</div>
-            <button style={styles.inicioHeroBtn} onClick={onIrTreino}>{t("inicioBtnVerRotina")}</button>
+            <button style={styles.inicioHeroBtn} onClick={() => onIrTreino(diaHoje)}>{t("inicioBtnVerRotina")}</button>
           </>
         )}
       </section>
@@ -6502,7 +6574,7 @@ function getUltimaDorRelacionada(nomeExercicio, dores) {
   return mesmoGrupo ? { ...mesmoGrupo, mesmoGrupo: true } : null;
 }
 
-function DayCard({ entry, onFoco, onAddExercicio, onRemoveExercicio, onEditExercicio, onEditCargaSerie, onEditCardio, onAbrirExercicio, onIniciarDescanso, onTrocarExercicio, onConcluirTreino, onRegistrarDor, onIniciarGuiado, progressao, dores, recordes }) {
+function DayCard({ entry, onFoco, onAddExercicio, onRemoveExercicio, onEditExercicio, onEditCargaSerie, onEditCardio, onAdicionarCardioFinal, onRemoverCardioFinal, onAbrirExercicio, onIniciarDescanso, onTrocarExercicio, onConcluirTreino, onRegistrarDor, onIniciarGuiado, progressao, dores, recordes }) {
   const { dia, foco, cardio, exercicios } = entry;
   const isDescanso = foco === "Descanso";
   const isCardio = foco === "Cardio";
@@ -6804,6 +6876,63 @@ function DayCard({ entry, onFoco, onAddExercicio, onRemoveExercicio, onEditExerc
               </button>
             )}
           </div>
+        )}
+
+        {!isDescanso && !isCardio && exercicios.length > 0 && cardio && (
+          <div style={styles.cardioBlock}>
+            <div style={styles.cardLabel}>🏃 Cardio moderado no final do treino</div>
+            <div style={styles.cardioVideoRow}>
+              {(() => {
+                const thumb = getThumbnailCardio(cardio.tipo);
+                return thumb ? (
+                  <img
+                    src={thumb}
+                    alt={`Capa do vídeo de ${cardio.tipo}`}
+                    style={styles.exThumb}
+                    loading="lazy"
+                    onClick={() => window.open(getVideoCardioUrl(cardio.tipo), "_blank")}
+                    onError={(e) => { e.target.style.display = "none"; }}
+                  />
+                ) : null;
+              })()}
+              <button
+                style={styles.guiadoVerBtnMini}
+                onClick={() => window.open(getVideoCardioUrl(cardio.tipo), "_blank")}
+              >
+                ▶ {VIDEOS_CARDIO[cardio.tipo] ? "Assistir execução" : "Ver forma correta no YouTube"}
+              </button>
+            </div>
+            <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "flex-end" }}>
+              <label style={styles.fieldLabel}>
+                Tipo
+                <select value={cardio.tipo} onChange={(e) => onEditCardio("tipo", e.target.value)} style={styles.selectSmall}>
+                  {CARDIO_TIPOS.map((tp) => (
+                    <option key={tp} value={tp}>{tp}</option>
+                  ))}
+                </select>
+              </label>
+              <label style={styles.fieldLabel}>
+                Duração (min)
+                <input
+                  type="number"
+                  min={5}
+                  max={60}
+                  value={cardio.duracao}
+                  onChange={(e) => onEditCardio("duracao", Number(e.target.value))}
+                  style={styles.inputSmall}
+                />
+              </label>
+              <button style={styles.trocarCardioBtn} onClick={onRemoverCardioFinal} title="Remover cardio do final do treino">
+                Remover
+              </button>
+            </div>
+          </div>
+        )}
+
+        {!isDescanso && !isCardio && exercicios.length > 0 && !cardio && (
+          <button onClick={onAdicionarCardioFinal} style={styles.addBtn}>
+            + adicionar cardio no final do treino
+          </button>
         )}
 
         {!isDescanso && exercicios.length > 0 && (
