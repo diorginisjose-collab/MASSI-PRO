@@ -126,59 +126,59 @@ const LIBRARY = {
     { name: "Flexão de braço", sets: 3, reps: "até a falha", maquinas: ["Peso corporal", "Peso corporal (apoio no joelho)", "Peso corporal (inclinado)"], regiao: "medial" },
   ],
   Costas: [
-    { name: "Puxada frontal", sets: 3, reps: "10-12", maquinas: ["Pulley (puxada alta)", "Pulldown (pegada aberta)", "Máquina (puxada alta)", "Máquina (puxada frente)", "Graviton (assistida)"] },
-    { name: "Puxada frontal triângulo", sets: 3, reps: "10-12", maquinas: ["Pulley (pegada triângulo)"] },
-    { name: "Remada baixa", sets: 3, reps: "10-12", maquinas: ["Cabo (remada baixa)", "Máquina de remada", "Máquina (pegada supinada)", "Cabo (unilateral)"] },
-    { name: "Remada curvada", sets: 3, reps: "10-12", maquinas: ["Halteres", "Barra livre", "Barra (pronada)", "Halteres (supinada)"] },
-    { name: "Remada unilateral (serrote)", sets: 3, reps: "10-12", maquinas: ["Halteres", "Máquina"] },
-    { name: "Puxada supinada", sets: 3, reps: "10-12", maquinas: ["Pulley (pegada supinada)"] },
-    { name: "Remada cavalinho", sets: 3, reps: "10-12", maquinas: ["Barra", "Cabo"] },
-    { name: "Face pull", sets: 3, reps: "12-15", maquinas: ["Cabo"] },
-    { name: "Encolhimento (trapézio)", sets: 3, reps: "12-15", maquinas: ["Halteres", "Barra", "Polia"] },
-    { name: "Barra fixa", sets: 3, reps: "até a falha", maquinas: ["Peso corporal", "Peso corporal (com elástico assistido)"] },
+    { name: "Puxada frontal", sets: 3, reps: "10-12", maquinas: ["Pulley (puxada alta)", "Pulldown (pegada aberta)", "Máquina (puxada alta)", "Máquina (puxada frente)", "Graviton (assistida)"], regiao: "puxada" },
+    { name: "Puxada frontal triângulo", sets: 3, reps: "10-12", maquinas: ["Pulley (pegada triângulo)"], regiao: "puxada" },
+    { name: "Remada baixa", sets: 3, reps: "10-12", maquinas: ["Cabo (remada baixa)", "Máquina de remada", "Máquina (pegada supinada)", "Cabo (unilateral)"], regiao: "remada" },
+    { name: "Remada curvada", sets: 3, reps: "10-12", maquinas: ["Halteres", "Barra livre", "Barra (pronada)", "Halteres (supinada)"], regiao: "remada" },
+    { name: "Remada unilateral (serrote)", sets: 3, reps: "10-12", maquinas: ["Halteres", "Máquina"], regiao: "remada" },
+    { name: "Puxada supinada", sets: 3, reps: "10-12", maquinas: ["Pulley (pegada supinada)"], regiao: "puxada" },
+    { name: "Remada cavalinho", sets: 3, reps: "10-12", maquinas: ["Barra", "Cabo"], regiao: "remada" },
+    { name: "Face pull", sets: 3, reps: "12-15", maquinas: ["Cabo"], regiao: "posterior" },
+    { name: "Encolhimento (trapézio)", sets: 3, reps: "12-15", maquinas: ["Halteres", "Barra", "Polia"], regiao: "trapezio" },
+    { name: "Barra fixa", sets: 3, reps: "até a falha", maquinas: ["Peso corporal", "Peso corporal (com elástico assistido)"], regiao: "puxada" },
   ],
   Perna: [
-    { name: "Leg press", sets: 3, reps: "12-15", maquinas: ["Leg press 45°", "Leg press horizontal"] },
-    { name: "Cadeira extensora", sets: 3, reps: "12-15", maquinas: ["Cadeira extensora"] },
-    { name: "Mesa/cadeira flexora", sets: 3, reps: "12-15", maquinas: ["Mesa flexora", "Cadeira flexora"] },
-    { name: "Agachamento", sets: 3, reps: "15", maquinas: ["Peso corporal", "Barra livre", "Máquina smith"] },
-    { name: "Agachamento afundo (lunge)", sets: 3, reps: "10-12 cada perna", maquinas: ["Peso corporal"] },
-    { name: "Agachamento búlgaro", sets: 3, reps: "10-12 cada perna", maquinas: ["Halteres", "Peso corporal"] },
-    { name: "Agachamento sumô", sets: 3, reps: "12-15", maquinas: ["Halteres", "Barra livre"] },
-    { name: "Agachamento hack (hack squat)", sets: 3, reps: "12-15", maquinas: ["Máquina hack squat"] },
-    { name: "Agachamento articulado (hack invertido)", sets: 3, reps: "12-15", maquinas: ["Máquina"] },
-    { name: "Agachamento pêndulo", sets: 3, reps: "12-15", maquinas: ["Máquina"] },
-    { name: "Stiff (levantamento terra romeno)", sets: 3, reps: "10-12", maquinas: ["Halteres", "Barra"] },
-    { name: "Levantamento terra", sets: 3, reps: "8-10", maquinas: ["Barra (sumô)", "Barra (convencional)"] },
-    { name: "Elevação pélvica (hip thrust)", sets: 3, reps: "12-15", maquinas: ["Barra livre", "Máquina smith", "Peso corporal", "Máquina"] },
-    { name: "Cadeira adutora", sets: 3, reps: "15-20", maquinas: ["Máquina", "Cabo (polia baixa)"] },
-    { name: "Cadeira abdutora", sets: 3, reps: "15-20", maquinas: ["Máquina", "Máquina (inclinada)", "Cabo (polia baixa)"] },
-    { name: "Glúteo no cabo (coice)", sets: 3, reps: "12-15 cada perna", maquinas: ["Cabo (perna flexionada)"] },
-    { name: "Coice (glúteo) na máquina", sets: 3, reps: "12-15", maquinas: ["Máquina"] },
-    { name: "Panturrilha em pé", sets: 3, reps: "15-20", maquinas: ["Máquina de panturrilha", "Halteres"] },
-    { name: "Panturrilha sentado", sets: 3, reps: "15-20", maquinas: ["Máquina de panturrilha sentado", "Halteres"] },
+    { name: "Leg press", sets: 3, reps: "12-15", maquinas: ["Leg press 45°", "Leg press horizontal"], regiao: "quadriceps" },
+    { name: "Cadeira extensora", sets: 3, reps: "12-15", maquinas: ["Cadeira extensora"], regiao: "quadriceps" },
+    { name: "Mesa/cadeira flexora", sets: 3, reps: "12-15", maquinas: ["Mesa flexora", "Cadeira flexora"], regiao: "posterior" },
+    { name: "Agachamento", sets: 3, reps: "15", maquinas: ["Peso corporal", "Barra livre", "Máquina smith"], regiao: "quadriceps" },
+    { name: "Agachamento afundo (lunge)", sets: 3, reps: "10-12 cada perna", maquinas: ["Peso corporal"], regiao: "quadriceps" },
+    { name: "Agachamento búlgaro", sets: 3, reps: "10-12 cada perna", maquinas: ["Halteres", "Peso corporal"], regiao: "quadriceps" },
+    { name: "Agachamento sumô", sets: 3, reps: "12-15", maquinas: ["Halteres", "Barra livre"], regiao: "quadriceps" },
+    { name: "Agachamento hack (hack squat)", sets: 3, reps: "12-15", maquinas: ["Máquina hack squat"], regiao: "quadriceps" },
+    { name: "Agachamento articulado (hack invertido)", sets: 3, reps: "12-15", maquinas: ["Máquina"], regiao: "quadriceps" },
+    { name: "Agachamento pêndulo", sets: 3, reps: "12-15", maquinas: ["Máquina"], regiao: "quadriceps" },
+    { name: "Stiff (levantamento terra romeno)", sets: 3, reps: "10-12", maquinas: ["Halteres", "Barra"], regiao: "posterior" },
+    { name: "Levantamento terra", sets: 3, reps: "8-10", maquinas: ["Barra (sumô)", "Barra (convencional)"], regiao: "posterior" },
+    { name: "Elevação pélvica (hip thrust)", sets: 3, reps: "12-15", maquinas: ["Barra livre", "Máquina smith", "Peso corporal", "Máquina"], regiao: "gluteo" },
+    { name: "Cadeira adutora", sets: 3, reps: "15-20", maquinas: ["Máquina", "Cabo (polia baixa)"], regiao: "adutor" },
+    { name: "Cadeira abdutora", sets: 3, reps: "15-20", maquinas: ["Máquina", "Máquina (inclinada)", "Cabo (polia baixa)"], regiao: "abdutor" },
+    { name: "Glúteo no cabo (coice)", sets: 3, reps: "12-15 cada perna", maquinas: ["Cabo (perna flexionada)"], regiao: "gluteo" },
+    { name: "Coice (glúteo) na máquina", sets: 3, reps: "12-15", maquinas: ["Máquina"], regiao: "gluteo" },
+    { name: "Panturrilha em pé", sets: 3, reps: "15-20", maquinas: ["Máquina de panturrilha", "Halteres"], regiao: "panturrilha" },
+    { name: "Panturrilha sentado", sets: 3, reps: "15-20", maquinas: ["Máquina de panturrilha sentado", "Halteres"], regiao: "panturrilha" },
   ],
   Ombro: [
-    { name: "Desenvolvimento", sets: 3, reps: "10-12", maquinas: ["Halteres", "Máquina de desenvolvimento", "Barra livre", "Máquina smith", "Halteres (Arnold press)"] },
-    { name: "Elevação lateral", sets: 3, reps: "12-15", maquinas: ["Halteres", "Cabo (polia baixa)", "Máquina (sentado)", "Cabo (unilateral, inclinado)", "Halteres (sentado)", "Halteres (deitado banco 45°)"] },
-    { name: "Elevação frontal", sets: 3, reps: "12-15", maquinas: ["Halteres", "Barra", "Cabo", "Corda (polia)", "Halteres (sentado, com rotação)", "Cabo (unilateral)"] },
-    { name: "Remada alta", sets: 3, reps: "10-12", maquinas: ["Barra livre", "Cabo"] },
-    { name: "Voador invertido (deltoide posterior)", sets: 3, reps: "12-15", maquinas: ["Halteres", "Peck deck invertido", "Cabo"] },
+    { name: "Desenvolvimento", sets: 3, reps: "10-12", maquinas: ["Halteres", "Máquina de desenvolvimento", "Barra livre", "Máquina smith", "Halteres (Arnold press)"], regiao: "desenvolvimento" },
+    { name: "Elevação lateral", sets: 3, reps: "12-15", maquinas: ["Halteres", "Cabo (polia baixa)", "Máquina (sentado)", "Cabo (unilateral, inclinado)", "Halteres (sentado)", "Halteres (deitado banco 45°)"], regiao: "lateral" },
+    { name: "Elevação frontal", sets: 3, reps: "12-15", maquinas: ["Halteres", "Barra", "Cabo", "Corda (polia)", "Halteres (sentado, com rotação)", "Cabo (unilateral)"], regiao: "frontal" },
+    { name: "Remada alta", sets: 3, reps: "10-12", maquinas: ["Barra livre", "Cabo"], regiao: "lateral" },
+    { name: "Voador invertido (deltoide posterior)", sets: 3, reps: "12-15", maquinas: ["Halteres", "Peck deck invertido", "Cabo"], regiao: "posterior" },
   ],
   Braço: [
-    { name: "Rosca bíceps", sets: 3, reps: "10-12", maquinas: ["Barra reta", "Barra W", "Halteres", "Polia baixa", "Polia baixa (unilateral)", "Polia alta (unilateral)"] },
-    { name: "Rosca alternada", sets: 3, reps: "10-12", maquinas: ["Halteres"] },
-    { name: "Rosca martelo", sets: 3, reps: "10-12", maquinas: ["Halteres", "Corda (polia)"] },
-    { name: "Rosca no banco Scott", sets: 3, reps: "10-12", maquinas: ["Barra W", "Halteres", "Máquina Scott", "Halteres (unilateral)"] },
-    { name: "Rosca no banco inclinado", sets: 3, reps: "10-12", maquinas: ["Halteres", "Halteres (alternada)"] },
-    { name: "Rosca concentrada", sets: 3, reps: "10-12", maquinas: ["Halteres"] },
-    { name: "Rosca invertida (pegada pronada)", sets: 3, reps: "10-12", maquinas: ["Halteres", "Polia"] },
-    { name: "Flexão de punho", sets: 3, reps: "15-20", maquinas: ["Barra"] },
-    { name: "Tríceps corda", sets: 3, reps: "10-12", maquinas: ["Pulley (corda)", "Pulley (barra reta)", "Pulley (barra W)"] },
-    { name: "Tríceps francês", sets: 3, reps: "10-12", maquinas: ["Halteres (sentado)", "Corda (polia baixa)", "Barra W"] },
-    { name: "Tríceps testa", sets: 3, reps: "10-12", maquinas: ["Barra W", "Halteres", "Polia baixa", "Corda (polia alta)"] },
-    { name: "Tríceps coice (kickback)", sets: 3, reps: "12-15", maquinas: ["Halteres", "Cabo (polia)"] },
-    { name: "Tríceps no banco (mergulho)", sets: 3, reps: "10-15", maquinas: ["Peso corporal (banco)", "Máquina"] },
+    { name: "Rosca bíceps", sets: 3, reps: "10-12", maquinas: ["Barra reta", "Barra W", "Halteres", "Polia baixa", "Polia baixa (unilateral)", "Polia alta (unilateral)"], regiao: "biceps" },
+    { name: "Rosca alternada", sets: 3, reps: "10-12", maquinas: ["Halteres"], regiao: "biceps" },
+    { name: "Rosca martelo", sets: 3, reps: "10-12", maquinas: ["Halteres", "Corda (polia)"], regiao: "biceps" },
+    { name: "Rosca no banco Scott", sets: 3, reps: "10-12", maquinas: ["Barra W", "Halteres", "Máquina Scott", "Halteres (unilateral)"], regiao: "biceps" },
+    { name: "Rosca no banco inclinado", sets: 3, reps: "10-12", maquinas: ["Halteres", "Halteres (alternada)"], regiao: "biceps" },
+    { name: "Rosca concentrada", sets: 3, reps: "10-12", maquinas: ["Halteres"], regiao: "biceps" },
+    { name: "Rosca invertida (pegada pronada)", sets: 3, reps: "10-12", maquinas: ["Halteres", "Polia"], regiao: "antebraco" },
+    { name: "Flexão de punho", sets: 3, reps: "15-20", maquinas: ["Barra"], regiao: "antebraco" },
+    { name: "Tríceps corda", sets: 3, reps: "10-12", maquinas: ["Pulley (corda)", "Pulley (barra reta)", "Pulley (barra W)"], regiao: "triceps" },
+    { name: "Tríceps francês", sets: 3, reps: "10-12", maquinas: ["Halteres (sentado)", "Corda (polia baixa)", "Barra W"], regiao: "triceps" },
+    { name: "Tríceps testa", sets: 3, reps: "10-12", maquinas: ["Barra W", "Halteres", "Polia baixa", "Corda (polia alta)"], regiao: "triceps" },
+    { name: "Tríceps coice (kickback)", sets: 3, reps: "12-15", maquinas: ["Halteres", "Cabo (polia)"], regiao: "triceps" },
+    { name: "Tríceps no banco (mergulho)", sets: 3, reps: "10-15", maquinas: ["Peso corporal (banco)", "Máquina"], regiao: "triceps" },
   ],
   Abdômen: [
     { name: "Abdominal máquina", sets: 3, reps: "15-20", maquinas: ["Máquina"] },
@@ -721,10 +721,11 @@ const VIDEOS_EXERCICIO = {
 function getVideoUrl(exercicio) {
   const porMaquina = VIDEOS_EXERCICIO[exercicio.name];
   if (!porMaquina) return null;
-  if (porMaquina[exercicio.maquina]) return porMaquina[exercicio.maquina];
-  // fallback: primeira opção cadastrada, caso a máquina exata não tenha vídeo específico ainda
-  const primeira = Object.values(porMaquina)[0];
-  return primeira || null;
+  // Só retorna vídeo se houver um cadastrado especificamente pra essa máquina.
+  // (Removido o fallback pra "primeira opção cadastrada": ele mostrava vídeo
+  // de equipamento errado quando a máquina escolhida não tinha vídeo próprio.
+  // Agora, sem vídeo específico, cai na busca/canal do YouTube via getVideoOuCanalUrl.)
+  return porMaquina[exercicio.maquina] || null;
 }
 
 // Capa (thumbnail) do vídeo cadastrado pro exercício/aparelho atual, extraída do próprio link do YouTube
@@ -1727,6 +1728,18 @@ function calcularSemanasConsistentes(historico) {
   return streakSemanas;
 }
 
+// Assinatura da composição da rotina (quais exercícios em quais dias) — ignora
+// séries/reps/carga de propósito, pra só contar como "trocou de treino" quando
+// os exercícios em si mudam, não quando a pessoa só ajusta peso/série.
+function assinaturaComposicaoRotina(rotina) {
+  if (!rotina || !rotina.length) return "";
+  const porDia = rotina
+    .map((d) => ({ dia: d.dia, exs: (d.exercicios || []).map((e) => e.name).sort() }))
+    .filter((d) => d.exs.length > 0)
+    .sort((a, b) => a.dia.localeCompare(b.dia));
+  return JSON.stringify(porDia);
+}
+
 function normalizarDecimal(valor) {
   return valor.replace(",", ".").replace(/[^0-9.]/g, "");
 }
@@ -2041,6 +2054,9 @@ const TRADUCOES = {
     rotinaDeloadTexto: "Que tal uma semana mais leve pra descansar e evitar overtraining? Isso reduz 1 série de cada exercício por essa semana — você pode ajustar de volta quando quiser.",
     rotinaDeloadAplicar: "Aplicar semana leve",
     rotinaDeloadAgoraNao: "Agora não",
+    rotinaTrocaTreinoTitulo: "🔄 semanas no mesmo treino",
+    rotinaTrocaTreinoTexto: "Já faz um tempo com a mesma rotina. Trocar os exercícios agora ajuda a evitar estagnação e continuar evoluindo — que tal montar um treino novo?",
+    rotinaTrocaTreinoVerModelos: "Ver modelos prontos",
     rotinaQuaisDias: "Quais dias você treina? (toque pra ligar/desligar)",
     rotinaDescansoRecomendado: "Descanso recomendado entre séries:",
     rotinaDescansoRecomendadoValor: "2 a 3 min",
@@ -2122,6 +2138,9 @@ const TRADUCOES = {
     rotinaDeloadTexto: "How about a lighter week to recover and avoid overtraining? This reduces 1 set per exercise for this week — you can switch it back anytime.",
     rotinaDeloadAplicar: "Apply light week",
     rotinaDeloadAgoraNao: "Not now",
+    rotinaTrocaTreinoTitulo: "🔄 weeks on the same routine",
+    rotinaTrocaTreinoTexto: "You've had the same routine for a while. Switching up the exercises now helps avoid a plateau and keeps you progressing — how about building a new workout?",
+    rotinaTrocaTreinoVerModelos: "See ready-made templates",
     rotinaQuaisDias: "Which days do you train? (tap to toggle)",
     rotinaDescansoRecomendado: "Recommended rest between sets:",
     rotinaDescansoRecomendadoValor: "2 to 3 min",
@@ -2203,6 +2222,9 @@ const TRADUCOES = {
     rotinaDeloadTexto: "¿Qué tal una semana más ligera para descansar y evitar el sobreentrenamiento? Esto reduce 1 serie de cada ejercicio en esta semana — puedes ajustarlo de vuelta cuando quieras.",
     rotinaDeloadAplicar: "Aplicar semana ligera",
     rotinaDeloadAgoraNao: "Ahora no",
+    rotinaTrocaTreinoTitulo: "🔄 semanas con la misma rutina",
+    rotinaTrocaTreinoTexto: "Hace un tiempo que tienes la misma rutina. Cambiar los ejercicios ahora ayuda a evitar el estancamiento y seguir progresando — ¿qué tal armar un entrenamiento nuevo?",
+    rotinaTrocaTreinoVerModelos: "Ver plantillas listas",
     rotinaQuaisDias: "¿Qué días entrenas? (toca para activar/desactivar)",
     rotinaDescansoRecomendado: "Descanso recomendado entre series:",
     rotinaDescansoRecomendadoValor: "2 a 3 min",
@@ -2247,6 +2269,9 @@ function AppMassiPro({ onSolicitarRemount }) {
   const [novoRecordeAviso, setNovoRecordeAviso] = useState(null); // texto do aviso de novo recorde, some sozinho
   const [sugestaoTroca, setSugestaoTroca] = useState(null); // { dia, nomeAtual, nomeAlternativo } — sugestão após registrar dor
   const [deloadRespostaSemana, setDeloadRespostaSemana] = useState(null); // semana em que a pessoa já aplicou ou dispensou a sugestão de deload
+  const [rotinaDataInicio, setRotinaDataInicio] = useState(null); // desde quando a composição atual da rotina (quais exercícios em quais dias) está em uso
+  const [rotinaAssinaturaCarregada, setRotinaAssinaturaCarregada] = useState(undefined); // undefined = ainda carregando do storage; null = nunca salva antes
+  const [trocaTreinoRespostaSemana, setTrocaTreinoRespostaSemana] = useState(null); // semana em que a pessoa já dispensou a sugestão de trocar de treino
   const [showPlanos, setShowPlanos] = useState(false);
   const [online, setOnline] = useState(typeof navigator === "undefined" ? true : navigator.onLine);
 
@@ -2273,11 +2298,13 @@ function AppMassiPro({ onSolicitarRemount }) {
   const tourTreinoHojeRef = useRef(null);
   const tourWodBtnRef = useRef(null);
   const [tourAtivo, setTourAtivo] = useState(null); // { aba: "rotina"|"inicio"|"cross", passo: 0 } ou null
+  // Cache local de quais tours já foram vistos nesta instalação. Evita reconsultar
+  // o storage a cada troca de aba (fonte do bug de o tour reaparecer ao voltar numa aba).
+  const [toursVistos, setToursVistos] = useState({ rotina: undefined, inicio: undefined, cross: undefined });
   const toursDef = {
     rotina: [
       { ref: tourMaquinaRef, texto: "Aqui você escolhe o equipamento do exercício — halteres, barra ou máquina." },
       { ref: tourVideoRef, texto: "Toque no nome do exercício pra ver o vídeo de execução e a explicação completa." },
-      { ref: tourGuiadoBtnRef, texto: "Toque aqui pra iniciar o treino guiado — ele te conduz exercício por exercício, com cronômetro de descanso automático." },
     ],
     inicio: [
       { ref: tourTreinoHojeRef, texto: "Esse card mostra o treino de hoje. Toque nele pra ir direto pro dia certo lá na Rotina." },
@@ -2299,6 +2326,7 @@ function AppMassiPro({ onSolicitarRemount }) {
     const aba = tourAtivo ? tourAtivo.aba : null;
     setTourAtivo(null);
     if (!aba) return;
+    setToursVistos((prev) => ({ ...prev, [aba]: true }));
     try {
       await window.storage.set(`tour-${aba}-visto`, "1");
     } catch (e) {
@@ -2309,34 +2337,36 @@ function AppMassiPro({ onSolicitarRemount }) {
     setActiveTab("rotina");
     setTimeout(() => setTourAtivo({ aba: "rotina", passo: 0 }), 450);
   };
+  // Se trocar de aba antes de terminar o tour, fecha o tour da aba anterior
+  // (sem marcar como visto) em vez de deixá-lo "vazando" pra tela nova.
+  useEffect(() => {
+    if (tourAtivo && tourAtivo.aba !== activeTab) {
+      setTourAtivo(null);
+    }
+  }, [activeTab]);
+
   useEffect(() => {
     if (tourAtivo) return;
+    if (toursVistos[activeTab] === undefined) return; // ainda não carregou o cache, ou aba sem tour
+    if (toursVistos[activeTab]) return; // já visto nesta instalação
     if (activeTab === "rotina" && !loaded) return;
     let cancelado = false;
-    (async () => {
-      try {
-        const vistoRes = await window.storage.get(`tour-${activeTab}-visto`);
-        if (vistoRes && vistoRes.value === "1") return;
-      } catch (e) {
-        // sem valor salvo ainda, mostra o tutorial
-      }
-      if (activeTab === "rotina") {
-        const primeiroDia = rotina.find((d) => diasSelecionados.includes(d.dia));
-        if (!cancelado && primeiroDia && primeiroDia.exercicios && primeiroDia.exercicios.length > 0) {
-          setTimeout(() => {
-            if (!cancelado) setTourAtivo({ aba: "rotina", passo: 0 });
-          }, 500);
-        }
-      } else if (activeTab === "inicio" || activeTab === "cross") {
+    if (activeTab === "rotina") {
+      const primeiroDia = rotina.find((d) => diasSelecionados.includes(d.dia));
+      if (primeiroDia && primeiroDia.exercicios && primeiroDia.exercicios.length > 0) {
         setTimeout(() => {
-          if (!cancelado) setTourAtivo({ aba: activeTab, passo: 0 });
+          if (!cancelado) setTourAtivo({ aba: "rotina", passo: 0 });
         }, 500);
       }
-    })();
+    } else if (activeTab === "inicio" || activeTab === "cross") {
+      setTimeout(() => {
+        if (!cancelado) setTourAtivo({ aba: activeTab, passo: 0 });
+      }, 500);
+    }
     return () => {
       cancelado = true;
     };
-  }, [activeTab, loaded]);
+  }, [activeTab, loaded, toursVistos]);
   useEffect(() => {
     const el = tabBtnRefs.current[activeTab];
     if (el && typeof el.scrollIntoView === "function") {
@@ -2464,6 +2494,24 @@ function AppMassiPro({ onSolicitarRemount }) {
         // sem resposta de deload salva ainda
       }
       try {
+        const dataInicioRes = await window.storage.get("rotina-data-inicio");
+        if (dataInicioRes && dataInicioRes.value) setRotinaDataInicio(dataInicioRes.value);
+      } catch (e) {
+        // ainda não tem data registrada
+      }
+      try {
+        const assinaturaRes = await window.storage.get("rotina-assinatura-composicao");
+        setRotinaAssinaturaCarregada(assinaturaRes && assinaturaRes.value ? assinaturaRes.value : null);
+      } catch (e) {
+        setRotinaAssinaturaCarregada(null);
+      }
+      try {
+        const trocaRes = await window.storage.get("troca-treino-resposta-semana");
+        if (trocaRes && trocaRes.value) setTrocaTreinoRespostaSemana(trocaRes.value);
+      } catch (e) {
+        // sem resposta salva ainda
+      }
+      try {
         // acessar qualquer chave normal primeiro garante que a migração de perfis já rodou
         const perfisRes = await window.storage.get("perfis-lista");
         if (perfisRes && perfisRes.value) setPerfis(JSON.parse(perfisRes.value));
@@ -2472,6 +2520,16 @@ function AppMassiPro({ onSolicitarRemount }) {
       } catch (e) {
         // segue com os padrões
       }
+      const vistosCarregados = {};
+      for (const aba of ["rotina", "inicio", "cross"]) {
+        try {
+          const res = await window.storage.get(`tour-${aba}-visto`);
+          vistosCarregados[aba] = !!(res && res.value === "1");
+        } catch (e) {
+          vistosCarregados[aba] = false;
+        }
+      }
+      setToursVistos(vistosCarregados);
     })();
 
     // TODO ADMOB: inicialização do AdMob (inerte até ter IDs configurados
@@ -2599,10 +2657,16 @@ function AppMassiPro({ onSolicitarRemount }) {
     setRotina((prev) =>
       prev.map((d) => {
         if (d.dia !== dia) return d;
-        const opcoes = LIBRARY[d.foco] || [];
-        const usados = new Set(d.exercicios.map((e) => e.name));
+        const opcoesGrupo = LIBRARY[d.foco] || [];
         const atual = d.exercicios.find((e) => e.id === id);
         if (!atual) return d;
+        // Prioriza outras opções da mesma região/padrão de movimento (ex: supino
+        // inclinado troca só por outro exercício de peito superior; puxada alta
+        // troca só por outra puxada). Só usa o grupo inteiro se não sobrar
+        // nenhuma opção nessa região específica.
+        const mesmaRegiao = atual.regiao ? opcoesGrupo.filter((o) => o.regiao === atual.regiao) : [];
+        const opcoes = mesmaRegiao.length > 1 ? mesmaRegiao : opcoesGrupo;
+        const usados = new Set(d.exercicios.map((e) => e.name));
         // libera o nome atual pra poder reaproveitar se só sobrar ele
         usados.delete(atual.name);
         const candidatos = opcoes.filter((o) => !usados.has(o.name));
@@ -2924,6 +2988,34 @@ function AppMassiPro({ onSolicitarRemount }) {
     setDeloadRespostaSemana(semanaAtualChave);
     try {
       await window.storage.set("deload-resposta-semana", semanaAtualChave);
+    } catch (e) {
+      // segue mesmo se falhar
+    }
+  };
+
+  // Detecta se a composição da rotina (quais exercícios em quais dias) mudou desde
+  // a última vez, e (re)inicia a contagem de "há quanto tempo é o mesmo treino".
+  useEffect(() => {
+    if (!loaded || rotinaAssinaturaCarregada === undefined) return;
+    const atual = assinaturaComposicaoRotina(rotina);
+    if (!atual) return; // rotina ainda vazia, não começa a contar
+    if (atual === rotinaAssinaturaCarregada) return;
+    const hoje = new Date().toISOString().slice(0, 10);
+    setRotinaDataInicio(hoje);
+    setRotinaAssinaturaCarregada(atual);
+    window.storage.set("rotina-data-inicio", hoje).catch(() => {});
+    window.storage.set("rotina-assinatura-composicao", atual).catch(() => {});
+  }, [rotina, loaded, rotinaAssinaturaCarregada]);
+
+  const semanasNoTreinoAtual = rotinaDataInicio
+    ? Math.floor((new Date() - new Date(rotinaDataInicio + "T00:00:00")) / (7 * 86400000))
+    : 0;
+  const mostrarSugestaoTrocaTreino = semanasNoTreinoAtual >= 5 && trocaTreinoRespostaSemana !== semanaAtualChave;
+
+  const registrarRespostaTrocaTreino = async () => {
+    setTrocaTreinoRespostaSemana(semanaAtualChave);
+    try {
+      await window.storage.set("troca-treino-resposta-semana", semanaAtualChave);
     } catch (e) {
       // segue mesmo se falhar
     }
@@ -3641,14 +3733,6 @@ function AppMassiPro({ onSolicitarRemount }) {
             />
           )}
 
-          <button style={styles.modelosBtn} onClick={() => setShowModelos(true)}>
-            {t("rotinaTrocarModelo")}
-          </button>
-
-          <button style={styles.exportarRotinaBtn} onClick={exportarRotinaImagem}>
-            {t("rotinaExportarImagem")}
-          </button>
-
           {mostrarSugestaoDeload && (
             <section style={styles.deloadBox}>
               <div style={styles.deloadTitulo}>{semanasConsistentes} {t("rotinaDeloadTitulo")}</div>
@@ -3658,6 +3742,19 @@ function AppMassiPro({ onSolicitarRemount }) {
               <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
                 <button style={styles.saveButton} onClick={aplicarSemanaLeve}>{t("rotinaDeloadAplicar")}</button>
                 <button style={styles.trocaManterBtn} onClick={registrarRespostaDeload}>{t("rotinaDeloadAgoraNao")}</button>
+              </div>
+            </section>
+          )}
+
+          {mostrarSugestaoTrocaTreino && (
+            <section style={styles.deloadBox}>
+              <div style={styles.deloadTitulo}>{semanasNoTreinoAtual} {t("rotinaTrocaTreinoTitulo")}</div>
+              <p style={styles.deloadTexto}>
+                {t("rotinaTrocaTreinoTexto")}
+              </p>
+              <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+                <button style={styles.saveButton} onClick={() => setShowModelos(true)}>{t("rotinaTrocaTreinoVerModelos")}</button>
+                <button style={styles.trocaManterBtn} onClick={registrarRespostaTrocaTreino}>{t("rotinaDeloadAgoraNao")}</button>
               </div>
             </section>
           )}
@@ -3715,6 +3812,15 @@ function AppMassiPro({ onSolicitarRemount }) {
                 />
                 </div>
               ))}
+          </div>
+
+          <div style={{ display: "flex", gap: 8, marginBottom: 14 }}>
+            <button style={styles.modelosBtnCompacto} onClick={() => setShowModelos(true)}>
+              {t("rotinaTrocarModelo")}
+            </button>
+            <button style={styles.exportarRotinaBtnCompacto} onClick={exportarRotinaImagem}>
+              {t("rotinaExportarImagem")}
+            </button>
           </div>
 
           <button style={styles.saveButton} onClick={salvar}>
@@ -4920,14 +5026,14 @@ function PremiumTab({ isPremium, onVerPlanos, objetivoUsuario, nivelUsuario }) {
       <section style={styles.card}>
         <div style={styles.cardLabel}>🍽 Sua dieta</div>
         {!isPremium ? (
-          <p style={styles.modalDisclaimer}>
+          <p style={{ ...styles.modalDisclaimer, ...styles.premiumMuted }}>
             Disponível pra quem assina o Premium — dietas prontas, uma por vez, no seu ritmo.
           </p>
         ) : !dietaCarregada ? null : dietas.length === 0 ? (
-          <p style={styles.modalDisclaimer}>Em breve — as dietas ainda estão sendo cadastradas.</p>
+          <p style={{ ...styles.modalDisclaimer, ...styles.premiumMuted }}>Em breve — as dietas ainda estão sendo cadastradas.</p>
         ) : (
           <>
-            <p style={styles.modalDisclaimer}>
+            <p style={{ ...styles.modalDisclaimer, ...styles.premiumMuted }}>
               Conteúdo educativo — não substitui acompanhamento de um nutricionista.
             </p>
 
@@ -4947,7 +5053,7 @@ function PremiumTab({ isPremium, onVerPlanos, objetivoUsuario, nivelUsuario }) {
             </div>
 
             <div style={styles.dietaFiltrosRow}>
-              <label style={styles.dietaFiltroLabel}>
+              <label style={{ ...styles.dietaFiltroLabel, ...styles.premiumMuted }}>
                 Nível
                 <select
                   value={perfilDieta}
@@ -4960,7 +5066,7 @@ function PremiumTab({ isPremium, onVerPlanos, objetivoUsuario, nivelUsuario }) {
                   <option value="prático">Prático</option>
                 </select>
               </label>
-              <label style={styles.dietaFiltroLabel}>
+              <label style={{ ...styles.dietaFiltroLabel, ...styles.premiumMuted }}>
                 Faixa etária
                 <select
                   value={faixaDieta}
@@ -4976,7 +5082,7 @@ function PremiumTab({ isPremium, onVerPlanos, objetivoUsuario, nivelUsuario }) {
             </div>
 
             {!dietaAtual ? (
-              <p style={styles.modalDisclaimer}>Nenhuma dieta encontrada com esses filtros ainda.</p>
+              <p style={{ ...styles.modalDisclaimer, ...styles.premiumMuted }}>Nenhuma dieta encontrada com esses filtros ainda.</p>
             ) : (
               <div style={styles.dietaCard}>
                 <div style={styles.dicaDietaTitulo}>{dietaAtual.nome}</div>
@@ -4986,7 +5092,7 @@ function PremiumTab({ isPremium, onVerPlanos, objetivoUsuario, nivelUsuario }) {
                   </div>
                 )}
                 {dietaAtual.refeicoes.map((r) => (
-                  <div key={r.nome} style={styles.dietaRefeicao}>
+                  <div key={r.nome} style={{ ...styles.dietaRefeicao, ...styles.premiumMuted }}>
                     <span style={styles.dietaRefeicaoNome}>{r.nome}:</span> {r.opcao_principal}
                     {r.alternativas && r.alternativas.length > 0 && (
                       <>
@@ -5014,7 +5120,7 @@ function PremiumTab({ isPremium, onVerPlanos, objetivoUsuario, nivelUsuario }) {
               {limiteAtingido ? "Limite de hoje atingido — volte amanhã" : "🔁 Ver outra dieta"}
             </button>
             {!limiteAtingido && (
-              <p style={styles.dietaLimiteTexto}>
+              <p style={{ ...styles.dietaLimiteTexto, ...styles.premiumMuted }}>
                 {LIMITE_DIARIO - cliquesHoje} de {LIMITE_DIARIO} trocas disponíveis hoje
               </p>
             )}
@@ -5024,7 +5130,7 @@ function PremiumTab({ isPremium, onVerPlanos, objetivoUsuario, nivelUsuario }) {
 
       <section style={styles.card}>
         <div style={styles.cardLabel}>★ Dicas gerais de dieta</div>
-        <p style={styles.modalDisclaimer}>
+        <p style={{ ...styles.modalDisclaimer, ...styles.premiumMuted }}>
           Conteúdo educativo geral, disponível pra todo mundo — não substitui acompanhamento de um nutricionista.
         </p>
         {DICAS_DIETA.map((d) => (
@@ -6718,6 +6824,7 @@ function TourOverlay({ alvoRef, texto, onProximo, onPular, ultimo }) {
 
   useEffect(() => {
     let cancelado = false;
+    let intervalId = null;
     function medir() {
       if (!alvoRef || !alvoRef.current) return;
       const r = alvoRef.current.getBoundingClientRect();
@@ -6726,11 +6833,18 @@ function TourOverlay({ alvoRef, texto, onProximo, onPular, ultimo }) {
     if (alvoRef && alvoRef.current) {
       alvoRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
       setTimeout(medir, 380);
+      // Continua remedindo enquanto o balão estiver ativo — a página pode
+      // continuar se ajustando (imagem carregando, rolagem, etc.) depois da
+      // medição inicial, o que fazia o balão ficar preso numa posição antiga.
+      intervalId = setInterval(medir, 200);
     }
-    window.addEventListener("resize", medir);
+    window.addEventListener("resize", medir, { passive: true });
+    window.addEventListener("scroll", medir, { passive: true, capture: true });
     return () => {
       cancelado = true;
+      if (intervalId) clearInterval(intervalId);
       window.removeEventListener("resize", medir);
+      window.removeEventListener("scroll", medir, { capture: true });
     };
   }, [alvoRef]);
 
@@ -7330,6 +7444,22 @@ const styles = {
     cursor: "pointer",
     marginBottom: 16,
   },
+  modelosBtnCompacto: {
+    flex: 1,
+    padding: "9px 8px",
+    borderRadius: 8,
+    border: `1px solid ${MARGIN_RED}`,
+    background: "rgba(8,18,26,0.75)",
+    backdropFilter: "blur(4px)",
+    WebkitBackdropFilter: "blur(4px)",
+    color: "#8FDCFF",
+    fontFamily: guiadoFont,
+    fontWeight: 700,
+    fontSize: 11.5,
+    letterSpacing: 0.2,
+    textShadow: "0 1px 3px rgba(0,0,0,0.55)",
+    cursor: "pointer",
+  },
   modeloDescricao: { fontSize: 12.5, color: PENCIL, lineHeight: 1.4, marginBottom: 6 },
   exportarRotinaBtn: {
     width: "100%",
@@ -7343,6 +7473,22 @@ const styles = {
     fontSize: 12.5,
     cursor: "pointer",
     marginBottom: 16,
+  },
+  exportarRotinaBtnCompacto: {
+    flex: 1,
+    padding: "9px 8px",
+    borderRadius: 8,
+    border: `1px solid ${HIGHLIGHT}`,
+    background: "rgba(10,20,8,0.75)",
+    backdropFilter: "blur(4px)",
+    WebkitBackdropFilter: "blur(4px)",
+    color: "#C6FF7A",
+    fontFamily: guiadoFont,
+    fontWeight: 700,
+    fontSize: 11.5,
+    letterSpacing: 0.2,
+    textShadow: "0 1px 3px rgba(0,0,0,0.55)",
+    cursor: "pointer",
   },
   objetivoCard: {
     textAlign: "left",
@@ -8001,13 +8147,18 @@ const styles = {
   deloadTexto: { fontSize: 12.5, color: PENCIL, lineHeight: 1.45, marginBottom: 10 },
   aquecimentoBox: {
     fontSize: 12.5,
-    color: "#8A5E12",
-    background: "rgba(217,164,65,0.14)",
-    border: "1px solid rgba(217,164,65,0.4)",
+    color: "#FFE3AE",
+    fontFamily: guiadoFont,
+    fontWeight: 500,
+    background: "rgba(15,10,5,0.82)",
+    backdropFilter: "blur(4px)",
+    WebkitBackdropFilter: "blur(4px)",
+    border: "1px solid rgba(217,164,65,0.6)",
     borderRadius: 8,
     padding: "9px 11px",
     marginBottom: 10,
     lineHeight: 1.4,
+    textShadow: "0 1px 3px rgba(0,0,0,0.6)",
   },
   feedbackRow: { display: "flex", gap: 8, justifyContent: "center", margin: "18px 0 14px" },
   feedbackBtn: {
@@ -8502,12 +8653,16 @@ const styles = {
     marginTop: 14,
     padding: "11px",
     borderRadius: 10,
-    border: "none",
-    background: "rgba(232,163,61,0.16)",
-    color: "#8A5E12",
-    fontFamily: monoFont,
+    border: "1px solid rgba(232,163,61,0.65)",
+    background: "rgba(20,14,6,0.8)",
+    backdropFilter: "blur(4px)",
+    WebkitBackdropFilter: "blur(4px)",
+    color: "#FFD98A",
+    fontFamily: guiadoFont,
     fontWeight: 700,
-    fontSize: 12.5,
+    fontSize: 13,
+    letterSpacing: 0.3,
+    textShadow: "0 1px 3px rgba(0,0,0,0.55)",
     cursor: "pointer",
   },
   guiadoBtn: {
@@ -8732,6 +8887,7 @@ const styles = {
     marginBottom: 14,
   },
   notaTexto: { fontSize: 13.5, color: INK, lineHeight: 1.5, margin: "6px 0 10px" },
+  premiumMuted: { color: "#D9DEE3", textShadow: "0 1px 3px rgba(0,0,0,0.5)" },
 
   toastOverlay: {
     position: "fixed",
