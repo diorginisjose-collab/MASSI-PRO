@@ -157,6 +157,7 @@ const LIBRARY = {
     { name: "Coice (glúteo) na máquina", sets: 3, reps: "12-15", maquinas: ["Máquina"], regiao: "gluteo" },
     { name: "Panturrilha em pé", sets: 3, reps: "15-20", maquinas: ["Máquina de panturrilha", "Halteres"], regiao: "panturrilha" },
     { name: "Panturrilha sentado", sets: 3, reps: "15-20", maquinas: ["Máquina de panturrilha sentado", "Halteres"], regiao: "panturrilha" },
+    { name: "Agachamento isométrico", sets: 3, reps: "30-40s", maquinas: ["Peso corporal"], regiao: "quadriceps" },
   ],
   Ombro: [
     { name: "Desenvolvimento", sets: 3, reps: "10-12", maquinas: ["Halteres", "Máquina de desenvolvimento", "Barra livre", "Máquina smith", "Halteres (Arnold press)"], regiao: "desenvolvimento" },
@@ -183,7 +184,7 @@ const LIBRARY = {
   Abdômen: [
     { name: "Abdominal máquina", sets: 3, reps: "15-20", maquinas: ["Máquina"] },
     { name: "Abdominal na paralela", sets: 3, reps: "10-15", maquinas: ["Peso corporal (paralelas)"] },
-    { name: "Elevação de pernas (infra)", sets: 3, reps: "12-15", maquinas: ["Suspenso/paralela", "Solo/banco"] },
+    { name: "Elevação de pernas (infra)", sets: 3, reps: "12-15", maquinas: ["Suspenso/paralela", "Solo/banco", "Sentado"] },
     { name: "Prancha", sets: 3, reps: "30-40s", maquinas: ["Peso corporal"] },
     { name: "Abdominal bicicleta", sets: 3, reps: "15-20", maquinas: ["Peso corporal"] },
     { name: "Abdominal na polia (cable crunch)", sets: 3, reps: "15-20", maquinas: ["Cabo"] },
@@ -444,6 +445,7 @@ const VIDEOS_EXERCICIO = {
     "Barra livre": "https://www.youtube.com/shorts/_WI8KhXfrJI",
     "Halteres": "https://www.youtube.com/shorts/NIzt_fAXL2w",
     "Máquina de supino (chest press)": "https://www.youtube.com/shorts/HNaDJTSrI8s",
+    "Máquina smith": "https://www.youtube.com/shorts/vGqxqSs37_g",
   },
   "Supino inclinado": {
     "Halteres": "https://www.youtube.com/shorts/TCpq9yFXea4",
@@ -474,11 +476,13 @@ const VIDEOS_EXERCICIO = {
     "Cabo (remada baixa)": "https://www.youtube.com/shorts/b5I0YVK3U-g",
     "Máquina (pegada supinada)": "https://www.youtube.com/shorts/8EoXjJreuUk",
     "Cabo (unilateral)": "https://www.youtube.com/shorts/LpQMEygJfNY",
+    "Máquina de remada": "https://www.youtube.com/shorts/r_dyGyQi6GE",
   },
   "Remada curvada": {
     "Halteres": "https://www.youtube.com/shorts/r6fkfU_wnVI",
     "Barra (pronada)": "https://www.youtube.com/shorts/e53vSzibkO0",
     "Halteres (supinada)": "https://www.youtube.com/shorts/EPsW8xZ27FI",
+    "Barra livre": "https://www.youtube.com/shorts/e53vSzibkO0",
   },
   "Leg press": {
     "Leg press 45°": "https://www.youtube.com/shorts/is4vRMSIkjw",
@@ -497,6 +501,7 @@ const VIDEOS_EXERCICIO = {
   "Agachamento": {
     "Barra livre": "https://www.youtube.com/shorts/rq5y8zHeWjM",
     "Máquina smith": "https://www.youtube.com/shorts/U4BMdqPBVLs",
+    "Peso corporal": "https://www.youtube.com/shorts/3uZE_E11eg4",
   },
   "Panturrilha em pé": {
     "Máquina de panturrilha": "https://www.youtube.com/shorts/o1CyKLbUPAM",
@@ -515,15 +520,19 @@ const VIDEOS_EXERCICIO = {
     "Cabo (unilateral, inclinado)": "https://www.youtube.com/shorts/dgpts8LHOLc",
     "Halteres (sentado)": "https://www.youtube.com/shorts/YbqbspnFnfo",
     "Halteres (deitado banco 45°)": "https://www.youtube.com/shorts/2a4yANFdNys",
+    "Cabo (polia baixa)": "https://www.youtube.com/shorts/dgpts8LHOLc",
   },
   "Elevação frontal": {
     "Halteres": "https://www.youtube.com/shorts/nPYUWLDKl2k",
     "Corda (polia)": "https://www.youtube.com/shorts/7jIaWstlQSI",
     "Halteres (sentado, com rotação)": "https://www.youtube.com/shorts/igVfogfTwHY",
     "Cabo (unilateral)": "https://www.youtube.com/shorts/t7r-yljzlws",
+    "Barra": "https://www.youtube.com/shorts/AwHiiz2QSTw",
+    "Cabo": "https://www.youtube.com/shorts/cCMl5hAgFvA",
   },
   "Remada alta": {
     "Barra livre": "https://www.youtube.com/shorts/emPow6X_a_E",
+    "Cabo": "https://www.youtube.com/shorts/rs56tSeqOiA",
   },
   "Rosca bíceps": {
     "Barra reta": "https://www.youtube.com/shorts/dc330H9yN3Y",
@@ -531,6 +540,7 @@ const VIDEOS_EXERCICIO = {
     "Polia baixa": "https://www.youtube.com/shorts/x6JCKfdzPJE",
     "Polia alta (unilateral)": "https://www.youtube.com/shorts/ZTzF54mFEgI",
     "Polia baixa (unilateral)": "https://www.youtube.com/shorts/ckoG5M9bkZI",
+    "Barra W": "https://www.youtube.com/shorts/fjS0CqDR4v8",
   },
   "Rosca alternada": {
     "Halteres": "https://www.youtube.com/shorts/WUrn8iFf1js",
@@ -538,11 +548,13 @@ const VIDEOS_EXERCICIO = {
   "Tríceps corda": {
     "Pulley (corda)": "https://www.youtube.com/shorts/jPl9_JHGxA8",
     "Pulley (barra reta)": "https://www.youtube.com/shorts/M88Bt4MMpkI",
+    "Pulley (barra W)": "https://www.youtube.com/shorts/-3s5GoUvIHE",
   },
   "Tríceps testa": {
     "Halteres": "https://www.youtube.com/shorts/Cd0-tP9utgM",
     "Polia baixa": "https://www.youtube.com/shorts/PfK51UcnHW0",
     "Corda (polia alta)": "https://www.youtube.com/shorts/etTuALjH3bo",
+    "Barra W": "https://www.youtube.com/shorts/7mj8iZaBP9s",
   },
   "Supino declinado": {
     "Barra livre": "https://www.youtube.com/shorts/v79c-eDjBv8",
@@ -591,6 +603,7 @@ const VIDEOS_EXERCICIO = {
   "Elevação de pernas (infra)": {
     "Suspenso/paralela": "https://www.youtube.com/shorts/In0EzoOAILw",
     "Solo/banco": "https://www.youtube.com/shorts/MC5hF4JDLm4",
+    "Sentado": "https://www.youtube.com/shorts/In0EzoOAILw",
   },
   "Prancha": {
     "Peso corporal": "https://www.youtube.com/shorts/uxPlAbWFUDs",
@@ -632,15 +645,24 @@ const VIDEOS_EXERCICIO = {
   },
   "Agachamento sumô": {
     "Halteres": "https://www.youtube.com/shorts/Jo1DFefVdrg",
+    "Barra livre": "https://www.youtube.com/shorts/DfsgqBqZ9vo",
   },
   "Elevação pélvica (hip thrust)": {
     "Máquina": "https://www.youtube.com/shorts/Nuoo1XgRtGY",
+    "Barra livre": "https://www.youtube.com/shorts/cOvGedlKlD4",
+    "Máquina smith": "https://www.youtube.com/shorts/4Gmvk_jVa_g",
+    "Peso corporal": "https://www.youtube.com/shorts/uhGWSh09z9Q",
   },
   "Agachamento búlgaro": {
     "Halteres": "https://www.youtube.com/shorts/cCTC06-Yjqk",
+    "Peso corporal": "https://www.youtube.com/shorts/QSslJGBWxvo",
   },
   "Panturrilha sentado": {
     "Máquina de panturrilha sentado": "https://www.youtube.com/shorts/9fIw0ue8iQE",
+    "Halteres": "https://www.youtube.com/shorts/9fIw0ue8iQE",
+  },
+  "Agachamento isométrico": {
+    "Peso corporal": "https://www.youtube.com/shorts/5OsEzsHSy_c",
   },
   "Coice (glúteo) na máquina": {
     "Máquina": "https://www.youtube.com/shorts/A555PryCZ3g",
@@ -754,6 +776,35 @@ function getVideoOuCanalUrl(exercicio) {
     especifico: false,
     canal: false,
   };
+}
+
+// ---------- Supervisor de vídeos: confere sozinho se todo exercício/máquina cadastrado
+// na LIBRARY tem vídeo específico em VIDEOS_EXERCICIO. Roda automaticamente sempre que
+// o app carrega — se alguém adicionar um exercício ou máquina nova sem vídeo, aparece
+// aqui (e no console do navegador) em vez de descobrir só quando alguém reportar bug.
+function auditarVideos() {
+  const faltando = [];
+  for (const grupo in LIBRARY) {
+    for (const ex of LIBRARY[grupo]) {
+      const videos = VIDEOS_EXERCICIO[ex.name];
+      for (const maquina of ex.maquinas) {
+        if (!videos || !videos[maquina]) {
+          const usaCanal = NOMES_FUNCIONAL.has(ex.name);
+          if (!faltando.some((f) => f.nome === ex.name && f.maquina === maquina)) {
+            faltando.push({ grupo, nome: ex.name, maquina, usaCanal });
+          }
+        }
+      }
+    }
+  }
+  return faltando;
+}
+const AUDITORIA_VIDEOS = auditarVideos();
+if (typeof console !== "undefined" && AUDITORIA_VIDEOS.some((f) => !f.usaCanal)) {
+  console.warn(
+    "[Massi Pro] Exercício/máquina sem vídeo específico cadastrado (cai na busca do YouTube):",
+    AUDITORIA_VIDEOS.filter((f) => !f.usaCanal).map((f) => `${f.nome} → ${f.maquina}`)
+  );
 }
 
 const GUIA_EXECUCAO = {
@@ -2660,16 +2711,13 @@ function AppMassiPro({ onSolicitarRemount }) {
         const opcoesGrupo = LIBRARY[d.foco] || [];
         const atual = d.exercicios.find((e) => e.id === id);
         if (!atual) return d;
-        // Prioriza outras opções da mesma região/padrão de movimento (ex: supino
-        // inclinado troca só por outro exercício de peito superior; puxada alta
-        // troca só por outra puxada). Só usa o grupo inteiro se não sobrar
-        // nenhuma opção nessa região específica.
-        const mesmaRegiao = atual.regiao ? opcoesGrupo.filter((o) => o.regiao === atual.regiao) : [];
-        const opcoes = mesmaRegiao.length > 1 ? mesmaRegiao : opcoesGrupo;
+        // Mostra TODAS as opções do grupo do dia (ex: todo mundo de Peito, todo
+        // mundo de Costas), sem restringir por região/padrão de movimento — só
+        // tira quem já está ocupando outro exercício do mesmo dia.
         const usados = new Set(d.exercicios.map((e) => e.name));
         // libera o nome atual pra poder reaproveitar se só sobrar ele
         usados.delete(atual.name);
-        const candidatos = opcoes.filter((o) => !usados.has(o.name));
+        const candidatos = opcoesGrupo.filter((o) => !usados.has(o.name));
         const indiceAtual = candidatos.findIndex((o) => o.name === atual.name);
         const proximo = candidatos[(indiceAtual + 1) % candidatos.length] || atual;
         return {
@@ -5259,6 +5307,33 @@ function SobreTab({ t, onIniciarTour }) {
         <button style={{ ...styles.addItemBtn, marginTop: 14 }} onClick={onIniciarTour}>
           ▶ Ver o tutorial guiado da Rotina de novo
         </button>
+        <div style={{ borderTop: "1px solid rgba(255,255,255,0.08)", paddingTop: 10, marginTop: 10 }}>
+          <button
+            onClick={() => setManualAberto(manualAberto === "diagnostico" ? null : "diagnostico")}
+            style={{ ...styles.trocarBtn, width: "100%", textAlign: "left", display: "flex", justifyContent: "space-between", background: "transparent", border: "none", padding: "4px 0" }}
+          >
+            <span style={{ fontWeight: 700, fontSize: 14, color: "#F6F7F9" }}>🛠 Diagnóstico de vídeos</span>
+            <span>{manualAberto === "diagnostico" ? "−" : "+"}</span>
+          </button>
+          {manualAberto === "diagnostico" && (() => {
+            const semVideoReal = AUDITORIA_VIDEOS.filter((f) => !f.usaCanal);
+            if (semVideoReal.length === 0) {
+              return <p style={styles.notaTexto}>✅ Todo exercício e máquina cadastrados têm vídeo específico.</p>;
+            }
+            return (
+              <div>
+                <p style={styles.notaTexto}>
+                  {semVideoReal.length} combinação(ões) de exercício + equipamento ainda sem vídeo específico (o app mostra busca do YouTube nesses casos):
+                </p>
+                {semVideoReal.map((f, i) => (
+                  <p key={i} style={{ ...styles.notaTexto, margin: "2px 0" }}>
+                    • {f.nome} — {f.maquina} ({f.grupo})
+                  </p>
+                ))}
+              </div>
+            );
+          })()}
+        </div>
       </section>
 
       <section style={styles.card}>
@@ -7035,20 +7110,25 @@ function DayCard({ entry, onFoco, onAddExercicio, onRemoveExercicio, onEditExerc
                   );
                 })()}
 
-                {ex.maquinas.length > 1 ? (
-                  <select
-                    value={ex.maquina}
-                    onChange={(e) => onEditExercicio(ex.id, "maquina", e.target.value)}
-                    style={styles.machineSelect}
-                    ref={idx === 0 && refsTour ? refsTour.maquina : undefined}
-                  >
-                    {ex.maquinas.map((m) => (
-                      <option key={m} value={m}>{m}</option>
-                    ))}
-                  </select>
-                ) : (
-                  <div style={styles.machineFixed} ref={idx === 0 && refsTour ? refsTour.maquina : undefined}>{ex.maquinas[0]}</div>
-                )}
+                <div style={styles.maquinaTrocarRow}>
+                  {ex.maquinas.length > 1 ? (
+                    <select
+                      value={ex.maquina}
+                      onChange={(e) => onEditExercicio(ex.id, "maquina", e.target.value)}
+                      style={{ ...styles.machineSelect, width: "auto", flex: 1, minWidth: 0, marginBottom: 0 }}
+                      ref={idx === 0 && refsTour ? refsTour.maquina : undefined}
+                    >
+                      {ex.maquinas.map((m) => (
+                        <option key={m} value={m}>{m}</option>
+                      ))}
+                    </select>
+                  ) : (
+                    <div style={{ ...styles.machineFixed, marginBottom: 0 }} ref={idx === 0 && refsTour ? refsTour.maquina : undefined}>{ex.maquinas[0]}</div>
+                  )}
+                  <button style={styles.trocarBtn} onClick={() => onTrocarExercicio(ex.id)} title="Trocar exercício">
+                    🔄 Trocar
+                  </button>
+                </div>
 
                 {(() => {
                   const thumb = getThumbnailExercicio(ex);
@@ -7063,9 +7143,6 @@ function DayCard({ entry, onFoco, onAddExercicio, onRemoveExercicio, onEditExerc
                         onClick={() => onAbrirExercicio(ex)}
                         onError={(e) => { e.target.style.display = "none"; }}
                       />
-                      <button style={styles.trocarBtn} onClick={() => onTrocarExercicio(ex.id)} title="Trocar exercício">
-                        🔄 Trocar
-                      </button>
                     </div>
                   );
                 })()}
@@ -7661,6 +7738,7 @@ const styles = {
     marginBottom: 6,
   },
   machineFixed: { fontSize: 12.5, color: PENCIL, marginBottom: 6, fontStyle: "italic" },
+  maquinaTrocarRow: { display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, marginBottom: 6 },
   exFieldsRow: { display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8 },
   exThumb: {
     width: 52,
