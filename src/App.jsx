@@ -244,6 +244,20 @@ Object.values(LIBRARY).forEach((lista) => {
 const FOCOS = ["Peito", "Costas", "Perna", "Ombro", "Braço", "Abdômen", "Corpo inteiro", "Funcional", "Superior", "Cardio", "Descanso"];
 const DIAS_SEMANA = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo"];
 const DIAS_ABREV = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
+
+// ---- Notificações: período do treino (Manhã/Tarde/Noite) e lembrete de água ----
+const PERIODOS_TREINO = ["Manhã", "Tarde", "Noite"];
+const HORARIO_POR_PERIODO = { "Manhã": "07:00", "Tarde": "12:00", "Noite": "18:00" };
+// new Date().getDay(): 0=domingo...6=sábado — mapeia pro nome usado em DIAS_SEMANA
+const DIA_SEMANA_POR_JSDAY = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
+const HORARIOS_AGUA = ["08:00", "10:00", "12:00", "14:00", "16:00", "18:00", "20:00", "22:00"];
+const HORARIO_AVISO_STREAK = "21:00"; // avisa à noite se ainda não treinou hoje num dia de treino
+const HORARIO_RESUMO_AGUA = "21:30"; // resumo/lembrete final de meta de água
+const HORARIO_AVISO_DOR = "07:15"; // aviso de dor recorrente no dia em que o exercício volta a aparecer
+const HORARIO_DIETA_PREMIUM = "08:30"; // aviso de dieta do dia (Premium)
+const HORARIO_CHECK_SEMANAL = "09:00"; // horário em que rodam as checagens semanais (deload, troca de treino, peso)
+const DIAS_SEM_PESAGEM_PARA_LEMBRAR = 7;
+const APP_VERSAO = "1.0.0";
 const CARDIO_TIPOS = ["Esteira", "Bicicleta", "Elíptico", "Corrida ao ar livre", "Pular corda", "Escada"];
 
 // Vídeo curto de execução por tipo de cardio — mesmo esquema dos exercícios.
@@ -326,9 +340,9 @@ const OBJETIVOS = [
     cardioMin: 20,
     cardioIntensidade: "Moderada",
     adicionarCardioExtra: false,
-    cardioFinalFracao: 0.5, // metade dos dias de treino ganham cardio moderado no final
+    cardioFinalFracao: 0.5, // metade dos dias de treino ganham cardio extra no final
     cardioFinalMin: 15,
-    cardioFinalIntensidade: "Moderada",
+    cardioFinalIntensidades: ["Leve", "Moderada"],
   },
   {
     id: "emagrecer",
@@ -339,9 +353,9 @@ const OBJETIVOS = [
     cardioMin: 30,
     cardioIntensidade: "Intensa",
     adicionarCardioExtra: true,
-    cardioFinalFracao: 1, // todos os dias de treino ganham cardio moderado no final
+    cardioFinalFracao: 1, // todos os dias de treino ganham cardio extra no final
     cardioFinalMin: 20,
-    cardioFinalIntensidade: "Moderada",
+    cardioFinalIntensidades: ["Leve", "Moderada"],
   },
   {
     id: "secar",
@@ -1700,6 +1714,114 @@ function MassiLogoMark() {
   );
 }
 
+function TelaBoraComecar() {
+  return (
+    <div style={styles.boraComecarOverlay}>
+      <svg viewBox="0 0 180 90" style={styles.boraComecarLogoFundo} aria-hidden="true">
+        <path
+          d="M5,45 L55,45 L72,15 L90,70 L108,30 L125,45 L175,45"
+          fill="none"
+          stroke="url(#boraComecarGrad)"
+          strokeWidth="6"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <defs>
+          <linearGradient id="boraComecarGrad" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stopColor="#1CA7E0" />
+            <stop offset="55%" stopColor="#1FD1A6" />
+            <stop offset="100%" stopColor="#8BDB4B" />
+          </linearGradient>
+        </defs>
+      </svg>
+
+      <p style={styles.boraComecarTopo}>Bora começar!</p>
+
+      <div style={styles.boraComecarBolaWrap}>
+        <div style={styles.boraComecarAnel} />
+        <div style={styles.boraComecarBola} />
+      </div>
+
+      <p style={styles.boraComecarBaixo}>FOCO E FORÇA</p>
+    </div>
+  );
+}
+
+function MenuPrincipalModal({ onClose, onItem }) {
+  const grupos = [
+    {
+      titulo: "Conta",
+      itens: [
+        { id: "perfil", icone: "👤", label: "Meu perfil" },
+        { id: "notificacoes", icone: "🔔", label: "Notificações" },
+        { id: "tema", icone: "🌙", label: "Aparência / Tema" },
+      ],
+    },
+    {
+      titulo: "Privacidade e legal",
+      itens: [
+        { id: "privacidade", icone: "🔒", label: "Privacidade" },
+        { id: "politica", icone: "📄", label: "Política de Privacidade" },
+        { id: "termos", icone: "📋", label: "Termos de Uso" },
+      ],
+    },
+    {
+      titulo: "Sobre e suporte",
+      itens: [
+        { id: "avaliar", icone: "⭐", label: "Avalie o Massi Pro" },
+        { id: "compartilhar", icone: "📤", label: "Compartilhar aplicativo" },
+        { id: "ajuda", icone: "❓", label: "Central de Ajuda" },
+        { id: "sobre", icone: "ℹ️", label: "Sobre o Massi Pro" },
+        { id: "versao", icone: "📱", label: "Versão do aplicativo" },
+      ],
+    },
+    {
+      titulo: "Premium",
+      itens: [
+        { id: "premium", icone: "👑", label: "Massi Pro Premium" },
+        { id: "assinatura", icone: "💳", label: "Gerenciar assinatura" },
+        { id: "beneficios", icone: "🎁", label: "Benefícios do Premium" },
+        { id: "restaurar", icone: "🔄", label: "Restaurar compra" },
+      ],
+    },
+  ];
+
+  return (
+    <div style={styles.modalOverlay} onClick={onClose}>
+      <div style={styles.modalCard} onClick={(e) => e.stopPropagation()}>
+        <button style={styles.modalClose} onClick={onClose} aria-label="Fechar">×</button>
+        <div style={styles.eyebrow}>⚙️ MENU</div>
+        {grupos.map((g) => (
+          <div key={g.titulo} style={styles.menuGrupo}>
+            <div style={styles.menuGrupoTitulo}>{g.titulo}</div>
+            <div style={styles.menuLista}>
+              {g.itens.map((it) => (
+                <button key={it.id} style={styles.menuItemBtn} onClick={() => onItem(it.id)}>
+                  <span style={styles.menuItemIcone}>{it.icone}</span>
+                  <span style={styles.menuItemLabel}>{it.label}</span>
+                  <span style={styles.menuItemSeta}>›</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function InfoTextModal({ titulo, corpo, onClose }) {
+  return (
+    <div style={styles.modalOverlay} onClick={onClose}>
+      <div style={styles.modalCard} onClick={(e) => e.stopPropagation()}>
+        <button style={styles.modalClose} onClick={onClose} aria-label="Fechar">×</button>
+        <h2 style={styles.modalTitle}>{titulo}</h2>
+        <p style={styles.modalSubtitle}>{corpo}</p>
+      </div>
+    </div>
+  );
+}
+
 function MarcaCompartilhamento({ foto }) {
   if (!foto) return <MassiLogoMark />;
   return (
@@ -1820,6 +1942,12 @@ function toExercicio(base) {
 }
 
 function makeDayEntry(dia, foco, nivel) {
+  const entry = makeDayEntryBase(dia, foco, nivel);
+  // todo dia que não é descanso precisa de um período (Manhã/Tarde/Noite) pra notificação de treino
+  return entry.foco === "Descanso" ? entry : { ...entry, periodo: entry.periodo || "Manhã" };
+}
+
+function makeDayEntryBase(dia, foco, nivel) {
   if (foco === "Cardio") {
     return { dia, foco, cardio: { tipo: "Esteira", duracao: 20, intensidade: "Moderada" }, exercicios: [] };
   }
@@ -2324,7 +2452,13 @@ function AppMassiPro({ onSolicitarRemount }) {
   const [rotinaAssinaturaCarregada, setRotinaAssinaturaCarregada] = useState(undefined); // undefined = ainda carregando do storage; null = nunca salva antes
   const [trocaTreinoRespostaSemana, setTrocaTreinoRespostaSemana] = useState(null); // semana em que a pessoa já dispensou a sugestão de trocar de treino
   const [showPlanos, setShowPlanos] = useState(false);
+  const [menuAberto, setMenuAberto] = useState(false);
+  const [infoModal, setInfoModal] = useState(null); // { titulo, corpo }
   const [online, setOnline] = useState(typeof navigator === "undefined" ? true : navigator.onLine);
+  const [notificacoesAtivas, setNotificacoesAtivas] = useState(false);
+  const notificacoesDisparadasHojeRef = useRef({}); // ex: { "2026-09-12_treino": true, "2026-09-12_agua_14:00": true }
+  const notificacoesDisparadasSemanaRef = useRef({}); // ex: { "deload_2026-W37": true }
+  const [avaliacoesParaNotificacao, setAvaliacoesParaNotificacao] = useState([]); // só pra checar data da última pesagem
 
   useEffect(() => {
     const ficouOnline = () => setOnline(true);
@@ -2338,6 +2472,8 @@ function AppMassiPro({ onSolicitarRemount }) {
   }, []);
   const [showModelos, setShowModelos] = useState(false);
   const [activeTab, setActiveTab] = useState("inicio");
+  const [onboardingPendente, setOnboardingPendente] = useState(false);
+  const [mostrarBoraComecar, setMostrarBoraComecar] = useState(false);
   const tabRowRef = useRef(null);
   const tabBtnRefs = useRef({});
   const dayCardRefs = useRef({});
@@ -2348,6 +2484,13 @@ function AppMassiPro({ onSolicitarRemount }) {
   const tourGuiadoBtnRef = useRef(null);
   const tourTreinoHojeRef = useRef(null);
   const tourWodBtnRef = useRef(null);
+  const tourCrossCategoriaRef = useRef(null);
+  const tourCrossGeradorRef = useRef(null);
+  const tourCrossAtalhosRef = useRef(null);
+  const tourSobreBtnRef = useRef(null);
+  const tourDescansoRef = useRef(null);
+  const tourTrocarTreinoRef = useRef(null);
+  const tourSalvarBtnRef = useRef(null);
   const [tourAtivo, setTourAtivo] = useState(null); // { aba: "rotina"|"inicio"|"cross", passo: 0 } ou null
   // Cache local de quais tours já foram vistos nesta instalação. Evita reconsultar
   // o storage a cada troca de aba (fonte do bug de o tour reaparecer ao voltar numa aba).
@@ -2356,12 +2499,20 @@ function AppMassiPro({ onSolicitarRemount }) {
     rotina: [
       { ref: tourMaquinaRef, texto: "Aqui você escolhe o equipamento do exercício — halteres, barra ou máquina." },
       { ref: tourVideoRef, texto: "Toque no nome do exercício pra ver o vídeo de execução e a explicação completa." },
+      { ref: tourDescansoRef, texto: "Escolha o tempo de descanso e toque em ▶ pra iniciar o cronômetro entre as séries." },
+      { ref: tourGuiadoBtnRef, texto: "Toque em \"Iniciar guiado\" pra ser conduzido exercício por exercício, com o cronômetro de descanso automático." },
+      { ref: tourSalvarBtnRef, texto: "Depois de ajustar seu treino, toque aqui pra salvar as mudanças." },
+      { ref: tourTrocarTreinoRef, texto: "Quer começar do zero? Aqui você troca o treino da semana inteira por outro modelo pronto." },
     ],
     inicio: [
       { ref: tourTreinoHojeRef, texto: "Esse card mostra o treino de hoje. Toque nele pra ir direto pro dia certo lá na Rotina." },
+      { ref: tourSobreBtnRef, texto: "Aqui na aba Sobre tem o tutorial completo do app e outras informações — dá uma olhada quando quiser." },
     ],
     cross: [
       { ref: tourWodBtnRef, texto: "Toque aqui pra começar o WOD do dia — o cronômetro certo pro treino já vem embutido pra te guiar." },
+      { ref: tourCrossCategoriaRef, texto: "Aqui você navega os WODs por categoria — benchmarks famosos, por duração, por nível e mais." },
+      { ref: tourCrossGeradorRef, texto: "Sem ideia do que treinar? Toque aqui pra gerar um WOD novo na hora." },
+      { ref: tourCrossAtalhosRef, texto: "Biblioteca (exercícios com vídeo), Desafios (progresso) e Desempenho (seu histórico) ficam aqui." },
     ],
   };
   const proximoPassoTour = () => {
@@ -2398,6 +2549,7 @@ function AppMassiPro({ onSolicitarRemount }) {
 
   useEffect(() => {
     if (tourAtivo) return;
+    if (onboardingPendente) return; // não deixa o tutorial nascer escondido atrás do formulário de nome
     if (toursVistos[activeTab] === undefined) return; // ainda não carregou o cache, ou aba sem tour
     if (toursVistos[activeTab]) return; // já visto nesta instalação
     if (activeTab === "rotina" && !loaded) return;
@@ -2417,7 +2569,7 @@ function AppMassiPro({ onSolicitarRemount }) {
     return () => {
       cancelado = true;
     };
-  }, [activeTab, loaded, toursVistos]);
+  }, [activeTab, loaded, toursVistos, onboardingPendente]);
   useEffect(() => {
     const el = tabBtnRefs.current[activeTab];
     if (el && typeof el.scrollIntoView === "function") {
@@ -2443,6 +2595,8 @@ function AppMassiPro({ onSolicitarRemount }) {
   const [mostrarOpcoesCompartilhar, setMostrarOpcoesCompartilhar] = useState(false);
   const [splashVisivel, setSplashVisivel] = useState(true);
   const [splashSaindo, setSplashSaindo] = useState(false);
+  const [tempoMinimoSplashPassado, setTempoMinimoSplashPassado] = useState(false);
+  const [perfilVerificado, setPerfilVerificado] = useState(false); // true assim que já sabemos se falta onboarding
   const [feedbackPendente, setFeedbackPendente] = useState(null);
   const [dores, setDores] = useState([]);
   const [dorPendente, setDorPendente] = useState(null); // { exercicio, dia }
@@ -2451,7 +2605,6 @@ function AppMassiPro({ onSolicitarRemount }) {
   const [avisoSemTreinar, setAvisoSemTreinar] = useState(null);
   const [guiadoAtivo, setGuiadoAtivo] = useState(null); // dia inteiro (entry) em modo guiado
   const [progressao, setProgressao] = useState({}); // { [nomeExercicio]: contagem }
-  const [onboardingPendente, setOnboardingPendente] = useState(false);
   const tema = "escuro"; // tema fixo — alternância claro/escuro removida a pedido do usuário
   const [idioma, setIdioma] = useState("pt");
   const t = useCallback((chave, vars) => traduzir(idioma, chave, vars), [idioma]);
@@ -2462,15 +2615,44 @@ function AppMassiPro({ onSolicitarRemount }) {
 
   useEffect(() => {
     const t1 = setTimeout(() => setSplashSaindo(true), 1700);
-    const t2 = setTimeout(() => setSplashVisivel(false), 2100);
+    // Não esconde a splash num tempo fixo — só quando o tempo mínimo (pra
+    // animação não parecer cortada) JÁ passou E a checagem de onboarding já
+    // terminou. Isso evita a Home aparecer por baixo antes do questionário
+    // decidir se deve aparecer, mesmo se a leitura de storage demorar mais
+    // que o normal.
+    const t2 = setTimeout(() => setTempoMinimoSplashPassado(true), 2100);
+    // Rede de segurança: se por algum motivo a checagem de onboarding nunca
+    // resolver, não deixa a splash presa pra sempre.
+    const t3 = setTimeout(() => setPerfilVerificado(true), 5000);
     return () => {
       clearTimeout(t1);
       clearTimeout(t2);
+      clearTimeout(t3);
     };
   }, []);
 
   useEffect(() => {
+    if (tempoMinimoSplashPassado && perfilVerificado) setSplashVisivel(false);
+  }, [tempoMinimoSplashPassado, perfilVerificado]);
+
+  useEffect(() => {
     (async () => {
+      // Verifica se falta o onboarding ANTES de qualquer outra leitura — é o que decide
+      // se o questionário aparece. Deixar isso no fim da fila (como estava) fazia a Home
+      // aparecer vazia por um instante antes do questionário decidir se deve aparecer.
+      try {
+        const onboardingRes = await window.storage.get("onboarding-perfil");
+        if (!onboardingRes || !onboardingRes.value) setOnboardingPendente(true);
+        else {
+          const perfilSalvo = JSON.parse(onboardingRes.value);
+          if (perfilSalvo && perfilSalvo.nivel) setNivelUsuario(perfilSalvo.nivel);
+          if (perfilSalvo && perfilSalvo.objetivo) setObjetivoUsuario(perfilSalvo.objetivo);
+        }
+      } catch (e) {
+        setOnboardingPendente(true);
+      } finally {
+        setPerfilVerificado(true);
+      }
       try {
         const res = await window.storage.get("rotina-treino");
         if (res && res.value) {
@@ -2518,17 +2700,6 @@ function AppMassiPro({ onSolicitarRemount }) {
         if (recRes && recRes.value) setRecordes(JSON.parse(recRes.value));
       } catch (e) {
         // sem recordes salvos ainda
-      }
-      try {
-        const onboardingRes = await window.storage.get("onboarding-perfil");
-        if (!onboardingRes || !onboardingRes.value) setOnboardingPendente(true);
-        else {
-          const perfilSalvo = JSON.parse(onboardingRes.value);
-          if (perfilSalvo && perfilSalvo.nivel) setNivelUsuario(perfilSalvo.nivel);
-          if (perfilSalvo && perfilSalvo.objetivo) setObjetivoUsuario(perfilSalvo.objetivo);
-        }
-      } catch (e) {
-        setOnboardingPendente(true);
       }
       try {
         const idiomaRes = await window.storage.get("idioma-app");
@@ -2581,6 +2752,18 @@ function AppMassiPro({ onSolicitarRemount }) {
         }
       }
       setToursVistos(vistosCarregados);
+      try {
+        const notifRes = await window.storage.get("notificacoes-ativas");
+        setNotificacoesAtivas(!!(notifRes && notifRes.value === "1" && typeof Notification !== "undefined" && Notification.permission === "granted"));
+      } catch (e) {
+        // notificações desativadas por padrão
+      }
+      try {
+        const avalRes = await window.storage.get("avaliacoes-evolucao");
+        if (avalRes && avalRes.value) setAvaliacoesParaNotificacao(JSON.parse(avalRes.value));
+      } catch (e) {
+        // sem avaliações salvas ainda
+      }
     })();
 
     // TODO ADMOB: inicialização do AdMob (inerte até ter IDs configurados
@@ -2621,6 +2804,13 @@ function AppMassiPro({ onSolicitarRemount }) {
     return () => clearInterval(id);
   }, [cronometro && cronometro.rodando, cronometro && cronometro.label]);
 
+  // Some sozinha depois de um tempo, levando a pessoa pra dentro do app já com o nome e horário definidos
+  useEffect(() => {
+    if (!mostrarBoraComecar) return;
+    const t = setTimeout(() => setMostrarBoraComecar(false), 7000);
+    return () => clearTimeout(t);
+  }, [mostrarBoraComecar]);
+
   const toggleDia = (dia) => {
     setDiasSelecionados((prev) => {
       if (prev.includes(dia)) return prev.filter((d) => d !== dia);
@@ -2630,6 +2820,108 @@ function AppMassiPro({ onSolicitarRemount }) {
 
   const mudarFoco = (dia, foco) => {
     setRotina((prev) => prev.map((d) => (d.dia === dia ? makeDayEntry(dia, foco, nivelUsuario) : d)));
+  };
+
+  const mudarPeriodo = (dia, periodo) => {
+    setRotina((prev) => prev.map((d) => (d.dia === dia ? { ...d, periodo } : d)));
+  };
+
+  const ativarNotificacoes = async () => {
+    if (typeof Notification === "undefined") return;
+    try {
+      const permissao = await Notification.requestPermission();
+      const ativou = permissao === "granted";
+      setNotificacoesAtivas(ativou);
+      await window.storage.set("notificacoes-ativas", ativou ? "1" : "0");
+    } catch (e) {
+      // permissão negada ou indisponível, mantém desativado
+    }
+  };
+
+  const desativarNotificacoes = () => {
+    setNotificacoesAtivas(false);
+    window.storage.set("notificacoes-ativas", "0").catch(() => {});
+  };
+
+  const abrirItemMenu = async (id) => {
+    setMenuAberto(false);
+    switch (id) {
+      case "perfil":
+        setShowPerfis(true);
+        break;
+      case "notificacoes":
+        setActiveTab("sobre");
+        break;
+      case "tema":
+        setInfoModal({
+          titulo: "Aparência / Tema",
+          corpo: "Em breve você vai poder escolher entre tema escuro e claro. Por enquanto, o Massi Pro usa o visual escuro padrão.",
+        });
+        break;
+      case "privacidade":
+        setInfoModal({
+          titulo: "Privacidade",
+          corpo: "O Massi Pro não tem login nem servidor: seus dados (rotina, treinos, medidas, fotos e avaliações) ficam salvos só neste aparelho, e nada é enviado pra fora dele.",
+        });
+        break;
+      case "politica":
+        setInfoModal({
+          titulo: "Política de Privacidade",
+          corpo: "O Massi Pro não coleta, armazena em servidor, nem compartilha seus dados pessoais com terceiros. Todas as informações que você preenche no app ficam salvas localmente no seu aparelho.",
+        });
+        break;
+      case "termos":
+        setInfoModal({
+          titulo: "Termos de Uso",
+          corpo: "O Massi Pro é uma ferramenta de apoio ao treino e não substitui orientação de um profissional de educação física ou de saúde. Use por sua conta e risco e respeite seus limites.",
+        });
+        break;
+      case "avaliar":
+        setInfoModal({
+          titulo: "Avalie o Massi Pro",
+          corpo: "O Massi Pro ainda não está publicado nas lojas de aplicativos. Assim que estiver disponível, você vai poder avaliar direto por aqui!",
+        });
+        break;
+      case "compartilhar":
+        try {
+          if (typeof navigator !== "undefined" && navigator.share) {
+            await navigator.share({ text: `Tô usando o Massi Pro pra treinar. Dá uma olhada: ${APP_URL}` });
+          } else if (typeof navigator !== "undefined" && navigator.clipboard) {
+            await navigator.clipboard.writeText(APP_URL);
+            setMensagemSucesso("Link copiado!");
+          }
+        } catch (e) {
+          // pessoa cancelou o compartilhamento, sem problema
+        }
+        break;
+      case "ajuda":
+      case "sobre":
+        setActiveTab("sobre");
+        break;
+      case "versao":
+        setInfoModal({ titulo: "Versão do aplicativo", corpo: `Massi Pro v${APP_VERSAO}` });
+        break;
+      case "premium":
+      case "beneficios":
+        setShowPlanos(true);
+        break;
+      case "assinatura":
+        setInfoModal(
+          isPremium
+            ? { titulo: "Gerenciar assinatura", corpo: "Sua assinatura Premium está ativa neste aparelho. O gerenciamento pela loja fica disponível quando o app for publicado." }
+            : { titulo: "Gerenciar assinatura", corpo: "Você ainda não é Premium. Toque em \"Massi Pro Premium\" pra ver os planos." }
+        );
+        break;
+      case "restaurar":
+        setInfoModal(
+          isPremium
+            ? { titulo: "Restaurar compra", corpo: "Sua assinatura Premium já está ativa neste aparelho." }
+            : { titulo: "Restaurar compra", corpo: "Nenhuma compra encontrada pra restaurar neste aparelho." }
+        );
+        break;
+      default:
+        break;
+    }
   };
 
   const aplicarModelo = (modeloId, objetivoId) => {
@@ -2643,19 +2935,22 @@ function AppMassiPro({ onSolicitarRemount }) {
       if (idxDescanso !== -1) focos[idxDescanso] = "Cardio";
     }
 
-    // Define quais dias de treino (força) recebem um cardio moderado extra no final,
+    // Define quais dias de treino (força) recebem um cardio extra no final,
     // conforme a fração definida no objetivo (ex: metade dos dias na Hipertrofia, todos no Emagrecer).
+    // A intensidade mescla entre as opções da lista (ex: Leve/Moderada alternando dia sim, dia não),
+    // e a pessoa continua podendo mudar manualmente no card do dia depois.
     const diasDeTreino = focos
       .map((f, i) => (f && f !== "Descanso" && f !== "Cardio" ? i : null))
       .filter((i) => i !== null);
-    const diasComCardioFinal = new Set();
+    const diasComCardioFinal = [];
     if (objetivo && objetivo.cardioFinalFracao && diasDeTreino.length > 0) {
       const qtd = Math.max(1, Math.round(diasDeTreino.length * objetivo.cardioFinalFracao));
       const passo = diasDeTreino.length / qtd;
       for (let k = 0; k < qtd; k++) {
-        diasComCardioFinal.add(diasDeTreino[Math.floor(k * passo)]);
+        diasComCardioFinal.push(diasDeTreino[Math.floor(k * passo)]);
       }
     }
+    const intensidadesCardioFinal = (objetivo && objetivo.cardioFinalIntensidades) || ["Moderada"];
 
     setRotina(
       DIAS_SEMANA.map((dia, i) => {
@@ -2670,11 +2965,12 @@ function AppMassiPro({ onSolicitarRemount }) {
             reps: objetivo.reps || ex.reps,
             descanso: objetivo.descanso,
           }));
-          if (diasComCardioFinal.has(i)) {
+          if (diasComCardioFinal.includes(i)) {
+            const posicao = diasComCardioFinal.indexOf(i);
             entry.cardio = {
               tipo: "Esteira",
               duracao: objetivo.cardioFinalMin || 15,
-              intensidade: objetivo.cardioFinalIntensidade || "Moderada",
+              intensidade: intensidadesCardioFinal[posicao % intensidadesCardioFinal.length],
             };
           }
         }
@@ -3069,6 +3365,147 @@ function AppMassiPro({ onSolicitarRemount }) {
     }
   };
 
+  // Checa a cada minuto se é hora de disparar alguma notificação. Só funciona com o app
+  // aberto ou minimizado no navegador — não é notificação garantida com o app fechado.
+  useEffect(() => {
+    if (!notificacoesAtivas || typeof Notification === "undefined") return;
+
+    const checar = () => {
+      const agora = new Date();
+      const hoje = agora.toISOString().slice(0, 10);
+      const hhmm = `${String(agora.getHours()).padStart(2, "0")}:${String(agora.getMinutes()).padStart(2, "0")}`;
+      const disparadasHoje = notificacoesDisparadasHojeRef.current;
+      const disparadasSemana = notificacoesDisparadasSemanaRef.current;
+
+      // limpeza: remove marcas de dias/semanas que já passaram
+      Object.keys(disparadasHoje).forEach((chave) => {
+        if (!chave.startsWith(hoje)) delete disparadasHoje[chave];
+      });
+      Object.keys(disparadasSemana).forEach((chave) => {
+        if (!chave.endsWith(semanaAtualChave)) delete disparadasSemana[chave];
+      });
+
+      const diaAtual = DIA_SEMANA_POR_JSDAY[agora.getDay()];
+      const entradaHoje = rotina.find((d) => d.dia === diaAtual);
+      const hojeEhTreino = diasSelecionados.includes(diaAtual) && entradaHoje && entradaHoje.foco !== "Descanso";
+
+      // 1) notificação de treino, no horário do período escolhido pro dia
+      if (hojeEhTreino) {
+        const horarioAlvo = HORARIO_POR_PERIODO[entradaHoje.periodo || "Manhã"];
+        const chave = `${hoje}_treino`;
+        if (horarioAlvo === hhmm && !disparadasHoje[chave]) {
+          disparadasHoje[chave] = true;
+          new Notification("🏋️ Hora do treino!", { body: `Treino de hoje: ${entradaHoje.foco}` });
+        }
+      }
+
+      // 2) lembrete de água, a cada 2h
+      if (HORARIOS_AGUA.includes(hhmm)) {
+        const chave = `${hoje}_agua_${hhmm}`;
+        if (!disparadasHoje[chave]) {
+          disparadasHoje[chave] = true;
+          new Notification("💧 Hora de beber água!", { body: "Mantenha-se hidratado durante o dia." });
+        }
+      }
+
+      // 3) sequência em risco — dia de treino, ainda sem registro hoje, à noite
+      if (hojeEhTreino && hhmm === HORARIO_AVISO_STREAK) {
+        const chave = `${hoje}_streak_risco`;
+        const jaTreinouHoje = historico.some((h) => h.data === hoje);
+        if (!jaTreinouHoje && !disparadasHoje[chave]) {
+          disparadasHoje[chave] = true;
+          new Notification("🔥 Sua sequência está em risco!", { body: "Você ainda não treinou hoje — não perca o streak." });
+        }
+      }
+
+      // 4) resumo/lembrete final de meta de água
+      if (hhmm === HORARIO_RESUMO_AGUA) {
+        const chave = `${hoje}_resumo_agua`;
+        if (!disparadasHoje[chave]) {
+          disparadasHoje[chave] = true;
+          new Notification("💧 Já bateu sua meta de água hoje?", { body: "Confira sua meta na aba Avaliação." });
+        }
+      }
+
+      // 5) dieta do dia (Premium)
+      if (isPremium && hhmm === HORARIO_DIETA_PREMIUM) {
+        const chave = `${hoje}_dieta_premium`;
+        if (!disparadasHoje[chave]) {
+          disparadasHoje[chave] = true;
+          new Notification("🍽️ Sua dieta de hoje está pronta", { body: "Confira a sugestão de hoje na aba Premium." });
+        }
+      }
+
+      // 6) dor recorrente — algum exercício do treino de hoje já teve dor registrada antes
+      if (hojeEhTreino && hhmm === HORARIO_AVISO_DOR) {
+        const chave = `${hoje}_dor`;
+        if (!disparadasHoje[chave]) {
+          const exComDor = (entradaHoje.exercicios || []).find((ex) => getUltimaDorRelacionada(ex.name, dores));
+          if (exComDor) {
+            disparadasHoje[chave] = true;
+            new Notification("⚠️ Atenção na execução hoje", {
+              body: `Você já registrou dor relacionada a "${exComDor.name}" antes — vá com cuidado.`,
+            });
+          }
+        }
+      }
+
+      // 7) e 8) checagens semanais: deload sugerido, troca de treino sugerida, lembrete de pesagem
+      if (hhmm === HORARIO_CHECK_SEMANAL) {
+        if (mostrarSugestaoDeload) {
+          const chave = `deload_${semanaAtualChave}`;
+          if (!disparadasSemana[chave]) {
+            disparadasSemana[chave] = true;
+            new Notification("📉 Hora de uma semana leve?", {
+              body: `${semanasConsistentes} semanas seguidas treinando — considere um deload.`,
+            });
+          }
+        }
+        if (mostrarSugestaoTrocaTreino) {
+          const chave = `trocaTreino_${semanaAtualChave}`;
+          if (!disparadasSemana[chave]) {
+            disparadasSemana[chave] = true;
+            new Notification("🔄 Hora de trocar de treino?", {
+              body: `${semanasNoTreinoAtual} semanas com a mesma composição — considere trocar os exercícios.`,
+            });
+          }
+        }
+        const ultimaPesagem = avaliacoesParaNotificacao.length > 0
+          ? [...avaliacoesParaNotificacao].sort((a, b) => (a.data < b.data ? 1 : -1))[0]
+          : null;
+        const diasSemPesagem = ultimaPesagem
+          ? Math.floor((agora - new Date(ultimaPesagem.data + "T00:00:00")) / 86400000)
+          : Infinity;
+        if (diasSemPesagem >= DIAS_SEM_PESAGEM_PARA_LEMBRAR) {
+          const chave = `peso_${semanaAtualChave}`;
+          if (!disparadasSemana[chave]) {
+            disparadasSemana[chave] = true;
+            new Notification("📏 Hora de atualizar suas medidas", { body: "Faz um tempo desde seu último registro na Avaliação." });
+          }
+        }
+      }
+
+      // 9) novo recorde pessoal já é disparado na hora em que acontece, em registrarPossivelRecorde
+    };
+
+    checar(); // checa uma vez já ao ativar
+    const id = setInterval(checar, 60000);
+    return () => clearInterval(id);
+  }, [
+    notificacoesAtivas,
+    rotina,
+    diasSelecionados,
+    historico,
+    dores,
+    isPremium,
+    mostrarSugestaoDeload,
+    mostrarSugestaoTrocaTreino,
+    semanaAtualChave,
+    semanasConsistentes,
+    semanasNoTreinoAtual,
+    avaliacoesParaNotificacao,
+  ]);
+
   const aplicarSemanaLeve = () => {
     setRotina((prev) =>
       prev.map((d) => ({
@@ -3252,6 +3689,9 @@ function AppMassiPro({ onSolicitarRemount }) {
       const novo = { ...prev, [nomeExercicio]: { valor: numero, texto: valorTexto, data: new Date().toISOString().slice(0, 10) } };
       window.storage.set("recordes-pessoais", JSON.stringify(novo)).catch(() => {});
       setNovoRecordeAviso(`🏆 Novo recorde em ${nomeExercicio}: ${valorTexto}!`);
+      if (notificacoesAtivas && typeof Notification !== "undefined") {
+        new Notification("🏆 Novo recorde pessoal!", { body: `${nomeExercicio}: ${valorTexto}` });
+      }
       return novo;
     });
   };
@@ -3360,6 +3800,8 @@ function AppMassiPro({ onSolicitarRemount }) {
         @keyframes tourPulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(198,255,77,0.55); } 50% { box-shadow: 0 0 0 8px rgba(198,255,77,0); } }
         @keyframes tourBounceCima { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
         @keyframes tourBounceBaixo { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(8px); } }
+        @keyframes boraComecarGirar { to { transform: rotate(360deg); } }
+        @keyframes boraComecarPulsar { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.12); } }
       `}</style>
 
       {splashVisivel && (
@@ -3392,7 +3834,10 @@ function AppMassiPro({ onSolicitarRemount }) {
       <header style={styles.hero}>
         <div style={styles.heroOverlay} />
         <div style={styles.headerTop}>
-          <MassiLogoMark />
+          <button style={styles.menuAbrirBtn} onClick={() => setMenuAberto(true)} aria-label="Abrir menu" title="Menu">
+            <MassiLogoMark />
+            <span style={styles.menuAbrirIcone}>⚙️</span>
+          </button>
           <div style={styles.headerBotoesDireita}>
             <button style={styles.perfilHeaderBtn} onClick={() => setShowPerfis(true)} aria-label="Trocar perfil" title="Perfil">
               👤 {perfilAtivoNome}
@@ -3411,6 +3856,8 @@ function AppMassiPro({ onSolicitarRemount }) {
       </header>
 
       <div style={styles.content}>
+      {menuAberto && <MenuPrincipalModal onClose={() => setMenuAberto(false)} onItem={abrirItemMenu} />}
+      {infoModal && <InfoTextModal titulo={infoModal.titulo} corpo={infoModal.corpo} onClose={() => setInfoModal(null)} />}
       {showPlanos && <PlanosModal isPremium={isPremium} onAssinar={assinar} onClose={() => setShowPlanos(false)} />}
       {exercicioAberto && (
         <ExercicioModal
@@ -3644,10 +4091,11 @@ function AppMassiPro({ onSolicitarRemount }) {
         />
       )}
 
-      {onboardingPendente && !splashVisivel && (
+      {onboardingPendente && perfilVerificado && (
         <OnboardingModal
           onConcluir={async (respostas) => {
             setOnboardingPendente(false);
+            setMostrarBoraComecar(true);
             if (respostas.nivel) setNivelUsuario(respostas.nivel);
             if (respostas.objetivo) setObjetivoUsuario(respostas.objetivo);
             try {
@@ -3659,6 +4107,8 @@ function AppMassiPro({ onSolicitarRemount }) {
           }}
         />
       )}
+
+      {mostrarBoraComecar && <TelaBoraComecar />}
 
       <div style={styles.tabRowWrapper}>
         <div
@@ -3717,7 +4167,7 @@ function AppMassiPro({ onSolicitarRemount }) {
             {t("tabPremium")}
           </button>
           <button
-            ref={(el) => (tabBtnRefs.current["sobre"] = el)}
+            ref={(el) => { tabBtnRefs.current["sobre"] = el; tourSobreBtnRef.current = el; }}
             style={{ ...styles.tabBtn, ...(activeTab === "sobre" ? styles.tabBtnActive : {}) }}
             onClick={() => setActiveTab("sobre")}
           >
@@ -3828,9 +4278,24 @@ function AppMassiPro({ onSolicitarRemount }) {
 
           {showModelos && <ModelosModal onEscolher={aplicarModelo} onClose={() => setShowModelos(false)} />}
 
-          <div style={styles.restBanner}>
-            {t("rotinaDescansoRecomendado")} <strong>{t("rotinaDescansoRecomendadoValor")}</strong>. {t("rotinaDescansoAjuste")}
-          </div>
+          <section style={styles.cronoRapidoCard}>
+            <div style={styles.cronoRapidoTopo}>
+              <span style={styles.cronoRapidoIcone}>⏱️</span>
+              <span style={styles.cronoRapidoTitulo}>Cronômetro</span>
+            </div>
+            <div style={styles.cronoRapidoOpcoesRow}>
+              {["1 min", "1:30 min", "2 min", "2:30 min", "3 min", "5 min"].map((op) => (
+                <button
+                  key={op}
+                  className="chip"
+                  style={styles.cronoRapidoBtn}
+                  onClick={() => iniciarDescanso(op, "Cronômetro")}
+                >
+                  {op.replace(" min", "")}
+                </button>
+              ))}
+            </div>
+          </section>
 
           <div style={styles.dayList}>
             {rotina
@@ -3840,6 +4305,7 @@ function AppMassiPro({ onSolicitarRemount }) {
                 <DayCard
                   entry={d}
                   onFoco={(foco) => mudarFoco(d.dia, foco)}
+                  onPeriodo={(periodo) => mudarPeriodo(d.dia, periodo)}
                   onAddExercicio={() => addExercicio(d.dia, d.foco)}
                   onRemoveExercicio={(id) => removerExercicio(d.dia, id)}
                   onEditExercicio={(id, campo, valor) => editarExercicio(d.dia, id, campo, valor)}
@@ -3856,14 +4322,14 @@ function AppMassiPro({ onSolicitarRemount }) {
                   progressao={progressao}
                   dores={dores}
                   recordes={recordes}
-                  refsTour={i === 0 ? { maquina: tourMaquinaRef, video: tourVideoRef, guiado: tourGuiadoBtnRef } : null}
+                  refsTour={i === 0 ? { maquina: tourMaquinaRef, video: tourVideoRef, guiado: tourGuiadoBtnRef, descanso: tourDescansoRef } : null}
                 />
                 </div>
               ))}
           </div>
 
           <div style={{ display: "flex", gap: 8, marginBottom: 14 }}>
-            <button style={styles.modelosBtnCompacto} onClick={() => setShowModelos(true)}>
+            <button style={styles.modelosBtnCompacto} onClick={() => setShowModelos(true)} ref={tourTrocarTreinoRef}>
               {t("rotinaTrocarModelo")}
             </button>
             <button style={styles.exportarRotinaBtnCompacto} onClick={exportarRotinaImagem}>
@@ -3871,7 +4337,7 @@ function AppMassiPro({ onSolicitarRemount }) {
             </button>
           </div>
 
-          <button style={styles.saveButton} onClick={salvar}>
+          <button style={styles.saveButton} onClick={salvar} ref={tourSalvarBtnRef}>
             {saveState === "saving" ? t("rotinaSalvando") : saveState === "saved" ? t("rotinaSalva") : saveState === "error" ? t("rotinaErroSalvar") : t("rotinaSalvarBtn")}
           </button>
 
@@ -3894,9 +4360,17 @@ function AppMassiPro({ onSolicitarRemount }) {
 
       {activeTab === "premium" && <PremiumTab isPremium={isPremium} onVerPlanos={() => setShowPlanos(true)} objetivoUsuario={objetivoUsuario} nivelUsuario={nivelUsuario} />}
 
-      {activeTab === "sobre" && <SobreTab t={t} onIniciarTour={iniciarTourManualmente} />}
+      {activeTab === "sobre" && (
+        <SobreTab
+          t={t}
+          onIniciarTour={iniciarTourManualmente}
+          notificacoesAtivas={notificacoesAtivas}
+          onAtivarNotificacoes={ativarNotificacoes}
+          onDesativarNotificacoes={desativarNotificacoes}
+        />
+      )}
 
-      {activeTab === "cross" && <MassiCrossTab refWodTour={tourWodBtnRef} />}
+      {activeTab === "cross" && <MassiCrossTab refWodTour={tourWodBtnRef} refCategorias={tourCrossCategoriaRef} refGerador={tourCrossGeradorRef} refAtalhos={tourCrossAtalhosRef} />}
       </div>
 
       {/* Banner do AdMob — inerte até ter ID configurado e o app estar
@@ -5200,7 +5674,7 @@ function PremiumTab({ isPremium, onVerPlanos, objetivoUsuario, nivelUsuario }) {
   );
 }
 
-function SobreTab({ t, onIniciarTour }) {
+function SobreTab({ t, onIniciarTour, notificacoesAtivas, onAtivarNotificacoes, onDesativarNotificacoes }) {
   const [mensagemBackup, setMensagemBackup] = useState(null);
   const [manualAberto, setManualAberto] = useState(null);
 
@@ -5287,6 +5761,21 @@ function SobreTab({ t, onIniciarTour }) {
         <p style={styles.notaTexto}>
           {t("sobreTexto")}
         </p>
+      </section>
+
+      <section style={styles.card}>
+        <div style={styles.cardLabel}>🔔 Notificações</div>
+        <p style={styles.notaTexto}>
+          Treino no horário escolhido em cada dia (aba Rotina), lembrete de água a cada 2h, aviso se a sequência estiver em risco, sugestão de deload e de trocar de treino, lembrete de atualizar medidas, aviso de dor recorrente antes do treino, dieta do dia (Premium) e novo recorde pessoal.
+        </p>
+        <p style={{ ...styles.notaTexto, opacity: 0.75, fontSize: 12 }}>
+          Funciona com o app aberto ou minimizado no navegador. Com o app totalmente fechado por muito tempo, ou no iPhone, os avisos podem não chegar.
+        </p>
+        {notificacoesAtivas ? (
+          <button style={styles.trocaManterBtn} onClick={onDesativarNotificacoes}>🔕 Desativar notificações</button>
+        ) : (
+          <button style={styles.saveButton} onClick={onAtivarNotificacoes}>🔔 Ativar notificações</button>
+        )}
       </section>
 
       <section style={styles.card}>
@@ -5395,11 +5884,11 @@ function PlanosModal({ isPremium, onAssinar, onClose }) {
             {PLANOS.map((p) => (
               <div key={p.id} style={{ ...styles.planCard, ...(p.destaque ? styles.planCardDestaque : {}) }}>
                 {p.economia && <div style={styles.planTag}>{p.economia}</div>}
-                <div style={styles.planNome}>{p.nome}</div>
-                <div style={styles.planPreco}>
-                  {p.preco}<span style={styles.planPeriodo}>{p.periodo}</span>
+                <div style={{ ...styles.planNome, ...(p.destaque ? styles.planNomeDestaque : {}) }}>{p.nome}</div>
+                <div style={{ ...styles.planPreco, ...(p.destaque ? styles.planPrecoDestaque : {}) }}>
+                  {p.preco}<span style={{ ...styles.planPeriodo, ...(p.destaque ? styles.planPeriodoDestaque : {}) }}>{p.periodo}</span>
                 </div>
-                {p.totalNota && <div style={styles.planTotalNota}>{p.totalNota}</div>}
+                {p.totalNota && <div style={{ ...styles.planTotalNota, ...(p.destaque ? styles.planTotalNotaDestaque : {}) }}>{p.totalNota}</div>}
                 <button style={p.destaque ? styles.planBtnDestaque : styles.planBtn} onClick={() => onAssinar(p.id)}>
                   Assinar {p.nome.toLowerCase()}
                 </button>
@@ -5544,6 +6033,12 @@ function CronometroDescanso({ cronometro, onPausarContinuar, onAjustar, onReinic
         </button>
         <button style={styles.cronoAjusteBtn} onClick={() => onAjustar(15)}>+15s</button>
       </div>
+
+      {!acabou && (
+        <p style={styles.cronoDescansoRecomendado}>
+          Descanso recomendado entre séries: <strong>2 a 3 min</strong>. Ajusta por exercício se precisar.
+        </p>
+      )}
 
       <button style={styles.cronoReiniciarBtn} onClick={onReiniciar}>↺ Reiniciar</button>
     </div>
@@ -6374,7 +6869,7 @@ function CrossExecucaoWod({ wod, onFinalizar, onCancelar }) {
 }
 
 // ---------- Tela principal Massi Cross ----------
-function MassiCrossTab({ refWodTour }) {
+function MassiCrossTab({ refWodTour, refCategorias, refGerador, refAtalhos }) {
   const [tela, setTela] = useState("home");
   const [historico, setHistorico] = useState([]);
   const [recordes, setRecordes] = useState({});
@@ -6840,7 +7335,7 @@ function MassiCrossTab({ refWodTour }) {
         <button style={styles.crossBtnComecar} onClick={() => setWodAtivo(wodDoDia)} ref={refWodTour}>COMEÇAR WOD</button>
       </section>
 
-      <div style={styles.crossCategoriasGridDark}>
+      <div style={styles.crossCategoriasGridDark} ref={refCategorias}>
         {CROSS_CATEGORIAS_GRID.map((cat) => (
           <button
             key={cat.chave}
@@ -6857,8 +7352,8 @@ function MassiCrossTab({ refWodTour }) {
         ))}
       </div>
 
-      <div style={styles.crossAtalhosRow}>
-        <button style={styles.crossAtalhoBtn} onClick={() => setTela("gerador")}>🧠 Gerar meu WOD</button>
+      <div style={styles.crossAtalhosRow} ref={refAtalhos}>
+        <button style={styles.crossAtalhoBtn} onClick={() => setTela("gerador")} ref={refGerador}>🧠 Gerar meu WOD</button>
         <button style={styles.crossAtalhoBtn} onClick={() => setTela("biblioteca")}>📚 Biblioteca</button>
         <button style={styles.crossAtalhoBtn} onClick={() => setTela("desafios")}>🏆 Desafios</button>
         <button style={styles.crossAtalhoBtn} onClick={() => setTela("desempenho")}>📊 Desempenho</button>
@@ -6964,8 +7459,8 @@ function TourOverlay({ alvoRef, texto, onProximo, onPular, ultimo }) {
   );
 }
 
-function DayCard({ entry, onFoco, onAddExercicio, onRemoveExercicio, onEditExercicio, onEditCargaSerie, onEditCardio, onAdicionarCardioFinal, onRemoverCardioFinal, onAbrirExercicio, onIniciarDescanso, onTrocarExercicio, onConcluirTreino, onRegistrarDor, onIniciarGuiado, progressao, dores, recordes, refsTour }) {
-  const { dia, foco, cardio, exercicios } = entry;
+function DayCard({ entry, onFoco, onPeriodo, onAddExercicio, onRemoveExercicio, onEditExercicio, onEditCargaSerie, onEditCardio, onAdicionarCardioFinal, onRemoverCardioFinal, onAbrirExercicio, onIniciarDescanso, onTrocarExercicio, onConcluirTreino, onRegistrarDor, onIniciarGuiado, progressao, dores, recordes, refsTour }) {
+  const { dia, foco, cardio, exercicios, periodo } = entry;
   const isDescanso = foco === "Descanso";
   const isCardio = foco === "Cardio";
   const podeAdicionar = !isDescanso && !isCardio && (LIBRARY[foco] || []).length > exercicios.length;
@@ -6987,6 +7482,24 @@ function DayCard({ entry, onFoco, onAddExercicio, onRemoveExercicio, onEditExerc
           </div>
           <div style={styles.focoTag}>{foco}</div>
         </div>
+
+        {!isDescanso && (
+          <div style={{ marginTop: 8 }}>
+            <div style={styles.focoLabel}>🔔 Notificar treino:</div>
+            <div style={styles.chipRow}>
+              {PERIODOS_TREINO.map((p) => (
+                <button
+                  key={p}
+                  className="chip"
+                  onClick={() => onPeriodo(p)}
+                  style={{ ...styles.chip, ...((periodo || "Manhã") === p ? styles.chipActive : {}) }}
+                >
+                  {p} ({HORARIO_POR_PERIODO[p]})
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
         {isDescanso && <div style={styles.restNote}>Dia de descanso. O músculo cresce na recuperação, não pula essa parte.</div>}
 
@@ -7227,7 +7740,7 @@ function DayCard({ entry, onFoco, onAddExercicio, onRemoveExercicio, onEditExerc
                 </div>
 
                 <div style={styles.novoRodapeRow}>
-                  <div style={styles.novoCampoBloco}>
+                  <div style={styles.novoCampoBloco} ref={idx === 0 && refsTour ? refsTour.descanso : undefined}>
                     <span style={styles.novoCampoLabel}>DESCANSO</span>
                     <div style={styles.novoDescansoBox}>
                       <select
@@ -7274,7 +7787,7 @@ function DayCard({ entry, onFoco, onAddExercicio, onRemoveExercicio, onEditExerc
 
         {!isDescanso && !isCardio && exercicios.length > 0 && cardio && (
           <div style={styles.cardioBlock}>
-            <div style={styles.cardLabel}>🏃 Cardio moderado no final do treino</div>
+            <div style={styles.cardLabel}>🏃 Cardio no final do treino</div>
             <div style={styles.cardioVideoRow}>
               {(() => {
                 const thumb = getThumbnailCardio(cardio.tipo);
@@ -7315,6 +7828,14 @@ function DayCard({ entry, onFoco, onAddExercicio, onRemoveExercicio, onEditExerc
                   onChange={(e) => onEditCardio("duracao", Number(e.target.value))}
                   style={styles.inputSmall}
                 />
+              </label>
+              <label style={styles.fieldLabel}>
+                Intensidade
+                <select value={cardio.intensidade} onChange={(e) => onEditCardio("intensidade", e.target.value)} style={styles.selectSmall}>
+                  <option>Leve</option>
+                  <option>Moderada</option>
+                  <option>Intensa</option>
+                </select>
               </label>
               <button style={styles.trocarCardioBtn} onClick={onRemoverCardioFinal} title="Remover cardio do final do treino">
                 Remover
@@ -7402,6 +7923,16 @@ const styles = {
     zIndex: 1,
   },
   headerTop: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18, position: "relative", zIndex: 1 },
+  menuAbrirBtn: {
+    display: "flex",
+    alignItems: "center",
+    gap: 8,
+    border: "none",
+    background: "transparent",
+    cursor: "pointer",
+    padding: 0,
+  },
+  menuAbrirIcone: { fontSize: 16, lineHeight: 1 },
   headerBotoesDireita: { display: "flex", alignItems: "center", gap: 8 },
   temaBtn: {
     width: 34,
@@ -7544,7 +8075,7 @@ const styles = {
     borderRadius: 10,
     border: `1px dashed ${HIGHLIGHT}`,
     background: "rgba(126,217,87,0.08)",
-    color: "#3F7A1E",
+    color: "#8FE05A",
     fontFamily: monoFont,
     fontWeight: 700,
     fontSize: 12.5,
@@ -7594,6 +8125,45 @@ const styles = {
     padding: "8px 12px",
     marginBottom: 18,
   },
+  cronoRapidoCard: {
+    background: "rgba(20,24,27,0.12)",
+    backdropFilter: "blur(6px)",
+    WebkitBackdropFilter: "blur(6px)",
+    border: `1px solid rgba(255,255,255,0.1)`,
+    borderRadius: 14,
+    padding: "18px 16px 16px",
+    marginBottom: 18,
+    width: "100%",
+    boxSizing: "border-box",
+  },
+  cronoRapidoTopo: {
+    display: "flex",
+    alignItems: "center",
+    gap: 10,
+    marginBottom: 14,
+  },
+  cronoRapidoIcone: { fontSize: 30, lineHeight: 1 },
+  cronoRapidoTitulo: { fontSize: 18, fontWeight: 700, color: INK },
+  cronoRapidoOpcoesRow: {
+    display: "flex",
+    gap: 8,
+    flexWrap: "wrap",
+    width: "100%",
+  },
+  cronoRapidoBtn: {
+    flex: "1 1 auto",
+    minWidth: 52,
+    textAlign: "center",
+    fontFamily: monoFont,
+    fontSize: 15,
+    fontWeight: 700,
+    padding: "12px 10px",
+    borderRadius: 12,
+    border: `1px solid ${PENCIL}`,
+    background: "transparent",
+    color: INK,
+    cursor: "pointer",
+  },
   dayList: { display: "flex", flexDirection: "column", gap: 14 },
   dayCard: {
     display: "flex",
@@ -7608,7 +8178,7 @@ const styles = {
   dayCardBody: { flex: 1, padding: "18px 18px 20px" },
   dayCardTop: { display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 },
   dayName: { fontFamily: monoFont, fontWeight: 800, fontSize: 16, color: INK, marginBottom: 6, letterSpacing: "-0.01em" },
-  focoLabel: { fontSize: 10.5, color: PENCIL, marginBottom: 3, textTransform: "uppercase", letterSpacing: "0.04em" },
+  focoLabel: { fontSize: 11, color: INK, fontWeight: 700, marginBottom: 3, textTransform: "uppercase", letterSpacing: "0.04em" },
   focoTag: {
     fontFamily: monoFont,
     fontSize: 10.5,
@@ -7853,6 +8423,14 @@ const styles = {
     color: GRAPHITE,
     cursor: "pointer",
   },
+  cronoDescansoRecomendado: {
+    marginTop: 18,
+    maxWidth: 260,
+    textAlign: "center",
+    fontSize: 12.5,
+    lineHeight: 1.4,
+    color: "rgba(246,247,249,0.7)",
+  },
   cronoReiniciarBtn: {
     marginTop: 20,
     fontFamily: monoFont,
@@ -7866,8 +8444,8 @@ const styles = {
     padding: "4px 8px",
     borderRadius: 20,
     border: "none",
-    background: "rgba(217,164,65,0.22)",
-    color: "#8A5E12",
+    background: "rgba(217,164,65,0.28)",
+    color: "#F6C453",
     fontSize: 11,
     fontWeight: 700,
     cursor: "pointer",
@@ -8040,7 +8618,11 @@ const styles = {
   onboardingOverlayNovo: {
     position: "fixed",
     inset: 0,
-    zIndex: 1000,
+    // fica logo abaixo da splash (zIndex 500) de propósito: o onboarding já é
+    // montado assim que sabemos que é necessário (perfilVerificado), então
+    // durante o fade da splash o que aparece por trás é o próprio questionário,
+    // não a Home — em vez de esperar a splash sumir de vez pra só então montar.
+    zIndex: 499,
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -8049,6 +8631,79 @@ const styles = {
     backgroundImage: `linear-gradient(180deg, rgba(10,8,6,0.55) 0%, rgba(10,8,6,0.85) 100%), url(${HERO_TREINO_IMG})`,
     backgroundSize: "cover",
     backgroundPosition: "center",
+  },
+
+  // ---------- "Bora começar" — tela de transição logo após o onboarding ----------
+  boraComecarOverlay: {
+    position: "fixed",
+    inset: 0,
+    zIndex: 1000,
+    background: "#0E1316",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    overflow: "hidden",
+    textAlign: "center",
+    padding: 24,
+    boxSizing: "border-box",
+  },
+  boraComecarLogoFundo: {
+    position: "absolute",
+    width: "170%",
+    maxWidth: 900,
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    opacity: 0.12,
+    pointerEvents: "none",
+  },
+  boraComecarTopo: {
+    position: "relative",
+    zIndex: 1,
+    color: "#F6F7F9",
+    fontFamily: "'Oswald', sans-serif",
+    fontSize: 30,
+    fontWeight: 700,
+    letterSpacing: 0.5,
+    margin: "0 0 48px",
+  },
+  boraComecarBolaWrap: {
+    position: "relative",
+    zIndex: 1,
+    width: 120,
+    height: 120,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 48,
+  },
+  boraComecarAnel: {
+    position: "absolute",
+    inset: 0,
+    borderRadius: "50%",
+    border: "4px solid rgba(31,209,166,0.25)",
+    borderTopColor: "#1FD1A6",
+    animation: "boraComecarGirar 1s linear infinite",
+  },
+  boraComecarBola: {
+    width: 74,
+    height: 74,
+    borderRadius: "50%",
+    background: "linear-gradient(135deg, #1CA7E0, #1FD1A6 55%, #8BDB4B)",
+    animation: "boraComecarPulsar 1.4s ease-in-out infinite",
+    boxShadow: "0 0 24px rgba(31,209,166,0.55)",
+  },
+  boraComecarBaixo: {
+    position: "relative",
+    zIndex: 1,
+    color: "#9AA3AC",
+    fontFamily: "'Oswald', sans-serif",
+    fontSize: 15,
+    fontWeight: 600,
+    letterSpacing: 4,
+    margin: 0,
+    textTransform: "uppercase",
   },
   onboardingCardNovo: {
     width: "100%",
@@ -8186,7 +8841,7 @@ const styles = {
   progressaoTag: {
     fontSize: 11,
     fontWeight: 700,
-    color: "#8A5E12",
+    color: "#F6C453",
     background: "rgba(217,164,65,0.18)",
     borderRadius: 6,
     padding: "3px 8px",
@@ -8194,8 +8849,8 @@ const styles = {
   recordeTag: {
     fontSize: 11,
     fontWeight: 700,
-    color: "#1B7A4A",
-    background: "rgba(31,209,166,0.18)",
+    color: "#4ADE80",
+    background: "rgba(31,209,166,0.22)",
     borderRadius: 6,
     padding: "3px 8px",
   },
@@ -8291,7 +8946,7 @@ const styles = {
   onboardingLabel: { display: "block", fontSize: 12, color: PENCIL, marginBottom: 5, fontWeight: 600 },
   avisoSemTreinarBox: {
     fontSize: 13,
-    color: "#8A5E12",
+    color: "#F6C453",
     background: "rgba(217,164,65,0.18)",
     border: "1px solid rgba(217,164,65,0.5)",
     borderRadius: 10,
@@ -8333,7 +8988,7 @@ const styles = {
     borderRadius: "50%",
     border: "none",
     background: "rgba(217,164,65,0.18)",
-    color: "#8A5E12",
+    color: "#F6C453",
     fontSize: 12,
     cursor: "pointer",
     lineHeight: 1,
@@ -8345,7 +9000,7 @@ const styles = {
   },
   dorAlertBox: {
     fontSize: 12,
-    color: "#8A5E12",
+    color: "#F6C453",
     background: "rgba(217,164,65,0.14)",
     border: "1px solid rgba(217,164,65,0.35)",
     borderRadius: 8,
@@ -8450,8 +9105,34 @@ const styles = {
   modalMaquinaTag: { fontSize: 12.5, color: PENCIL, marginBottom: 14, fontStyle: "italic" },
   modalSubtitle: { color: PENCIL, fontSize: 14, lineHeight: 1.45, margin: "0 0 14px", maxWidth: 420 },
   benefitList: { listStyle: "none", padding: 0, margin: "0 0 20px", display: "flex", flexDirection: "column", gap: 8 },
+  menuGrupo: { marginTop: 18 },
+  menuGrupoTitulo: {
+    fontSize: 11.5,
+    fontWeight: 700,
+    letterSpacing: "0.06em",
+    textTransform: "uppercase",
+    color: PENCIL,
+    marginBottom: 8,
+  },
+  menuLista: { display: "flex", flexDirection: "column", gap: 4 },
+  menuItemBtn: {
+    display: "flex",
+    alignItems: "center",
+    gap: 12,
+    width: "100%",
+    textAlign: "left",
+    padding: "12px 8px",
+    borderRadius: 10,
+    border: "none",
+    background: "transparent",
+    cursor: "pointer",
+    fontFamily: sansFont,
+  },
+  menuItemIcone: { fontSize: 19, width: 24, textAlign: "center", flexShrink: 0 },
+  menuItemLabel: { flex: 1, fontSize: 14.5, color: INK, fontWeight: 500 },
+  menuItemSeta: { color: PENCIL, fontSize: 16 },
   benefitItem: { fontSize: 14, color: INK },
-  jaPremium: { fontSize: 15, fontWeight: 600, color: "#8A5E12", background: "rgba(217,164,65,0.18)", padding: "12px 14px", borderRadius: 10, textAlign: "center" },
+  jaPremium: { fontSize: 15, fontWeight: 600, color: "#F6C453", background: "rgba(217,164,65,0.18)", padding: "12px 14px", borderRadius: 10, textAlign: "center" },
   planGrid: { display: "flex", flexDirection: "column", gap: 12 },
   planCard: {
     border: `1px solid rgba(43,42,40,0.18)`,
@@ -8461,6 +9142,13 @@ const styles = {
     position: "relative",
   },
   planCardDestaque: { border: `2px solid ${MARGIN_RED}`, background: "#FDF6EF" },
+  // O card destaque usa fundo claro fixo (não muda com o tema), então o texto
+  // dele também precisa ser fixo escuro — senão fica ilegível no tema escuro,
+  // que usa cor de texto clara por padrão (pensada pro fundo escuro normal).
+  planNomeDestaque: { color: "#8A6D4B" },
+  planPrecoDestaque: { color: "#2B2A28" },
+  planPeriodoDestaque: { color: "#6B5B47" },
+  planTotalNotaDestaque: { color: "#6B5B47" },
   planTag: {
     position: "absolute",
     top: -10,
@@ -8565,7 +9253,7 @@ const styles = {
 
   premiumNote: {
     fontSize: 12.5,
-    color: "#8A5E12",
+    color: "#F6C453",
     background: "rgba(217,164,65,0.18)",
     border: `1px solid rgba(217,164,65,0.5)`,
     borderRadius: 8,
@@ -8612,7 +9300,7 @@ const styles = {
     display: "inline-block",
     fontSize: 11.5,
     fontFamily: monoFont,
-    color: "#8A5E12",
+    color: "#F6C453",
     background: "rgba(217,164,65,0.18)",
     padding: "3px 9px",
     borderRadius: 12,
@@ -8624,7 +9312,7 @@ const styles = {
   resultListOrdered: { margin: 0, paddingLeft: 18, fontSize: 13.5, color: INK, lineHeight: 1.6 },
   dicaBox: {
     fontSize: 13.5,
-    color: "#8A5E12",
+    color: "#F6C453",
     background: "rgba(217,164,65,0.18)",
     padding: "10px 12px",
     borderRadius: 8,
@@ -8632,7 +9320,7 @@ const styles = {
   },
 
   avalGrid: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 16 },
-  avalField: { display: "flex", flexDirection: "column", gap: 4, fontSize: 12, color: PENCIL, minWidth: 0 },
+  avalField: { display: "flex", flexDirection: "column", gap: 4, fontSize: 12, fontWeight: 600, color: INK, minWidth: 0 },
   avalInput: {
     width: "100%",
     minWidth: 0,
@@ -8648,8 +9336,8 @@ const styles = {
     border: "1.5px solid #C0392B",
     background: "rgba(192,57,43,0.06)",
   },
-  avalErroMsg: { fontSize: 11, color: "#C0392B", fontWeight: 600, marginTop: 2 },
-  avalErroResumo: { fontSize: 12.5, color: "#C0392B", fontWeight: 700, marginTop: 8, textAlign: "center" },
+  avalErroMsg: { fontSize: 11, color: "#FF7A68", fontWeight: 600, marginTop: 2 },
+  avalErroResumo: { fontSize: 12.5, color: "#FF7A68", fontWeight: 700, marginTop: 8, textAlign: "center" },
   biotipoDescricao: { fontSize: 12, color: PENCIL, fontStyle: "italic", marginBottom: 16, marginTop: -6 },
   deltaPeso: {
     fontSize: 13,
@@ -9203,12 +9891,12 @@ const styles = {
     color: INK,
     fontSize: 12.5,
   },
-  dietaMacros: { fontSize: 11.5, fontWeight: 700, color: "#1B7A4A", marginBottom: 8 },
+  dietaMacros: { fontSize: 11.5, fontWeight: 700, color: "#4ADE80", marginBottom: 8 },
   dietaAltToggle: {
     display: "block",
     background: "transparent",
     border: "none",
-    color: "#3F7A1E",
+    color: "#8FE05A",
     fontSize: 11.5,
     fontWeight: 700,
     cursor: "pointer",
@@ -9398,8 +10086,8 @@ const styles = {
     marginBottom: 18,
     padding: "12px 14px",
     borderRadius: 10,
-    background: "rgba(126,217,87,0.14)",
-    color: "#3F7A1E",
+    background: "rgba(126,217,87,0.2)",
+    color: "#8FE05A",
     fontWeight: 700,
     fontSize: 13.5,
     textAlign: "center",
@@ -9419,7 +10107,7 @@ const styles = {
   crossDesafioBadge: {
     fontSize: 10,
     fontWeight: 800,
-    color: "#3F7A1E",
+    color: "#8FE05A",
     background: "rgba(126,217,87,0.18)",
     borderRadius: 6,
     padding: "2px 8px",
@@ -9563,7 +10251,7 @@ const styles = {
     fontSize: 24,
     color: "#fff",
   },
-  crossHeroSubtituloDark: { fontSize: 12.5, color: CROSS_TEXT_DIM, marginTop: 4 },
+  crossHeroSubtituloDark: { fontSize: 12.5, color: "#E4E7EB", fontWeight: 600, marginTop: 4, textShadow: "0 1px 4px rgba(0,0,0,0.6)" },
   crossCategoriasGridDark: {
     display: "grid",
     gridTemplateColumns: "1fr 1fr",
