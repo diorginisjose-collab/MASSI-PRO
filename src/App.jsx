@@ -116,7 +116,7 @@ if (typeof window !== "undefined" && !window.storage.__comPerfis) {
 // cada exercício traz opções de máquina/equipamento alternativas
 const LIBRARY = {
   Peito: [
-    { name: "Supino reto", sets: 3, reps: "10-12", maquinas: ["Barra livre", "Halteres", "Máquina smith", "Máquina de supino (chest press)"], regiao: "medial" },
+    { name: "Supino reto", sets: 3, reps: "10-12", maquinas: ["Barra livre", "Halteres", "Máquina smith", "Máquina de supino (chest press)", "Máquina de supino vertical (sentado)"], regiao: "medial" },
     { name: "Supino inclinado", sets: 3, reps: "10-12", maquinas: ["Halteres", "Barra livre", "Máquina smith", "Máquina"], regiao: "superior" },
     { name: "Supino declinado", sets: 3, reps: "10-12", maquinas: ["Barra livre", "Halteres", "Máquina"], regiao: "inferior" },
     { name: "Crossover / peck deck", sets: 3, reps: "12-15", maquinas: ["Cabo (crossover)", "Peck deck (voador)", "Cabo (crossover) - parte inferior", "Cabo (crossover) - parte superior", "Cabo (crossover) - inclinado"], regiao: "medial" },
@@ -240,6 +240,27 @@ Object.values(LIBRARY).forEach((lista) => {
     if (!LIBRARY_INDEX[ex.name]) LIBRARY_INDEX[ex.name] = ex;
   });
 });
+
+// ---- Restrições físicas (onboarding) — exercícios que costumam sobrecarregar cada região ----
+const RESTRICOES_OPCOES = [
+  { id: "joelho", label: "Joelho", icone: "🦵" },
+  { id: "ombro", label: "Ombro", icone: "💪" },
+  { id: "lombar", label: "Lombar", icone: "🔙" },
+  { id: "punho", label: "Punho", icone: "✋" },
+];
+const EXERCICIOS_RISCO = {
+  joelho: ["Agachamento", "Agachamento afundo (lunge)", "Agachamento búlgaro", "Agachamento sumô", "Agachamento hack (hack squat)", "Agachamento articulado (hack invertido)", "Agachamento pêndulo", "Agachamento isométrico", "Leg press", "Cadeira extensora"],
+  ombro: ["Desenvolvimento", "Elevação lateral", "Elevação frontal", "Remada alta", "Voador invertido (deltoide posterior)", "Paralelas (mergulho)", "Tríceps testa"],
+  lombar: ["Levantamento terra", "Stiff (levantamento terra romeno)", "Remada curvada", "Agachamento", "Elevação pélvica (hip thrust)"],
+  punho: ["Flexão de punho", "Flexão de braço", "Rosca invertida (pegada pronada)", "Prancha"],
+};
+function exercicioTemRisco(nomeExercicio, restricoes) {
+  if (!restricoes || restricoes.length === 0) return null;
+  for (const r of restricoes) {
+    if (EXERCICIOS_RISCO[r] && EXERCICIOS_RISCO[r].includes(nomeExercicio)) return r;
+  }
+  return null;
+}
 
 const FOCOS = ["Peito", "Costas", "Perna", "Ombro", "Braço", "Abdômen", "Corpo inteiro", "Funcional", "Superior", "Cardio", "Descanso"];
 const DIAS_SEMANA = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo"];
@@ -460,6 +481,7 @@ const VIDEOS_EXERCICIO = {
     "Halteres": "https://www.youtube.com/shorts/NIzt_fAXL2w",
     "Máquina de supino (chest press)": "https://www.youtube.com/shorts/HNaDJTSrI8s",
     "Máquina smith": "https://www.youtube.com/shorts/vGqxqSs37_g",
+    "Máquina de supino vertical (sentado)": "https://www.youtube.com/shorts/R8f7CtI-2dU",
   },
   "Supino inclinado": {
     "Halteres": "https://www.youtube.com/shorts/TCpq9yFXea4",
@@ -1596,6 +1618,29 @@ function extrairNumeroCarga(texto) {
   return match ? parseFloat(match[1]) : null;
 }
 
+function extrairRepsNumero(texto) {
+  if (!texto) return null;
+  const match = String(texto).match(/(\d+)/);
+  return match ? parseInt(match[1], 10) : null;
+}
+
+// Volume total do treino (soma de carga × reps × séries). Exercícios sem número de
+// reps (ex: "até a falha", isometria em segundos) não entram na conta.
+function calcularVolumeTreino(diaEntry) {
+  let volume = 0;
+  (diaEntry.exercicios || []).forEach((ex) => {
+    const reps = extrairRepsNumero(ex.reps);
+    if (!reps) return;
+    const totalSets = ex.sets || 1;
+    const cargas = ex.cargas && ex.cargas.length === totalSets ? ex.cargas : Array.from({ length: totalSets }, () => ex.carga || "");
+    cargas.forEach((c) => {
+      const peso = extrairNumeroCarga(c);
+      if (peso) volume += peso * reps;
+    });
+  });
+  return Math.round(volume);
+}
+
 function descansoParaSegundos(str) {
   const mapa = {
     "1 min": 60,
@@ -1855,6 +1900,22 @@ function uid() {
   return Math.random().toString(36).slice(2, 9);
 }
 
+// Tenta salvar no window.storage algumas vezes antes de desistir de vez —
+// cobre instabilidades momentâneas em vez de falhar na primeira tentativa.
+async function salvarComRetentativa(chave, valor, tentativas = 3, esperaMs = 500) {
+  for (let i = 0; i < tentativas; i++) {
+    try {
+      await window.storage.set(chave, valor);
+      return true;
+    } catch (e) {
+      if (i < tentativas - 1) {
+        await new Promise((resolve) => setTimeout(resolve, esperaMs));
+      }
+    }
+  }
+  return false;
+}
+
 function calcularStreak(historico) {
   if (!historico || historico.length === 0) return 0;
   const datasUnicas = [...new Set(historico.map((h) => h.data))].sort().reverse();
@@ -1862,12 +1923,25 @@ function calcularStreak(historico) {
   const ontem = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
   if (datasUnicas[0] !== hoje && datasUnicas[0] !== ontem) return 0;
   let streak = 1;
+  const semanasComFolgaUsada = new Set();
   for (let i = 0; i < datasUnicas.length - 1; i++) {
     const atual = new Date(datasUnicas[i]);
     const anterior = new Date(datasUnicas[i + 1]);
     const diffDias = Math.round((atual - anterior) / 86400000);
-    if (diffDias === 1) streak++;
-    else break;
+    if (diffDias === 1) {
+      streak++;
+    } else if (diffDias === 2) {
+      // pulou exatamente 1 dia — permite 1 "congelamento" por semana sem quebrar a sequência
+      const semanaDoGap = getChaveSemana(datasUnicas[i]);
+      if (!semanasComFolgaUsada.has(semanaDoGap)) {
+        semanasComFolgaUsada.add(semanaDoGap);
+        streak++;
+      } else {
+        break;
+      }
+    } else {
+      break;
+    }
   }
   return streak;
 }
@@ -2443,9 +2517,12 @@ function AppMassiPro({ onSolicitarRemount }) {
   const [loaded, setLoaded] = useState(false);
   const [isPremium, setIsPremium] = useState(false);
   const [nivelUsuario, setNivelUsuario] = useState(null); // nível do onboarding — usado pra montar peito/costas/ombro automaticamente
+  const [restricoesFisicas, setRestricoesFisicas] = useState([]); // ex: ["joelho", "ombro"] — usado pra avisar em exercícios de risco
   const [objetivoUsuario, setObjetivoUsuario] = useState(null); // objetivo do onboarding — usado pra pré-selecionar a dieta
   const [recordes, setRecordes] = useState({}); // recorde pessoal (maior carga já registrada) por exercício
   const [novoRecordeAviso, setNovoRecordeAviso] = useState(null); // texto do aviso de novo recorde, some sozinho
+  const [avisoSaltoCarga, setAvisoSaltoCarga] = useState(null); // aviso de carga subindo rápido demais, some sozinho
+  const [cargaHistorico, setCargaHistorico] = useState({}); // { "Supino reto": [{data, valor}, ...] }
   const [sugestaoTroca, setSugestaoTroca] = useState(null); // { dia, nomeAtual, nomeAlternativo } — sugestão após registrar dor
   const [deloadRespostaSemana, setDeloadRespostaSemana] = useState(null); // semana em que a pessoa já aplicou ou dispensou a sugestão de deload
   const [rotinaDataInicio, setRotinaDataInicio] = useState(null); // desde quando a composição atual da rotina (quais exercícios em quais dias) está em uso
@@ -2471,6 +2548,7 @@ function AppMassiPro({ onSolicitarRemount }) {
     };
   }, []);
   const [showModelos, setShowModelos] = useState(false);
+  const [modoImpressao, setModoImpressao] = useState(false);
   const [activeTab, setActiveTab] = useState("inicio");
   const [onboardingPendente, setOnboardingPendente] = useState(false);
   const [mostrarBoraComecar, setMostrarBoraComecar] = useState(false);
@@ -2604,6 +2682,7 @@ function AppMassiPro({ onSolicitarRemount }) {
   const [buscaExercicio, setBuscaExercicio] = useState("");
   const [avisoSemTreinar, setAvisoSemTreinar] = useState(null);
   const [guiadoAtivo, setGuiadoAtivo] = useState(null); // dia inteiro (entry) em modo guiado
+  const [inicioTreinoPorDia, setInicioTreinoPorDia] = useState({}); // { "Segunda": { data: "2026-09-13", timestamp: 172839xxx } }
   const [progressao, setProgressao] = useState({}); // { [nomeExercicio]: contagem }
   const tema = "escuro"; // tema fixo — alternância claro/escuro removida a pedido do usuário
   const [idioma, setIdioma] = useState("pt");
@@ -2647,6 +2726,7 @@ function AppMassiPro({ onSolicitarRemount }) {
           const perfilSalvo = JSON.parse(onboardingRes.value);
           if (perfilSalvo && perfilSalvo.nivel) setNivelUsuario(perfilSalvo.nivel);
           if (perfilSalvo && perfilSalvo.objetivo) setObjetivoUsuario(perfilSalvo.objetivo);
+          if (perfilSalvo && perfilSalvo.restricoes) setRestricoesFisicas(perfilSalvo.restricoes);
         }
       } catch (e) {
         setOnboardingPendente(true);
@@ -2676,6 +2756,18 @@ function AppMassiPro({ onSolicitarRemount }) {
         if (histRes && histRes.value) setHistorico(JSON.parse(histRes.value));
       } catch (e) {
         // sem histórico salvo ainda
+      }
+      try {
+        const cargaHistRes = await window.storage.get("carga-historico");
+        if (cargaHistRes && cargaHistRes.value) setCargaHistorico(JSON.parse(cargaHistRes.value));
+      } catch (e) {
+        // sem histórico de carga salvo ainda
+      }
+      try {
+        const inicioRes = await window.storage.get("inicio-treino-por-dia");
+        if (inicioRes && inicioRes.value) setInicioTreinoPorDia(JSON.parse(inicioRes.value));
+      } catch (e) {
+        // sem início de treino em andamento salvo
       }
       try {
         const doresRes = await window.storage.get("dores-exercicios");
@@ -3242,15 +3334,30 @@ function AppMassiPro({ onSolicitarRemount }) {
       cardio: diaEntry.cardio ? { tipo: diaEntry.cardio.tipo, duracao: diaEntry.cardio.duracao } : null,
       sentimento: sentimento || null,
       calorias,
+      volumeTotal: calcularVolumeTreino(diaEntry),
     };
+    registro.duracaoMin = estimarDuracaoMinPorRegistro(registro);
+    const inicioHoje = inicioTreinoPorDia[diaEntry.dia];
+    const hoje = registro.data;
+    if (inicioHoje && inicioHoje.data === hoje) {
+      const minutosReais = Math.round((Date.now() - inicioHoje.timestamp) / 60000);
+      if (minutosReais > 0) {
+        registro.duracaoMin = minutosReais;
+        registro.duracaoReal = true;
+      }
+    }
+    setInicioTreinoPorDia((prev) => {
+      const { [diaEntry.dia]: _removido, ...resto } = prev;
+      return resto;
+    });
     const novoHistorico = [...historico, registro];
     setHistorico(novoHistorico);
     setUltimoTreinoConcluido(registro);
-    try {
-      await window.storage.set("historico-treinos", JSON.stringify(novoHistorico));
+    const salvou = await salvarComRetentativa("historico-treinos", JSON.stringify(novoHistorico));
+    if (salvou) {
       setMensagemSucesso(`Bom treino! ~${calorias} kcal estimadas. Já salvo no histórico.`);
-    } catch (e) {
-      setMensagemSucesso("Treino concluído, mas não consegui salvar no histórico agora.");
+    } else {
+      setMensagemSucesso("Treino concluído, mas não consegui salvar no histórico agora. Tentei algumas vezes — evita fechar o app até conseguir se puder.");
     }
 
     // Progressão automática de carga: soma 1 na contagem de cada exercício desse treino
@@ -3259,11 +3366,7 @@ function AppMassiPro({ onSolicitarRemount }) {
       novaProgressao[ex.name] = (novaProgressao[ex.name] || 0) + 1;
     });
     setProgressao(novaProgressao);
-    try {
-      await window.storage.set("progressao-exercicios", JSON.stringify(novaProgressao));
-    } catch (e) {
-      // segue mesmo se falhar
-    }
+    await salvarComRetentativa("progressao-exercicios", JSON.stringify(novaProgressao));
     // TODO ADMOB: bom ponto pra exibir um intersticial, ex: mostrarInterstitial();
     // Deixado comentado de propósito — decida a frequência ideal antes de ativar.
   };
@@ -3522,6 +3625,24 @@ function AppMassiPro({ onSolicitarRemount }) {
     registrarRespostaDeload();
   };
 
+  // Exporta a rotina em PDF usando a própria função de impressão do navegador
+  // (sem precisar de nenhuma biblioteca nova) — a pessoa escolhe "Salvar como PDF"
+  // na caixa de impressão do aparelho.
+  const exportarRotinaPDF = () => {
+    setModoImpressao(true);
+  };
+
+  useEffect(() => {
+    if (!modoImpressao) return;
+    const timer = setTimeout(() => window.print(), 150);
+    const aoTerminarImpressao = () => setModoImpressao(false);
+    window.addEventListener("afterprint", aoTerminarImpressao);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("afterprint", aoTerminarImpressao);
+    };
+  }, [modoImpressao]);
+
   const exportarRotinaImagem = () => {
     const diasComConteudo = rotina.filter((d) => (d.exercicios && d.exercicios.length > 0) || d.cardio);
     const LARGURA = 1000;
@@ -3659,6 +3780,7 @@ function AppMassiPro({ onSolicitarRemount }) {
   }, [historico, loaded]);
 
   const editarExercicio = (dia, id, campo, valor) => {
+    if (campo === "concluido" && valor) marcarInicioTreino(dia);
     setRotina((prev) =>
       prev.map((d) =>
         d.dia === dia
@@ -3696,13 +3818,65 @@ function AppMassiPro({ onSolicitarRemount }) {
     });
   };
 
+  const registrarCargaHistorico = (nomeExercicio, valorTexto) => {
+    const numero = extrairNumeroCarga(valorTexto);
+    if (numero === null) return;
+    const hoje = new Date().toISOString().slice(0, 10);
+
+    // aviso de salto de carga: compara com o valor de ~7 dias atrás pra esse exercício
+    const listaAnterior = cargaHistorico[nomeExercicio] || [];
+    const seteDiasAtrasStr = new Date(Date.now() - 7 * 86400000).toISOString().slice(0, 10);
+    const referencia = [...listaAnterior].reverse().find((r) => r.data <= seteDiasAtrasStr);
+    if (referencia && referencia.valor > 0) {
+      const aumento = (numero - referencia.valor) / referencia.valor;
+      if (aumento >= 0.3) {
+        setAvisoSaltoCarga(`⚠️ ${nomeExercicio}: salto de ${Math.round(aumento * 100)}% na carga em uma semana. Considere subir com mais calma pra evitar lesão.`);
+      }
+    }
+
+    setCargaHistorico((prev) => {
+      const lista = prev[nomeExercicio] || [];
+      const semHoje = lista.filter((r) => r.data !== hoje);
+      const nova = [...semHoje, { data: hoje, valor: numero }].sort((a, b) => (a.data < b.data ? -1 : 1));
+      return { ...prev, [nomeExercicio]: nova };
+    });
+  };
+
+  useEffect(() => {
+    salvarComRetentativa("carga-historico", JSON.stringify(cargaHistorico));
+  }, [cargaHistorico]);
+
+  useEffect(() => {
+    if (!avisoSaltoCarga) return;
+    const t = setTimeout(() => setAvisoSaltoCarga(null), 6000);
+    return () => clearTimeout(t);
+  }, [avisoSaltoCarga]);
+
   useEffect(() => {
     if (!novoRecordeAviso) return;
     const t = setTimeout(() => setNovoRecordeAviso(null), 4000);
     return () => clearTimeout(t);
   }, [novoRecordeAviso]);
 
+  const marcarInicioTreino = (dia) => {
+    const hoje = new Date().toISOString().slice(0, 10);
+    setInicioTreinoPorDia((prev) => {
+      const atual = prev[dia];
+      if (atual && atual.data === hoje) return prev; // já tem início registrado hoje pra esse dia
+      return { ...prev, [dia]: { data: hoje, timestamp: Date.now() } };
+    });
+  };
+
+  // Salva o início do treino em andamento sempre que muda, pra sobreviver a
+  // fechar/atualizar o app: o tempo real continua contando certo depois,
+  // porque é calculado pela diferença de horário (Date.now()), não por um
+  // cronômetro rodando na tela.
+  useEffect(() => {
+    salvarComRetentativa("inicio-treino-por-dia", JSON.stringify(inicioTreinoPorDia));
+  }, [inicioTreinoPorDia]);
+
   const editarCargaSerie = (dia, id, indiceSerie, valor) => {
+    marcarInicioTreino(dia);
     setRotina((prev) =>
       prev.map((d) =>
         d.dia === dia
@@ -3715,6 +3889,7 @@ function AppMassiPro({ onSolicitarRemount }) {
                 const novasCargas = [...cargasAtual];
                 novasCargas[indiceSerie] = valor;
                 registrarPossivelRecorde(e.name, valor);
+                registrarCargaHistorico(e.name, valor);
                 return { ...e, cargas: novasCargas, carga: novasCargas[0] };
               }),
             }
@@ -3802,7 +3977,67 @@ function AppMassiPro({ onSolicitarRemount }) {
         @keyframes tourBounceBaixo { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(8px); } }
         @keyframes boraComecarGirar { to { transform: rotate(360deg); } }
         @keyframes boraComecarPulsar { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.12); } }
+        .print-rotina-area { display: none; }
+        @media print {
+          body * { visibility: hidden; }
+          .print-rotina-area, .print-rotina-area * { visibility: visible; }
+          .print-rotina-area {
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 24px;
+            color: #000;
+            background: #fff;
+          }
+          .print-rotina-area h1 { font-size: 22px; margin-bottom: 2px; }
+          .print-rotina-area h3 { font-size: 16px; margin: 18px 0 6px; }
+          .print-rotina-area table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+          .print-rotina-area th, .print-rotina-area td { border: 1px solid #999; padding: 5px 8px; font-size: 12px; text-align: left; }
+        }
       `}</style>
+
+      <div className="print-rotina-area">
+        <h1>Minha rotina — Massi Pro</h1>
+        <p>{new Date().toLocaleDateString("pt-BR")} — {perfilAtivoNome}</p>
+        {rotina
+          .filter((d) => (d.exercicios && d.exercicios.length > 0) || d.cardio)
+          .map((d) => (
+            <div key={d.dia}>
+              <h3>{d.dia} — {d.foco}</h3>
+              {d.cardio && (
+                <p>Cardio: {d.cardio.tipo} — {d.cardio.duracao} min ({d.cardio.intensidade || "Moderada"})</p>
+              )}
+              {d.exercicios && d.exercicios.length > 0 && (
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Exercício</th>
+                      <th>Máquina</th>
+                      <th>Séries</th>
+                      <th>Reps</th>
+                      <th>Descanso</th>
+                      <th>Carga (anote aqui)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {d.exercicios.map((ex) => (
+                      <tr key={ex.id}>
+                        <td>{ex.name}</td>
+                        <td>{ex.maquina}</td>
+                        <td>{ex.sets}</td>
+                        <td>{ex.reps}</td>
+                        <td>{ex.descanso}</td>
+                        <td>______</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
+          ))}
+      </div>
 
       {splashVisivel && (
         <div style={{ ...styles.splashOverlay, opacity: splashSaindo ? 0 : 1 }}>
@@ -3862,6 +4097,7 @@ function AppMassiPro({ onSolicitarRemount }) {
       {exercicioAberto && (
         <ExercicioModal
           exercicio={exercicioAberto}
+          historicoCarga={cargaHistorico[exercicioAberto.name] || []}
           onClose={() => setExercicioAberto(null)}
           onIniciarDescanso={() => {
             iniciarDescanso(exercicioAberto.descanso, exercicioAberto.name);
@@ -3897,6 +4133,12 @@ function AppMassiPro({ onSolicitarRemount }) {
         </div>
       )}
 
+      {avisoSaltoCarga && (
+        <div style={styles.avisoSaltoToast} onClick={() => setAvisoSaltoCarga(null)}>
+          {avisoSaltoCarga}
+        </div>
+      )}
+
       {mensagemSucesso && (
         <div
           style={styles.toastOverlay}
@@ -3905,16 +4147,55 @@ function AppMassiPro({ onSolicitarRemount }) {
             setMostrarOpcoesCompartilhar(false);
           }}
         >
-          <div style={styles.toastCard} onClick={(e) => e.stopPropagation()}>
-            {ultimoTreinoConcluido && mostrarOpcoesCompartilhar ? (
+          <div style={{ ...styles.toastCard, ...(ultimoTreinoConcluido && !mostrarOpcoesCompartilhar ? styles.toastCardResumo : {}) }} onClick={(e) => e.stopPropagation()}>
+            {ultimoTreinoConcluido && !mostrarOpcoesCompartilhar ? (
+              <div style={styles.resumoTreino}>
+                <div style={styles.resumoTreinoIcone}>💪</div>
+                <div style={styles.resumoTreinoTitulo}>Treino concluído!</div>
+                <div style={styles.resumoTreinoGrid}>
+                  <div style={styles.resumoTreinoStat}>
+                    <div style={styles.resumoTreinoStatIcone}>⏱️</div>
+                    <div style={styles.resumoTreinoStatValor}>
+                      {ultimoTreinoConcluido.duracaoReal ? "" : "~"}{ultimoTreinoConcluido.duracaoMin}
+                      <span style={styles.resumoTreinoStatUnidade}> min</span>
+                    </div>
+                    <div style={styles.resumoTreinoStatLabel}>
+                      {ultimoTreinoConcluido.duracaoReal ? "Tempo de treino" : "Tempo estimado"}
+                    </div>
+                  </div>
+                  <div style={styles.resumoTreinoStat}>
+                    <div style={styles.resumoTreinoStatIcone}>🔥</div>
+                    <div style={styles.resumoTreinoStatValor}>
+                      ~{ultimoTreinoConcluido.calorias}
+                      <span style={styles.resumoTreinoStatUnidade}> kcal</span>
+                    </div>
+                    <div style={styles.resumoTreinoStatLabel}>Calorias</div>
+                  </div>
+                  {ultimoTreinoConcluido.cardio && (
+                    <div style={styles.resumoTreinoStat}>
+                      <div style={styles.resumoTreinoStatIcone}>🏃</div>
+                      <div style={styles.resumoTreinoStatValor}>
+                        {ultimoTreinoConcluido.cardio.duracao}
+                        <span style={styles.resumoTreinoStatUnidade}> min</span>
+                      </div>
+                      <div style={styles.resumoTreinoStatLabel}>{ultimoTreinoConcluido.cardio.tipo}</div>
+                    </div>
+                  )}
+                </div>
+                <div style={styles.resumoTreinoRodape}>{mensagemSucesso}</div>
+              </div>
+            ) : ultimoTreinoConcluido && mostrarOpcoesCompartilhar ? (
               <div style={styles.toastMarca}>
                 <MarcaCompartilhamento foto={fotoCompartilhamento} />
                 <div style={styles.toastMarcaNome}>Massi Pro</div>
+                <div style={styles.toastTexto}>{mensagemSucesso}</div>
               </div>
             ) : (
-              <div style={styles.toastIcone}>✓</div>
+              <>
+                <div style={styles.toastIcone}>✓</div>
+                <div style={styles.toastTexto}>{mensagemSucesso}</div>
+              </>
             )}
-            <div style={styles.toastTexto}>{mensagemSucesso}</div>
 
             {ultimoTreinoConcluido && !mostrarOpcoesCompartilhar && (
               <div style={styles.toastBotoesRow}>
@@ -4098,6 +4379,7 @@ function AppMassiPro({ onSolicitarRemount }) {
             setMostrarBoraComecar(true);
             if (respostas.nivel) setNivelUsuario(respostas.nivel);
             if (respostas.objetivo) setObjetivoUsuario(respostas.objetivo);
+            if (respostas.restricoes) setRestricoesFisicas(respostas.restricoes);
             try {
               await window.storage.set("onboarding-perfil", JSON.stringify(respostas));
             } catch (e) {
@@ -4196,6 +4478,7 @@ function AppMassiPro({ onSolicitarRemount }) {
           rotina={rotina}
           diasSelecionados={diasSelecionados}
           historico={historico}
+          recordes={recordes}
           onIrTreino={(dia) => {
             setActiveTab("rotina");
             setDiaParaFocar(dia || null);
@@ -4278,24 +4561,7 @@ function AppMassiPro({ onSolicitarRemount }) {
 
           {showModelos && <ModelosModal onEscolher={aplicarModelo} onClose={() => setShowModelos(false)} />}
 
-          <section style={styles.cronoRapidoCard}>
-            <div style={styles.cronoRapidoTopo}>
-              <span style={styles.cronoRapidoIcone}>⏱️</span>
-              <span style={styles.cronoRapidoTitulo}>Cronômetro</span>
-            </div>
-            <div style={styles.cronoRapidoOpcoesRow}>
-              {["1 min", "1:30 min", "2 min", "2:30 min", "3 min", "5 min"].map((op) => (
-                <button
-                  key={op}
-                  className="chip"
-                  style={styles.cronoRapidoBtn}
-                  onClick={() => iniciarDescanso(op, "Cronômetro")}
-                >
-                  {op.replace(" min", "")}
-                </button>
-              ))}
-            </div>
-          </section>
+          <CronometroRapidoRotina onIniciarDescanso={iniciarDescanso} />
 
           <div style={styles.dayList}>
             {rotina
@@ -4318,10 +4584,14 @@ function AppMassiPro({ onSolicitarRemount }) {
                   onTrocarExercicio={(id) => trocarExercicio(d.dia, id)}
                   onConcluirTreino={() => setFeedbackPendente(d)}
                   onRegistrarDor={(nome) => setDorPendente({ exercicio: nome, dia: d.dia })}
-                  onIniciarGuiado={(d) => setGuiadoAtivo(d)}
+                  onIniciarGuiado={(d) => {
+                    marcarInicioTreino(d.dia);
+                    setGuiadoAtivo(d);
+                  }}
                   progressao={progressao}
                   dores={dores}
                   recordes={recordes}
+                  restricoesFisicas={restricoesFisicas}
                   refsTour={i === 0 ? { maquina: tourMaquinaRef, video: tourVideoRef, guiado: tourGuiadoBtnRef, descanso: tourDescansoRef } : null}
                 />
                 </div>
@@ -4334,6 +4604,9 @@ function AppMassiPro({ onSolicitarRemount }) {
             </button>
             <button style={styles.exportarRotinaBtnCompacto} onClick={exportarRotinaImagem}>
               {t("rotinaExportarImagem")}
+            </button>
+            <button style={styles.exportarRotinaBtnCompacto} onClick={exportarRotinaPDF}>
+              📄 PDF
             </button>
           </div>
 
@@ -4451,7 +4724,7 @@ function getFraseDoDiaInicio(idioma) {
 }
 
 // ---------- INÍCIO — painel principal ----------
-function InicioTab({ perfilAtivoNome, rotina, diasSelecionados, historico, onIrTreino, t, idioma, refTreinoHojeTour }) {
+function InicioTab({ perfilAtivoNome, rotina, diasSelecionados, historico, recordes, onIrTreino, t, idioma, refTreinoHojeTour }) {
   const [avaliacoes, setAvaliacoes] = useState([]);
 
   useEffect(() => {
@@ -4492,6 +4765,47 @@ function InicioTab({ perfilAtivoNome, rotina, diasSelecionados, historico, onIrT
   });
   const exerciciosSemana = historicoSemana.reduce((acc, h) => acc + (h.totalExercicios || 0), 0);
   const minutosSemana = historicoSemana.reduce((acc, h) => acc + estimarDuracaoMinPorRegistro(h), 0);
+  const volumeSemana = historicoSemana.reduce((acc, h) => acc + (h.volumeTotal || 0), 0);
+
+  // grupo muscular em destaque essa semana
+  const focoContagemSemana = {};
+  historicoSemana.forEach((h) => {
+    if (!h.foco || h.foco === "Descanso") return;
+    focoContagemSemana[h.foco] = (focoContagemSemana[h.foco] || 0) + 1;
+  });
+  const focoDestaqueSemana = Object.entries(focoContagemSemana).sort((a, b) => b[1] - a[1])[0];
+
+  // resumo do mês
+  const hojeMes = hojeData.getMonth();
+  const hojeAno = hojeData.getFullYear();
+  const historicoMes = historico.filter((h) => {
+    const d = new Date(h.data + "T00:00:00");
+    return d.getMonth() === hojeMes && d.getFullYear() === hojeAno;
+  });
+  const volumeMes = historicoMes.reduce((acc, h) => acc + (h.volumeTotal || 0), 0);
+  const recordesMes = recordes
+    ? Object.values(recordes).filter((r) => {
+        if (!r.data) return false;
+        const d = new Date(r.data + "T00:00:00");
+        return d.getMonth() === hojeMes && d.getFullYear() === hojeAno;
+      }).length
+    : 0;
+  const nomeMesAtual = hojeData.toLocaleDateString("pt-BR", { month: "long" });
+
+  // "está quase lá": falta só 1 treino essa semana pra igualar o recorde de dias treinados numa semana
+  const semanaAtualChaveHoje = getChaveSemana(hojeData.toISOString().slice(0, 10));
+  const diasPorSemana = {};
+  historico.forEach((h) => {
+    const semana = getChaveSemana(h.data);
+    if (!diasPorSemana[semana]) diasPorSemana[semana] = new Set();
+    diasPorSemana[semana].add(h.data);
+  });
+  let recordeSemanalAnterior = 0;
+  Object.entries(diasPorSemana).forEach(([semana, datas]) => {
+    if (semana !== semanaAtualChaveHoje && datas.size > recordeSemanalAnterior) recordeSemanalAnterior = datas.size;
+  });
+  const diasTreinadosEstaSemana = diasPorSemana[semanaAtualChaveHoje] ? diasPorSemana[semanaAtualChaveHoje].size : 0;
+  const mostrarAvisoQuaseLa = recordeSemanalAnterior > 0 && recordeSemanalAnterior - diasTreinadosEstaSemana === 1;
 
   const dadosPeso = avaliacoes.map((a, i) => ({ indice: i + 1, peso: parseFloat(a.peso) })).filter((d) => !isNaN(d.peso));
 
@@ -4529,6 +4843,12 @@ function InicioTab({ perfilAtivoNome, rotina, diasSelecionados, historico, onIrT
         {streak > 0 && <span style={styles.resumoDiaStreak}>🔥 {streak}</span>}
       </div>
 
+      {mostrarAvisoQuaseLa && (
+        <div style={styles.inicioQuaseLaBanner}>
+          🚀 Só mais 1 treino essa semana pra igualar seu recorde de {recordeSemanalAnterior} treinos numa semana!
+        </div>
+      )}
+
       <section style={styles.inicioHeroCard} ref={refTreinoHojeTour}>
         {hojeEhDiaDeTreino ? (
           <>
@@ -4556,7 +4876,7 @@ function InicioTab({ perfilAtivoNome, rotina, diasSelecionados, historico, onIrT
 
       <div style={styles.inicioCardsGrid}>
         <div style={styles.inicioCard}>
-          <div style={styles.inicioCardLabel}>{t("inicioProgresso")}</div>
+          <div style={styles.inicioCardLabel}>⚖️ {t("inicioProgresso")}</div>
           {avaliacoes.length > 0 ? (
             <>
               <div style={styles.inicioCardValor}>{avaliacoes[avaliacoes.length - 1].peso} kg</div>
@@ -4567,7 +4887,7 @@ function InicioTab({ perfilAtivoNome, rotina, diasSelecionados, historico, onIrT
           )}
         </div>
         <div style={styles.inicioCard}>
-          <div style={styles.inicioCardLabel}>{t("inicioSequencia")}</div>
+          <div style={styles.inicioCardLabel}>🔥 {t("inicioSequencia")}</div>
           <div style={styles.inicioCardValor}>{streak > 0 ? `🔥 ${streak}` : "—"}</div>
           <div style={styles.inicioCardSub}>
             {streak > 0 ? (streak > 1 ? t("inicioDiasTreinando") : t("inicioDiaTreinando")) : t("inicioTreineHoje")}
@@ -4576,7 +4896,7 @@ function InicioTab({ perfilAtivoNome, rotina, diasSelecionados, historico, onIrT
       </div>
 
       <section style={styles.inicioCard}>
-        <div style={styles.inicioCardLabel}>{t("inicioResumoSemanal")}</div>
+        <div style={styles.inicioCardLabel}>📅 {t("inicioResumoSemanal")}</div>
         <div style={styles.inicioSemanaRow}>
           {diasDaSemana.map((d) => (
             <div key={d.nomeDia} style={styles.inicioSemanaDia}>
@@ -4590,10 +4910,39 @@ function InicioTab({ perfilAtivoNome, rotina, diasSelecionados, historico, onIrT
         <div style={styles.inicioResumoLinha}>
           {historicoSemana.length} {historicoSemana.length !== 1 ? t("inicioTreinos") : t("inicioTreino")} • ~{minutosSemana} min • {exerciciosSemana} {t("inicioExerciciosConcluidos")}
         </div>
+        {(volumeSemana > 0 || focoDestaqueSemana) && (
+          <div style={styles.inicioResumoLinha}>
+            {volumeSemana > 0 ? `🏋️ ${volumeSemana} kg de volume` : ""}
+            {volumeSemana > 0 && focoDestaqueSemana ? " • " : ""}
+            {focoDestaqueSemana ? `💪 ${focoDestaqueSemana[0]} em destaque (${focoDestaqueSemana[1]}x)` : ""}
+          </div>
+        )}
       </section>
 
       <section style={styles.inicioCard}>
-        <div style={styles.inicioCardLabel}>{t("inicioEvolucaoPeso")}</div>
+        <div style={styles.inicioCardLabel}>🗓️ Seu mês de {nomeMesAtual}</div>
+        {historicoMes.length > 0 ? (
+          <div style={styles.inicioMesGrid}>
+            <div style={styles.inicioMesStat}>
+              <div style={styles.inicioMesStatValor}>{historicoMes.length}</div>
+              <div style={styles.inicioMesStatLabel}>Treinos</div>
+            </div>
+            <div style={styles.inicioMesStat}>
+              <div style={styles.inicioMesStatValor}>{volumeMes > 0 ? `${volumeMes}` : "—"}</div>
+              <div style={styles.inicioMesStatLabel}>kg levantados</div>
+            </div>
+            <div style={styles.inicioMesStat}>
+              <div style={styles.inicioMesStatValor}>🏆 {recordesMes}</div>
+              <div style={styles.inicioMesStatLabel}>Recordes batidos</div>
+            </div>
+          </div>
+        ) : (
+          <div style={styles.inicioCardVazio}>Nenhum treino registrado esse mês ainda.</div>
+        )}
+      </section>
+
+      <section style={styles.inicioCard}>
+        <div style={styles.inicioCardLabel}>📈 {t("inicioEvolucaoPeso")}</div>
         {dadosPeso.length >= 2 ? (
           <ResponsiveContainer width="100%" height={170}>
             <LineChart data={dadosPeso}>
@@ -4672,6 +5021,7 @@ function EvolucaoTab({ onAplicarTreino }) {
   };
 
   const removerFoto = async (id) => {
+    if (!window.confirm("Remover essa foto de progresso? Essa ação não pode ser desfeita.")) return;
     const novasFotos = fotos.filter((f) => f.id !== id);
     setFotos(novasFotos);
     try {
@@ -4989,14 +5339,19 @@ function OnboardingModal({ onConcluir }) {
   const [horario, setHorario] = useState("Manhã");
   const [objetivo, setObjetivo] = useState("Hipertrofia");
   const [nivel, setNivel] = useState("Iniciante");
+  const [restricoes, setRestricoes] = useState([]);
   const [erroNome, setErroNome] = useState(false);
+
+  const alternarRestricao = (id) => {
+    setRestricoes((prev) => (prev.includes(id) ? prev.filter((r) => r !== id) : [...prev, id]));
+  };
 
   const confirmar = () => {
     if (!nome.trim()) {
       setErroNome(true);
       return;
     }
-    onConcluir({ nome: nome.trim(), idade, horario, objetivo, nivel });
+    onConcluir({ nome: nome.trim(), idade, horario, objetivo, nivel, restricoes });
   };
 
   return (
@@ -5070,6 +5425,22 @@ function OnboardingModal({ onConcluir }) {
               ))}
             </select>
             <span style={styles.onboardingChevron}>▾</span>
+          </div>
+        </div>
+
+        <div style={styles.onboardingCampoNovo}>
+          <div style={styles.onboardingRestricaoLabel}>⚕️ Alguma região merece cuidado? (opcional)</div>
+          <div style={styles.onboardingRestricaoRow}>
+            {RESTRICOES_OPCOES.map((r) => (
+              <button
+                key={r.id}
+                type="button"
+                style={{ ...styles.onboardingRestricaoChip, ...(restricoes.includes(r.id) ? styles.onboardingRestricaoChipAtiva : {}) }}
+                onClick={() => alternarRestricao(r.id)}
+              >
+                {r.icone} {r.label}
+              </button>
+            ))}
           </div>
         </div>
 
@@ -5906,9 +6277,10 @@ function PlanosModal({ isPremium, onAssinar, onClose }) {
 }
 
 
-function ExercicioModal({ exercicio, onClose, onIniciarDescanso }) {
+function ExercicioModal({ exercicio, historicoCarga, onClose, onIniciarDescanso }) {
   const guia = GUIA_EXECUCAO[exercicio.name];
   const { url: videoUrl, especifico: videoEspecifico, canal: isCanalFuncional } = getVideoOuCanalUrl(exercicio);
+  const dadosCarga = (historicoCarga || []).map((r, i) => ({ indice: i + 1, valor: r.valor, data: r.data }));
 
   return (
     <div style={styles.modalOverlay} onClick={onClose}>
@@ -5917,6 +6289,24 @@ function ExercicioModal({ exercicio, onClose, onIniciarDescanso }) {
         <div style={styles.eyebrow}>COMO EXECUTAR</div>
         <h2 style={styles.modalTitle}>{exercicio.name}</h2>
         <div style={styles.modalMaquinaTag}>{exercicio.maquina}</div>
+
+        {dadosCarga.length >= 2 && (
+          <div style={styles.evolucaoCargaBox}>
+            <div style={styles.evolucaoCargaTitulo}>📈 Evolução de carga</div>
+            <ResponsiveContainer width="100%" height={110}>
+              <LineChart data={dadosCarga}>
+                <XAxis dataKey="indice" hide />
+                <YAxis fontSize={10} width={30} domain={["auto", "auto"]} stroke="rgba(255,255,255,0.4)" />
+                <Tooltip
+                  contentStyle={{ background: GRAPHITE, border: "none", fontSize: 12 }}
+                  labelFormatter={() => ""}
+                  formatter={(valor) => [`${valor} kg`, "Carga"]}
+                />
+                <Line type="monotone" dataKey="valor" stroke={HIGHLIGHT} strokeWidth={2} dot={{ r: 3, fill: HIGHLIGHT }} />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        )}
 
         {guia ? (
           <>
@@ -6171,6 +6561,7 @@ function HistoricoTab() {
   }, []);
 
   const removerRegistro = async (id) => {
+    if (!window.confirm("Remover esse treino do histórico? Essa ação não pode ser desfeita.")) return;
     const nova = historico.filter((h) => h.id !== id);
     setHistorico(nova);
     try {
@@ -7459,7 +7850,63 @@ function TourOverlay({ alvoRef, texto, onProximo, onPular, ultimo }) {
   );
 }
 
-function DayCard({ entry, onFoco, onPeriodo, onAddExercicio, onRemoveExercicio, onEditExercicio, onEditCargaSerie, onEditCardio, onAdicionarCardioFinal, onRemoverCardioFinal, onAbrirExercicio, onIniciarDescanso, onTrocarExercicio, onConcluirTreino, onRegistrarDor, onIniciarGuiado, progressao, dores, recordes, refsTour }) {
+function CronometroRapidoRotina({ onIniciarDescanso }) {
+  const [modo, setModo] = useState("relogio"); // "relogio" | "opcoes"
+  const [agora, setAgora] = useState(() => new Date());
+
+  useEffect(() => {
+    const id = setInterval(() => setAgora(new Date()), 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  const horaBrasilia = new Intl.DateTimeFormat("pt-BR", {
+    timeZone: "America/Sao_Paulo",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false,
+  }).format(agora);
+
+  return (
+    <section style={styles.cronoRapidoCard}>
+      <div style={styles.cronoRapidoLinha}>
+        {modo === "relogio" ? (
+          <div style={styles.cronoRapidoRelogioBloco}>
+            <div style={styles.cronoRapidoHora}>{horaBrasilia}</div>
+            <div style={styles.cronoRapidoHoraLabel}>Horário de Brasília</div>
+          </div>
+        ) : (
+          <div style={styles.cronoRapidoOpcoesRow}>
+            {["1 min", "1:30 min", "2 min", "2:30 min", "3 min", "5 min"].map((op) => (
+              <button
+                key={op}
+                className="chip"
+                style={styles.cronoRapidoBtn}
+                onClick={() => {
+                  onIniciarDescanso(op, "Cronômetro");
+                  setModo("relogio");
+                }}
+              >
+                {op.replace(" min", "")}
+              </button>
+            ))}
+          </div>
+        )}
+
+        <button
+          style={styles.cronoRapidoToggleBtn}
+          onClick={() => setModo((m) => (m === "relogio" ? "opcoes" : "relogio"))}
+          aria-label={modo === "relogio" ? "Abrir cronômetro" : "Ver relógio"}
+          title={modo === "relogio" ? "Cronômetro" : "Ver relógio"}
+        >
+          {modo === "relogio" ? "⏱️" : "🕐"}
+        </button>
+      </div>
+    </section>
+  );
+}
+
+function DayCard({ entry, onFoco, onPeriodo, onAddExercicio, onRemoveExercicio, onEditExercicio, onEditCargaSerie, onEditCardio, onAdicionarCardioFinal, onRemoverCardioFinal, onAbrirExercicio, onIniciarDescanso, onTrocarExercicio, onConcluirTreino, onRegistrarDor, onIniciarGuiado, progressao, dores, recordes, restricoesFisicas, refsTour }) {
   const { dia, foco, cardio, exercicios, periodo } = entry;
   const isDescanso = foco === "Descanso";
   const isCardio = foco === "Cardio";
@@ -7594,6 +8041,11 @@ function DayCard({ entry, onFoco, onPeriodo, onAddExercicio, onRemoveExercicio, 
                   >
                     {ex.name}
                   </button>
+                  {exercicioTemRisco(ex.name, restricoesFisicas) && (
+                    <span style={styles.exRiscoTag} title="Você marcou essa região como sensível no seu perfil">
+                      ⚠️ Atenção: {exercicioTemRisco(ex.name, restricoesFisicas)}
+                    </span>
+                  )}
                   <div style={styles.exAcoesMini}>
                     <button
                       style={styles.exAcaoMiniBtn}
@@ -8126,42 +8578,72 @@ const styles = {
     marginBottom: 18,
   },
   cronoRapidoCard: {
-    background: "rgba(20,24,27,0.12)",
-    backdropFilter: "blur(6px)",
-    WebkitBackdropFilter: "blur(6px)",
-    border: `1px solid rgba(255,255,255,0.1)`,
-    borderRadius: 14,
-    padding: "18px 16px 16px",
+    background: "linear-gradient(160deg, rgba(14,22,18,0.92) 0%, rgba(9,14,12,0.96) 100%)",
+    border: "1px solid rgba(34,197,94,0.35)",
+    borderRadius: 16,
+    padding: "16px 16px",
     marginBottom: 18,
     width: "100%",
+    minHeight: 78,
     boxSizing: "border-box",
+    boxShadow: "0 8px 24px -14px rgba(0,0,0,0.6)",
   },
-  cronoRapidoTopo: {
+  cronoRapidoLinha: {
     display: "flex",
     alignItems: "center",
-    gap: 10,
-    marginBottom: 14,
+    justifyContent: "space-between",
+    gap: 12,
+    width: "100%",
   },
-  cronoRapidoIcone: { fontSize: 30, lineHeight: 1 },
-  cronoRapidoTitulo: { fontSize: 18, fontWeight: 700, color: INK },
+  cronoRapidoRelogioBloco: { display: "flex", flexDirection: "column", gap: 2 },
+  cronoRapidoHora: {
+    fontFamily: monoFont,
+    fontSize: 30,
+    fontWeight: 700,
+    letterSpacing: "0.03em",
+    color: "#22C55E",
+    fontVariantNumeric: "tabular-nums",
+    textShadow: "0 0 16px rgba(34,197,94,0.35)",
+  },
+  cronoRapidoHoraLabel: {
+    fontSize: 11,
+    fontWeight: 600,
+    letterSpacing: "0.08em",
+    textTransform: "uppercase",
+    color: "rgba(246,247,249,0.5)",
+  },
+  cronoRapidoToggleBtn: {
+    flexShrink: 0,
+    width: 46,
+    height: 46,
+    borderRadius: "50%",
+    border: "1px solid rgba(34,197,94,0.5)",
+    background: "rgba(34,197,94,0.14)",
+    color: "#22C55E",
+    fontSize: 19,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    cursor: "pointer",
+  },
   cronoRapidoOpcoesRow: {
     display: "flex",
     gap: 8,
     flexWrap: "wrap",
-    width: "100%",
+    flex: 1,
   },
   cronoRapidoBtn: {
     flex: "1 1 auto",
-    minWidth: 52,
+    minWidth: 48,
     textAlign: "center",
     fontFamily: monoFont,
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: 700,
-    padding: "12px 10px",
-    borderRadius: 12,
-    border: `1px solid ${PENCIL}`,
-    background: "transparent",
-    color: INK,
+    padding: "10px 8px",
+    borderRadius: 10,
+    border: "1px solid rgba(34,197,94,0.4)",
+    background: "rgba(34,197,94,0.1)",
+    color: "#22C55E",
     cursor: "pointer",
   },
   dayList: { display: "flex", flexDirection: "column", gap: 14 },
@@ -8477,7 +8959,7 @@ const styles = {
   },
 
   // ---------- Novo layout do card de exercício (referência: mockup enviado) ----------
-  exHeaderNovo: { display: "flex", alignItems: "center", gap: 14, marginBottom: 16 },
+  exHeaderNovo: { display: "flex", alignItems: "center", gap: 14, marginBottom: 16, flexWrap: "wrap" },
   exRingWrap: (concluido) => ({
     width: 56,
     height: 56,
@@ -8519,6 +9001,19 @@ const styles = {
     lineHeight: 1.25,
     whiteSpace: "normal",
     wordBreak: "break-word",
+  },
+  exRiscoTag: {
+    flexBasis: "100%",
+    fontSize: 11,
+    fontWeight: 700,
+    color: "#F6C453",
+    background: "rgba(180,83,9,0.18)",
+    border: "1px solid rgba(246,196,83,0.4)",
+    borderRadius: 8,
+    padding: "3px 8px",
+    marginTop: 4,
+    display: "inline-block",
+    textTransform: "capitalize",
   },
   exAcoesMini: { display: "flex", gap: 4, flexShrink: 0 },
   exAcaoMiniBtn: {
@@ -8708,6 +9203,8 @@ const styles = {
   onboardingCardNovo: {
     width: "100%",
     maxWidth: 420,
+    maxHeight: "calc(100vh - 40px)",
+    overflowY: "auto",
     background: "rgba(30,26,22,0.55)",
     backdropFilter: "blur(18px)",
     WebkitBackdropFilter: "blur(18px)",
@@ -8716,6 +9213,7 @@ const styles = {
     padding: "26px 22px",
     boxShadow: "0 20px 50px -20px rgba(0,0,0,0.6)",
     textAlign: "left",
+    boxSizing: "border-box",
   },
   onboardingLogoNovo: {
     fontWeight: 900,
@@ -8729,6 +9227,23 @@ const styles = {
   onboardingTituloNovo: { fontWeight: 800, fontSize: 23, color: "#fff", margin: "0 0 6px", lineHeight: 1.25 },
   onboardingSubNovo: { color: "rgba(255,255,255,0.7)", fontSize: 13, lineHeight: 1.45, margin: "0 0 20px" },
   onboardingCampoNovo: { marginBottom: 13 },
+  onboardingRestricaoLabel: { fontSize: 12.5, color: "rgba(255,255,255,0.75)", marginBottom: 8, fontWeight: 600 },
+  onboardingRestricaoRow: { display: "flex", gap: 8, flexWrap: "wrap" },
+  onboardingRestricaoChip: {
+    fontSize: 13,
+    padding: "8px 14px",
+    borderRadius: 20,
+    border: "1px solid rgba(255,255,255,0.3)",
+    background: "rgba(255,255,255,0.08)",
+    color: "#fff",
+    cursor: "pointer",
+  },
+  onboardingRestricaoChipAtiva: {
+    background: "rgba(154,205,50,0.25)",
+    border: "1px solid #9ACD32",
+    color: "#fff",
+    fontWeight: 700,
+  },
   onboardingInputWrap: (erro) => ({
     display: "flex",
     alignItems: "center",
@@ -8785,6 +9300,24 @@ const styles = {
     fontSize: 13,
     padding: "10px 18px",
     borderRadius: 24,
+    boxShadow: "0 4px 14px rgba(0,0,0,0.25)",
+    cursor: "pointer",
+    maxWidth: "90vw",
+    textAlign: "center",
+  },
+  avisoSaltoToast: {
+    position: "fixed",
+    top: 14,
+    left: "50%",
+    transform: "translateX(-50%)",
+    zIndex: 800,
+    background: "#B45309",
+    color: "#fff",
+    fontWeight: 600,
+    fontSize: 12.5,
+    lineHeight: 1.4,
+    padding: "10px 18px",
+    borderRadius: 16,
     boxShadow: "0 4px 14px rgba(0,0,0,0.25)",
     cursor: "pointer",
     maxWidth: "90vw",
@@ -9103,6 +9636,14 @@ const styles = {
   },
   modalTitle: { fontFamily: monoFont, fontSize: 26, fontWeight: 700, color: INK, margin: "4px 0 8px" },
   modalMaquinaTag: { fontSize: 12.5, color: PENCIL, marginBottom: 14, fontStyle: "italic" },
+  evolucaoCargaBox: {
+    background: "rgba(154,205,50,0.08)",
+    border: "1px solid rgba(154,205,50,0.25)",
+    borderRadius: 12,
+    padding: "10px 10px 4px",
+    marginBottom: 16,
+  },
+  evolucaoCargaTitulo: { fontSize: 12.5, fontWeight: 700, color: INK, marginBottom: 4 },
   modalSubtitle: { color: PENCIL, fontSize: 14, lineHeight: 1.45, margin: "0 0 14px", maxWidth: 420 },
   benefitList: { listStyle: "none", padding: 0, margin: "0 0 20px", display: "flex", flexDirection: "column", gap: 8 },
   menuGrupo: { marginTop: 18 },
@@ -9673,6 +10214,63 @@ const styles = {
     textAlign: "center",
     boxShadow: "0 20px 50px -12px rgba(19,26,29,0.4)",
   },
+  toastCardResumo: {
+    maxWidth: 400,
+    padding: "30px 22px 26px",
+  },
+  resumoTreino: { display: "flex", flexDirection: "column", alignItems: "center" },
+  resumoTreinoIcone: {
+    width: 62,
+    height: 62,
+    borderRadius: "50%",
+    background: HIGHLIGHT,
+    fontSize: 30,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    margin: "0 0 12px",
+  },
+  resumoTreinoTitulo: {
+    fontFamily: monoFont,
+    fontSize: 21,
+    fontWeight: 800,
+    color: INK,
+    marginBottom: 18,
+  },
+  resumoTreinoGrid: {
+    display: "flex",
+    gap: 10,
+    width: "100%",
+    marginBottom: 18,
+  },
+  resumoTreinoStat: {
+    flex: 1,
+    background: "rgba(154,205,50,0.12)",
+    border: "1px solid rgba(154,205,50,0.35)",
+    borderRadius: 14,
+    padding: "14px 6px",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    gap: 4,
+  },
+  resumoTreinoStatIcone: { fontSize: 24, lineHeight: 1 },
+  resumoTreinoStatValor: {
+    fontFamily: monoFont,
+    fontSize: 20,
+    fontWeight: 800,
+    color: INK,
+    lineHeight: 1.1,
+  },
+  resumoTreinoStatUnidade: { fontSize: 12, fontWeight: 600, color: PENCIL },
+  resumoTreinoStatLabel: {
+    fontSize: 10.5,
+    fontWeight: 600,
+    color: PENCIL,
+    textAlign: "center",
+    lineHeight: 1.25,
+  },
+  resumoTreinoRodape: { fontSize: 13.5, color: INK, lineHeight: 1.4, fontWeight: 600 },
   toastIcone: {
     width: 52,
     height: 52,
@@ -10181,6 +10779,28 @@ const styles = {
     cursor: "pointer",
   },
   inicioCardsGrid: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 16 },
+  inicioQuaseLaBanner: {
+    background: "rgba(154,205,50,0.14)",
+    border: "1px solid rgba(154,205,50,0.4)",
+    borderRadius: 12,
+    padding: "10px 14px",
+    marginBottom: 14,
+    fontSize: 13,
+    fontWeight: 600,
+    color: INK,
+    lineHeight: 1.4,
+  },
+  inicioMesGrid: { display: "flex", gap: 8 },
+  inicioMesStat: {
+    flex: 1,
+    background: "rgba(154,205,50,0.08)",
+    border: "1px solid rgba(154,205,50,0.25)",
+    borderRadius: 12,
+    padding: "12px 6px",
+    textAlign: "center",
+  },
+  inicioMesStatValor: { fontFamily: monoFont, fontSize: 18, fontWeight: 800, color: INK },
+  inicioMesStatLabel: { fontSize: 10.5, color: PENCIL, fontWeight: 600, marginTop: 2 },
   inicioCard: {
     background: CROSS_CARD_DARK,
     border: "1px solid rgba(255,255,255,0.06)",
