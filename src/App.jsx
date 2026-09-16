@@ -207,6 +207,24 @@ const LIBRARY = {
     { name: "Rotação de tronco sentado", sets: 2, reps: "10-12 cada lado", maquinas: ["Peso corporal", "Cadeira"] },
     { name: "Funcional livre (escolha no canal)", sets: 2, reps: "conforme o vídeo escolhido", maquinas: ["Canal Women 3D Workouts"] },
   ],
+  "Casa: Superior": [
+    { name: "Flexão de braço", sets: 3, reps: "até a falha", maquinas: ["Peso corporal", "Peso corporal (apoio no joelho)", "Peso corporal (inclinado)"], regiao: "medial" },
+    { name: "Tríceps no banco (mergulho)", sets: 3, reps: "10-15", maquinas: ["Peso corporal (banco)", "Máquina"], regiao: "triceps" },
+    { name: "Prancha", sets: 3, reps: "30-40s", maquinas: ["Peso corporal"] },
+    { name: "Abdominal bicicleta", sets: 3, reps: "15-20", maquinas: ["Peso corporal"] },
+  ],
+  "Casa: Inferior": [
+    { name: "Agachamento", sets: 3, reps: "15", maquinas: ["Peso corporal", "Barra livre", "Máquina smith"], regiao: "quadriceps" },
+    { name: "Agachamento afundo (lunge)", sets: 3, reps: "10-12 cada perna", maquinas: ["Peso corporal"], regiao: "quadriceps" },
+    { name: "Elevação pélvica (hip thrust)", sets: 3, reps: "12-15", maquinas: ["Peso corporal", "Barra livre", "Máquina smith", "Máquina"], regiao: "gluteo" },
+    { name: "Agachamento isométrico", sets: 3, reps: "30-40s", maquinas: ["Peso corporal"], regiao: "quadriceps" },
+  ],
+  "Casa: Completo": [
+    { name: "Agachamento na cadeira (sentar e levantar)", sets: 2, reps: "8-12", maquinas: ["Peso corporal", "Cadeira"] },
+    { name: "Flexão de braço", sets: 3, reps: "até a falha", maquinas: ["Peso corporal", "Peso corporal (apoio no joelho)", "Peso corporal (inclinado)"], regiao: "medial" },
+    { name: "Ponte de glúteo (deitado)", sets: 2, reps: "10-15", maquinas: ["Peso corporal"] },
+    { name: "Abdominal no chão", sets: 3, reps: "15-20", maquinas: ["Peso corporal"] },
+  ],
 };
 
 // ---------- Grupos derivados, usados pela composição automática dos treinos ----------
@@ -262,7 +280,7 @@ function exercicioTemRisco(nomeExercicio, restricoes) {
   return null;
 }
 
-const FOCOS = ["Peito", "Costas", "Perna", "Ombro", "Braço", "Abdômen", "Corpo inteiro", "Funcional", "Superior", "Cardio", "Descanso"];
+const FOCOS = ["Peito", "Costas", "Perna", "Ombro", "Braço", "Abdômen", "Corpo inteiro", "Funcional", "Superior", "Casa: Superior", "Casa: Inferior", "Casa: Completo", "Cardio", "Descanso"];
 const DIAS_SEMANA = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo"];
 const DIAS_ABREV = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
 
@@ -308,6 +326,8 @@ function getThumbnailCardio(tipo) {
   return `https://img.youtube.com/vi/${id}/mqdefault.jpg`;
 }
 const DESCANSO_OPCOES = ["1 min", "1:30 min", "2 min", "2:30 min", "3 min", "3:30 min", "4 min", "4:30 min", "5 min"];
+const ANILHAS_DISPONIVEIS = [25, 20, 15, 10, 5, 2.5, 1.25]; // kg, por lado
+const BARRAS_PADRAO = [{ nome: "Barra olímpica (20kg)", peso: 20 }, { nome: "Barra feminina (15kg)", peso: 15 }, { nome: "Sem barra (peso livre)", peso: 0 }];
 const DESCANSO_PADRAO = "2 min";
 
 // ---------- Modelos prontos de semana ----------
@@ -335,6 +355,12 @@ const MODELOS_SEMANA = [
     nome: "Upper / Lower (4x)",
     descricao: "Alterna parte superior e inferior do corpo, 4 dias por semana.",
     focos: ["Peito", "Perna", "Costas", "Perna", "Descanso", "Descanso", "Descanso"],
+  },
+  {
+    id: "casa",
+    nome: "🏠 Sem equipamento (casa)",
+    descricao: "3 dias completos usando só o peso do corpo (e uma cadeira) — nada de academia.",
+    focos: ["Casa: Superior", "Casa: Inferior", "Descanso", "Casa: Completo", "Descanso", "Descanso", "Descanso"],
   },
   {
     id: "abcd",
@@ -1867,6 +1893,139 @@ function InfoTextModal({ titulo, corpo, onClose }) {
   );
 }
 
+function Calc1RMModal({ cargaInicial, repsInicial, onClose }) {
+  const [carga, setCarga] = useState(cargaInicial ? String(cargaInicial) : "");
+  const [reps, setReps] = useState(repsInicial ? String(repsInicial) : "10");
+  const rm = calcular1RM(carga, reps);
+
+  return (
+    <div style={styles.modalOverlay} onClick={onClose}>
+      <div style={styles.modalCard} onClick={(e) => e.stopPropagation()}>
+        <button style={styles.modalClose} onClick={onClose} aria-label="Fechar">×</button>
+        <h2 style={styles.modalTitle}>🧮 Calculadora de 1RM</h2>
+        <p style={styles.modalSubtitle}>
+          1RM é o quanto você conseguiria levantar numa única repetição com a força máxima. Não precisa testar isso de verdade — a gente estima a partir de uma carga que você já levantou e quantas repetições fez com ela.
+        </p>
+        <div style={{ display: "flex", gap: 10, marginBottom: 14 }}>
+          <div style={{ flex: 1 }}>
+            <span style={styles.novoCampoLabel}>CARGA (KG)</span>
+            <input type="number" value={carga} onChange={(e) => setCarga(e.target.value)} placeholder="ex: 40" style={styles.novoInputBox} />
+          </div>
+          <div style={{ flex: 1 }}>
+            <span style={styles.novoCampoLabel}>REPETIÇÕES FEITAS</span>
+            <input type="number" value={reps} onChange={(e) => setReps(e.target.value)} placeholder="ex: 10" style={styles.novoInputBox} />
+          </div>
+        </div>
+        {rm ? (
+          <div style={styles.cargaSeriesBox}>
+            <div style={styles.cargaSeriesTitulo}>Sua carga máxima estimada</div>
+            <div style={{ fontFamily: monoFont, fontSize: 28, fontWeight: 700, color: INK, margin: "6px 0" }}>~{rm}kg</div>
+            <div style={{ fontSize: 12, opacity: 0.75 }}>
+              Com {carga}kg x {reps} reps. Isso é uma estimativa (fórmula de Epley) — não é preciso testar 1 repetição máxima de verdade, que tem mais risco de lesão.
+            </div>
+          </div>
+        ) : (
+          <div style={{ fontSize: 13, opacity: 0.7 }}>Preencha a carga e as repetições pra ver a estimativa.</div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function AquecimentoModal({ cargaInicial, onClose }) {
+  const [cargaTrabalho, setCargaTrabalho] = useState(cargaInicial ? String(cargaInicial) : "");
+  const numero = Number(cargaTrabalho);
+  const valido = cargaTrabalho && numero > 0;
+  const etapas = valido
+    ? [
+        { pct: 50, reps: "10", carga: Math.round(numero * 0.5) },
+        { pct: 70, reps: "6", carga: Math.round(numero * 0.7) },
+        { pct: 85, reps: "3", carga: Math.round(numero * 0.85) },
+      ]
+    : [];
+
+  return (
+    <div style={styles.modalOverlay} onClick={onClose}>
+      <div style={styles.modalCard} onClick={(e) => e.stopPropagation()}>
+        <button style={styles.modalClose} onClick={onClose} aria-label="Fechar">×</button>
+        <h2 style={styles.modalTitle}>🔥 Aquecimento</h2>
+        <p style={styles.modalSubtitle}>
+          Antes da carga de trabalho, faça algumas séries mais leves pra preparar músculos e articulações. Informe a carga que você vai usar na série de verdade.
+        </p>
+        <div style={{ marginBottom: 14 }}>
+          <span style={styles.novoCampoLabel}>CARGA DE TRABALHO (KG)</span>
+          <input type="number" value={cargaTrabalho} onChange={(e) => setCargaTrabalho(e.target.value)} placeholder="ex: 60" style={styles.novoInputBox} />
+        </div>
+        {valido ? (
+          <div style={styles.cargaSeriesBox}>
+            <div style={styles.cargaSeriesTitulo}>Séries de aquecimento sugeridas</div>
+            {etapas.map((e) => (
+              <div key={e.pct} style={{ display: "flex", justifyContent: "space-between", padding: "6px 0", borderBottom: `1px solid ${PENCIL}` }}>
+                <span style={{ fontSize: 13, opacity: 0.8 }}>{e.pct}% · {e.reps} reps</span>
+                <span style={{ fontFamily: monoFont, fontWeight: 700 }}>{e.carga}kg</span>
+              </div>
+            ))}
+            <div style={{ display: "flex", justifyContent: "space-between", padding: "8px 0 0" }}>
+              <span style={{ fontSize: 13, fontWeight: 700 }}>Série de trabalho</span>
+              <span style={{ fontFamily: monoFont, fontWeight: 700, color: "#8FE05A" }}>{numero}kg</span>
+            </div>
+          </div>
+        ) : (
+          <div style={{ fontSize: 13, opacity: 0.7 }}>Preencha a carga de trabalho pra ver as séries de aquecimento.</div>
+        )}
+      </div>
+    </div>
+  );
+}
+function CalcAnilhasModal({ cargaInicial, onClose }) {
+  const [cargaAlvo, setCargaAlvo] = useState(cargaInicial ? String(cargaInicial) : "");
+  const [barra, setBarra] = useState(20);
+  const { porLado, totalMontado, sobra } = calcularAnilhas(cargaAlvo, barra);
+
+  return (
+    <div style={styles.modalOverlay} onClick={onClose}>
+      <div style={styles.modalCard} onClick={(e) => e.stopPropagation()}>
+        <button style={styles.modalClose} onClick={onClose} aria-label="Fechar">×</button>
+        <h2 style={styles.modalTitle}>🏋️ Calculadora de anilhas</h2>
+        <p style={styles.modalSubtitle}>
+          Diz quanto você quer levantar no total (barra + anilhas) e a gente calcula quais anilhas colocar de cada lado da barra.
+        </p>
+        <div style={{ display: "flex", gap: 10, marginBottom: 14 }}>
+          <div style={{ flex: 1 }}>
+            <span style={styles.novoCampoLabel}>CARGA TOTAL (KG)</span>
+            <input type="number" value={cargaAlvo} onChange={(e) => setCargaAlvo(e.target.value)} placeholder="ex: 60" style={styles.novoInputBox} />
+          </div>
+          <div style={{ flex: 1 }}>
+            <span style={styles.novoCampoLabel}>PESO DA BARRA</span>
+            <select value={barra} onChange={(e) => setBarra(Number(e.target.value))} style={styles.novoInputBox}>
+              {BARRAS_PADRAO.map((b) => (
+                <option key={b.nome} value={b.peso}>{b.nome}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+        {cargaAlvo && Number(cargaAlvo) > 0 ? (
+          porLado.length > 0 ? (
+            <div style={styles.cargaSeriesBox}>
+              <div style={styles.cargaSeriesTitulo}>Anilhas de cada lado</div>
+              <div style={{ fontFamily: monoFont, fontSize: 20, fontWeight: 700, color: INK, margin: "6px 0" }}>
+                {porLado.map((a) => `${a}kg`).join(" + ")}
+              </div>
+              <div style={{ fontSize: 12, opacity: 0.75 }}>
+                Total montado: {totalMontado}kg{sobra > 0 ? ` (sobra ${sobra}kg que não dá pra bater exato com essas anilhas)` : ""}
+              </div>
+            </div>
+          ) : (
+            <div style={{ fontSize: 13, opacity: 0.7 }}>Essa carga é igual ou menor que o peso da barra — sem anilhas necessárias.</div>
+          )
+        ) : (
+          <div style={{ fontSize: 13, opacity: 0.7 }}>Preencha a carga total pra ver as anilhas.</div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function MarcaCompartilhamento({ foto }) {
   if (!foto) return <MassiLogoMark />;
   return (
@@ -2012,7 +2171,47 @@ function calcularCaloriasTreino(diaEntry) {
 }
 
 function toExercicio(base) {
-  return { id: uid(), ...base, maquina: base.maquinas[0], descanso: DESCANSO_PADRAO, concluido: false, carga: "", cargas: Array(base.sets || 1).fill("") };
+  return { id: uid(), ...base, maquina: base.maquinas[0], descanso: DESCANSO_PADRAO, concluido: false, carga: "", cargas: Array(base.sets || 1).fill(""), rirs: Array(base.sets || 1).fill(""), superset: false, dropset: false, personalizado: false };
+}
+
+const FRASES_MOTIVACIONAIS = [
+  "Cada série te deixa mais perto do seu objetivo.",
+  "Ninguém falou que seria fácil — só que ia valer a pena.",
+  "Consistência vence intensidade. Continue voltando.",
+  "O treino de hoje é o resultado de amanhã.",
+  "Você já venceu a parte mais difícil: começar.",
+  "Dor de hoje, força de amanhã.",
+  "Progresso é progresso, não importa o tamanho.",
+  "Foco no processo — o resultado é consequência.",
+  "Respeita seu corpo, mas não subestima ele.",
+  "Mais um treino, mais um passo.",
+];
+
+// Fórmula de Epley pra estimar carga máxima (1RM) a partir de uma carga e repetições feitas
+function calcular1RM(cargaKg, reps) {
+  const c = Number(cargaKg);
+  const r = Number(reps);
+  if (!c || !r || r <= 0) return null;
+  if (r === 1) return Math.round(c);
+  return Math.round(c * (1 + r / 30));
+}
+
+// Calculadora de anilhas: monta a combinação de anilhas (por lado) mais próxima do peso alvo,
+// descontando o peso da barra
+function calcularAnilhas(pesoAlvoKg, pesoBarraKg) {
+  const alvo = Number(pesoAlvoKg);
+  const barra = Number(pesoBarraKg) || 0;
+  if (!alvo || alvo <= barra) return { porLado: [], totalPorLado: 0, totalMontado: barra, sobra: 0 };
+  let restante = (alvo - barra) / 2;
+  const porLado = [];
+  for (const anilha of ANILHAS_DISPONIVEIS) {
+    while (restante + 1e-9 >= anilha) {
+      porLado.push(anilha);
+      restante -= anilha;
+    }
+  }
+  const totalPorLado = porLado.reduce((a, b) => a + b, 0);
+  return { porLado, totalPorLado, totalMontado: barra + totalPorLado * 2, sobra: Math.round(restante * 100) / 100 };
 }
 
 function makeDayEntry(dia, foco, nivel) {
@@ -2522,6 +2721,13 @@ function AppMassiPro({ onSolicitarRemount }) {
   const [recordes, setRecordes] = useState({}); // recorde pessoal (maior carga já registrada) por exercício
   const [novoRecordeAviso, setNovoRecordeAviso] = useState(null); // texto do aviso de novo recorde, some sozinho
   const [avisoSaltoCarga, setAvisoSaltoCarga] = useState(null); // aviso de carga subindo rápido demais, some sozinho
+  const [rirHistorico, setRirHistorico] = useState({}); // { "Supino reto": [{data, valor}, ...] } — últimos RIR registrados por exercício
+  const [notasExercicio, setNotasExercicio] = useState({}); // { "Supino reto": "texto da anotação" }
+  const [exercicioDesde, setExercicioDesde] = useState({}); // { "Segunda::Supino reto": "2026-01-01" } — desde quando esse exercício está nessa posição
+  const [avisosExercicioParado, setAvisosExercicioParado] = useState({}); // { chave: "data do último aviso" } — evita repetir toda hora
+  const [avisoExercicioParado, setAvisoExercicioParado] = useState(null); // toast atual, some sozinho
+  const [avisoOvertreino, setAvisoOvertreino] = useState(null); // aviso de RIR 0 repetido, some sozinho
+  const [avisoAumentarCarga, setAvisoAumentarCarga] = useState(null); // aviso de RIR sempre alto, some sozinho
   const [cargaHistorico, setCargaHistorico] = useState({}); // { "Supino reto": [{data, valor}, ...] }
   const [sugestaoTroca, setSugestaoTroca] = useState(null); // { dia, nomeAtual, nomeAlternativo } — sugestão após registrar dor
   const [deloadRespostaSemana, setDeloadRespostaSemana] = useState(null); // semana em que a pessoa já aplicou ou dispensou a sugestão de deload
@@ -2569,10 +2775,15 @@ function AppMassiPro({ onSolicitarRemount }) {
   const tourDescansoRef = useRef(null);
   const tourTrocarTreinoRef = useRef(null);
   const tourSalvarBtnRef = useRef(null);
+  const tourCargaSeriesRef = useRef(null);
+  const tourCalcBtnsRef = useRef(null);
+  const tourSupersetRef = useRef(null);
+  const tourPersonalizadoRef = useRef(null);
+  const tourCsvRef = useRef(null);
   const [tourAtivo, setTourAtivo] = useState(null); // { aba: "rotina"|"inicio"|"cross", passo: 0 } ou null
   // Cache local de quais tours já foram vistos nesta instalação. Evita reconsultar
   // o storage a cada troca de aba (fonte do bug de o tour reaparecer ao voltar numa aba).
-  const [toursVistos, setToursVistos] = useState({ rotina: undefined, inicio: undefined, cross: undefined });
+  const [toursVistos, setToursVistos] = useState({ rotina: undefined, inicio: undefined, cross: undefined, novidades: undefined });
   const toursDef = {
     rotina: [
       { ref: tourMaquinaRef, texto: "Aqui você escolhe o equipamento do exercício — halteres, barra ou máquina." },
@@ -2591,6 +2802,13 @@ function AppMassiPro({ onSolicitarRemount }) {
       { ref: tourCrossCategoriaRef, texto: "Aqui você navega os WODs por categoria — benchmarks famosos, por duração, por nível e mais." },
       { ref: tourCrossGeradorRef, texto: "Sem ideia do que treinar? Toque aqui pra gerar um WOD novo na hora." },
       { ref: tourCrossAtalhosRef, texto: "Biblioteca (exercícios com vídeo), Desafios (progresso) e Desempenho (seu histórico) ficam aqui." },
+    ],
+    novidades: [
+      { ref: tourCargaSeriesRef, texto: "Novidade: aqui aparece a carga que você usou da última vez, e agora dá pra marcar o RIR de cada série (quantas repetições ainda sobrariam no tanque)." },
+      { ref: tourCalcBtnsRef, texto: "Toque em \"1RM\" pra estimar sua carga máxima nesse exercício, ou em \"Anilhas\" pra saber quais anilhas colocar em cada lado da barra." },
+      { ref: tourSupersetRef, texto: "Marque \"Superset\" quando esse exercício for feito direto com o próximo, sem descanso entre eles." },
+      { ref: tourPersonalizadoRef, texto: "Não achou seu exercício na lista? Toque aqui pra cadastrar um exercício personalizado nesse dia." },
+      { ref: tourCsvRef, texto: "E agora você também pode exportar sua rotina inteira em CSV, pra abrir numa planilha." },
     ],
   };
   const proximoPassoTour = () => {
@@ -2620,7 +2838,9 @@ function AppMassiPro({ onSolicitarRemount }) {
   // Se trocar de aba antes de terminar o tour, fecha o tour da aba anterior
   // (sem marcar como visto) em vez de deixá-lo "vazando" pra tela nova.
   useEffect(() => {
-    if (tourAtivo && tourAtivo.aba !== activeTab) {
+    if (!tourAtivo) return;
+    const abaEquivalente = tourAtivo.aba === "novidades" ? "rotina" : tourAtivo.aba;
+    if (abaEquivalente !== activeTab) {
       setTourAtivo(null);
     }
   }, [activeTab]);
@@ -2646,6 +2866,27 @@ function AppMassiPro({ onSolicitarRemount }) {
     }
     return () => {
       cancelado = true;
+    };
+  }, [activeTab, loaded, toursVistos, onboardingPendente]);
+  // Tour das novidades (1RM, anilhas, superset, RIR, carga anterior, exercício
+  // personalizado, CSV): roda separado do tour antigo da Rotina, pra aparecer
+  // também pra quem já tinha visto o tour antigo antes dessas funções existirem.
+  useEffect(() => {
+    if (tourAtivo) return;
+    if (onboardingPendente) return;
+    if (activeTab !== "rotina") return;
+    if (!loaded) return;
+    if (toursVistos.rotina !== true) return; // deixa o tour antigo (se pendente) terminar primeiro
+    if (toursVistos.novidades !== false) return; // ainda não carregou, ou já visto
+    const primeiroDia = rotina.find((d) => diasSelecionados.includes(d.dia));
+    if (!primeiroDia || !primeiroDia.exercicios || primeiroDia.exercicios.length === 0) return;
+    let cancelado = false;
+    const timeoutId = setTimeout(() => {
+      if (!cancelado) setTourAtivo({ aba: "novidades", passo: 0 });
+    }, 600);
+    return () => {
+      cancelado = true;
+      clearTimeout(timeoutId);
     };
   }, [activeTab, loaded, toursVistos, onboardingPendente]);
   useEffect(() => {
@@ -2760,6 +3001,14 @@ function AppMassiPro({ onSolicitarRemount }) {
       try {
         const cargaHistRes = await window.storage.get("carga-historico");
         if (cargaHistRes && cargaHistRes.value) setCargaHistorico(JSON.parse(cargaHistRes.value));
+        const rirHistRes = await window.storage.get("rir-historico");
+        if (rirHistRes && rirHistRes.value) setRirHistorico(JSON.parse(rirHistRes.value));
+        const notasRes = await window.storage.get("notas-exercicio");
+        if (notasRes && notasRes.value) setNotasExercicio(JSON.parse(notasRes.value));
+        const exDesdeRes = await window.storage.get("exercicio-desde");
+        if (exDesdeRes && exDesdeRes.value) setExercicioDesde(JSON.parse(exDesdeRes.value));
+        const avisosExParadoRes = await window.storage.get("avisos-exercicio-parado");
+        if (avisosExParadoRes && avisosExParadoRes.value) setAvisosExercicioParado(JSON.parse(avisosExParadoRes.value));
       } catch (e) {
         // sem histórico de carga salvo ainda
       }
@@ -2835,7 +3084,7 @@ function AppMassiPro({ onSolicitarRemount }) {
         // segue com os padrões
       }
       const vistosCarregados = {};
-      for (const aba of ["rotina", "inicio", "cross"]) {
+      for (const aba of ["rotina", "inicio", "cross", "novidades"]) {
         try {
           const res = await window.storage.get(`tour-${aba}-visto`);
           vistosCarregados[aba] = !!(res && res.value === "1");
@@ -3842,6 +4091,115 @@ function AppMassiPro({ onSolicitarRemount }) {
     });
   };
 
+  // Guarda o RIR registrado e, com base nos últimos 3 valores desse exercício,
+  // avisa se tá treinando sempre no limite (RIR 0) ou sempre folgado (RIR alto)
+  const registrarRirHistorico = (nomeExercicio, valorRir) => {
+    if (valorRir === "" || valorRir === null || valorRir === undefined) return;
+    const numero = Number(valorRir);
+    if (isNaN(numero)) return;
+    const agora = new Date().toISOString();
+    setRirHistorico((prev) => {
+      const lista = prev[nomeExercicio] || [];
+      const nova = [...lista, { data: agora, valor: numero }].slice(-20); // guarda só os últimos 20 registros
+      const ultimos3 = nova.slice(-3);
+      if (ultimos3.length === 3) {
+        if (ultimos3.every((r) => r.valor === 0)) {
+          setAvisoOvertreino(`😮‍💨 ${nomeExercicio}: RIR 0 nas últimas 3 séries registradas. Treinar sempre na falha aumenta o risco de lesão e atrapalha a recuperação — considere folgar um pouco a carga.`);
+        } else if (ultimos3.every((r) => r.valor >= 4)) {
+          setAvisoAumentarCarga(`🔺 ${nomeExercicio}: RIR alto (4+) nas últimas 3 séries. Pode ser hora de aumentar a carga.`);
+        }
+      }
+      return { ...prev, [nomeExercicio]: nova };
+    });
+  };
+
+  useEffect(() => {
+    salvarComRetentativa("rir-historico", JSON.stringify(rirHistorico));
+  }, [rirHistorico]);
+
+  const editarNotaExercicio = (nomeExercicio, texto) => {
+    setNotasExercicio((prev) => ({ ...prev, [nomeExercicio]: texto }));
+  };
+
+  useEffect(() => {
+    salvarComRetentativa("notas-exercicio", JSON.stringify(notasExercicio));
+  }, [notasExercicio]);
+
+  // Rastreia desde quando cada exercício está naquela posição do dia. Se o
+  // exercício mudar (trocar/remover), a chave some e o contador reinicia
+  // quando (se) ele voltar.
+  useEffect(() => {
+    if (!loaded) return;
+    const hoje = new Date().toISOString().slice(0, 10);
+    const chavesAtuais = new Set();
+    rotina.forEach((d) => {
+      if (!d.exercicios) return;
+      d.exercicios.forEach((e) => chavesAtuais.add(`${d.dia}::${e.name}`));
+    });
+    setExercicioDesde((prev) => {
+      let mudou = false;
+      const novo = {};
+      chavesAtuais.forEach((chave) => {
+        if (prev[chave]) {
+          novo[chave] = prev[chave];
+        } else {
+          novo[chave] = hoje;
+          mudou = true;
+        }
+      });
+      if (Object.keys(prev).length !== Object.keys(novo).length) mudou = true;
+      return mudou ? novo : prev;
+    });
+  }, [rotina, loaded]);
+
+  useEffect(() => {
+    salvarComRetentativa("exercicio-desde", JSON.stringify(exercicioDesde));
+  }, [exercicioDesde]);
+
+  // Verifica, uma vez por carregamento, se algum exercício está há 8+ semanas
+  // na mesma posição sem trocar, e avisa (no máximo 1x por semana por exercício)
+  useEffect(() => {
+    if (!loaded) return;
+    if (Object.keys(exercicioDesde).length === 0) return;
+    const hoje = new Date();
+    const hojeStr = hoje.toISOString().slice(0, 10);
+    for (const [chave, dataInicio] of Object.entries(exercicioDesde)) {
+      const dias = Math.floor((hoje - new Date(dataInicio + "T00:00:00")) / 86400000);
+      if (dias < 56) continue;
+      const ultimoAviso = avisosExercicioParado[chave];
+      if (ultimoAviso) {
+        const diasDesdeAviso = Math.floor((hoje - new Date(ultimoAviso + "T00:00:00")) / 86400000);
+        if (diasDesdeAviso < 7) continue;
+      }
+      const nomeExercicio = chave.split("::")[1];
+      setAvisoExercicioParado(`🔁 Você treina ${nomeExercicio} há mais de 8 semanas sem trocar. Considere variar pra evitar platô.`);
+      setAvisosExercicioParado((prev) => ({ ...prev, [chave]: hojeStr }));
+      break; // um aviso por vez
+    }
+  }, [exercicioDesde, loaded]);
+
+  useEffect(() => {
+    salvarComRetentativa("avisos-exercicio-parado", JSON.stringify(avisosExercicioParado));
+  }, [avisosExercicioParado]);
+
+  useEffect(() => {
+    if (!avisoExercicioParado) return;
+    const t = setTimeout(() => setAvisoExercicioParado(null), 7000);
+    return () => clearTimeout(t);
+  }, [avisoExercicioParado]);
+
+  useEffect(() => {
+    if (!avisoOvertreino) return;
+    const t = setTimeout(() => setAvisoOvertreino(null), 7000);
+    return () => clearTimeout(t);
+  }, [avisoOvertreino]);
+
+  useEffect(() => {
+    if (!avisoAumentarCarga) return;
+    const t = setTimeout(() => setAvisoAumentarCarga(null), 6000);
+    return () => clearTimeout(t);
+  }, [avisoAumentarCarga]);
+
   useEffect(() => {
     salvarComRetentativa("carga-historico", JSON.stringify(cargaHistorico));
   }, [cargaHistorico]);
@@ -3896,6 +4254,67 @@ function AppMassiPro({ onSolicitarRemount }) {
           : d
       )
     );
+  };
+
+  const editarRIRSerie = (dia, id, indiceSerie, valor) => {
+    setRotina((prev) =>
+      prev.map((d) =>
+        d.dia === dia
+          ? {
+              ...d,
+              exercicios: d.exercicios.map((e) => {
+                if (e.id !== id) return e;
+                const totalSets = e.sets || 1;
+                const rirsAtual = e.rirs && e.rirs.length === totalSets ? e.rirs : Array.from({ length: totalSets }, (_, i) => (e.rirs && e.rirs[i]) || "");
+                const novosRirs = [...rirsAtual];
+                novosRirs[indiceSerie] = valor;
+                registrarRirHistorico(e.name, valor);
+                return { ...e, rirs: novosRirs };
+              }),
+            }
+          : d
+      )
+    );
+  };
+
+  // Exercício personalizado: adiciona um exercício cadastrado pela própria pessoa (fora da LIBRARY)
+  const addExercicioPersonalizado = (dia, nome, maquina) => {
+    if (!nome || !nome.trim()) return;
+    const base = { name: nome.trim(), sets: 3, reps: "10-12", maquinas: [maquina && maquina.trim() ? maquina.trim() : "Personalizado"] };
+    setRotina((prev) =>
+      prev.map((d) => (d.dia === dia ? { ...d, exercicios: [...d.exercicios, { ...toExercicio(base), personalizado: true }] } : d))
+    );
+  };
+
+  // Exporta a rotina inteira em CSV (dia, foco, exercício, máquina, séries, reps, cargas, RIR, descanso)
+  const exportarRotinaCSV = () => {
+    const linhas = [["Dia", "Foco", "Exercício", "Equipamento", "Séries", "Repetições", "Cargas", "RIR", "Descanso"]];
+    rotina.forEach((d) => {
+      if (d.foco === "Descanso" || !d.exercicios) return;
+      d.exercicios.forEach((ex) => {
+        linhas.push([
+          d.dia,
+          d.foco,
+          ex.name,
+          ex.maquina || "",
+          String(ex.sets || ""),
+          ex.reps || "",
+          (ex.cargas || []).join(" / "),
+          (ex.rirs || []).join(" / "),
+          ex.descanso || "",
+        ]);
+      });
+    });
+    const csv = linhas.map((l) => l.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(",")).join("\n");
+    const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "minha-rotina-massi-pro.csv";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   };
 
   const editarCardio = (dia, campo, valor) => {
@@ -4139,6 +4558,24 @@ function AppMassiPro({ onSolicitarRemount }) {
         </div>
       )}
 
+      {avisoOvertreino && (
+        <div style={styles.avisoSaltoToast} onClick={() => setAvisoOvertreino(null)}>
+          {avisoOvertreino}
+        </div>
+      )}
+
+      {avisoAumentarCarga && (
+        <div style={styles.recordeToast} onClick={() => setAvisoAumentarCarga(null)}>
+          {avisoAumentarCarga}
+        </div>
+      )}
+
+      {avisoExercicioParado && (
+        <div style={styles.avisoSaltoToast} onClick={() => setAvisoExercicioParado(null)}>
+          {avisoExercicioParado}
+        </div>
+      )}
+
       {mensagemSucesso && (
         <div
           style={styles.toastOverlay}
@@ -4343,6 +4780,14 @@ function AppMassiPro({ onSolicitarRemount }) {
         <ModoGuiadoOverlay
           entry={guiadoAtivo}
           onFechar={() => setGuiadoAtivo(null)}
+          onTreinoFinalizado={() => {
+            // Nesse ponto todo o treino guiado já foi percorrido — marca tudo como
+            // concluído (evita perder o último exercício por causa da ordem de
+            // atualização de estado do React entre esse fechamento e o anterior).
+            const diaFinal = { ...guiadoAtivo, exercicios: guiadoAtivo.exercicios.map((e) => ({ ...e, concluido: true })) };
+            setGuiadoAtivo(null);
+            setFeedbackPendente(diaFinal);
+          }}
           onAbrirExercicio={(ex) => setExercicioAberto(ex)}
           onConcluirExercicio={(exId) => {
             editarExercicio(guiadoAtivo.dia, exId, "concluido", true);
@@ -4576,6 +5021,11 @@ function AppMassiPro({ onSolicitarRemount }) {
                   onRemoveExercicio={(id) => removerExercicio(d.dia, id)}
                   onEditExercicio={(id, campo, valor) => editarExercicio(d.dia, id, campo, valor)}
                   onEditCargaSerie={(id, indiceSerie, valor) => editarCargaSerie(d.dia, id, indiceSerie, valor)}
+                  onEditRirSerie={(id, indiceSerie, valor) => editarRIRSerie(d.dia, id, indiceSerie, valor)}
+                  onAddExercicioPersonalizado={(nome, maquina) => addExercicioPersonalizado(d.dia, nome, maquina)}
+                  cargaHistorico={cargaHistorico}
+                  notasExercicio={notasExercicio}
+                  onEditNotaExercicio={editarNotaExercicio}
                   onEditCardio={(campo, valor) => editarCardio(d.dia, campo, valor)}
                   onAdicionarCardioFinal={() => adicionarCardioFinalDia(d.dia)}
                   onRemoverCardioFinal={() => removerCardioFinalDia(d.dia)}
@@ -4592,20 +5042,23 @@ function AppMassiPro({ onSolicitarRemount }) {
                   dores={dores}
                   recordes={recordes}
                   restricoesFisicas={restricoesFisicas}
-                  refsTour={i === 0 ? { maquina: tourMaquinaRef, video: tourVideoRef, guiado: tourGuiadoBtnRef, descanso: tourDescansoRef } : null}
+                  refsTour={i === 0 ? { maquina: tourMaquinaRef, video: tourVideoRef, guiado: tourGuiadoBtnRef, descanso: tourDescansoRef, cargaSeries: tourCargaSeriesRef, calcBtns: tourCalcBtnsRef, superset: tourSupersetRef, personalizado: tourPersonalizadoRef } : null}
                 />
                 </div>
               ))}
           </div>
 
-          <div style={{ display: "flex", gap: 8, marginBottom: 14 }}>
-            <button style={styles.modelosBtnCompacto} onClick={() => setShowModelos(true)} ref={tourTrocarTreinoRef}>
+          <div style={{ display: "flex", gap: 8, marginBottom: 14, flexWrap: "wrap" }}>
+            <button style={{ ...styles.modelosBtnCompacto, flex: "1 1 45%", minWidth: 0 }} onClick={() => setShowModelos(true)} ref={tourTrocarTreinoRef}>
               {t("rotinaTrocarModelo")}
             </button>
-            <button style={styles.exportarRotinaBtnCompacto} onClick={exportarRotinaImagem}>
+            <button style={{ ...styles.exportarRotinaBtnCompacto, flex: "1 1 45%", minWidth: 0 }} onClick={exportarRotinaImagem}>
               {t("rotinaExportarImagem")}
             </button>
-            <button style={styles.exportarRotinaBtnCompacto} onClick={exportarRotinaPDF}>
+            <button style={{ ...styles.exportarRotinaBtnCompacto, flex: "1 1 45%", minWidth: 0 }} onClick={exportarRotinaCSV} ref={tourCsvRef}>
+              📊 CSV
+            </button>
+            <button style={{ ...styles.exportarRotinaBtnCompacto, flex: "1 1 45%", minWidth: 0 }} onClick={exportarRotinaPDF}>
               📄 PDF
             </button>
           </div>
@@ -5628,11 +6081,12 @@ const CHAVES_BACKUP = [
   "cross-desafios-progresso",
 ];
 
-function ModoGuiadoOverlay({ entry, onFechar, onAbrirExercicio, onEditCarga, onConcluirExercicio }) {
+function ModoGuiadoOverlay({ entry, onFechar, onAbrirExercicio, onEditCarga, onConcluirExercicio, onTreinoFinalizado }) {
   const [indice, setIndice] = useState(0);
   const [serieAtual, setSerieAtual] = useState(1);
   const [estado, setEstado] = useState("serie"); // "serie" | "descanso" | "treinoConcluido"
   const [restanteSeg, setRestanteSeg] = useState(0);
+  const [frase] = useState(() => FRASES_MOTIVACIONAIS[Math.floor(Math.random() * FRASES_MOTIVACIONAIS.length)]);
 
   const exercicios = entry.exercicios;
   const total = exercicios.length;
@@ -5689,6 +6143,17 @@ function ModoGuiadoOverlay({ entry, onFechar, onAbrirExercicio, onEditCarga, onC
   const concluirSerie = () => {
     if (serieAtual >= totalSets) {
       onConcluirExercicio(ex.id);
+      if (indice >= total - 1) {
+        onTreinoFinalizado(); // última série do último exercício: sem descanso, vai direto pro resumo
+        return;
+      }
+      if (ex.superset) {
+        setIndice((i) => i + 1); // superset: sem descanso, direto pro próximo exercício
+        return;
+      }
+    } else if (ex.dropset) {
+      setSerieAtual((s) => s + 1); // dropset: sem descanso entre as séries deste exercício
+      return;
     }
     setEstado("descanso");
     setRestanteSeg(descansoParaSegundos(ex.descanso));
@@ -5707,6 +6172,8 @@ function ModoGuiadoOverlay({ entry, onFechar, onAbrirExercicio, onEditCarga, onC
         <div style={{ ...styles.guiadoBarraPreenchida, width: `${((indice + 1) / total) * 100}%` }} />
       </div>
 
+      <div style={{ ...styles.guiadoMaquina, textAlign: "center", fontStyle: "italic", padding: "6px 20px 0" }}>💬 {frase}</div>
+
       <div style={styles.guiadoCorpo}>
         <div style={styles.guiadoNome}>{ex.name}</div>
         <div style={styles.guiadoMaquina}>{ex.maquina}</div>
@@ -5716,6 +6183,12 @@ function ModoGuiadoOverlay({ entry, onFechar, onAbrirExercicio, onEditCarga, onC
             <div style={styles.guiadoSeriesReps}>
               Série {serieAtual} de {totalSets} · {ex.reps}
             </div>
+            {ex.dropset && serieAtual < totalSets && (
+              <div style={{ ...styles.guiadoMaquina, color: "#F6C453" }}>⬇️ Dropset — sem descanso até a próxima série</div>
+            )}
+            {ex.superset && serieAtual >= totalSets && indice < total - 1 && (
+              <div style={{ ...styles.guiadoMaquina, color: "#F6C453" }}>🔗 Superset — sem descanso até o próximo exercício</div>
+            )}
             {(() => {
               const cargasAtual = ex.cargas && ex.cargas.length === totalSets ? ex.cargas : Array.from({ length: totalSets }, (_, i) => (ex.cargas && ex.cargas[i]) || ex.carga || "");
               return (
@@ -7906,13 +8379,15 @@ function CronometroRapidoRotina({ onIniciarDescanso }) {
   );
 }
 
-function DayCard({ entry, onFoco, onPeriodo, onAddExercicio, onRemoveExercicio, onEditExercicio, onEditCargaSerie, onEditCardio, onAdicionarCardioFinal, onRemoverCardioFinal, onAbrirExercicio, onIniciarDescanso, onTrocarExercicio, onConcluirTreino, onRegistrarDor, onIniciarGuiado, progressao, dores, recordes, restricoesFisicas, refsTour }) {
+function DayCard({ entry, onFoco, onPeriodo, onAddExercicio, onRemoveExercicio, onEditExercicio, onEditCargaSerie, onEditRirSerie, onAddExercicioPersonalizado, cargaHistorico, notasExercicio, onEditNotaExercicio, onEditCardio, onAdicionarCardioFinal, onRemoverCardioFinal, onAbrirExercicio, onIniciarDescanso, onTrocarExercicio, onConcluirTreino, onRegistrarDor, onIniciarGuiado, progressao, dores, recordes, restricoesFisicas, refsTour }) {
   const { dia, foco, cardio, exercicios, periodo } = entry;
   const isDescanso = foco === "Descanso";
   const isCardio = foco === "Cardio";
   const podeAdicionar = !isDescanso && !isCardio && (LIBRARY[foco] || []).length > exercicios.length;
+  const [modalCalc, setModalCalc] = useState(null); // { tipo: "1rm"|"anilhas", cargaInicial, repsInicial }
 
   return (
+    <>
     <div style={styles.dayCard}>
       <div style={styles.dayCardBody}>
         <div style={styles.dayCardTop}>
@@ -8094,6 +8569,23 @@ function DayCard({ entry, onFoco, onPeriodo, onAddExercicio, onRemoveExercicio, 
                     🔄 Trocar
                   </button>
                 </div>
+                <div style={{ marginBottom: 6, display: "flex", gap: 6, flexWrap: "wrap" }}>
+                  <button
+                    style={{ ...styles.trocarBtn, opacity: ex.superset ? 1 : 0.55 }}
+                    onClick={() => onEditExercicio(ex.id, "superset", !ex.superset)}
+                    title="Marcar como superset com o próximo exercício (sem descanso entre eles)"
+                    ref={idx === 0 && refsTour ? refsTour.superset : undefined}
+                  >
+                    🔗 {ex.superset ? "Superset ✓" : "Superset"}
+                  </button>
+                  <button
+                    style={{ ...styles.trocarBtn, opacity: ex.dropset ? 1 : 0.55 }}
+                    onClick={() => onEditExercicio(ex.id, "dropset", !ex.dropset)}
+                    title="Marcar como dropset (reduzir a carga sem descanso entre as séries)"
+                  >
+                    ⬇️ {ex.dropset ? "Dropset ✓" : "Dropset"}
+                  </button>
+                </div>
 
                 {(() => {
                   const thumb = getThumbnailExercicio(ex);
@@ -8159,7 +8651,7 @@ function DayCard({ entry, onFoco, onPeriodo, onAddExercicio, onRemoveExercicio, 
                   </div>
                 </div>
 
-                <div style={styles.cargaSeriesBox}>
+                <div style={styles.cargaSeriesBox} ref={idx === 0 && refsTour ? refsTour.cargaSeries : undefined}>
                   <div style={styles.cargaSeriesTitulo}>
                     Carga por série
                     {recordes && recordes[ex.name] && (
@@ -8169,9 +8661,20 @@ function DayCard({ entry, onFoco, onPeriodo, onAddExercicio, onRemoveExercicio, 
                       <span style={styles.progressaoTag}>🔺 Hora de aumentar a carga</span>
                     )}
                   </div>
+                  {(() => {
+                    const historicoEx = (cargaHistorico && cargaHistorico[ex.name]) || [];
+                    if (historicoEx.length === 0) return null;
+                    const ultimo = historicoEx[historicoEx.length - 1];
+                    return (
+                      <div style={{ fontSize: 12, opacity: 0.75, marginBottom: 6 }}>
+                        Última vez: {ultimo.valor}kg ({new Date(ultimo.data + "T00:00:00").toLocaleDateString("pt-BR")})
+                      </div>
+                    );
+                  })()}
                   <div style={styles.cargaSeriesGrid}>
                     {Array.from({ length: ex.sets || 1 }, (_, i) => {
                       const cargasAtual = ex.cargas && ex.cargas.length === (ex.sets || 1) ? ex.cargas : Array.from({ length: ex.sets || 1 }, (_, j) => (ex.cargas && ex.cargas[j]) || ex.carga || "");
+                      const rirsAtual = ex.rirs && ex.rirs.length === (ex.sets || 1) ? ex.rirs : Array.from({ length: ex.sets || 1 }, () => "");
                       return (
                         <div key={i} style={styles.cargaSerieItem}>
                           <span style={styles.cargaSerieNum}>Série {i + 1}</span>
@@ -8182,18 +8685,76 @@ function DayCard({ entry, onFoco, onPeriodo, onAddExercicio, onRemoveExercicio, 
                             onChange={(e) => onEditCargaSerie(ex.id, i, e.target.value)}
                             style={styles.novoInputBox}
                           />
+                          <select
+                            value={rirsAtual[i] || ""}
+                            onChange={(e) => onEditRirSerie(ex.id, i, e.target.value)}
+                            style={{ ...styles.selectSmall, marginTop: 4 }}
+                            title="RIR — repetições que ainda sobrariam no tanque"
+                          >
+                            <option value="">RIR</option>
+                            {[0, 1, 2, 3, 4, 5].map((n) => (
+                              <option key={n} value={n}>RIR {n}</option>
+                            ))}
+                          </select>
                         </div>
                       );
                     })}
                   </div>
+                  <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 8 }} ref={idx === 0 && refsTour ? refsTour.calcBtns : undefined}>
+                    <button
+                      style={styles.trocarBtn}
+                      onClick={() => {
+                        const cargaBase = (ex.cargas && ex.cargas[0]) || ex.carga || "";
+                        const numero = extrairNumeroCarga(cargaBase);
+                        const repsBase = parseInt(ex.reps, 10) || 10;
+                        setModalCalc({ tipo: "1rm", cargaInicial: numero || "", repsInicial: repsBase });
+                      }}
+                    >
+                      🧮 1RM
+                    </button>
+                    <button
+                      style={styles.trocarBtn}
+                      onClick={() => {
+                        const cargaBase = (ex.cargas && ex.cargas[0]) || ex.carga || "";
+                        const numero = extrairNumeroCarga(cargaBase);
+                        setModalCalc({ tipo: "anilhas", cargaInicial: numero || "" });
+                      }}
+                    >
+                      🏋️ Anilhas
+                    </button>
+                    <button
+                      style={styles.trocarBtn}
+                      onClick={() => {
+                        const cargaBase = (ex.cargas && ex.cargas[0]) || ex.carga || "";
+                        const numero = extrairNumeroCarga(cargaBase);
+                        const repsBase = parseInt(ex.reps, 10) || 10;
+                        setModalCalc({ tipo: "aquecimento", cargaInicial: numero || "", repsInicial: repsBase });
+                      }}
+                    >
+                      🔥 Aquecimento
+                    </button>
+                  </div>
                   <div style={styles.cargaSeriesDica}>
                     Diferente em cada série? Ajuste aqui — no treino guiado, a carga certa aparece automaticamente quando você mudar de série.
                   </div>
+                  <textarea
+                    value={(notasExercicio && notasExercicio[ex.name]) || ""}
+                    onChange={(e) => onEditNotaExercicio(ex.name, e.target.value)}
+                    placeholder="📝 Anotação sobre esse exercício (pegada, ajuste do banco, dor, etc.)"
+                    style={styles.notaExercicioBox}
+                    rows={2}
+                  />
                 </div>
 
                 <div style={styles.novoRodapeRow}>
                   <div style={styles.novoCampoBloco} ref={idx === 0 && refsTour ? refsTour.descanso : undefined}>
                     <span style={styles.novoCampoLabel}>DESCANSO</span>
+                    {ex.superset && (
+                      <div style={{ fontSize: 11, opacity: 0.8, marginBottom: 4 }}>🔗 Superset — sem descanso pro próximo exercício</div>
+                    )}
+                    {ex.dropset && (
+                      <div style={{ fontSize: 11, opacity: 0.8, marginBottom: 4 }}>⬇️ Dropset — sem descanso entre as séries</div>
+                    )}
                     <div style={styles.novoDescansoBox}>
                       <select
                         value={ex.descanso}
@@ -8234,6 +8795,18 @@ function DayCard({ entry, onFoco, onPeriodo, onAddExercicio, onRemoveExercicio, 
                 + adicionar exercício de {foco.toLowerCase()}
               </button>
             )}
+            <button
+              onClick={() => {
+                const nome = window.prompt("Nome do exercício personalizado:");
+                if (!nome || !nome.trim()) return;
+                const maquina = window.prompt("Equipamento usado (opcional):", "Personalizado");
+                onAddExercicioPersonalizado(nome, maquina);
+              }}
+              style={{ ...styles.addBtn, marginTop: 8, opacity: 0.85 }}
+              ref={refsTour ? refsTour.personalizado : undefined}
+            >
+              + exercício personalizado
+            </button>
           </div>
         )}
 
@@ -8315,6 +8888,16 @@ function DayCard({ entry, onFoco, onPeriodo, onAddExercicio, onRemoveExercicio, 
         )}
       </div>
     </div>
+    {modalCalc && modalCalc.tipo === "1rm" && (
+      <Calc1RMModal cargaInicial={modalCalc.cargaInicial} repsInicial={modalCalc.repsInicial} onClose={() => setModalCalc(null)} />
+    )}
+    {modalCalc && modalCalc.tipo === "anilhas" && (
+      <CalcAnilhasModal cargaInicial={modalCalc.cargaInicial} onClose={() => setModalCalc(null)} />
+    )}
+    {modalCalc && modalCalc.tipo === "aquecimento" && (
+      <AquecimentoModal cargaInicial={modalCalc.cargaInicial} repsInicial={modalCalc.repsInicial} onClose={() => setModalCalc(null)} />
+    )}
+    </>
   );
 }
 
@@ -9362,6 +9945,7 @@ const styles = {
     flexWrap: "wrap",
   },
   cargaSeriesGrid: { display: "flex", flexWrap: "wrap", gap: 8 },
+  notaExercicioBox: { width: "100%", boxSizing: "border-box", marginTop: 10, fontFamily: sansFont, fontSize: 13, padding: "8px 10px", borderRadius: 8, border: `1px solid ${PENCIL}`, background: PAPER, color: INK, resize: "vertical" },
   cargaSerieItem: { display: "flex", flexDirection: "column", gap: 3 },
   cargaSerieNum: { fontSize: 10.5, color: PENCIL, opacity: 0.8 },
   cargaSeriesDica: {
