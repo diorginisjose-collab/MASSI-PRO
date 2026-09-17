@@ -3000,6 +3000,7 @@ function AppMassiPro({ onSolicitarRemount }) {
   const [buscaExercicio, setBuscaExercicio] = useState("");
   const [avisoSemTreinar, setAvisoSemTreinar] = useState(null);
   const [guiadoAtivo, setGuiadoAtivo] = useState(null); // dia inteiro (entry) em modo guiado
+  const [arLivreAberto, setArLivreAberto] = useState(false); // modal do treino ao ar livre (corrida/caminhada)
   const [inicioTreinoPorDia, setInicioTreinoPorDia] = useState({}); // { "Segunda": { data: "2026-09-13", timestamp: 172839xxx } }
   const [progressao, setProgressao] = useState({}); // { [nomeExercicio]: contagem }
   const tema = "escuro"; // tema fixo — alternância claro/escuro removida a pedido do usuário
@@ -3758,6 +3759,38 @@ function AppMassiPro({ onSolicitarRemount }) {
     // Deixado comentado de propósito — decida a frequência ideal antes de ativar.
   };
 
+  // Treino ao ar livre: corrida/caminhada com cronômetro e distância manual (sem GPS).
+  // Gera um registro de histórico próprio, com calorias estimadas por tempo+intensidade.
+  const registrarTreinoArLivre = async (tipo, duracaoMin, distanciaKm) => {
+    const kcalPorMinuto = tipo === "Corrida" ? 10 : 6; // caminhada ~6, corrida ~10 kcal/min (estimativa média)
+    const calorias = Math.round(duracaoMin * kcalPorMinuto);
+    const registro = {
+      id: uid(),
+      data: new Date().toISOString().slice(0, 10),
+      dia: "Ao ar livre",
+      foco: tipo,
+      totalExercicios: 0,
+      cardio: { tipo, duracao: duracaoMin },
+      distanciaKm: distanciaKm || null,
+      arLivre: true,
+      sentimento: null,
+      calorias,
+      volumeTotal: 0,
+      duracaoMin,
+      duracaoReal: true,
+    };
+    const novoHistorico = [...historico, registro];
+    setHistorico(novoHistorico);
+    setUltimoTreinoConcluido(registro);
+    setArLivreAberto(false);
+    const salvou = await salvarComRetentativa("historico-treinos", JSON.stringify(novoHistorico));
+    setMensagemSucesso(
+      salvou
+        ? `Boa! ${tipo} de ${duracaoMin} min registrada, ~${calorias} kcal estimadas.`
+        : "Treino registrado, mas não consegui salvar agora. Tenta de novo em instantes."
+    );
+  };
+
   const encontrarAlternativa = (dia, nomeExercicio) => {
     const diaEntry = rotina.find((d) => d.dia === dia);
     if (!diaEntry) return null;
@@ -4371,6 +4404,33 @@ function AppMassiPro({ onSolicitarRemount }) {
     salvarComRetentativa("inicio-treino-por-dia", JSON.stringify(inicioTreinoPorDia));
   }, [inicioTreinoPorDia]);
 
+  // Treino relâmpago: monta um treino curto (3-4 exercícios) puxando do dia de
+  // hoje, ou do primeiro dia disponível se hoje for descanso/sem treino, e
+  // já entra direto no modo guiado.
+  const iniciarTreinoRelampago = () => {
+    const diaHoje = getDiaHojeNome();
+    let base = rotina.find((d) => d.dia === diaHoje && d.foco !== "Descanso" && d.exercicios && d.exercicios.length > 0);
+    if (!base) {
+      base = rotina.find((d) => diasSelecionados.includes(d.dia) && d.foco !== "Descanso" && d.exercicios && d.exercicios.length > 0);
+    }
+    if (!base) return;
+    const exerciciosRelampago = base.exercicios.slice(0, 4).map((ex) => ({
+      ...ex,
+      sets: Math.min(ex.sets || 3, 2),
+      cargas: (ex.cargas || []).slice(0, 2),
+      rirs: (ex.rirs || []).slice(0, 2),
+    }));
+    const diaRelampago = {
+      ...base,
+      dia: `${base.dia} (relâmpago)`,
+      relampago: true,
+      exercicios: exerciciosRelampago,
+      cardio: null,
+    };
+    marcarInicioTreino(diaRelampago.dia);
+    setGuiadoAtivo(diaRelampago);
+  };
+
   const editarCargaSerie = (dia, id, indiceSerie, valor) => {
     marcarInicioTreino(dia);
     setRotina((prev) =>
@@ -4935,6 +4995,10 @@ function AppMassiPro({ onSolicitarRemount }) {
         />
       )}
 
+      {arLivreAberto && (
+        <TreinoArLivreModal onFechar={() => setArLivreAberto(false)} onSalvar={registrarTreinoArLivre} />
+      )}
+
       {guiadoAtivo && (
         <ModoGuiadoOverlay
           entry={guiadoAtivo}
@@ -5169,6 +5233,30 @@ function AppMassiPro({ onSolicitarRemount }) {
 
           <CronometroRapidoRotina onIniciarDescanso={iniciarDescanso} />
 
+          <section style={styles.card}>
+            <div style={styles.rapidoCardRow}>
+              <div style={styles.rapidoCardTextoWrap}>
+                <div style={styles.rapidoCardTitulo}>⚡ Treino relâmpago</div>
+                <p style={styles.rapidoCardTexto}>
+                  Sem tempo hoje? Monta um treino curto (15-20 min) com os principais exercícios do seu dia e já entra guiado.
+                </p>
+              </div>
+              <button style={styles.rapidoCardBtn} onClick={iniciarTreinoRelampago}>Começar</button>
+            </div>
+          </section>
+
+          <section style={styles.card}>
+            <div style={styles.rapidoCardRow}>
+              <div style={styles.rapidoCardTextoWrap}>
+                <div style={styles.rapidoCardTitulo}>🏃 Treino ao ar livre</div>
+                <p style={styles.rapidoCardTexto}>
+                  Corrida ou caminhada com cronômetro e distância manual — sem precisar de GPS.
+                </p>
+              </div>
+              <button style={styles.rapidoCardBtn} onClick={() => setArLivreAberto(true)}>Começar</button>
+            </div>
+          </section>
+
           <div style={styles.dayList}>
             {rotina
               .filter((d) => diasSelecionados.includes(d.dia))
@@ -5341,6 +5429,59 @@ function getFraseDoDiaInicio(idioma) {
   return frases[semente % frases.length];
 }
 
+// Dica do dia: diferente da frase motivacional do topo — aqui são dicas
+// práticas (nutrição, técnica, recuperação, hidratação), rotativas por data.
+const DICAS_DO_DIA = {
+  pt: [
+    { emoji: "🍗", texto: "Priorize proteína em todas as refeições — ela ajuda na recuperação muscular e na saciedade." },
+    { emoji: "💧", texto: "A desidratação, mesmo leve, já reduz sua força e resistência. Beba água antes de sentir sede." },
+    { emoji: "🧘", texto: "Alongar depois do treino ajuda na recuperação e reduz o risco de lesão." },
+    { emoji: "😴", texto: "O músculo cresce no descanso, não no treino. Priorize 7-8h de sono." },
+    { emoji: "🎯", texto: "Foque na execução correta antes de aumentar a carga — técnica ruim gera lesão, não resultado." },
+    { emoji: "🥗", texto: "Carboidratos não são inimigos: eles são o principal combustível para treinos intensos." },
+    { emoji: "⏱️", texto: "Respeitar o tempo de descanso entre séries é tão importante quanto a série em si." },
+    { emoji: "📈", texto: "Progressão de carga não precisa ser toda semana — pequenos aumentos constantes já geram resultado." },
+    { emoji: "🫁", texto: "Controle a respiração: expire no esforço, inspire no retorno." },
+    { emoji: "🦵", texto: "Aquecer antes do treino reduz o risco de lesão e melhora o desempenho nas primeiras séries." },
+    { emoji: "🧊", texto: "Sentiu dor aguda (diferente da dor muscular normal)? Pare e avalie antes de continuar." },
+    { emoji: "🍌", texto: "Uma refeição leve com carboidrato 1-2h antes do treino ajuda no rendimento." },
+    { emoji: "🔄", texto: "Trocar de exercício de vez em quando evita platô e mantém o estímulo interessante." },
+    { emoji: "📓", texto: "Anotar suas cargas ajuda a enxergar sua evolução real ao longo das semanas." },
+    { emoji: "🚶", texto: "Nos dias de descanso, uma caminhada leve ajuda na recuperação ativa." },
+  ],
+  en: [
+    { emoji: "🍗", texto: "Prioritize protein in every meal — it helps with muscle recovery and satiety." },
+    { emoji: "💧", texto: "Even mild dehydration reduces your strength and endurance. Drink before you feel thirsty." },
+    { emoji: "🧘", texto: "Stretching after training helps recovery and lowers injury risk." },
+    { emoji: "😴", texto: "Muscle grows during rest, not during training. Aim for 7-8h of sleep." },
+    { emoji: "🎯", texto: "Focus on correct form before adding weight — bad technique causes injury, not results." },
+    { emoji: "🥗", texto: "Carbs aren't the enemy — they're your main fuel for intense training." },
+    { emoji: "⏱️", texto: "Respecting rest time between sets matters as much as the set itself." },
+    { emoji: "📈", texto: "Load progression doesn't need to happen every week — small steady increases work." },
+    { emoji: "🫁", texto: "Control your breathing: exhale on effort, inhale on the way back." },
+    { emoji: "🦵", texto: "Warming up before training lowers injury risk and improves early-set performance." },
+  ],
+  es: [
+    { emoji: "🍗", texto: "Prioriza la proteína en cada comida — ayuda en la recuperación muscular y la saciedad." },
+    { emoji: "💧", texto: "Incluso la deshidratación leve reduce tu fuerza y resistencia. Bebe agua antes de tener sed." },
+    { emoji: "🧘", texto: "Estirar después del entrenamiento ayuda en la recuperación y reduce el riesgo de lesión." },
+    { emoji: "😴", texto: "El músculo crece en el descanso, no en el entrenamiento. Prioriza 7-8h de sueño." },
+    { emoji: "🎯", texto: "Enfócate en la ejecución correcta antes de aumentar la carga." },
+    { emoji: "🥗", texto: "Los carbohidratos no son enemigos: son el combustible principal para entrenos intensos." },
+    { emoji: "⏱️", texto: "Respetar el tiempo de descanso entre series es tan importante como la serie misma." },
+    { emoji: "📈", texto: "La progresión de carga no tiene que ser cada semana — pequeños aumentos constantes funcionan." },
+    { emoji: "🫁", texto: "Controla la respiración: exhala en el esfuerzo, inhala en el retorno." },
+    { emoji: "🦵", texto: "Calentar antes del entrenamiento reduce el riesgo de lesión y mejora el rendimiento inicial." },
+  ],
+};
+
+function getDicaDoDia(idioma) {
+  const hoje = new Date();
+  const diaDoAno = Math.floor((hoje - new Date(hoje.getFullYear(), 0, 0)) / 86400000);
+  const dicas = DICAS_DO_DIA[idioma] || DICAS_DO_DIA.pt;
+  return dicas[diaDoAno % dicas.length];
+}
+
 // ---------- INÍCIO — painel principal ----------
 function InicioTab({ perfilAtivoNome, rotina, diasSelecionados, historico, recordes, onIrTreino, t, idioma, refTreinoHojeTour }) {
   const [avaliacoes, setAvaliacoes] = useState([]);
@@ -5478,6 +5619,16 @@ function InicioTab({ perfilAtivoNome, rotina, diasSelecionados, historico, recor
         </div>
       )}
 
+      {(() => {
+        const dica = getDicaDoDia(idioma);
+        return (
+          <div style={styles.inicioDicaCard}>
+            <span style={styles.inicioDicaEmoji}>{dica.emoji}</span>
+            <span style={styles.inicioDicaTexto}>{dica.texto}</span>
+          </div>
+        );
+      })()}
+
       <section style={styles.inicioHeroCard} ref={refTreinoHojeTour}>
         {hojeEhDiaDeTreino ? (
           <>
@@ -5606,6 +5757,9 @@ function EvolucaoTab({ onAplicarTreino }) {
   const [avaliacaoSalva, setAvaliacaoSalva] = useState(false);
   const [erros, setErros] = useState({});
   const [fotos, setFotos] = useState([]);
+  const [compararA, setCompararA] = useState(null);
+  const [compararB, setCompararB] = useState(null);
+  const [sliderComparar, setSliderComparar] = useState(50);
 
   const [peso, setPeso] = useState("");
   const [altura, setAltura] = useState("");
@@ -5653,6 +5807,13 @@ function EvolucaoTab({ onAplicarTreino }) {
       }
     })();
   }, []);
+
+  useEffect(() => {
+    if (fotos.length >= 2 && (compararA === null || compararB === null)) {
+      setCompararA(fotos[0].id);
+      setCompararB(fotos[fotos.length - 1].id);
+    }
+  }, [fotos]);
 
   const mudarCoposAgua = (delta) => {
     setCoposAgua((prev) => {
@@ -5952,6 +6113,50 @@ function EvolucaoTab({ onAplicarTreino }) {
             ))}
           </div>
         )}
+
+        {fotos.length >= 2 && (() => {
+          const fotoA = fotos.find((f) => f.id === compararA);
+          const fotoB = fotos.find((f) => f.id === compararB);
+          return (
+            <div style={styles.comparadorWrap}>
+              <div style={styles.comparadorTitulo}>🔀 Comparar antes / depois</div>
+              <div style={styles.comparadorSeletores}>
+                <select style={styles.comparadorSelect} value={compararA || ""} onChange={(e) => setCompararA(e.target.value)}>
+                  {fotos.map((f) => (
+                    <option key={f.id} value={f.id}>{f.data}</option>
+                  ))}
+                </select>
+                <span style={styles.comparadorSeta}>→</span>
+                <select style={styles.comparadorSelect} value={compararB || ""} onChange={(e) => setCompararB(e.target.value)}>
+                  {fotos.map((f) => (
+                    <option key={f.id} value={f.id}>{f.data}</option>
+                  ))}
+                </select>
+              </div>
+              {fotoA && fotoB && (
+                <>
+                  <div style={styles.comparadorImgWrap}>
+                    <img src={fotoA.img} alt="Antes" style={styles.comparadorImgBase} />
+                    <div style={{ ...styles.comparadorImgOverlayWrap, clipPath: `inset(0 ${100 - sliderComparar}% 0 0)` }}>
+                      <img src={fotoB.img} alt="Depois" style={styles.comparadorImgBase} />
+                    </div>
+                    <div style={{ ...styles.comparadorLinha, left: `${sliderComparar}%` }} />
+                    <div style={styles.comparadorLabelEsq}>{fotoA.data}</div>
+                    <div style={styles.comparadorLabelDir}>{fotoB.data}</div>
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    value={sliderComparar}
+                    onChange={(e) => setSliderComparar(Number(e.target.value))}
+                    style={styles.comparadorSlider}
+                  />
+                </>
+              )}
+            </div>
+          );
+        })()}
       </section>
 
       {ultima && (
@@ -7312,6 +7517,34 @@ function HistoricoTab({ isPremium, onVerPlanos }) {
     setModoImpressaoRelatorio(true);
   };
 
+  // Exporta o histórico completo de treinos em CSV (todos os registros, não só o mês)
+  const exportarHistoricoCSV = () => {
+    const linhas = [["Data", "Dia", "Foco", "Exercícios", "Duração (min)", "Volume (kg)", "Calorias", "Cardio", "Sentimento"]];
+    [...historico].sort((a, b) => (a.data < b.data ? -1 : 1)).forEach((h) => {
+      linhas.push([
+        h.data || "",
+        h.dia || "",
+        h.foco || "",
+        String(h.totalExercicios || ""),
+        String(h.duracaoMin || ""),
+        String(h.volumeTotal || ""),
+        String(h.calorias || ""),
+        h.cardio ? `${h.cardio.tipo || ""} ${h.cardio.duracao || ""}min`.trim() : "",
+        h.sentimento || "",
+      ]);
+    });
+    const csv = linhas.map((l) => l.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(",")).join("\n");
+    const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "meu-historico-massi-pro.csv";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
   const removerRegistro = async (id) => {
     if (!window.confirm("Remover esse treino do histórico? Essa ação não pode ser desfeita.")) return;
     const nova = historico.filter((h) => h.id !== id);
@@ -7380,6 +7613,18 @@ function HistoricoTab({ isPremium, onVerPlanos }) {
           {isPremium
             ? "Gera um PDF com o resumo do mês: treinos feitos, volume total, calorias e o dia a dia."
             : "Assine o Premium pra baixar um PDF completo com o resumo de cada mês de treino."}
+        </p>
+      </section>
+
+      <section style={styles.card}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div style={styles.cardLabel}>📊 Exportar histórico completo</div>
+          <button style={styles.trocarBtn} onClick={exportarHistoricoCSV} disabled={totalTreinos === 0}>
+            Baixar CSV
+          </button>
+        </div>
+        <p style={styles.modalDisclaimer}>
+          Baixa todos os {totalTreinos} treino{totalTreinos === 1 ? "" : "s"} registrados em uma planilha (CSV), pra analisar no Excel ou onde preferir.
         </p>
       </section>
 
@@ -8667,6 +8912,103 @@ function TourOverlay({ alvoRef, texto, onProximo, onPular, ultimo }) {
   );
 }
 
+// Treino ao ar livre: cronômetro simples de corrida/caminhada + distância manual
+// (sem GPS). Ao finalizar, chama onSalvar(tipo, minutos, distanciaKm).
+function TreinoArLivreModal({ onFechar, onSalvar }) {
+  const [tipo, setTipo] = useState("Caminhada");
+  const [rodando, setRodando] = useState(false);
+  const [segundos, setSegundos] = useState(0);
+  const [distancia, setDistancia] = useState("");
+  const intervaloRef = useRef(null);
+
+  useEffect(() => {
+    if (rodando) {
+      intervaloRef.current = setInterval(() => setSegundos((s) => s + 1), 1000);
+    } else if (intervaloRef.current) {
+      clearInterval(intervaloRef.current);
+      intervaloRef.current = null;
+    }
+    return () => {
+      if (intervaloRef.current) clearInterval(intervaloRef.current);
+    };
+  }, [rodando]);
+
+  const formatarTempo = (totalSegundos) => {
+    const min = Math.floor(totalSegundos / 60).toString().padStart(2, "0");
+    const seg = (totalSegundos % 60).toString().padStart(2, "0");
+    return `${min}:${seg}`;
+  };
+
+  const minutosDecorridos = Math.max(1, Math.round(segundos / 60));
+  const distanciaNum = parseFloat(distancia.replace(",", "."));
+
+  const finalizar = () => {
+    if (segundos < 10) {
+      if (!window.confirm("Menos de 10 segundos de treino — quer registrar mesmo assim?")) return;
+    }
+    onSalvar(tipo, minutosDecorridos, isNaN(distanciaNum) || distanciaNum <= 0 ? null : distanciaNum);
+  };
+
+  return (
+    <div style={styles.modalOverlay} onClick={onFechar}>
+      <div style={styles.modalCard} onClick={(e) => e.stopPropagation()}>
+        <button style={styles.modalClose} onClick={onFechar} aria-label="Fechar">×</button>
+        <div style={styles.eyebrow}>TREINO AO AR LIVRE</div>
+        <h2 style={styles.modalTitle}>{tipo}</h2>
+
+        <div style={styles.chipRow}>
+          {["Caminhada", "Corrida"].map((op) => (
+            <button
+              key={op}
+              className="chip"
+              disabled={rodando || segundos > 0}
+              style={{ ...styles.chip, ...(tipo === op ? styles.chipActive : {}) }}
+              onClick={() => setTipo(op)}
+            >
+              {op}
+            </button>
+          ))}
+        </div>
+
+        <div style={styles.arLivreCronometro}>{formatarTempo(segundos)}</div>
+
+        <div style={{ display: "flex", gap: 10, marginTop: 4 }}>
+          {!rodando ? (
+            <button style={styles.saveButton} onClick={() => setRodando(true)}>
+              {segundos === 0 ? "▶ Começar" : "▶ Retomar"}
+            </button>
+          ) : (
+            <button style={styles.saveButton} onClick={() => setRodando(false)}>⏸ Pausar</button>
+          )}
+        </div>
+
+        <label style={{ ...styles.avalField, marginTop: 18 }}>
+          Distância percorrida (km) — opcional
+          <input
+            type="text"
+            inputMode="decimal"
+            placeholder="Ex: 3,5"
+            value={distancia}
+            onChange={(e) => setDistancia(e.target.value)}
+            style={styles.avalInput}
+          />
+        </label>
+
+        <button
+          style={{ ...styles.saveButton, ...(segundos > 0 ? {} : { opacity: 0.5, cursor: "not-allowed" }) }}
+          disabled={segundos === 0}
+          onClick={finalizar}
+        >
+          ✅ Finalizar e salvar
+        </button>
+        <p style={styles.modalDisclaimer}>
+          Calorias estimadas com base no tempo e no tipo de atividade. Fica salvo no seu histórico normalmente.
+        </p>
+      </div>
+    </div>
+  );
+}
+
 function CronometroRapidoRotina({ onIniciarDescanso }) {
   const [modo, setModo] = useState("relogio"); // "relogio" | "opcoes"
   const [agora, setAgora] = useState(() => new Date());
@@ -9447,6 +9789,23 @@ const styles = {
     marginBottom: 16,
   },
   cardLabel: { fontWeight: 600, fontSize: 14, marginBottom: 10, color: INK },
+  rapidoCardTitulo: { fontWeight: 700, fontSize: 14, color: "#fff", marginBottom: 4, textShadow: "0 1px 3px rgba(0,0,0,0.4)" },
+  rapidoCardTexto: { fontSize: 12.5, color: "rgba(255,255,255,0.82)", lineHeight: 1.4, margin: 0, textShadow: "0 1px 3px rgba(0,0,0,0.4)" },
+  rapidoCardRow: { display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10 },
+  rapidoCardTextoWrap: { flex: 1, minWidth: 0 },
+  rapidoCardBtn: {
+    padding: "8px 14px",
+    borderRadius: 20,
+    border: "none",
+    background: "rgba(217,164,65,0.28)",
+    color: "#F6C453",
+    fontSize: 12.5,
+    fontWeight: 700,
+    cursor: "pointer",
+    lineHeight: 1.4,
+    flexShrink: 0,
+    whiteSpace: "nowrap",
+  },
   chipRow: { display: "flex", gap: 8, flexWrap: "wrap" },
   chip: {
     fontFamily: monoFont,
@@ -9562,6 +9921,15 @@ const styles = {
     justifyContent: "space-between",
     gap: 12,
     width: "100%",
+  },
+  arLivreCronometro: {
+    fontFamily: monoFont,
+    fontSize: 48,
+    fontWeight: 800,
+    color: INK,
+    textAlign: "center",
+    margin: "18px 0 14px",
+    fontVariantNumeric: "tabular-nums",
   },
   cronoRapidoRelogioBloco: { display: "flex", flexDirection: "column", gap: 2 },
   cronoRapidoHora: {
@@ -11476,6 +11844,18 @@ const styles = {
   fotoItem: { width: 100, textAlign: "center" },
   fotoImg: { width: 100, height: 130, objectFit: "cover", borderRadius: 10, border: "1px solid rgba(43,42,40,0.12)" },
   fotoData: { fontSize: 10.5, color: PENCIL, marginTop: 4 },
+  comparadorWrap: { marginTop: 18, paddingTop: 16, borderTop: "1px solid rgba(43,42,40,0.1)" },
+  comparadorTitulo: { fontSize: 13, fontWeight: 800, color: INK, marginBottom: 10 },
+  comparadorSeletores: { display: "flex", alignItems: "center", gap: 8, marginBottom: 10 },
+  comparadorSelect: { flex: 1, padding: "8px 10px", borderRadius: 8, border: "1px solid rgba(43,42,40,0.15)", fontSize: 12.5, color: INK, background: "#fff" },
+  comparadorSeta: { fontSize: 14, color: PENCIL, flexShrink: 0 },
+  comparadorImgWrap: { position: "relative", width: "100%", aspectRatio: "3/4", borderRadius: 12, overflow: "hidden", background: "#000" },
+  comparadorImgOverlayWrap: { position: "absolute", top: 0, left: 0, width: "100%", height: "100%" },
+  comparadorImgBase: { width: "100%", height: "100%", objectFit: "cover", display: "block" },
+  comparadorLinha: { position: "absolute", top: 0, bottom: 0, width: 3, background: "#fff", transform: "translateX(-50%)", boxShadow: "0 0 6px rgba(0,0,0,0.5)", pointerEvents: "none" },
+  comparadorLabelEsq: { position: "absolute", top: 8, left: 8, fontSize: 10.5, fontWeight: 700, color: "#fff", background: "rgba(0,0,0,0.5)", padding: "3px 8px", borderRadius: 6 },
+  comparadorLabelDir: { position: "absolute", top: 8, right: 8, fontSize: 10.5, fontWeight: 700, color: "#fff", background: "rgba(0,0,0,0.5)", padding: "3px 8px", borderRadius: 6 },
+  comparadorSlider: { width: "100%", marginTop: 10, accentColor: CROSS_LIME },
 
   splashOverlay: {
     position: "fixed",
@@ -11761,6 +12141,18 @@ const styles = {
     color: INK,
     lineHeight: 1.4,
   },
+  inicioDicaCard: {
+    display: "flex",
+    alignItems: "flex-start",
+    gap: 10,
+    background: "rgba(255,255,255,0.05)",
+    border: "1px solid rgba(255,255,255,0.08)",
+    borderRadius: 12,
+    padding: "12px 14px",
+    marginBottom: 14,
+  },
+  inicioDicaEmoji: { fontSize: 18, flexShrink: 0, lineHeight: "1.4" },
+  inicioDicaTexto: { fontSize: 12.5, color: CROSS_TEXT_DIM, lineHeight: 1.5 },
   inicioMesGrid: { display: "flex", gap: 8 },
   inicioMesStat: {
     flex: 1,
