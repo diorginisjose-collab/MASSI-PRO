@@ -281,6 +281,51 @@ function exercicioTemRisco(nomeExercicio, restricoes) {
 }
 
 const FOCOS = ["Peito", "Costas", "Perna", "Ombro", "Braço", "Abdômen", "Corpo inteiro", "Funcional", "Superior", "Casa: Superior", "Casa: Inferior", "Casa: Completo", "Cardio", "Descanso"];
+
+// Mapa de cada foco de dia pra regiões do corpo (usado no mapa muscular visual e
+// no aviso de grupo esquecido) — pesos parciais quando o foco cobre mais de uma região.
+const FOCO_REGIOES = {
+  "Peito": { peito: 1 },
+  "Costas": { costas: 1 },
+  "Perna": { perna: 1 },
+  "Ombro": { ombro: 1 },
+  "Braço": { braco: 1 },
+  "Abdômen": { abdomen: 1 },
+  "Corpo inteiro": { peito: 0.6, costas: 0.6, ombro: 0.6, braco: 0.6, abdomen: 0.6, perna: 0.6 },
+  "Funcional": { abdomen: 0.5, ombro: 0.5, perna: 0.5 },
+  "Superior": { peito: 0.7, costas: 0.5, ombro: 0.6, braco: 0.6 },
+  "Casa: Superior": { peito: 0.6, costas: 0.4, ombro: 0.5, braco: 0.5 },
+  "Casa: Inferior": { perna: 1 },
+  "Casa: Completo": { peito: 0.4, costas: 0.4, ombro: 0.4, braco: 0.4, abdomen: 0.4, perna: 0.4 },
+};
+const REGIOES_ORDEM = ["peito", "costas", "ombro", "braco", "abdomen", "perna"];
+const REGIAO_LABEL = { peito: "Peito", costas: "Costas", ombro: "Ombro", braco: "Braço", abdomen: "Abdômen", perna: "Perna" };
+
+function calcularVolumePorRegiao(historico, dias) {
+  const limite = new Date();
+  limite.setDate(limite.getDate() - dias);
+  const soma = { peito: 0, costas: 0, ombro: 0, braco: 0, abdomen: 0, perna: 0 };
+  (historico || []).forEach((h) => {
+    if (!h.foco) return;
+    if (new Date(h.data) < limite) return;
+    const pesos = FOCO_REGIOES[h.foco];
+    if (!pesos) return;
+    Object.entries(pesos).forEach(([regiao, peso]) => {
+      soma[regiao] += peso;
+    });
+  });
+  return soma;
+}
+
+// Interpola entre um cinza neutro (sem volume) e o verde-limão de destaque do app (volume alto)
+function corIntensidadeMuscular(valor, max) {
+  if (max <= 0 || valor <= 0) return "rgba(255,255,255,0.16)";
+  const t = Math.min(1, valor / max);
+  const r = Math.round(60 + (154 - 60) * t);
+  const g = Math.round(66 + (205 - 66) * t);
+  const b = Math.round(72 + (50 - 72) * t);
+  return `rgba(${r},${g},${b},${0.32 + 0.6 * t})`;
+}
 const DIAS_SEMANA = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo"];
 const DIAS_ABREV = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
 
@@ -5577,6 +5622,33 @@ function InicioTab({ perfilAtivoNome, rotina, diasSelecionados, historico, recor
   const diasTreinadosEstaSemana = diasPorSemana[semanaAtualChaveHoje] ? diasPorSemana[semanaAtualChaveHoje].size : 0;
   const mostrarAvisoQuaseLa = recordeSemanalAnterior > 0 && recordeSemanalAnterior - diasTreinadosEstaSemana === 1;
 
+  // Aviso de grupo muscular esquecido: olha quais regiões fazem parte da rotina
+  // dessa semana e há quanto tempo cada uma foi treinada de verdade (histórico).
+  const regioesPlanejadas = new Set();
+  rotina.forEach((d) => {
+    const pesos = FOCO_REGIOES[d.foco];
+    if (pesos) Object.keys(pesos).forEach((r) => regioesPlanejadas.add(r));
+  });
+  const ultimaDataPorRegiao = {};
+  historico.forEach((h) => {
+    const pesos = FOCO_REGIOES[h.foco];
+    if (!pesos) return;
+    Object.keys(pesos).forEach((r) => {
+      if (!ultimaDataPorRegiao[r] || h.data > ultimaDataPorRegiao[r]) ultimaDataPorRegiao[r] = h.data;
+    });
+  });
+  const hojeMs = Date.now();
+  let grupoEsquecido = null;
+  regioesPlanejadas.forEach((regiao) => {
+    const ultimaData = ultimaDataPorRegiao[regiao];
+    const dias = ultimaData ? Math.floor((hojeMs - new Date(ultimaData).getTime()) / 86400000) : null;
+    if (dias === null || dias >= 10) {
+      if (!grupoEsquecido || (dias ?? 999) > (grupoEsquecido.dias ?? 999)) {
+        grupoEsquecido = { regiao, dias };
+      }
+    }
+  });
+
   const dadosPeso = avaliacoes.map((a, i) => ({ indice: i + 1, peso: parseFloat(a.peso) })).filter((d) => !isNaN(d.peso));
 
   const treinoHojeConcluido = diasDaSemana[diaSemanaIdx] ? diasDaSemana[diaSemanaIdx].concluido : false;
@@ -5616,6 +5688,14 @@ function InicioTab({ perfilAtivoNome, rotina, diasSelecionados, historico, recor
       {mostrarAvisoQuaseLa && (
         <div style={styles.inicioQuaseLaBanner}>
           🚀 Só mais 1 treino essa semana pra igualar seu recorde de {recordeSemanalAnterior} treinos numa semana!
+        </div>
+      )}
+
+      {grupoEsquecido && (
+        <div style={styles.inicioQuaseLaBanner}>
+          🧭 {grupoEsquecido.dias === null
+            ? `Você ainda não registrou nenhum treino de ${REGIAO_LABEL[grupoEsquecido.regiao]} — esse grupo já está na sua rotina dessa semana.`
+            : `Faz ${grupoEsquecido.dias} dias que você não treina ${REGIAO_LABEL[grupoEsquecido.regiao]} — ainda está na sua rotina dessa semana.`}
         </div>
       )}
 
@@ -7476,11 +7556,59 @@ function ConsistenciaHeatmap({ historico }) {
   );
 }
 
+// Mapa muscular visual: dois corpinhos simplificados (frente e costas) coloridos
+// por volume de treino recente em cada região — calculado a partir do `foco` de
+// cada dia já concluído, sem precisar de nenhum dado novo.
+function MapaMuscularSVG({ volumePorRegiao }) {
+  const max = Math.max(1, ...Object.values(volumePorRegiao));
+  const cor = (regiao) => corIntensidadeMuscular(volumePorRegiao[regiao] || 0, max);
+  const cabeca = "rgba(255,255,255,0.14)";
+  const contorno = { stroke: "rgba(255,255,255,0.35)", strokeWidth: 1.5 };
+
+  return (
+    <div style={styles.mapaMuscularWrap}>
+      <svg viewBox="0 0 300 210" width="300" height="210" style={styles.mapaMuscularSvg}>
+        {/* Frente */}
+        <circle cx="65" cy="20" r="14" fill={cabeca} {...contorno} />
+        <circle cx="35" cy="46" r="12" fill={cor("ombro")} {...contorno} />
+        <circle cx="95" cy="46" r="12" fill={cor("ombro")} {...contorno} />
+        <rect x="40" y="40" width="50" height="35" rx="8" fill={cor("peito")} {...contorno} />
+        <rect x="15" y="45" width="14" height="55" rx="6" fill={cor("braco")} {...contorno} />
+        <rect x="101" y="45" width="14" height="55" rx="6" fill={cor("braco")} {...contorno} />
+        <rect x="45" y="78" width="40" height="28" rx="6" fill={cor("abdomen")} {...contorno} />
+        <rect x="40" y="108" width="18" height="72" rx="7" fill={cor("perna")} {...contorno} />
+        <rect x="72" y="108" width="18" height="72" rx="7" fill={cor("perna")} {...contorno} />
+        <text x="65" y="200" textAnchor="middle" style={styles.mapaMuscularLabel}>Frente</text>
+
+        {/* Costas */}
+        <circle cx="235" cy="20" r="14" fill={cabeca} {...contorno} />
+        <circle cx="205" cy="46" r="12" fill={cor("ombro")} {...contorno} />
+        <circle cx="265" cy="46" r="12" fill={cor("ombro")} {...contorno} />
+        <rect x="205" y="38" width="60" height="45" rx="10" fill={cor("costas")} {...contorno} />
+        <rect x="185" y="45" width="14" height="55" rx="6" fill={cor("braco")} {...contorno} />
+        <rect x="271" y="45" width="14" height="55" rx="6" fill={cor("braco")} {...contorno} />
+        <rect x="210" y="108" width="18" height="72" rx="7" fill={cor("perna")} {...contorno} />
+        <rect x="242" y="108" width="18" height="72" rx="7" fill={cor("perna")} {...contorno} />
+        <text x="235" y="200" textAnchor="middle" style={styles.mapaMuscularLabel}>Costas</text>
+      </svg>
+      <div style={styles.mapaMuscularLegenda}>
+        {REGIOES_ORDEM.map((r) => (
+          <div key={r} style={styles.mapaMuscularLegendaItem}>
+            <span style={{ ...styles.mapaMuscularLegendaCor, background: cor(r) }} />
+            {REGIAO_LABEL[r]}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function HistoricoTab({ isPremium, onVerPlanos }) {
   const [modoImpressaoRelatorio, setModoImpressaoRelatorio] = useState(false);
   const [historico, setHistorico] = useState([]);
   const [carregado, setCarregado] = useState(false);
   const [dores, setDores] = useState([]);
+  const [recordes, setRecordes] = useState({});
 
   useEffect(() => {
     (async () => {
@@ -7497,6 +7625,12 @@ function HistoricoTab({ isPremium, onVerPlanos }) {
         if (doresRes && doresRes.value) setDores(JSON.parse(doresRes.value));
       } catch (e) {
         // sem registros de dor ainda
+      }
+      try {
+        const recRes = await window.storage.get("recordes-pessoais");
+        if (recRes && recRes.value) setRecordes(JSON.parse(recRes.value));
+      } catch (e) {
+        // sem recordes ainda
       }
     })();
   }, []);
@@ -7593,6 +7727,8 @@ function HistoricoTab({ isPremium, onVerPlanos }) {
   });
   const focoRanking = Object.entries(focoContagem).sort((a, b) => b[1] - a[1]);
   const maxFoco = focoRanking.length > 0 ? focoRanking[0][1] : 0;
+  const volumePorRegiao = calcularVolumePorRegiao(historico, 14);
+  const recordesRanking = Object.entries(recordes).sort((a, b) => (a[1].data < b[1].data ? 1 : -1));
 
   return (
     <div>
@@ -7664,6 +7800,30 @@ function HistoricoTab({ isPremium, onVerPlanos }) {
         <div style={styles.cardLabel}>Consistência</div>
         <ConsistenciaHeatmap historico={historico} />
       </section>
+
+      {focoRanking.length > 0 && (
+        <section style={styles.card}>
+          <div style={styles.cardLabel}>🗺️ Mapa muscular (últimos 14 dias)</div>
+          <MapaMuscularSVG volumePorRegiao={volumePorRegiao} />
+        </section>
+      )}
+
+      {recordesRanking.length > 0 && (
+        <section style={styles.card}>
+          <div style={styles.cardLabel}>🏆 Recordes pessoais</div>
+          <div style={styles.prRankingLista}>
+            {recordesRanking.map(([nome, r]) => (
+              <div key={nome} style={styles.prRankingItem}>
+                <div style={styles.prRankingNome}>{nome}</div>
+                <div style={styles.prRankingValorData}>
+                  <span style={styles.prRankingValor}>{r.texto}</span>
+                  <span style={styles.prRankingData}>{r.data}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       {focoRanking.length > 0 && (
         <section style={styles.card}>
@@ -11234,6 +11394,26 @@ const styles = {
     borderBottom: "1px solid rgba(43,42,40,0.08)",
   },
   muscGrupoLista: { display: "flex", flexDirection: "column", gap: 10 },
+  mapaMuscularWrap: { display: "flex", flexDirection: "column", alignItems: "center", gap: 10 },
+  mapaMuscularSvg: { width: "100%", maxWidth: 320, height: "auto", aspectRatio: "300 / 210", display: "block" },
+  mapaMuscularLabel: { fontSize: 10, fill: "rgba(255,255,255,0.55)", fontWeight: 600 },
+  mapaMuscularLegenda: { display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "6px 14px" },
+  mapaMuscularLegendaItem: { display: "flex", alignItems: "center", gap: 5, fontSize: 11.5, color: "rgba(255,255,255,0.75)" },
+  mapaMuscularLegendaCor: { width: 10, height: 10, borderRadius: 3, display: "inline-block" },
+  prRankingLista: { display: "flex", flexDirection: "column", gap: 8 },
+  prRankingItem: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    gap: 10,
+    padding: "8px 10px",
+    borderRadius: 8,
+    background: "rgba(255,255,255,0.05)",
+  },
+  prRankingNome: { fontSize: 12.5, fontWeight: 600, color: "#fff", flex: 1, minWidth: 0 },
+  prRankingValorData: { display: "flex", flexDirection: "column", alignItems: "flex-end", flexShrink: 0 },
+  prRankingValor: { fontSize: 12.5, fontWeight: 700, color: "#F6C453" },
+  prRankingData: { fontSize: 10.5, color: "rgba(255,255,255,0.55)" },
   muscGrupoLinha: { display: "flex", alignItems: "center", gap: 10, width: "100%", boxSizing: "border-box" },
   muscGrupoNome: {
     flex: "0 0 84px",
