@@ -5706,7 +5706,7 @@ function AppMassiPro({ onSolicitarRemount }) {
                   if (!temAtivacao) return null;
                   return (
                     <div style={styles.resumoTreinoMapaWrap}>
-                      <MapaMuscularSVG ativacao={ativacaoSessao} piscando />
+                      <MapaMuscularSVG ativacao={ativacaoSessao} piscando mini />
                     </div>
                   );
                 })()}
@@ -6554,6 +6554,18 @@ function InicioTab({ perfilAtivoNome, rotina, diasSelecionados, historico, recor
         );
       })()}
 
+      {(() => {
+        const volumePorRegiaoInicio = calcularVolumePorRegiao(historico, 14);
+        const temVolume = Object.values(volumePorRegiaoInicio).some((v) => v > 0);
+        if (!temVolume) return null;
+        return (
+          <section style={styles.card}>
+            <div style={styles.cardLabel}>🗺️ Mapa muscular (últimos 14 dias)</div>
+            <MapaMuscularSVG volumePorRegiao={volumePorRegiaoInicio} />
+          </section>
+        );
+      })()}
+
       <section style={styles.inicioHeroCard} ref={refTreinoHojeTour}>
         {hojeEhDiaDeTreino ? (
           <>
@@ -7032,6 +7044,7 @@ function EvolucaoTab({ onAplicarTreino }) {
               value={cintura}
               onChange={(e) => setCintura(normalizarDecimal(e.target.value))}
               style={erros.cintura ? { ...styles.avalInput, ...styles.avalInputErro } : styles.avalInput}
+              placeholder="ex: 84"
             />
             {erros.cintura && <span style={styles.avalErroMsg}>{erros.cintura}</span>}
           </label>
@@ -7043,6 +7056,7 @@ function EvolucaoTab({ onAplicarTreino }) {
               value={pescoco}
               onChange={(e) => setPescoco(normalizarDecimal(e.target.value))}
               style={erros.pescoco ? { ...styles.avalInput, ...styles.avalInputErro } : styles.avalInput}
+              placeholder="ex: 38"
             />
             {erros.pescoco && <span style={styles.avalErroMsg}>{erros.pescoco}</span>}
           </label>
@@ -7054,6 +7068,7 @@ function EvolucaoTab({ onAplicarTreino }) {
               value={quadril}
               onChange={(e) => setQuadril(normalizarDecimal(e.target.value))}
               style={erros.quadril ? { ...styles.avalInput, ...styles.avalInputErro } : styles.avalInput}
+              placeholder="ex: 98"
             />
             {erros.quadril && <span style={styles.avalErroMsg}>{erros.quadril}</span>}
           </label>
@@ -7065,6 +7080,7 @@ function EvolucaoTab({ onAplicarTreino }) {
               value={peito}
               onChange={(e) => setPeito(normalizarDecimal(e.target.value))}
               style={erros.peito ? { ...styles.avalInput, ...styles.avalInputErro } : styles.avalInput}
+              placeholder="ex: 100"
             />
             {erros.peito && <span style={styles.avalErroMsg}>{erros.peito}</span>}
           </label>
@@ -7076,6 +7092,7 @@ function EvolucaoTab({ onAplicarTreino }) {
               value={braco}
               onChange={(e) => setBraco(normalizarDecimal(e.target.value))}
               style={erros.braco ? { ...styles.avalInput, ...styles.avalInputErro } : styles.avalInput}
+              placeholder="ex: 35"
             />
             {erros.braco && <span style={styles.avalErroMsg}>{erros.braco}</span>}
           </label>
@@ -7087,6 +7104,7 @@ function EvolucaoTab({ onAplicarTreino }) {
               value={coxa}
               onChange={(e) => setCoxa(normalizarDecimal(e.target.value))}
               style={erros.coxa ? { ...styles.avalInput, ...styles.avalInputErro } : styles.avalInput}
+              placeholder="ex: 56"
             />
             {erros.coxa && <span style={styles.avalErroMsg}>{erros.coxa}</span>}
           </label>
@@ -8820,7 +8838,11 @@ function regioesParaTermo(termo) {
 function ativacaoMuscularExercicios(exercicios) {
   const ativacao = {};
   (exercicios || []).forEach((ex) => {
-    const partes = (ex.grupoMuscular || "").split(",").map((p) => p.trim()).filter(Boolean);
+    // o exercício do dia (diaEntry.exercicios) não guarda grupoMuscular direto —
+    // esse dado mora no GUIA_EXECUCAO, indexado pelo nome do exercício.
+    const guia = GUIA_EXECUCAO[ex.name] || GUIA_EXECUCAO[ex.nome];
+    const textoGrupo = ex.grupoMuscular || (guia && guia.grupoMuscular) || "";
+    const partes = textoGrupo.split(",").map((p) => p.trim()).filter(Boolean);
     partes.forEach((parte, i) => {
       const nivel = i === 0 ? "forte" : "suave";
       regioesParaTermo(parte).forEach((regiao) => {
@@ -8860,14 +8882,14 @@ function usePiscar(ativo, intervaloMs = 650) {
 // principal pisca forte; ativação secundária/auxiliar pisca bem mais suave
 const OPACIDADE_ATIVACAO = { forte: 0.92, suave: 0.32 };
 
-function CorpoSVG({ lado, volumePorRegiao, ativacao, piscando }) {
+function CorpoSVG({ lado, volumePorRegiao, ativacao, piscando, largura = 140, altura = 320 }) {
   const max = Math.max(1, ...Object.values(volumePorRegiao || {}));
   const regioes = lado === "frente" ? REGIOES_FRENTE : REGIOES_COSTAS;
   const imgBase = lado === "frente" ? IMG_CORPO_FRENTE : IMG_CORPO_COSTAS;
   const aceso = usePiscar(!!piscando);
   return (
-    <div style={styles.mapaMuscularImgFrame}>
-      <img src={imgBase} alt={`Corpo humano - ${lado}`} style={styles.mapaMuscularImg} />
+    <div style={{ ...styles.mapaMuscularImgFrame, width: largura, height: altura }}>
+      <img src={imgBase} alt={`Corpo humano - ${lado}`} style={{ ...styles.mapaMuscularImg, width: largura, height: altura }} />
       {regioes.map((r, i) => {
         let intensidade;
         if (ativacao) {
@@ -8883,7 +8905,7 @@ function CorpoSVG({ lado, volumePorRegiao, ativacao, piscando }) {
             src={r.mascara}
             alt=""
             style={{
-              position: "absolute", top: 0, left: 0, width: 140, height: 320,
+              position: "absolute", top: 0, left: 0, width: largura, height: altura,
               opacity,
               pointerEvents: "none",
             }}
@@ -8898,17 +8920,19 @@ function CorpoSVG({ lado, volumePorRegiao, ativacao, piscando }) {
 // acumulado). ativacao: usado no resumo pós-treino ({ regiao: "forte"|"suave" },
 // vindo de ativacaoMuscularExercicios) — tem prioridade sobre volumePorRegiao
 // quando os dois são passados.
-function MapaMuscularSVG({ volumePorRegiao, ativacao, piscando }) {
+function MapaMuscularSVG({ volumePorRegiao, ativacao, piscando, mini }) {
+  const largura = mini ? 68 : 140;
+  const altura = mini ? 155 : 320;
   return (
     <div style={styles.mapaMuscularWrap}>
-      <div style={styles.mapaMuscularImgRow}>
-        <div style={styles.mapaMuscularImgCol}>
-          <CorpoSVG lado="frente" volumePorRegiao={volumePorRegiao} ativacao={ativacao} piscando={piscando} />
-          <span style={styles.mapaMuscularLabel}>Frente</span>
+      <div style={{ ...styles.mapaMuscularImgRow, gap: mini ? 8 : 16 }}>
+        <div style={{ ...styles.mapaMuscularImgCol, width: largura }}>
+          <CorpoSVG lado="frente" volumePorRegiao={volumePorRegiao} ativacao={ativacao} piscando={piscando} largura={largura} altura={altura} />
+          {!mini && <span style={styles.mapaMuscularLabel}>Frente</span>}
         </div>
-        <div style={styles.mapaMuscularImgCol}>
-          <CorpoSVG lado="costas" volumePorRegiao={volumePorRegiao} ativacao={ativacao} piscando={piscando} />
-          <span style={styles.mapaMuscularLabel}>Costas</span>
+        <div style={{ ...styles.mapaMuscularImgCol, width: largura }}>
+          <CorpoSVG lado="costas" volumePorRegiao={volumePorRegiao} ativacao={ativacao} piscando={piscando} largura={largura} altura={altura} />
+          {!mini && <span style={styles.mapaMuscularLabel}>Costas</span>}
         </div>
       </div>
     </div>
