@@ -1137,12 +1137,69 @@ const OBJETIVOS = [
   },
 ];
 
+// Ilustração do "teste do punho": segurar o próprio pulso com polegar e dedo
+// médio — se as pontas se cruzam, a estrutura óssea é fina (ectomorfo); se só
+// se tocam, é média (mesomorfo); se não alcançam, é larga (endomorfo).
+// Desenho esquemático original (não é a foto/ilustração que o usuário mandou).
+function TestePulso({ variante, cor }) {
+  // variante: "sobrepoe" | "toca" | "gap"
+  const pontas = {
+    sobrepoe: { polegar: 34, dedo: 26 },
+    toca: { polegar: 30, dedo: 30 },
+    gap: { polegar: 25, dedo: 35 },
+  }[variante];
+  const ordemDedoPorCima = variante === "sobrepoe";
+  const linhaPolegar = (
+    <line x1={13} y1={28} x2={pontas.polegar} y2={42} stroke={cor} strokeWidth={5} strokeLinecap="round" />
+  );
+  const linhaDedo = (
+    <line x1={47} y1={54} x2={pontas.dedo} y2={42} stroke={cor} strokeWidth={5} strokeLinecap="round" />
+  );
+  return (
+    <svg viewBox="0 0 60 66" width="40" height="44" aria-hidden="true">
+      <rect x={20} y={12} width={20} height={54} rx={10} fill="none" stroke={cor} strokeWidth={2} opacity={0.55} />
+      {ordemDedoPorCima ? (
+        <>
+          {linhaPolegar}
+          {linhaDedo}
+        </>
+      ) : (
+        <>
+          {linhaDedo}
+          {linhaPolegar}
+        </>
+      )}
+      <circle cx={pontas.polegar} cy={42} r={2.6} fill={cor} />
+      <circle cx={pontas.dedo} cy={42} r={2.6} fill={cor} />
+    </svg>
+  );
+}
+
 // ---------- Avaliação física: biotipo, nível, e diretriz de treino ----------
 const BIOTIPOS = [
-  { id: "ectomorfo", nome: "Ectomorfo", descricao: "Corpo naturalmente magro, mais dificuldade pra ganhar peso e músculo." },
-  { id: "mesomorfo", nome: "Mesomorfo", descricao: "Ganha músculo com relativa facilidade, estrutura mais atlética." },
-  { id: "endomorfo", nome: "Endomorfo", descricao: "Tendência a acumular gordura mais fácil, estrutura mais robusta." },
+  { id: "ectomorfo", nome: "Ectomorfo", descricao: "Corpo naturalmente magro, mais dificuldade pra ganhar peso e músculo.", ombros: 10, cintura: 7, quadril: 8, membro: 3.5, punho: "sobrepoe" },
+  { id: "mesomorfo", nome: "Mesomorfo", descricao: "Ganha músculo com relativa facilidade, estrutura mais atlética.", ombros: 15, cintura: 8, quadril: 10, membro: 5, punho: "toca" },
+  { id: "endomorfo", nome: "Endomorfo", descricao: "Tendência a acumular gordura mais fácil, estrutura mais robusta.", ombros: 14, cintura: 14, quadril: 15, membro: 6.5, punho: "gap" },
 ];
+
+// Silhueta bem simples (cabeça + tronco + braços + pernas), só pra dar uma
+// referência visual rápida da diferença de proporção entre os 3 biotipos —
+// não é foto, é um desenho esquemático mesmo, então não tem problema de
+// direito de imagem e funciona 100% offline (nada de carregar imagem externa).
+function SilhuetaBiotipo({ ombros, cintura, quadril, membro, cor }) {
+  const cx = 30;
+  const torso = `${cx - ombros},19 ${cx + ombros},19 ${cx + cintura},50 ${cx + quadril},60 ${cx - quadril},60 ${cx - cintura},50`;
+  return (
+    <svg viewBox="0 0 60 96" width="46" height="74" aria-hidden="true">
+      <circle cx={cx} cy={10} r={7} fill={cor} />
+      <polygon points={torso} fill={cor} />
+      <line x1={cx - ombros * 0.85} y1={23} x2={cx - ombros - 5} y2={48} stroke={cor} strokeWidth={membro} strokeLinecap="round" />
+      <line x1={cx + ombros * 0.85} y1={23} x2={cx + ombros + 5} y2={48} stroke={cor} strokeWidth={membro} strokeLinecap="round" />
+      <line x1={cx - quadril * 0.55} y1={61} x2={cx - quadril * 0.55 - 2} y2={94} stroke={cor} strokeWidth={membro + 1.5} strokeLinecap="round" />
+      <line x1={cx + quadril * 0.55} y1={61} x2={cx + quadril * 0.55 + 2} y2={94} stroke={cor} strokeWidth={membro + 1.5} strokeLinecap="round" />
+    </svg>
+  );
+}
 
 const NIVEIS = ["Iniciante", "Intermediário", "Avançado"];
 
@@ -7082,6 +7139,29 @@ function EvolucaoTab({ onAplicarTreino }) {
         </div>
         <div style={styles.biotipoDescricao}>{BIOTIPOS.find((b) => b.id === biotipo)?.descricao}</div>
 
+        <div style={styles.biotipoImagemRow}>
+          {BIOTIPOS.map((b) => {
+            const ativo = biotipo === b.id;
+            return (
+              <button
+                key={b.id}
+                onClick={() => setBiotipo(b.id)}
+                style={{ ...styles.biotipoImagemCard, ...(ativo ? styles.biotipoImagemCardAtiva : {}) }}
+              >
+                <SilhuetaBiotipo
+                  ombros={b.ombros}
+                  cintura={b.cintura}
+                  quadril={b.quadril}
+                  membro={b.membro}
+                  cor={ativo ? CROSS_LIME : INK}
+                />
+                <TestePulso variante={b.punho} cor={ativo ? CROSS_LIME : INK} />
+                <span style={styles.biotipoImagemLabel}>{b.nome}</span>
+              </button>
+            );
+          })}
+        </div>
+
         <div style={styles.cardLabel}>Nível de experiência</div>
         <div style={styles.chipRow}>
           {NIVEIS.map((n) => (
@@ -11371,6 +11451,21 @@ const styles = {
     cursor: "pointer",
   },
   chipActive: { background: GRAPHITE, color: TEXTO_CLARO_FIXO, borderColor: GRAPHITE },
+  biotipoImagemRow: { display: "flex", flexDirection: "row", gap: 10, marginTop: -6, marginBottom: 16 },
+  biotipoImagemCard: {
+    flex: 1,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    gap: 4,
+    padding: "10px 4px",
+    borderRadius: 12,
+    border: `1px solid ${PENCIL}`,
+    background: "transparent",
+    cursor: "pointer",
+  },
+  biotipoImagemCardAtiva: { borderColor: CROSS_LIME, background: "rgba(198,255,77,0.08)" },
+  biotipoImagemLabel: { fontFamily: monoFont, fontSize: 11, color: INK, fontWeight: 600 },
   modelosBtn: {
     width: "100%",
     padding: "12px",
@@ -12844,7 +12939,7 @@ const styles = {
   },
   avalErroMsg: { fontSize: 11, color: "#FF7A68", fontWeight: 600, marginTop: 2 },
   avalErroResumo: { fontSize: 12.5, color: "#FF7A68", fontWeight: 700, marginTop: 8, textAlign: "center" },
-  biotipoDescricao: { fontSize: 12, color: PENCIL, fontStyle: "italic", marginBottom: 16, marginTop: -6 },
+  biotipoDescricao: { fontSize: 13, color: INK, fontWeight: 500, fontStyle: "normal", marginBottom: 16, marginTop: -6 },
   deltaPeso: {
     fontSize: 13,
     fontWeight: 700,
