@@ -6358,6 +6358,12 @@ function getDicaDoDia(idioma) {
 // ---------- INÍCIO — painel principal ----------
 function InicioTab({ perfilAtivoNome, rotina, diasSelecionados, historico, recordes, onIrTreino, t, idioma, refTreinoHojeTour }) {
   const [avaliacoes, setAvaliacoes] = useState([]);
+  const [agora, setAgora] = useState(() => new Date());
+
+  useEffect(() => {
+    const id = setInterval(() => setAgora(new Date()), 1000);
+    return () => clearInterval(id);
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -6491,7 +6497,13 @@ function InicioTab({ perfilAtivoNome, rotina, diasSelecionados, historico, recor
   const dadosPeso = avaliacoes.map((a, i) => ({ indice: i + 1, peso: parseFloat(a.peso) })).filter((d) => !isNaN(d.peso));
 
   const treinoHojeConcluido = diasDaSemana[diaSemanaIdx] ? diasDaSemana[diaSemanaIdx].concluido : false;
-  const dataHojeFormatada = hojeData.toLocaleDateString("pt-BR", { weekday: "long", day: "numeric", month: "long" });
+  const dataHojeFormatada = agora.toLocaleDateString("pt-BR", { weekday: "long", day: "numeric", month: "long" });
+  const horaBrasilia = agora.toLocaleTimeString("pt-BR", {
+    timeZone: "America/Sao_Paulo",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  });
 
   return (
     <div style={styles.crossDarkWrap}>
@@ -6506,6 +6518,8 @@ function InicioTab({ perfilAtivoNome, rotina, diasSelecionados, historico, recor
 
       <div style={styles.resumoDiaFaixa}>
         <span style={styles.resumoDiaData}>{dataHojeFormatada}</span>
+        <span style={styles.resumoDiaSeparador}>•</span>
+        <span style={styles.resumoDiaRelogio}>🕒 {horaBrasilia}</span>
         <span style={styles.resumoDiaSeparador}>•</span>
         <span
           style={{
@@ -8805,33 +8819,26 @@ function normalizarTermoMuscular(txt) {
     .toLowerCase()
     .normalize("NFD").replace(/[̀-ͯ]/g, "");
 }
-const PALAVRA_CHAVE_REGIAO = [
-  [/peito/, ["peito"]],
-  [/costas|grande dorsal|dorsal/, ["costas"]],
-  [/lombar/, ["costas"]],
-  [/deltoide anterior|deltoide frontal/, ["deltoide-frente"]],
-  [/deltoide posterior|deltoide traseiro|rotadores do ombro/, ["deltoide-costas"]],
-  [/deltoide lateral/, ["deltoide-frente", "deltoide-costas"]],
-  [/ombro/, ["deltoide-frente", "deltoide-costas"]],
-  [/trapezio/, ["trapezio"]],
-  [/biceps/, ["biceps"]],
-  [/triceps/, ["triceps"]],
-  [/antebraco/, ["antebraco-frente", "antebraco-costas"]],
-  [/abdomen|abdominal|core|obliquo/, ["abdomen"]],
-  [/quadriceps/, ["quadriceps"]],
-  [/adutor|abdutor|flexores do quadril/, ["quadriceps"]],
-  [/posterior de coxa/, ["posterior-coxa"]],
-  [/gluteo/, ["gluteo"]],
-  [/panturrilha/, ["panturrilha"]],
-  [/serratil/, ["abdomen"]],
-];
 function regioesParaTermo(termo) {
   const norm = normalizarTermoMuscular(termo);
-  const encontradas = new Set();
-  PALAVRA_CHAVE_REGIAO.forEach(([re, regioes]) => {
-    if (re.test(norm)) regioes.forEach((r) => encontradas.add(r));
-  });
-  return [...encontradas];
+  const tem = (s) => norm.includes(s);
+  const achou = new Set();
+  if (tem("deltoide anterior") || tem("deltoide frontal")) achou.add("deltoide-frente");
+  if (tem("deltoide posterior") || tem("deltoide traseiro") || tem("rotadores do ombro")) achou.add("deltoide-costas");
+  if (tem("deltoide lateral")) { achou.add("deltoide-frente"); achou.add("deltoide-costas"); }
+  if (tem("ombro")) { achou.add("deltoide-frente"); achou.add("deltoide-costas"); }
+  if (tem("peito")) achou.add("peito");
+  if (tem("costas") || tem("dorsal") || tem("lombar")) achou.add("costas");
+  if (tem("trapezio")) achou.add("trapezio");
+  if (tem("biceps")) achou.add("biceps");
+  if (tem("triceps")) achou.add("triceps");
+  if (tem("antebraco")) { achou.add("antebraco-frente"); achou.add("antebraco-costas"); }
+  if (tem("abdomen") || tem("abdominal") || tem("core") || tem("obliquo") || tem("serratil")) achou.add("abdomen");
+  if (tem("quadriceps") || tem("adutor") || tem("abdutor") || tem("flexores do quadril")) achou.add("quadriceps");
+  if (tem("posterior de coxa") || (tem("posterior") && !tem("deltoide") && !tem("ombro"))) achou.add("posterior-coxa");
+  if (tem("gluteo")) achou.add("gluteo");
+  if (tem("panturrilha")) achou.add("panturrilha");
+  return [...achou];
 }
 // Recebe a lista de exercícios do treino do dia (cada um com .grupoMuscular)
 // e devolve { regiao: "forte" | "suave" } com a ativação do dia inteiro.
@@ -8850,6 +8857,15 @@ function ativacaoMuscularExercicios(exercicios) {
       });
     });
   });
+  // Reforços anatômicos gerais: mesmo quando o texto do exercício não cita
+  // o auxiliar, ele é sabidamente ativado nesse padrão de movimento — garante
+  // pelo menos "suave", sem nunca sobrescrever um "forte" já definido.
+  const garantirSuave = (regiao) => {
+    if (!ativacao[regiao]) ativacao[regiao] = "suave";
+  };
+  if (ativacao["costas"]) garantirSuave("deltoide-costas");
+  if (ativacao["peito"]) garantirSuave("deltoide-frente");
+  if (ativacao["quadriceps"]) garantirSuave("abdomen");
   return ativacao;
 }
 
@@ -13981,7 +13997,8 @@ const styles = {
     fontSize: 12,
     color: CROSS_TEXT_DIM,
   },
-  resumoDiaData: { textTransform: "capitalize" },
+  resumoDiaData: { textTransform: "capitalize", color: CROSS_LIME, fontWeight: 800 },
+  resumoDiaRelogio: { color: CROSS_LIME, fontWeight: 800, fontVariantNumeric: "tabular-nums" },
   resumoDiaSeparador: { opacity: 0.5 },
   resumoDiaStatus: { color: "#fff", fontWeight: 700 },
   resumoDiaStreak: { marginLeft: "auto", color: CROSS_LIME, fontWeight: 800 },
