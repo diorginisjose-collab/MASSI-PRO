@@ -305,9 +305,22 @@ function calcularVolumePorRegiao(historico, dias) {
   const limite = new Date();
   limite.setDate(limite.getDate() - dias);
   const soma = {};
+  const somar = (regiao, peso) => {
+    soma[regiao] = (soma[regiao] || 0) + peso;
+  };
   (historico || []).forEach((h) => {
-    if (!h.foco) return;
     if (new Date(h.data) < limite) return;
+    // Treinos salvos com a ativação fina por exercício (a partir desta versão)
+    // usam esse dado, muito mais preciso que o "foco" geral do dia.
+    if (h.ativacaoMusculos && Object.keys(h.ativacaoMusculos).length > 0) {
+      Object.entries(h.ativacaoMusculos).forEach(([regiao, nivel]) => {
+        somar(regiao, nivel === "forte" ? 1 : 0.35);
+      });
+      return;
+    }
+    // Fallback pra treinos antigos (salvos antes de existir ativacaoMusculos):
+    // estima pelas 6 macro-regiões do foco do dia, expandidas pras finas.
+    if (!h.foco) return;
     const pesos = FOCO_REGIOES[h.foco];
     if (!pesos) return;
     Object.entries(pesos).forEach(([regiaoMacro, peso]) => {
@@ -315,9 +328,7 @@ function calcularVolumePorRegiao(historico, dias) {
       // máscaras); em JS as declarações `const` de função top-level já estão
       // disponíveis aqui por hoisting do módulo.
       const finas = (typeof EXPANSAO_REGIAO_FINA !== "undefined" && EXPANSAO_REGIAO_FINA[regiaoMacro]) || [regiaoMacro];
-      finas.forEach((regiao) => {
-        soma[regiao] = (soma[regiao] || 0) + peso;
-      });
+      finas.forEach((regiao) => somar(regiao, peso));
     });
   });
   return soma;
@@ -3707,11 +3718,27 @@ function AppMassiPro({ onSolicitarRemount }) {
   const tourCalcBtnsRef = useRef(null);
   const tourSupersetRef = useRef(null);
   const tourPersonalizadoRef = useRef(null);
+  const tourDuplicarRef = useRef(null);
   const tourCsvRef = useRef(null);
+  const tourHistCsvRef = useRef(null);
+  const tourHistMapaRef = useRef(null);
+  const tourHistPdfRef = useRef(null);
+  const tourHistDorRef = useRef(null);
+  const tourAvalRegistrarRef = useRef(null);
+  const tourAvalGorduraRef = useRef(null);
+  const tourAvalBiotipoRef = useRef(null);
+  const tourAvalAlimentoRef = useRef(null);
+  const tourAvalFotosRef = useRef(null);
+  const tourNotasRef = useRef(null);
+  const tourPremiumPlanosRef = useRef(null);
+  const tourPremiumDietaRef = useRef(null);
   const [tourAtivo, setTourAtivo] = useState(null); // { aba: "rotina"|"inicio"|"cross", passo: 0 } ou null
   // Cache local de quais tours já foram vistos nesta instalação. Evita reconsultar
   // o storage a cada troca de aba (fonte do bug de o tour reaparecer ao voltar numa aba).
-  const [toursVistos, setToursVistos] = useState({ rotina: undefined, inicio: undefined, cross: undefined, novidades: undefined });
+  const [toursVistos, setToursVistos] = useState({
+    rotina: undefined, inicio: undefined, cross: undefined, novidades: undefined,
+    historico: undefined, evolucao: undefined, notas: undefined, premium: undefined,
+  });
   const toursDef = {
     rotina: [
       { ref: tourMaquinaRef, texto: "Aqui você escolhe o equipamento do exercício — halteres, barra ou máquina." },
@@ -3733,10 +3760,31 @@ function AppMassiPro({ onSolicitarRemount }) {
     ],
     novidades: [
       { ref: tourCargaSeriesRef, texto: "Novidade: aqui aparece a carga que você usou da última vez, e agora dá pra marcar o RIR de cada série (quantas repetições ainda sobrariam no tanque)." },
-      { ref: tourCalcBtnsRef, texto: "Toque em \"1RM\" pra estimar sua carga máxima nesse exercício, ou em \"Anilhas\" pra saber quais anilhas colocar em cada lado da barra." },
-      { ref: tourSupersetRef, texto: "Marque \"Superset\" quando esse exercício for feito direto com o próximo, sem descanso entre eles." },
+      { ref: tourCalcBtnsRef, texto: "Toque em \"1RM\" pra estimar sua carga máxima, \"Anilhas\" pra saber o que colocar em cada lado da barra, ou \"Aquecimento\" pra ver séries de aquecimento sugeridas antes da série de trabalho." },
+      { ref: tourSupersetRef, texto: "Marque \"Superset\" quando esse exercício for feito direto com o próximo, sem descanso entre eles. \"Dropset\" é pra quando você reduz a carga e continua na mesma série, sem descansar." },
       { ref: tourPersonalizadoRef, texto: "Não achou seu exercício na lista? Toque aqui pra cadastrar um exercício personalizado nesse dia." },
+      { ref: tourDuplicarRef, texto: "Toque em \"Duplicar\" pra copiar o treino desse dia pra outro dia da semana, sem montar tudo de novo." },
       { ref: tourCsvRef, texto: "E agora você também pode exportar sua rotina inteira em CSV, pra abrir numa planilha." },
+    ],
+    historico: [
+      { ref: tourHistPdfRef, texto: "Assinantes Premium podem baixar um PDF com o resumo completo de cada mês de treino." },
+      { ref: tourHistCsvRef, texto: "Aqui você baixa todo o seu histórico de treinos numa planilha (CSV), pra analisar como quiser." },
+      { ref: tourHistMapaRef, texto: "Vá desbloqueando medalhas conforme treina — algumas contam treinos, outras sua sequência ou volume total." },
+      { ref: tourHistDorRef, texto: "Esse calendário mostra sua consistência ao longo do tempo — quanto mais forte a cor, mais treinos naquele período." },
+    ],
+    evolucao: [
+      { ref: tourAvalRegistrarRef, texto: "Registre peso e medidas aqui de tempos em tempos — sexo biológico é só pra calcular seu % de gordura corporal certinho." },
+      { ref: tourAvalGorduraRef, texto: "Com pescoço, cintura (e quadril, se for mulher) preenchidos, esse card estima seu % de gordura corporal automaticamente." },
+      { ref: tourAvalBiotipoRef, texto: "Não sabe seu biotipo? Compare a silhueta e o teste do punho de cada card — é só tocar no que mais parece com você." },
+      { ref: tourAvalAlimentoRef, texto: "Busque um alimento aqui pra registrar sua refeição — o app já calcula as calorias e macros pra você." },
+      { ref: tourAvalFotosRef, texto: "Tire fotos de progresso regularmente — depois dá pra comparar antes/depois com um slider bem visual." },
+    ],
+    notas: [
+      { ref: tourNotasRef, texto: "Use esse espaço livre pra anotar qualquer coisa sobre seu treino ou evolução — sensações, metas, lembretes, o que quiser." },
+    ],
+    premium: [
+      { ref: tourPremiumDietaRef, texto: "Assinantes Premium têm acesso a mais de 1200 dietas prontas, filtráveis por objetivo, nível e faixa etária." },
+      { ref: tourPremiumPlanosRef, texto: "Essas dicas gerais de dieta ficam disponíveis pra todo mundo, assinante ou não." },
     ],
   };
   const proximoPassoTour = () => {
@@ -3787,7 +3835,7 @@ function AppMassiPro({ onSolicitarRemount }) {
           if (!cancelado) setTourAtivo({ aba: "rotina", passo: 0 });
         }, 500);
       }
-    } else if (activeTab === "inicio" || activeTab === "cross") {
+    } else if (activeTab === "inicio" || activeTab === "cross" || activeTab === "historico" || activeTab === "evolucao" || activeTab === "notas" || activeTab === "premium") {
       setTimeout(() => {
         if (!cancelado) setTourAtivo({ aba: activeTab, passo: 0 });
       }, 500);
@@ -4015,7 +4063,7 @@ function AppMassiPro({ onSolicitarRemount }) {
         // segue com os padrões
       }
       const vistosCarregados = {};
-      for (const aba of ["rotina", "inicio", "cross", "novidades"]) {
+      for (const aba of ["rotina", "inicio", "cross", "novidades", "historico", "evolucao", "notas", "premium"]) {
         try {
           const res = await window.storage.get(`tour-${aba}-visto`);
           vistosCarregados[aba] = !!(res && res.value === "1");
@@ -6168,7 +6216,7 @@ function AppMassiPro({ onSolicitarRemount }) {
                   dores={dores}
                   recordes={recordes}
                   restricoesFisicas={restricoesFisicas}
-                  refsTour={i === 0 ? { maquina: tourMaquinaRef, video: tourVideoRef, guiado: tourGuiadoBtnRef, descanso: tourDescansoRef, cargaSeries: tourCargaSeriesRef, calcBtns: tourCalcBtnsRef, superset: tourSupersetRef, personalizado: tourPersonalizadoRef } : null}
+                  refsTour={i === 0 ? { maquina: tourMaquinaRef, video: tourVideoRef, guiado: tourGuiadoBtnRef, descanso: tourDescansoRef, cargaSeries: tourCargaSeriesRef, calcBtns: tourCalcBtnsRef, superset: tourSupersetRef, personalizado: tourPersonalizadoRef, duplicar: tourDuplicarRef } : null}
                 />
                 </div>
               ))}
@@ -6197,9 +6245,15 @@ function AppMassiPro({ onSolicitarRemount }) {
         </>
       )}
 
-      {activeTab === "historico" && <HistoricoTab isPremium={isPremium} onVerPlanos={() => setShowPlanos(true)} />}
+      {activeTab === "historico" && (
+        <HistoricoTab
+          isPremium={isPremium}
+          onVerPlanos={() => setShowPlanos(true)}
+          refsTour={{ pdf: tourHistPdfRef, csv: tourHistCsvRef, conquistas: tourHistMapaRef, consistencia: tourHistDorRef }}
+        />
+      )}
 
-      {activeTab === "notas" && <NotasTab />}
+      {activeTab === "notas" && <NotasTab refTour={tourNotasRef} />}
 
       {activeTab === "evolucao" && (
         <EvolucaoTab
@@ -6207,10 +6261,19 @@ function AppMassiPro({ onSolicitarRemount }) {
             aplicarModelo(modeloId, objetivoId);
             setActiveTab("rotina");
           }}
+          refsTour={{ registrar: tourAvalRegistrarRef, gordura: tourAvalGorduraRef, biotipo: tourAvalBiotipoRef, alimento: tourAvalAlimentoRef, fotos: tourAvalFotosRef }}
         />
       )}
 
-      {activeTab === "premium" && <PremiumTab isPremium={isPremium} onVerPlanos={() => setShowPlanos(true)} objetivoUsuario={objetivoUsuario} nivelUsuario={nivelUsuario} />}
+      {activeTab === "premium" && (
+        <PremiumTab
+          isPremium={isPremium}
+          onVerPlanos={() => setShowPlanos(true)}
+          objetivoUsuario={objetivoUsuario}
+          nivelUsuario={nivelUsuario}
+          refsTour={{ dieta: tourPremiumDietaRef, planos: tourPremiumPlanosRef }}
+        />
+      )}
 
       {activeTab === "sobre" && (
         <SobreTab
@@ -6701,7 +6764,7 @@ function InicioTab({ perfilAtivoNome, rotina, diasSelecionados, historico, recor
 }
 
 
-function EvolucaoTab({ onAplicarTreino }) {
+function EvolucaoTab({ onAplicarTreino, refsTour }) {
   const [avaliacoes, setAvaliacoes] = useState([]);
   const [carregado, setCarregado] = useState(false);
   const [salvando, setSalvando] = useState(false);
@@ -7021,7 +7084,7 @@ function EvolucaoTab({ onAplicarTreino }) {
 
   return (
     <div>
-      <section style={styles.card}>
+      <section style={styles.card} ref={refsTour ? refsTour.registrar : undefined}>
         <div style={styles.cardLabel}>Registrar avaliação de hoje</div>
 
         <div style={styles.avalGrid}>
@@ -7155,7 +7218,7 @@ function EvolucaoTab({ onAplicarTreino }) {
           ))}
         </div>
 
-        <div style={styles.cardLabel}>Biotipo (o que mais parece com você)</div>
+        <div style={styles.cardLabel} ref={refsTour ? refsTour.biotipo : undefined}>Biotipo (o que mais parece com você)</div>
         <div style={styles.chipRow}>
           {BIOTIPOS.map((b) => (
             <button
@@ -7256,7 +7319,7 @@ function EvolucaoTab({ onAplicarTreino }) {
         );
         const faltaQuadril = sexo === "feminino" && !(quadril || (ultima && ultima.quadril));
         return (
-          <section style={styles.card}>
+          <section style={styles.card} ref={refsTour ? refsTour.gordura : undefined}>
             <div style={styles.cardLabel}>🔥 % de gordura corporal (estimado)</div>
             {percGordura !== null ? (
               <>
@@ -7277,7 +7340,7 @@ function EvolucaoTab({ onAplicarTreino }) {
         );
       })()}
 
-      <section style={styles.card}>
+      <section style={styles.card} ref={refsTour ? refsTour.alimento : undefined}>
         <div style={styles.cardLabel}>🍽️ Registrar refeição</div>
         <p style={styles.refeicaoDisclaimer}>
           Busca num banco de alimentos comuns (funciona mesmo sem internet) e complementa com uma base pública online quando disponível — calorias e macros calculados pela quantidade. Pode buscar mais de um de uma vez: "arroz, feijão" ou "arroz e feijão".
@@ -7364,7 +7427,7 @@ function EvolucaoTab({ onAplicarTreino }) {
         })()}
       </section>
 
-      <section style={styles.card}>
+      <section style={styles.card} ref={refsTour ? refsTour.fotos : undefined}>
         <div style={styles.cardLabel}>📷 Fotos de progresso</div>
         <label style={styles.addItemBtn}>
           + Adicionar foto
@@ -8035,7 +8098,7 @@ const DICAS_DIETA = [
 // vez via fetch — assim não pesa o pacote JS do app, mesmo com muitas dietas).
 // Formato de cada dieta: título + 2 opções (hipertrofia/emagrecimento), cada uma com 4 refeições.
 
-function PremiumTab({ isPremium, onVerPlanos, objetivoUsuario, nivelUsuario }) {
+function PremiumTab({ isPremium, onVerPlanos, objetivoUsuario, nivelUsuario, refsTour }) {
   const objetivoPadrao = objetivoUsuario === "emagrecer" || objetivoUsuario === "secar" ? "emagrecer" : "hipertrofia";
   const perfilPadrao = nivelUsuario ? nivelUsuario.toLowerCase() : "iniciante";
 
@@ -8132,7 +8195,7 @@ function PremiumTab({ isPremium, onVerPlanos, objetivoUsuario, nivelUsuario }) {
 
   return (
     <div>
-      <section style={styles.card}>
+      <section style={styles.card} ref={refsTour ? refsTour.dieta : undefined}>
         <div style={styles.cardLabel}>🍽 Sua dieta</div>
         {!isPremium ? (
           <p style={{ ...styles.modalDisclaimer, ...styles.premiumMuted }}>
@@ -8237,7 +8300,7 @@ function PremiumTab({ isPremium, onVerPlanos, objetivoUsuario, nivelUsuario }) {
         )}
       </section>
 
-      <section style={styles.card}>
+      <section style={styles.card} ref={refsTour ? refsTour.planos : undefined}>
         <div style={styles.cardLabel}>★ Dicas gerais de dieta</div>
         <p style={{ ...styles.modalDisclaimer, ...styles.premiumMuted }}>
           Conteúdo educativo geral, disponível pra todo mundo — não substitui acompanhamento de um nutricionista.
@@ -8955,7 +9018,7 @@ function MapaMuscularSVG({ volumePorRegiao, ativacao, piscando, mini }) {
   );
 }
 
-function HistoricoTab({ isPremium, onVerPlanos }) {
+function HistoricoTab({ isPremium, onVerPlanos, refsTour }) {
   const [modoImpressaoRelatorio, setModoImpressaoRelatorio] = useState(false);
   const [historico, setHistorico] = useState([]);
   const [carregado, setCarregado] = useState(false);
@@ -9084,7 +9147,7 @@ function HistoricoTab({ isPremium, onVerPlanos }) {
 
   return (
     <div>
-      <section style={styles.card}>
+      <section style={styles.card} ref={refsTour ? refsTour.pdf : undefined}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
           <div style={styles.cardLabel}>📄 Relatório mensal</div>
           {isPremium ? (
@@ -9104,7 +9167,7 @@ function HistoricoTab({ isPremium, onVerPlanos }) {
         </p>
       </section>
 
-      <section style={styles.card}>
+      <section style={styles.card} ref={refsTour ? refsTour.csv : undefined}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <div style={styles.cardLabel}>📊 Exportar histórico completo</div>
           <button style={styles.trocarBtn} onClick={exportarHistoricoCSV} disabled={totalTreinos === 0}>
@@ -9133,7 +9196,7 @@ function HistoricoTab({ isPremium, onVerPlanos }) {
         </div>
       </section>
 
-      <section style={styles.card}>
+      <section style={styles.card} ref={refsTour ? refsTour.conquistas : undefined}>
         <div style={styles.cardLabel}>Conquistas</div>
         <div style={styles.conquistasRow}>
           {CONQUISTAS.map((c) => {
@@ -9148,7 +9211,7 @@ function HistoricoTab({ isPremium, onVerPlanos }) {
         </div>
       </section>
 
-      <section style={styles.card}>
+      <section style={styles.card} ref={refsTour ? refsTour.consistencia : undefined}>
         <div style={styles.cardLabel}>Consistência</div>
         <ConsistenciaHeatmap historico={historico} />
       </section>
@@ -9288,7 +9351,7 @@ function HistoricoTab({ isPremium, onVerPlanos }) {
   );
 }
 
-function NotasTab() {
+function NotasTab({ refTour }) {
   const [notas, setNotas] = useState([]);
   const [carregado, setCarregado] = useState(false);
   const [itens, setItens] = useState([{ id: uid(), exercicio: "", carga: "" }]);
@@ -9351,7 +9414,7 @@ function NotasTab() {
 
   return (
     <div>
-      <section style={styles.card}>
+      <section style={styles.card} ref={refTour}>
         <div style={styles.cardLabel}>Nova anotação</div>
 
         {itens.map((item, idx) => (
@@ -10755,7 +10818,7 @@ function DayCard({ entry, onFoco, onPeriodo, onAddExercicio, onRemoveExercicio, 
           <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 6 }}>
             <div style={styles.focoTag}>{foco}</div>
             {!isDescanso && exercicios.length > 0 && (
-              <button style={{ ...styles.trocarBtn, fontSize: 11 }} onClick={() => setDuplicarAberto(true)} title="Duplicar esse treino pra outro dia">
+              <button style={{ ...styles.trocarBtn, fontSize: 11 }} onClick={() => setDuplicarAberto(true)} title="Duplicar esse treino pra outro dia" ref={refsTour ? refsTour.duplicar : undefined}>
                 📋 Duplicar
               </button>
             )}
@@ -10929,12 +10992,11 @@ function DayCard({ entry, onFoco, onPeriodo, onAddExercicio, onRemoveExercicio, 
                     🔍
                   </button>
                 </div>
-                <div style={{ marginBottom: 6, display: "flex", gap: 6, flexWrap: "wrap" }}>
+                <div style={{ marginBottom: 6, display: "flex", gap: 6, flexWrap: "wrap" }} ref={idx === 0 && refsTour ? refsTour.superset : undefined}>
                   <button
                     style={{ ...styles.trocarBtn, opacity: ex.superset ? 1 : 0.55 }}
                     onClick={() => onEditExercicio(ex.id, "superset", !ex.superset)}
                     title="Marcar como superset com o próximo exercício (sem descanso entre eles)"
-                    ref={idx === 0 && refsTour ? refsTour.superset : undefined}
                   >
                     🔗 {ex.superset ? "Superset ✓" : "Superset"}
                   </button>
