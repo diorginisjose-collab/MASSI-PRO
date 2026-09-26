@@ -2616,6 +2616,7 @@ function MenuPrincipalModal({ onClose, onItem }) {
       titulo: "Conta",
       itens: [
         { id: "perfil", icone: "👤", label: "Meu perfil" },
+        { id: "idioma", icone: "🌐", label: "Idioma" },
         { id: "notificacoes", icone: "🔔", label: "Notificações" },
         { id: "tema", icone: "🌙", label: "Aparência / Tema" },
       ],
@@ -3642,6 +3643,58 @@ export default function App() {
   return <AppMassiPro key={chaveRemount} onSolicitarRemount={() => setChaveRemount((c) => c + 1)} />;
 }
 
+// ---------------------------------------------------------------
+// Letreiro digital fixo no topo — texto corrido "MASSI PRO", sem
+// CSS animation/keyframes (não suportado no WebView), só JS puro
+// com setInterval movendo a posição, igual ao hook usePiscar.
+// ---------------------------------------------------------------
+function LetreiroTopo() {
+  const [pos, setPos] = useState(0);
+  const texto = "MASSI PRO  •  ";
+  const textoRepetido = texto.repeat(12);
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      setPos((p) => {
+        const novo = p - 1;
+        return novo < -900 ? 0 : novo;
+      });
+    }, 60); // velocidade mais lenta (era 30ms)
+    return () => clearInterval(id);
+  }, []);
+
+  return (
+    <div
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        right: 0,
+        height: 26,
+        backgroundColor: "#14181B",
+        overflow: "hidden",
+        zIndex: 999,
+        display: "flex",
+        alignItems: "center",
+      }}
+    >
+      <div
+        style={{
+          whiteSpace: "nowrap",
+          color: "#9ACD32",
+          fontWeight: "bold",
+          fontSize: 13,
+          letterSpacing: 1,
+          position: "relative",
+          left: pos,
+        }}
+      >
+        {textoRepetido}
+      </div>
+    </div>
+  );
+}
+
 function AppMassiPro({ onSolicitarRemount }) {
   const [rotina, setRotina] = useState(() =>
     DIAS_SEMANA.map((dia, i) =>
@@ -3908,7 +3961,9 @@ function AppMassiPro({ onSolicitarRemount }) {
   const [perfis, setPerfis] = useState([{ id: "perfil-1", nome: "Eu" }]);
   const [perfilAtivoId, setPerfilAtivoId] = useState("perfil-1");
   const [showPerfis, setShowPerfis] = useState(false);
+  const [showFotoEscolha, setShowFotoEscolha] = useState(false);
   const perfilAtivoNome = (perfis.find((p) => p.id === perfilAtivoId) || {}).nome || "Você";
+  const perfilAtivoFoto = (perfis.find((p) => p.id === perfilAtivoId) || {}).foto || null;
 
   useEffect(() => {
     const t1 = setTimeout(() => setSplashSaindo(true), 1700);
@@ -4184,6 +4239,9 @@ function AppMassiPro({ onSolicitarRemount }) {
       case "perfil":
         setShowPerfis(true);
         break;
+      case "idioma":
+        alternarIdioma();
+        break;
       case "notificacoes":
         setActiveTab("sobre");
         break;
@@ -4429,6 +4487,48 @@ function AppMassiPro({ onSolicitarRemount }) {
 
   const renomearPerfil = async (id, novoNome) => {
     const novaLista = perfis.map((p) => (p.id === id ? { ...p, nome: novoNome } : p));
+    setPerfis(novaLista);
+    try {
+      await window.storage.set("perfis-lista", JSON.stringify(novaLista));
+    } catch (e) {
+      // segue mesmo se falhar
+    }
+  };
+
+  // Recebe o arquivo de imagem escolhido (câmera ou galeria), reduz o
+  // tamanho num canvas (evita estourar o storage) e salva como foto do
+  // perfil ativo.
+  const atualizarFotoPerfil = (arquivo) => {
+    if (!arquivo) return;
+    const leitor = new FileReader();
+    leitor.onload = () => {
+      const img = new Image();
+      img.onload = async () => {
+        const tamanho = 240;
+        const canvas = document.createElement("canvas");
+        canvas.width = tamanho;
+        canvas.height = tamanho;
+        const ctx = canvas.getContext("2d");
+        const lado = Math.min(img.width, img.height);
+        const sx = (img.width - lado) / 2;
+        const sy = (img.height - lado) / 2;
+        ctx.drawImage(img, sx, sy, lado, lado, 0, 0, tamanho, tamanho);
+        const dataUrl = canvas.toDataURL("image/jpeg", 0.82);
+        const novaLista = perfis.map((p) => (p.id === perfilAtivoId ? { ...p, foto: dataUrl } : p));
+        setPerfis(novaLista);
+        try {
+          await window.storage.set("perfis-lista", JSON.stringify(novaLista));
+        } catch (e) {
+          // segue mesmo se falhar
+        }
+      };
+      img.src = leitor.result;
+    };
+    leitor.readAsDataURL(arquivo);
+  };
+
+  const removerFotoPerfil = async () => {
+    const novaLista = perfis.map((p) => (p.id === perfilAtivoId ? { ...p, foto: null } : p));
     setPerfis(novaLista);
     try {
       await window.storage.set("perfis-lista", JSON.stringify(novaLista));
@@ -5545,6 +5645,8 @@ function AppMassiPro({ onSolicitarRemount }) {
         }
       `}</style>
 
+      <LetreiroTopo />
+
       <div className="print-rotina-area">
         <h1>Minha rotina — Massi Pro</h1>
         <p>{new Date().toLocaleDateString("pt-BR")} — {perfilAtivoNome}</p>
@@ -5621,18 +5723,21 @@ function AppMassiPro({ onSolicitarRemount }) {
             <span style={styles.menuAbrirIcone}>⚙️</span>
           </button>
           <div style={styles.headerBotoesDireita}>
-            <button style={styles.perfilHeaderBtn} onClick={() => setShowPerfis(true)} aria-label="Trocar perfil" title="Perfil">
-              👤 {perfilAtivoNome}
-            </button>
-            <button style={styles.temaBtn} onClick={alternarIdioma} aria-label="Trocar idioma" title={t("alternarIdioma")}>
-              {IDIOMA_BANDEIRA[idioma]} {IDIOMA_LABEL[idioma]}
-            </button>
             <button style={isPremium ? styles.premiumBadge : styles.freeBadge} onClick={() => setShowPlanos(true)}>
               {isPremium ? t("premium") : t("freeVerPlanos")}
             </button>
           </div>
         </div>
-        <p style={styles.saudacaoNome}>{t("ola")}, {perfilAtivoNome}!</p>
+        <div style={styles.saudacaoRow}>
+          <button style={styles.avatarPerfilBtn} onClick={() => setShowFotoEscolha(true)} aria-label="Foto de perfil" title="Alterar foto">
+            {perfilAtivoFoto ? (
+              <img src={perfilAtivoFoto} alt="" style={styles.avatarPerfilImg} />
+            ) : (
+              <span style={styles.avatarPerfilIniciais}>{(perfilAtivoNome || "V").charAt(0).toUpperCase()}</span>
+            )}
+          </button>
+          <p style={styles.saudacaoNome}>{t("ola")}, {perfilAtivoNome}!</p>
+        </div>
         <h1 style={styles.title}>Massi Pro</h1>
         <p style={styles.subtitle}>{t("subtituloApp")}</p>
       </header>
@@ -5912,6 +6017,15 @@ function AppMassiPro({ onSolicitarRemount }) {
           onApagar={apagarPerfil}
           onRenomear={renomearPerfil}
           onFechar={() => setShowPerfis(false)}
+        />
+      )}
+
+      {showFotoEscolha && (
+        <FotoPerfilModal
+          temFoto={!!perfilAtivoFoto}
+          onEscolher={atualizarFotoPerfil}
+          onRemover={removerFotoPerfil}
+          onFechar={() => setShowFotoEscolha(false)}
         />
       )}
 
@@ -7806,6 +7920,57 @@ function PerfilModal({ perfis, perfilAtivoId, onTrocar, onCriar, onApagar, onRen
           </button>
         </div>
         <p style={styles.modalDisclaimer}>Trocar de perfil recarrega o app pra carregar os dados certos.</p>
+      </div>
+    </div>
+  );
+}
+
+function FotoPerfilModal({ temFoto, onEscolher, onRemover, onFechar }) {
+  const handleArquivo = (e) => {
+    const arquivo = e.target.files && e.target.files[0];
+    if (arquivo) onEscolher(arquivo);
+    e.target.value = "";
+    onFechar();
+  };
+
+  return (
+    <div style={styles.modalOverlay} onClick={onFechar}>
+      <div style={styles.modalCard} onClick={(e) => e.stopPropagation()}>
+        <button style={styles.modalClose} onClick={onFechar} aria-label="Fechar">×</button>
+        <div style={styles.eyebrow}>FOTO DE PERFIL</div>
+        <h2 style={styles.modalTitle}>Escolha sua foto</h2>
+        <p style={styles.modalSubtitle}>Tire uma foto na hora ou escolha uma imagem já salva no seu celular.</p>
+
+        <div style={styles.fotoPerfilOpcoes}>
+          <label style={styles.fotoPerfilBotaoLabel} htmlFor="fotoPerfilCameraInput">
+            📷 Abrir câmera
+          </label>
+          <input
+            id="fotoPerfilCameraInput"
+            type="file"
+            accept="image/*"
+            capture="user"
+            style={styles.inputArquivoOculto}
+            onChange={handleArquivo}
+          />
+
+          <label style={styles.fotoPerfilBotaoLabel} htmlFor="fotoPerfilGaleriaInput">
+            🖼️ Escolher da galeria
+          </label>
+          <input
+            id="fotoPerfilGaleriaInput"
+            type="file"
+            accept="image/*"
+            style={styles.inputArquivoOculto}
+            onChange={handleArquivo}
+          />
+
+          {temFoto && (
+            <button style={styles.removerItemBtn} onClick={() => { onRemover(); onFechar(); }}>
+              Remover foto atual
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -11503,6 +11668,72 @@ const styles = {
     letterSpacing: "-0.02em",
     position: "relative",
     zIndex: 1,
+  },
+  saudacaoRow: {
+    display: "flex",
+    alignItems: "center",
+    gap: 10,
+    position: "relative",
+    zIndex: 1,
+  },
+  avatarPerfilBtn: {
+    width: 44,
+    height: 44,
+    borderRadius: "50%",
+    border: "2px solid " + HIGHLIGHT,
+    padding: 0,
+    overflow: "hidden",
+    background: "rgba(255,255,255,0.08)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    flexShrink: 0,
+    cursor: "pointer",
+  },
+  avatarPerfilImg: {
+    width: "100%",
+    height: "100%",
+    objectFit: "cover",
+  },
+  avatarPerfilIniciais: {
+    color: HIGHLIGHT,
+    fontFamily: monoFont,
+    fontWeight: 800,
+    fontSize: 18,
+  },
+  fotoPerfilOpcoes: {
+    display: "flex",
+    flexDirection: "column",
+    gap: 10,
+    marginTop: 8,
+  },
+  fotoPerfilBotaoLabel: {
+    marginTop: 0,
+    width: "100%",
+    padding: "14px",
+    borderRadius: 10,
+    border: "none",
+    background: GRAPHITE,
+    color: HIGHLIGHT,
+    fontFamily: monoFont,
+    fontWeight: 700,
+    fontSize: 15,
+    letterSpacing: "0.03em",
+    cursor: "pointer",
+    display: "block",
+    textAlign: "center",
+    boxSizing: "border-box",
+  },
+  inputArquivoOculto: {
+    position: "absolute",
+    width: 1,
+    height: 1,
+    padding: 0,
+    margin: -1,
+    overflow: "hidden",
+    clip: "rect(0,0,0,0)",
+    whiteSpace: "nowrap",
+    border: 0,
   },
   saudacaoNome: {
     margin: "0 0 4px",
