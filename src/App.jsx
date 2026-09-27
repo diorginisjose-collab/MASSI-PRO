@@ -2874,6 +2874,32 @@ function DuplicarDiaModal({ diaOrigem, diasDisponiveis, onEscolher, onClose }) {
     </div>
   );
 }
+function TrocarFocoModal({ focoAtual, onEscolher, onFechar }) {
+  return (
+    <div style={styles.focoModalOverlay} onClick={onFechar}>
+      <div style={styles.focoModalCard} onClick={(e) => e.stopPropagation()}>
+        <button style={{ ...styles.modalClose, border: "1px solid rgba(255,255,255,0.35)", color: "#fff" }} onClick={onFechar} aria-label="Fechar">×</button>
+        <div style={styles.focoModalEyebrow}>ESCOLHER FOCO</div>
+        <h2 style={styles.focoModalTitle}>Trocar foco do dia</h2>
+        <div style={styles.focoModalLista}>
+          {FOCOS.map((f) => {
+            const ativo = f === focoAtual;
+            return (
+              <button
+                key={f}
+                onClick={() => onEscolher(f)}
+                style={ativo ? { ...styles.focoModalItem, ...styles.focoModalItemAtivo } : styles.focoModalItem}
+              >
+                {f}
+                {ativo && <span style={styles.focoModalCheck}>✓</span>}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
 function CalcAnilhasModal({ cargaInicial, onClose }) {
   const [cargaAlvo, setCargaAlvo] = useState(cargaInicial ? String(cargaInicial) : "");
   const [barra, setBarra] = useState(20);
@@ -3708,6 +3734,7 @@ function AppMassiPro({ onSolicitarRemount }) {
   const [nivelUsuario, setNivelUsuario] = useState(null); // nível do onboarding — usado pra montar peito/costas/ombro automaticamente
   const [restricoesFisicas, setRestricoesFisicas] = useState([]); // ex: ["joelho", "ombro"] — usado pra avisar em exercícios de risco
   const [objetivoUsuario, setObjetivoUsuario] = useState(null); // objetivo do onboarding — usado pra pré-selecionar a dieta
+  const [mostrarParabens, setMostrarParabens] = useState(false); // exibe o card de "Feliz aniversário" quando bate com a data de nascimento
   const [recordes, setRecordes] = useState({}); // recorde pessoal (maior carga já registrada) por exercício
   const [novoRecordeAviso, setNovoRecordeAviso] = useState(null); // texto do aviso de novo recorde, some sozinho
   const [avisoSaltoCarga, setAvisoSaltoCarga] = useState(null); // aviso de carga subindo rápido demais, some sozinho
@@ -3932,7 +3959,7 @@ function AppMassiPro({ onSolicitarRemount }) {
         el.scrollIntoView({ behavior: "smooth", block: "start" });
       }
       setDiaParaFocar(null);
-    }, 80);
+    }, 180);
     return () => clearTimeout(timer);
   }, [activeTab, diaParaFocar]);
   const [exercicioAberto, setExercicioAberto] = useState(null);
@@ -4000,6 +4027,30 @@ function AppMassiPro({ onSolicitarRemount }) {
           if (perfilSalvo && perfilSalvo.nivel) setNivelUsuario(perfilSalvo.nivel);
           if (perfilSalvo && perfilSalvo.objetivo) setObjetivoUsuario(perfilSalvo.objetivo);
           if (perfilSalvo && perfilSalvo.restricoes) setRestricoesFisicas(perfilSalvo.restricoes);
+          if (perfilSalvo && perfilSalvo.nascimento) {
+            // Compara só dia e mês (formato "AAAA-MM-DD") pra descobrir se hoje é aniversário
+            const hojeStr = new Date().toISOString().slice(0, 10);
+            const [, mesHoje, diaHoje] = hojeStr.split("-");
+            const [, mesNasc, diaNasc] = perfilSalvo.nascimento.split("-");
+            if (mesHoje === mesNasc && diaHoje === diaNasc) {
+              const anoAtual = hojeStr.slice(0, 4);
+              let jaVisto = null;
+              try {
+                const vistoRes = await window.storage.get("aniversario-visto-" + anoAtual);
+                jaVisto = vistoRes && vistoRes.value;
+              } catch (e) {
+                // ainda não visto esse ano
+              }
+              if (!jaVisto) {
+                setMostrarParabens(true);
+                try {
+                  await window.storage.set("aniversario-visto-" + anoAtual, "1");
+                } catch (e) {
+                  // segue mesmo se falhar
+                }
+              }
+            }
+          }
         }
       } catch (e) {
         setOnboardingPendente(true);
@@ -6022,7 +6073,7 @@ function AppMassiPro({ onSolicitarRemount }) {
 
       {showFotoEscolha && (
         <FotoPerfilModal
-          temFoto={!!perfilAtivoFoto}
+          foto={perfilAtivoFoto}
           onEscolher={atualizarFotoPerfil}
           onRemover={removerFotoPerfil}
           onFechar={() => setShowFotoEscolha(false)}
@@ -6096,6 +6147,20 @@ function AppMassiPro({ onSolicitarRemount }) {
 
       {mostrarBoraComecar && <TelaBoraComecar />}
 
+      {mostrarParabens && (
+        <div style={styles.modalOverlay} onClick={() => setMostrarParabens(false)}>
+          <div style={styles.modalCard} onClick={(e) => e.stopPropagation()}>
+            <button style={styles.modalClose} onClick={() => setMostrarParabens(false)} aria-label="Fechar">×</button>
+            <div style={{ fontSize: 48, textAlign: "center", marginBottom: 8 }}>🎉🎂🎉</div>
+            <h2 style={{ ...styles.modalTitle, textAlign: "center" }}>Feliz aniversário, {perfilAtivoNome}!</h2>
+            <p style={{ ...styles.modalSubtitle, textAlign: "center" }}>
+              A equipe Massi Pro deseja um dia incrível e muita energia pra seguir evoluindo nos treinos. Parabéns! 🎈
+            </p>
+            <button style={styles.saveButton} onClick={() => setMostrarParabens(false)}>Obrigado!</button>
+          </div>
+        </div>
+      )}
+
       <div style={styles.tabRowWrapper}>
         <div
           ref={tabRowRef}
@@ -6115,7 +6180,11 @@ function AppMassiPro({ onSolicitarRemount }) {
           <button
             ref={(el) => (tabBtnRefs.current["rotina"] = el)}
             style={{ ...styles.tabBtn, ...(activeTab === "rotina" ? styles.tabBtnActive : {}) }}
-            onClick={() => setActiveTab("rotina")}
+            onClick={() => {
+              setActiveTab("rotina");
+              const primeiroDiaRotina = rotina.find((d) => diasSelecionados.includes(d.dia));
+              if (primeiroDiaRotina) setDiaParaFocar(primeiroDiaRotina.dia);
+            }}
           >
             <span style={styles.tabBtnIcone}>💪</span>
             {t("tabRotina")}
@@ -7674,11 +7743,24 @@ function EvolucaoTab({ onAplicarTreino, refsTour }) {
 function OnboardingModal({ onConcluir }) {
   const [nome, setNome] = useState("");
   const [idade, setIdade] = useState("");
+  const [diaNasc, setDiaNasc] = useState("");
+  const [mesNasc, setMesNasc] = useState("");
+  const [anoNasc, setAnoNasc] = useState("");
   const [horario, setHorario] = useState("Manhã");
   const [objetivo, setObjetivo] = useState("Hipertrofia");
   const [nivel, setNivel] = useState("Iniciante");
   const [restricoes, setRestricoes] = useState([]);
   const [erroNome, setErroNome] = useState(false);
+
+  const anoAtualOnboarding = new Date().getFullYear();
+  const anosNascimento = Array.from({ length: 100 }, (_, i) => anoAtualOnboarding - i);
+  const diasNascimento = Array.from({ length: 31 }, (_, i) => String(i + 1).padStart(2, "0"));
+  const mesesNascimento = [
+    { valor: "01", nome: "Janeiro" }, { valor: "02", nome: "Fevereiro" }, { valor: "03", nome: "Março" },
+    { valor: "04", nome: "Abril" }, { valor: "05", nome: "Maio" }, { valor: "06", nome: "Junho" },
+    { valor: "07", nome: "Julho" }, { valor: "08", nome: "Agosto" }, { valor: "09", nome: "Setembro" },
+    { valor: "10", nome: "Outubro" }, { valor: "11", nome: "Novembro" }, { valor: "12", nome: "Dezembro" },
+  ];
 
   const alternarRestricao = (id) => {
     setRestricoes((prev) => (prev.includes(id) ? prev.filter((r) => r !== id) : [...prev, id]));
@@ -7689,7 +7771,8 @@ function OnboardingModal({ onConcluir }) {
       setErroNome(true);
       return;
     }
-    onConcluir({ nome: nome.trim(), idade, horario, objetivo, nivel, restricoes });
+    const nascimento = diaNasc && mesNasc && anoNasc ? `${anoNasc}-${mesNasc}-${diaNasc}` : "";
+    onConcluir({ nome: nome.trim(), idade, nascimento, horario, objetivo, nivel, restricoes });
   };
 
   return (
@@ -7727,6 +7810,30 @@ function OnboardingModal({ onConcluir }) {
               placeholder="Sua idade"
               style={styles.onboardingInputNovo}
             />
+          </div>
+        </div>
+
+        <div style={styles.onboardingCampoNovo}>
+          <div style={styles.nascimentoLabel}>🎉 Data de nascimento</div>
+          <div style={styles.nascimentoRow}>
+            <select value={diaNasc} onChange={(e) => setDiaNasc(e.target.value)} style={styles.nascimentoSelect}>
+              <option value="">Dia</option>
+              {diasNascimento.map((d) => (
+                <option key={d} value={d}>{d}</option>
+              ))}
+            </select>
+            <select value={mesNasc} onChange={(e) => setMesNasc(e.target.value)} style={{ ...styles.nascimentoSelect, flex: 1.6 }}>
+              <option value="">Mês</option>
+              {mesesNascimento.map((m) => (
+                <option key={m.valor} value={m.valor}>{m.nome}</option>
+              ))}
+            </select>
+            <select value={anoNasc} onChange={(e) => setAnoNasc(e.target.value)} style={styles.nascimentoSelect}>
+              <option value="">Ano</option>
+              {anosNascimento.map((a) => (
+                <option key={a} value={a}>{a}</option>
+              ))}
+            </select>
           </div>
         </div>
 
@@ -7925,7 +8032,10 @@ function PerfilModal({ perfis, perfilAtivoId, onTrocar, onCriar, onApagar, onRen
   );
 }
 
-function FotoPerfilModal({ temFoto, onEscolher, onRemover, onFechar }) {
+function FotoPerfilModal({ foto, onEscolher, onRemover, onFechar }) {
+  const [verGrande, setVerGrande] = useState(false);
+  const temFoto = !!foto;
+
   const handleArquivo = (e) => {
     const arquivo = e.target.files && e.target.files[0];
     if (arquivo) onEscolher(arquivo);
@@ -7934,45 +8044,58 @@ function FotoPerfilModal({ temFoto, onEscolher, onRemover, onFechar }) {
   };
 
   return (
-    <div style={styles.modalOverlay} onClick={onFechar}>
-      <div style={styles.modalCard} onClick={(e) => e.stopPropagation()}>
-        <button style={styles.modalClose} onClick={onFechar} aria-label="Fechar">×</button>
-        <div style={styles.eyebrow}>FOTO DE PERFIL</div>
-        <h2 style={styles.modalTitle}>Escolha sua foto</h2>
-        <p style={styles.modalSubtitle}>Tire uma foto na hora ou escolha uma imagem já salva no seu celular.</p>
+    <>
+      <div style={styles.modalOverlay} onClick={onFechar}>
+        <div style={styles.modalCard} onClick={(e) => e.stopPropagation()}>
+          <button style={styles.modalClose} onClick={onFechar} aria-label="Fechar">×</button>
+          <div style={styles.eyebrow}>FOTO DE PERFIL</div>
+          <h2 style={styles.modalTitle}>Escolha sua foto</h2>
+          <p style={styles.modalSubtitle}>Tire uma foto na hora ou escolha uma imagem já salva no seu celular.</p>
 
-        <div style={styles.fotoPerfilOpcoes}>
-          <label style={styles.fotoPerfilBotaoLabel} htmlFor="fotoPerfilCameraInput">
-            📷 Abrir câmera
-          </label>
-          <input
-            id="fotoPerfilCameraInput"
-            type="file"
-            accept="image/*"
-            capture="user"
-            style={styles.inputArquivoOculto}
-            onChange={handleArquivo}
-          />
+          <div style={styles.fotoPerfilOpcoes}>
+            <label style={styles.fotoPerfilBotaoLabel} htmlFor="fotoPerfilCameraInput">
+              📷 Abrir câmera
+            </label>
+            <input
+              id="fotoPerfilCameraInput"
+              type="file"
+              accept="image/*"
+              capture="user"
+              style={styles.inputArquivoOculto}
+              onChange={handleArquivo}
+            />
 
-          <label style={styles.fotoPerfilBotaoLabel} htmlFor="fotoPerfilGaleriaInput">
-            🖼️ Escolher da galeria
-          </label>
-          <input
-            id="fotoPerfilGaleriaInput"
-            type="file"
-            accept="image/*"
-            style={styles.inputArquivoOculto}
-            onChange={handleArquivo}
-          />
+            <label style={styles.fotoPerfilBotaoLabel} htmlFor="fotoPerfilGaleriaInput">
+              🖼️ Escolher da galeria
+            </label>
+            <input
+              id="fotoPerfilGaleriaInput"
+              type="file"
+              accept="image/*"
+              style={styles.inputArquivoOculto}
+              onChange={handleArquivo}
+            />
 
-          {temFoto && (
-            <button style={styles.removerItemBtn} onClick={() => { onRemover(); onFechar(); }}>
-              Remover foto atual
-            </button>
-          )}
+            {temFoto && (
+              <>
+                <button style={styles.fotoPerfilBotaoLabel} onClick={() => setVerGrande(true)}>
+                  🔍 Ver imagem em tela cheia
+                </button>
+                <button style={styles.removerItemBtn} onClick={() => { onRemover(); onFechar(); }}>
+                  Remover foto atual
+                </button>
+              </>
+            )}
+          </div>
         </div>
       </div>
-    </div>
+
+      {verGrande && (
+        <div style={styles.fotoAmpliadaOverlay} onClick={() => setVerGrande(false)}>
+          <img src={foto} alt="" style={styles.fotoAmpliadaImg} />
+        </div>
+      )}
+    </>
   );
 }
 
@@ -10963,6 +11086,7 @@ function DayCard({ entry, onFoco, onPeriodo, onAddExercicio, onRemoveExercicio, 
   const [modalCalc, setModalCalc] = useState(null); // { tipo: "1rm"|"anilhas", cargaInicial, repsInicial }
   const [buscaExercicioAberta, setBuscaExercicioAberta] = useState(null); // id do exercício sendo trocado por busca
   const [duplicarAberto, setDuplicarAberto] = useState(false);
+  const [modalFocoAberto, setModalFocoAberto] = useState(false);
 
   return (
     <>
@@ -10972,13 +11096,9 @@ function DayCard({ entry, onFoco, onPeriodo, onAddExercicio, onRemoveExercicio, 
           <div>
             <div style={styles.dayName}>{dia}</div>
             <div style={styles.focoLabel}>Trocar foco do dia:</div>
-            <select value={foco} onChange={(e) => onFoco(e.target.value)} style={styles.select}>
-              {FOCOS.map((f) => (
-                <option key={f} value={f}>
-                  {f}
-                </option>
-              ))}
-            </select>
+            <button style={styles.selectFocoDia} onClick={() => setModalFocoAberto(true)}>
+              {foco} <span style={styles.selectFocoDiaSeta}>▾</span>
+            </button>
           </div>
           <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 6 }}>
             <div style={styles.focoTag}>{foco}</div>
@@ -11055,25 +11175,27 @@ function DayCard({ entry, onFoco, onPeriodo, onAddExercicio, onRemoveExercicio, 
                 </button>
               </div>
             </label>
-            <label style={styles.fieldLabel}>
-              Duração (min)
-              <input
-                type="number"
-                min={5}
-                max={120}
-                value={cardio.duracao}
-                onChange={(e) => onEditCardio("duracao", Number(e.target.value))}
-                style={styles.inputSmall}
-              />
-            </label>
-            <label style={styles.fieldLabel}>
-              Intensidade
-              <select value={cardio.intensidade} onChange={(e) => onEditCardio("intensidade", e.target.value)} style={styles.selectSmall}>
-                <option>Leve</option>
-                <option>Moderada</option>
-                <option>Intensa</option>
-              </select>
-            </label>
+            <div style={styles.cardioDuracaoIntensidadeRow}>
+              <label style={{ ...styles.fieldLabel, flex: 1 }}>
+                Duração (min)
+                <input
+                  type="number"
+                  min={5}
+                  max={120}
+                  value={cardio.duracao}
+                  onChange={(e) => onEditCardio("duracao", Number(e.target.value))}
+                  style={{ ...styles.inputSmall, width: "100%" }}
+                />
+              </label>
+              <label style={{ ...styles.fieldLabel, flex: 1 }}>
+                Intensidade
+                <select value={cardio.intensidade} onChange={(e) => onEditCardio("intensidade", e.target.value)} style={styles.selectSmall}>
+                  <option>Leve</option>
+                  <option>Moderada</option>
+                  <option>Intensa</option>
+                </select>
+              </label>
+            </div>
           </div>
         )}
 
@@ -11524,6 +11646,16 @@ function DayCard({ entry, onFoco, onPeriodo, onAddExercicio, onRemoveExercicio, 
         onClose={() => setDuplicarAberto(false)}
       />
     )}
+    {modalFocoAberto && (
+      <TrocarFocoModal
+        focoAtual={foco}
+        onEscolher={(f) => {
+          onFoco(f);
+          setModalFocoAberto(false);
+        }}
+        onFechar={() => setModalFocoAberto(false)}
+      />
+    )}
     </>
   );
 }
@@ -11673,6 +11805,7 @@ const styles = {
     display: "flex",
     alignItems: "center",
     gap: 10,
+    marginBottom: 8,
     position: "relative",
     zIndex: 1,
   },
@@ -11735,8 +11868,28 @@ const styles = {
     whiteSpace: "nowrap",
     border: 0,
   },
+  fotoAmpliadaOverlay: {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    background: "rgba(0,0,0,0.92)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 2000,
+    padding: 24,
+    boxSizing: "border-box",
+  },
+  fotoAmpliadaImg: {
+    maxWidth: "100%",
+    maxHeight: "100%",
+    borderRadius: 12,
+    objectFit: "contain",
+  },
   saudacaoNome: {
-    margin: "0 0 4px",
+    margin: 0,
     color: HIGHLIGHT,
     fontFamily: monoFont,
     fontSize: 22,
@@ -12048,21 +12201,24 @@ const styles = {
     borderRadius: 16,
     boxShadow: "0 1px 3px rgba(18,21,26,0.06), 0 8px 24px -12px rgba(18,21,26,0.12)",
     overflow: "hidden",
+    scrollMarginTop: 40,
   },
   dayCardBody: { flex: 1, padding: "18px 18px 20px" },
   dayCardTop: { display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 },
   dayName: { fontFamily: monoFont, fontWeight: 800, fontSize: 16, color: INK, marginBottom: 6, letterSpacing: "-0.01em" },
   focoLabel: { fontSize: 11, color: INK, fontWeight: 700, marginBottom: 3, textTransform: "uppercase", letterSpacing: "0.04em" },
   focoTag: {
-    fontFamily: monoFont,
-    fontSize: 10.5,
+    fontFamily: guiadoFont,
+    fontSize: 17,
     fontWeight: 700,
-    color: MARGIN_RED,
-    background: "rgba(225,38,59,0.08)",
-    padding: "4px 10px",
-    borderRadius: 20,
+    color: HIGHLIGHT,
+    background: "rgba(154,205,50,0.12)",
+    padding: "5px 12px",
+    borderRadius: 10,
     marginTop: 4,
     whiteSpace: "nowrap",
+    letterSpacing: "0.02em",
+    textTransform: "uppercase",
   },
   select: {
     fontFamily: sansFont,
@@ -12073,8 +12229,57 @@ const styles = {
     background: PAPER,
     color: INK,
   },
+  selectFocoDia: {
+    fontFamily: guiadoFont,
+    fontSize: 15,
+    fontWeight: 700,
+    padding: "8px 12px",
+    borderRadius: 10,
+    border: `2px solid ${HIGHLIGHT}`,
+    background: "rgba(154,205,50,0.10)",
+    color: HIGHLIGHT,
+    letterSpacing: "0.01em",
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 6,
+    cursor: "pointer",
+  },
+  selectFocoDiaSeta: { fontSize: 12 },
+  nascimentoLabel: {
+    fontFamily: sansFont,
+    fontSize: 13,
+    fontWeight: 700,
+    color: "rgba(255,255,255,0.85)",
+    marginBottom: 8,
+  },
+  nascimentoRow: {
+    display: "flex",
+    gap: 8,
+  },
+  nascimentoSelect: {
+    flex: 1,
+    fontFamily: sansFont,
+    fontSize: 15,
+    fontWeight: 600,
+    padding: "12px 10px",
+    borderRadius: 10,
+    border: "1px solid rgba(255,255,255,0.18)",
+    background: "rgba(255,255,255,0.06)",
+    color: "#fff",
+    appearance: "auto",
+  },
   restNote: { color: PENCIL, fontSize: 13, fontStyle: "italic", padding: "6px 0" },
-  cardioBlock: { display: "flex", flexDirection: "column", gap: 10, marginTop: 4 },
+  cardioBlock: {
+    display: "flex",
+    flexDirection: "column",
+    gap: 8,
+    marginTop: 6,
+    background: "rgba(255,255,255,0.03)",
+    border: "1px solid rgba(255,255,255,0.07)",
+    borderRadius: 12,
+    padding: "12px 12px 14px",
+  },
+  cardioDuracaoIntensidadeRow: { display: "flex", gap: 10 },
   cardioVideoRow: { display: "flex", alignItems: "center", gap: 10 },
   guiadoVerBtnMini: {
     fontSize: 12,
@@ -13038,6 +13243,74 @@ const styles = {
   },
   evolucaoCargaTitulo: { fontSize: 12.5, fontWeight: 700, color: INK, marginBottom: 4 },
   modalSubtitle: { color: PENCIL, fontSize: 14, lineHeight: 1.45, margin: "0 0 14px", maxWidth: 420 },
+  focoModalOverlay: {
+    position: "fixed",
+    inset: 0,
+    background: "rgba(0,0,0,0.6)",
+    display: "flex",
+    alignItems: "flex-end",
+    justifyContent: "center",
+    zIndex: 700,
+  },
+  focoModalCard: {
+    width: "100%",
+    maxWidth: 520,
+    maxHeight: "82vh",
+    display: "flex",
+    flexDirection: "column",
+    borderRadius: "20px 20px 0 0",
+    padding: "20px 18px 18px",
+    position: "relative",
+    boxShadow: "0 -6px 28px rgba(0,0,0,0.4)",
+    backgroundImage: `linear-gradient(rgba(10,12,14,0.86), rgba(10,12,14,0.94)), url(${GYM_BG_IMG})`,
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+    border: "1px solid rgba(255,255,255,0.08)",
+  },
+  focoModalEyebrow: {
+    fontFamily: monoFont,
+    fontSize: 11,
+    fontWeight: 700,
+    color: HIGHLIGHT,
+    letterSpacing: "0.08em",
+    marginBottom: 4,
+  },
+  focoModalTitle: {
+    fontFamily: guiadoFont,
+    fontSize: 24,
+    fontWeight: 700,
+    color: "#fff",
+    margin: "0 0 14px",
+  },
+  focoModalLista: {
+    display: "flex",
+    flexDirection: "column",
+    gap: 8,
+    overflowY: "auto",
+    paddingRight: 2,
+  },
+  focoModalItem: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    fontFamily: guiadoFont,
+    fontSize: 16,
+    fontWeight: 600,
+    color: "rgba(255,255,255,0.82)",
+    background: "rgba(255,255,255,0.05)",
+    border: "1px solid rgba(255,255,255,0.10)",
+    borderRadius: 10,
+    padding: "12px 16px",
+    textAlign: "left",
+    cursor: "pointer",
+  },
+  focoModalItemAtivo: {
+    color: HIGHLIGHT,
+    background: "rgba(154,205,50,0.14)",
+    border: `1px solid ${HIGHLIGHT}`,
+    fontWeight: 700,
+  },
+  focoModalCheck: { color: HIGHLIGHT, fontWeight: 800, fontSize: 16 },
   benefitList: { listStyle: "none", padding: 0, margin: "0 0 20px", display: "flex", flexDirection: "column", gap: 8 },
   menuGrupo: { marginTop: 18 },
   menuGrupoTitulo: {
