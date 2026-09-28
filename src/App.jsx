@@ -6069,7 +6069,7 @@ function AppMassiPro({ onSolicitarRemount }) {
       )}
 
       {showFeedback && (
-        <FeedbackModal
+        <AvaliacaoPerguntasModal
           onFechar={() => setShowFeedback(false)}
           onMensagem={(m) => setMensagemSucesso(m)}
         />
@@ -8045,7 +8045,7 @@ function PerfilModal({ perfis, perfilAtivoId, onTrocar, onCriar, onApagar, onRen
   );
 }
 
-function FeedbackModal({ onFechar, onMensagem }) {
+function AvaliacaoPerguntasModal({ onFechar, onMensagem }) {
   const [aba, setAba] = useState("avaliar");
   const [nota, setNota] = useState(0);
   const [comentario, setComentario] = useState("");
