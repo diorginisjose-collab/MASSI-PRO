@@ -2632,7 +2632,7 @@ function MenuPrincipalModal({ onClose, onItem }) {
     {
       titulo: "Sobre e suporte",
       itens: [
-        { id: "avaliar", icone: "⭐", label: "Avalie o Massi Pro" },
+        { id: "avaliar", icone: "⭐", label: "Avaliações e perguntas" },
         { id: "compartilhar", icone: "📤", label: "Compartilhar aplicativo" },
         { id: "ajuda", icone: "❓", label: "Central de Ajuda" },
         { id: "sobre", icone: "ℹ️", label: "Sobre o Massi Pro" },
@@ -3841,7 +3841,6 @@ function AppMassiPro({ onSolicitarRemount }) {
     novidades: [
       { ref: tourCargaSeriesRef, texto: "Novidade: aqui aparece a carga que você usou da última vez, e agora dá pra marcar o RIR de cada série (quantas repetições ainda sobrariam no tanque)." },
       { ref: tourCalcBtnsRef, texto: "Toque em \"1RM\" pra estimar sua carga máxima, \"Anilhas\" pra saber o que colocar em cada lado da barra, ou \"Aquecimento\" pra ver séries de aquecimento sugeridas antes da série de trabalho." },
-      { ref: tourSupersetRef, texto: "Marque \"Superset\" quando esse exercício for feito direto com o próximo, sem descanso entre eles. \"Dropset\" é pra quando você reduz a carga e continua na mesma série, sem descansar." },
       { ref: tourPersonalizadoRef, texto: "Não achou seu exercício na lista? Toque aqui pra cadastrar um exercício personalizado nesse dia." },
       { ref: tourDuplicarRef, texto: "Toque em \"Duplicar\" pra copiar o treino desse dia pra outro dia da semana, sem montar tudo de novo." },
       { ref: tourCsvRef, texto: "E agora você também pode exportar sua rotina inteira em CSV, pra abrir numa planilha." },
@@ -3989,6 +3988,7 @@ function AppMassiPro({ onSolicitarRemount }) {
   const [perfilAtivoId, setPerfilAtivoId] = useState("perfil-1");
   const [showPerfis, setShowPerfis] = useState(false);
   const [showFotoEscolha, setShowFotoEscolha] = useState(false);
+  const [showFeedback, setShowFeedback] = useState(false);
   const perfilAtivoNome = (perfis.find((p) => p.id === perfilAtivoId) || {}).nome || "Você";
   const perfilAtivoFoto = (perfis.find((p) => p.id === perfilAtivoId) || {}).foto || null;
 
@@ -4321,10 +4321,7 @@ function AppMassiPro({ onSolicitarRemount }) {
         });
         break;
       case "avaliar":
-        setInfoModal({
-          titulo: "Avalie o Massi Pro",
-          corpo: "O Massi Pro ainda não está publicado nas lojas de aplicativos. Assim que estiver disponível, você vai poder avaliar direto por aqui!",
-        });
+        setShowFeedback(true);
         break;
       case "compartilhar":
         try {
@@ -6071,6 +6068,13 @@ function AppMassiPro({ onSolicitarRemount }) {
         />
       )}
 
+      {showFeedback && (
+        <FeedbackModal
+          onFechar={() => setShowFeedback(false)}
+          onMensagem={(m) => setMensagemSucesso(m)}
+        />
+      )}
+
       {showFotoEscolha && (
         <FotoPerfilModal
           foto={perfilAtivoFoto}
@@ -6121,6 +6125,15 @@ function AppMassiPro({ onSolicitarRemount }) {
                   novas[serieIndex] = valor;
                   return { ...e, cargas: novas, carga: novas[0] };
                 }),
+              }
+            );
+          }}
+          onEditCampo={(exId, campo, valor) => {
+            editarExercicio(guiadoAtivo.dia, exId, campo, valor);
+            setGuiadoAtivo((prev) =>
+              prev && {
+                ...prev,
+                exercicios: prev.exercicios.map((e) => (e.id === exId ? { ...e, [campo]: valor } : e)),
               }
             );
           }}
@@ -6399,7 +6412,7 @@ function AppMassiPro({ onSolicitarRemount }) {
                   dores={dores}
                   recordes={recordes}
                   restricoesFisicas={restricoesFisicas}
-                  refsTour={i === 0 ? { maquina: tourMaquinaRef, video: tourVideoRef, guiado: tourGuiadoBtnRef, descanso: tourDescansoRef, cargaSeries: tourCargaSeriesRef, calcBtns: tourCalcBtnsRef, superset: tourSupersetRef, personalizado: tourPersonalizadoRef, duplicar: tourDuplicarRef } : null}
+                  refsTour={i === 0 ? { maquina: tourMaquinaRef, video: tourVideoRef, guiado: tourGuiadoBtnRef, descanso: tourDescansoRef, cargaSeries: tourCargaSeriesRef, calcBtns: tourCalcBtnsRef, personalizado: tourPersonalizadoRef, duplicar: tourDuplicarRef } : null}
                 />
                 </div>
               ))}
@@ -8032,6 +8045,150 @@ function PerfilModal({ perfis, perfilAtivoId, onTrocar, onCriar, onApagar, onRen
   );
 }
 
+function FeedbackModal({ onFechar, onMensagem }) {
+  const [aba, setAba] = useState("avaliar");
+  const [nota, setNota] = useState(0);
+  const [comentario, setComentario] = useState("");
+  const [pergunta, setPergunta] = useState("");
+  const [dados, setDados] = useState({ avaliacao: null, perguntas: [] });
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await window.storage.get("feedback-usuario");
+        if (res && res.value) {
+          const salvo = JSON.parse(res.value);
+          setDados({ avaliacao: salvo.avaliacao || null, perguntas: salvo.perguntas || [] });
+          if (salvo.avaliacao) {
+            setNota(salvo.avaliacao.nota || 0);
+            setComentario(salvo.avaliacao.comentario || "");
+          }
+        }
+      } catch (e) {
+        // sem feedback salvo ainda
+      }
+    })();
+  }, []);
+
+  const persistir = async (novo) => {
+    setDados(novo);
+    try {
+      await window.storage.set("feedback-usuario", JSON.stringify(novo));
+    } catch (e) {
+      // segue mesmo se falhar
+    }
+  };
+
+  const compartilhar = async (texto) => {
+    try {
+      if (typeof navigator !== "undefined" && navigator.share) {
+        await navigator.share({ text: texto });
+      } else if (typeof navigator !== "undefined" && navigator.clipboard) {
+        await navigator.clipboard.writeText(texto);
+        onMensagem("Texto copiado!");
+      }
+    } catch (e) {
+      // usuário cancelou o compartilhamento
+    }
+  };
+
+  const salvarAvaliacao = async () => {
+    if (!nota) return;
+    const avaliacao = { nota, comentario: comentario.trim(), data: new Date().toISOString().slice(0, 10) };
+    await persistir({ ...dados, avaliacao });
+    onMensagem("Avaliação salva. Obrigado!");
+  };
+
+  const salvarPergunta = async () => {
+    if (!pergunta.trim()) return;
+    const nova = { texto: pergunta.trim(), data: new Date().toISOString().slice(0, 10) };
+    await persistir({ ...dados, perguntas: [nova, ...dados.perguntas] });
+    setPergunta("");
+  };
+
+  const apagarPergunta = (idx) => {
+    persistir({ ...dados, perguntas: dados.perguntas.filter((_, i) => i !== idx) });
+  };
+
+  return (
+    <div style={styles.modalOverlay} onClick={onFechar}>
+      <div style={styles.modalCard} onClick={(e) => e.stopPropagation()}>
+        <button style={styles.modalClose} onClick={onFechar} aria-label="Fechar">×</button>
+        <div style={styles.eyebrow}>⭐ FEEDBACK</div>
+        <h2 style={styles.modalTitle}>Avaliações e perguntas</h2>
+
+        <div style={styles.chipRow}>
+          <button style={aba === "avaliar" ? { ...styles.chip, ...styles.chipActive } : styles.chip} onClick={() => setAba("avaliar")}>
+            Avaliar
+          </button>
+          <button style={aba === "perguntas" ? { ...styles.chip, ...styles.chipActive } : styles.chip} onClick={() => setAba("perguntas")}>
+            Perguntas {dados.perguntas.length > 0 ? `(${dados.perguntas.length})` : ""}
+          </button>
+        </div>
+
+        {aba === "avaliar" && (
+          <div style={styles.feedbackBloco}>
+            <p style={styles.modalSubtitle}>Como está sendo sua experiência com o Massi Pro?</p>
+            <div style={styles.estrelasRow}>
+              {[1, 2, 3, 4, 5].map((n) => (
+                <button key={n} style={styles.estrelaBtn} onClick={() => setNota(n)} aria-label={`${n} estrelas`}>
+                  <span style={{ color: n <= nota ? "#F6B93B" : "rgba(43,42,40,0.25)" }}>★</span>
+                </button>
+              ))}
+            </div>
+            <textarea
+              value={comentario}
+              onChange={(e) => setComentario(e.target.value)}
+              placeholder="Conte o que você gostou ou o que podemos melhorar (opcional)"
+              style={styles.feedbackTextarea}
+              rows={4}
+            />
+            <button style={{ ...styles.saveButton, marginTop: 12, opacity: nota ? 1 : 0.5 }} onClick={salvarAvaliacao}>
+              {dados.avaliacao ? "Atualizar avaliação" : "Salvar avaliação"}
+            </button>
+            {dados.avaliacao && (
+              <button
+                style={styles.feedbackLinkBtn}
+                onClick={() =>
+                  compartilhar(`Avaliação do Massi Pro: ${"★".repeat(dados.avaliacao.nota)}${"☆".repeat(5 - dados.avaliacao.nota)}${dados.avaliacao.comentario ? "\n" + dados.avaliacao.comentario : ""}`)
+                }
+              >
+                📤 Enviar minha avaliação
+              </button>
+            )}
+          </div>
+        )}
+
+        {aba === "perguntas" && (
+          <div style={styles.feedbackBloco}>
+            <p style={styles.modalSubtitle}>Tem alguma dúvida sobre o app ou sobre os treinos? Escreva aqui.</p>
+            <textarea
+              value={pergunta}
+              onChange={(e) => setPergunta(e.target.value)}
+              placeholder="Digite sua pergunta"
+              style={styles.feedbackTextarea}
+              rows={3}
+            />
+            <button style={{ ...styles.saveButton, marginTop: 12, opacity: pergunta.trim() ? 1 : 0.5 }} onClick={salvarPergunta}>
+              Salvar pergunta
+            </button>
+            {dados.perguntas.map((p, i) => (
+              <div key={i} style={styles.perguntaItem}>
+                <div style={styles.perguntaData}>{p.data}</div>
+                <div style={styles.perguntaTexto}>{p.texto}</div>
+                <div style={styles.perguntaAcoes}>
+                  <button style={styles.feedbackLinkBtn} onClick={() => compartilhar(`Pergunta sobre o Massi Pro: ${p.texto}`)}>📤 Enviar</button>
+                  <button style={styles.feedbackLinkBtn} onClick={() => apagarPergunta(i)}>Apagar</button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function FotoPerfilModal({ foto, onEscolher, onRemover, onFechar }) {
   const [verGrande, setVerGrande] = useState(false);
   const temFoto = !!foto;
@@ -8140,7 +8297,7 @@ const CHAVES_BACKUP = [
   "cross-desafios-progresso",
 ];
 
-function ModoGuiadoOverlay({ entry, onFechar, onAbrirExercicio, onEditCarga, onConcluirExercicio, onTreinoFinalizado, vozAtiva, onToggleVoz }) {
+function ModoGuiadoOverlay({ entry, onFechar, onAbrirExercicio, onEditCarga, onEditCampo, onConcluirExercicio, onTreinoFinalizado, vozAtiva, onToggleVoz }) {
   const [indice, setIndice] = useState(0);
   const [serieAtual, setSerieAtual] = useState(1);
   const [estado, setEstado] = useState("serie"); // "serie" | "descanso" | "treinoConcluido"
@@ -8276,6 +8433,22 @@ function ModoGuiadoOverlay({ entry, onFechar, onAbrirExercicio, onEditCarga, onC
           <>
             <div style={styles.guiadoSeriesReps}>
               Série {serieAtual} de {totalSets} · {ex.reps}
+            </div>
+            <div style={styles.guiadoSupersetRow}>
+              <button
+                style={ex.superset ? { ...styles.guiadoSupersetBtn, ...styles.guiadoSupersetBtnAtivo } : styles.guiadoSupersetBtn}
+                onClick={() => onEditCampo(ex.id, "superset", !ex.superset)}
+                title="Marcar como superset com o próximo exercício (sem descanso entre eles)"
+              >
+                🔗 {ex.superset ? "Superset ✓" : "Superset"}
+              </button>
+              <button
+                style={ex.dropset ? { ...styles.guiadoSupersetBtn, ...styles.guiadoSupersetBtnAtivo } : styles.guiadoSupersetBtn}
+                onClick={() => onEditCampo(ex.id, "dropset", !ex.dropset)}
+                title="Marcar como dropset (reduzir a carga sem descanso entre as séries)"
+              >
+                ⬇️ {ex.dropset ? "Dropset ✓" : "Dropset"}
+              </button>
             </div>
             {ex.dropset && serieAtual < totalSets && (
               <div style={{ ...styles.guiadoMaquina, color: "#F6C453" }}>⬇️ Dropset — sem descanso até a próxima série</div>
@@ -11279,36 +11452,19 @@ function DayCard({ entry, onFoco, onPeriodo, onAddExercicio, onRemoveExercicio, 
                     🔍
                   </button>
                 </div>
-                <div style={{ marginBottom: 6, display: "flex", gap: 6, flexWrap: "wrap" }} ref={idx === 0 && refsTour ? refsTour.superset : undefined}>
-                  <button
-                    style={{ ...styles.trocarBtn, opacity: ex.superset ? 1 : 0.55 }}
-                    onClick={() => onEditExercicio(ex.id, "superset", !ex.superset)}
-                    title="Marcar como superset com o próximo exercício (sem descanso entre eles)"
-                  >
-                    🔗 {ex.superset ? "Superset ✓" : "Superset"}
-                  </button>
-                  <button
-                    style={{ ...styles.trocarBtn, opacity: ex.dropset ? 1 : 0.55 }}
-                    onClick={() => onEditExercicio(ex.id, "dropset", !ex.dropset)}
-                    title="Marcar como dropset (reduzir a carga sem descanso entre as séries)"
-                  >
-                    ⬇️ {ex.dropset ? "Dropset ✓" : "Dropset"}
-                  </button>
-                </div>
-
                 {(() => {
                   const thumb = getThumbnailExercicio(ex);
                   if (!thumb) return null;
                   return (
-                    <div style={styles.cardioVideoRow}>
+                    <div style={styles.exThumbGrandeWrap} onClick={() => onAbrirExercicio(ex)}>
                       <img
                         src={thumb}
                         alt={`Capa do vídeo de ${ex.name}`}
-                        style={styles.exThumb}
+                        style={styles.exThumbGrande}
                         loading="lazy"
-                        onClick={() => onAbrirExercicio(ex)}
-                        onError={(e) => { e.target.style.display = "none"; }}
+                        onError={(e) => { e.target.parentElement.style.display = "none"; }}
                       />
+                      <div style={styles.exThumbGrandePlayBadge}>▶ Ver execução</div>
                     </div>
                   );
                 })()}
@@ -11834,6 +11990,35 @@ const styles = {
     fontWeight: 800,
     fontSize: 18,
   },
+  feedbackBloco: { marginTop: 14 },
+  estrelasRow: { display: "flex", gap: 6, marginBottom: 12 },
+  estrelaBtn: { background: "transparent", border: "none", fontSize: 34, lineHeight: 1, padding: 2, cursor: "pointer" },
+  feedbackTextarea: {
+    width: "100%",
+    boxSizing: "border-box",
+    fontFamily: sansFont,
+    fontSize: 14,
+    padding: "10px 12px",
+    borderRadius: 10,
+    border: `1px solid ${PENCIL}`,
+    background: PAPER,
+    color: INK,
+    resize: "vertical",
+  },
+  feedbackLinkBtn: {
+    background: "transparent",
+    border: "none",
+    color: INK,
+    fontWeight: 700,
+    fontSize: 13,
+    padding: "10px 4px",
+    cursor: "pointer",
+    textDecoration: "underline",
+  },
+  perguntaItem: { marginTop: 12, padding: "10px 12px", borderRadius: 10, border: `1px solid ${PENCIL}` },
+  perguntaData: { fontSize: 11, color: PENCIL, marginBottom: 4 },
+  perguntaTexto: { fontSize: 14, color: INK, lineHeight: 1.4 },
+  perguntaAcoes: { display: "flex", gap: 12, marginTop: 4 },
   fotoPerfilOpcoes: {
     display: "flex",
     flexDirection: "column",
@@ -12397,6 +12582,35 @@ const styles = {
     flexShrink: 0,
     cursor: "pointer",
     border: `1px solid rgba(43,42,40,0.14)`,
+  },
+  exThumbGrandeWrap: {
+    position: "relative",
+    width: "100%",
+    borderRadius: 14,
+    overflow: "hidden",
+    marginBottom: 10,
+    cursor: "pointer",
+    boxShadow: "0 4px 16px -6px rgba(0,0,0,0.35)",
+    border: "1px solid rgba(255,255,255,0.08)",
+  },
+  exThumbGrande: {
+    width: "100%",
+    height: 170,
+    objectFit: "cover",
+    display: "block",
+  },
+  exThumbGrandePlayBadge: {
+    position: "absolute",
+    bottom: 8,
+    left: 8,
+    fontFamily: guiadoFont,
+    fontSize: 12.5,
+    fontWeight: 700,
+    color: "#fff",
+    background: "rgba(10,12,14,0.72)",
+    padding: "5px 12px",
+    borderRadius: 20,
+    letterSpacing: "0.02em",
   },
   exFieldGroup: { display: "flex", alignItems: "center", gap: 4 },
   numMini: { width: 34, fontSize: 13, padding: "4px", borderRadius: 5, border: `1px solid ${PENCIL}`, textAlign: "center" },
@@ -13755,6 +13969,23 @@ const styles = {
   guiadoNome: { fontFamily: guiadoFont, fontWeight: 700, fontSize: 32, letterSpacing: 0.3, color: "#FFFFFF", textShadow: "0 2px 14px rgba(0,0,0,0.9)" },
   guiadoMaquina: { fontFamily: guiadoFont, fontWeight: 500, fontSize: 16, color: "#E4E7EB", textShadow: "0 1px 8px rgba(0,0,0,0.85)" },
   guiadoSeriesReps: { fontFamily: guiadoFont, fontWeight: 700, fontSize: 21, color: HIGHLIGHT, marginBottom: 10, textShadow: "0 1px 8px rgba(0,0,0,0.85)" },
+  guiadoSupersetRow: { display: "flex", gap: 8, marginBottom: 10, flexWrap: "wrap", justifyContent: "center" },
+  guiadoSupersetBtn: {
+    fontFamily: guiadoFont,
+    fontSize: 13,
+    fontWeight: 600,
+    padding: "7px 14px",
+    borderRadius: 20,
+    border: "1px solid rgba(255,255,255,0.35)",
+    background: "rgba(255,255,255,0.08)",
+    color: "rgba(255,255,255,0.85)",
+    cursor: "pointer",
+  },
+  guiadoSupersetBtnAtivo: {
+    background: "rgba(246,196,83,0.18)",
+    border: "1px solid #F6C453",
+    color: "#F6C453",
+  },
   guiadoCargaRow: { display: "flex", alignItems: "center", justifyContent: "center", gap: 8, marginBottom: 14 },
   guiadoCargaLabel: { fontFamily: guiadoFont, fontWeight: 500, fontSize: 15, color: "#E4E7EB", textShadow: "0 1px 6px rgba(0,0,0,0.8)" },
   guiadoCargaInput: {
