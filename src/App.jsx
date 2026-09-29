@@ -7005,9 +7005,12 @@ const REL_COR = {
 const REL_FONTE_SANS = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
 const REL_FONTE_TITULO = "'Oswald', 'Helvetica Neue', Arial, sans-serif";
 
+const REL_APP_URL = "https://massi-pro.vercel.app";
+
 const REL_NIVEIS_AVATAR = ["Abaixo", "Normal", "Acima 1", "Acima 2", "Acima 3", "Alto 1", "Alto 2", "Alto 3"];
 
 const REL_CAMPOS_MEDIDAS = [
+  ["pescoco", "Pescoço"],
   ["torax", "Tórax"],
   ["cintura", "Cintura"],
   ["abdome", "Abdome"],
@@ -7146,6 +7149,16 @@ function relNivelAvatar(sexo, gorduraPct, imc) {
   return 7;
 }
 
+const REL_METODO_MARINHA = "Circunferências (Marinha)";
+
+// No método Marinha o % de gordura vem das medidas (pescoço, cintura e, para mulher,
+// quadril) — o app calcula sozinho, sem ninguém digitar o resultado.
+function relGorduraAuto(av) {
+  if (av.metodo !== REL_METODO_MARINHA) return null;
+  const r = calcularPercentualGordura(av.sexo || "masculino", relNum(av.altura), relNum(av.pescoco), relNum(av.cintura), relNum(av.quadril));
+  return r === null || r === undefined ? null : r;
+}
+
 // Monta todas as linhas das tabelas (valor, referência, avaliação, cor, explicação).
 function relCalcular(av) {
   const linhas = { composicao: [], obesidade: [] };
@@ -7155,7 +7168,8 @@ function relCalcular(av) {
   const idade = relNum(av.idade);
   const altM = alt ? alt / 100 : null;
   const imc = peso && altM ? peso / (altM * altM) : null;
-  const gordPct = relNum(av.gorduraPct);
+  const gordAuto = relGorduraAuto(av);
+  const gordPct = gordAuto !== null ? gordAuto : relNum(av.gorduraPct);
   const gordKg = gordPct !== null && peso ? (gordPct / 100) * peso : null;
   const musPct = relNum(av.musculoPct);
   const musKg = musPct !== null && peso ? (musPct / 100) * peso : null;
@@ -7509,6 +7523,10 @@ const REL_INPUT = {
   border: "1px solid #3A484F", background: "#232E33", color: "#EAF0F2", boxSizing: "border-box",
 };
 const REL_LABEL = { display: "flex", flexDirection: "column", gap: 4, fontSize: 12, fontWeight: 600, color: "#C9D3D8", minWidth: 0 };
+const REL_INPUT_OCULTO = {
+  position: "absolute", width: 1, height: 1, padding: 0, margin: -1, overflow: "hidden",
+  clip: "rect(0,0,0,0)", whiteSpace: "nowrap", border: 0, opacity: 0,
+};
 const REL_GRID = { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 14 };
 const REL_SECAO = { fontSize: 16, fontWeight: 700, color: "#9ACD32", margin: "18px 0 10px", fontFamily: REL_FONTE_TITULO };
 const REL_CARD = { background: "#1A2226", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 10, padding: "14px 12px", marginBottom: 14 };
@@ -7560,10 +7578,71 @@ function RelAreaImpressao({ dados }) {
               </tbody></table>
             </div>
           )}
+          {(sel.objetivoInicial || sel.objetivoCurto || sel.proximaAvaliacao) && (<div><h3>Objetivos</h3><p>{sel.objetivoInicial ? `Inicial: ${sel.objetivoInicial}. ` : ""}{sel.objetivoCurto ? `Curto prazo: ${sel.objetivoCurto}. ` : ""}{sel.proximaAvaliacao ? `Próxima avaliação: ${sel.proximaAvaliacao}.` : ""}</p></div>)}
           {sel.anotacoes && (<div><h3>Anotações</h3><p style={{ whiteSpace: "pre-wrap" }}>{sel.anotacoes}</p></div>)}
           {prof.nome && (<div><h3>Contato</h3><p>{prof.nome}{prof.funcao ? ` — ${prof.funcao}` : ""}{prof.telefone ? ` • ${prof.telefone}` : ""}{prof.email ? ` • ${prof.email}` : ""}</p></div>)}
           <p style={{ fontSize: 11 }}>Referências aproximadas (OMS, Omron, NIH, Harris-Benedict, Bray & Gray). Não substitui avaliação com profissional. Gerado no Massi Pro.</p>
         </div>
+  );
+}
+
+// Textos dos botões "?" do formulário (o que é cada campo e como medir).
+const REL_AJUDA = {
+  nome: "Nome de quem está sendo avaliado. Aparece no cabeçalho do relatório e na mensagem de compartilhar.",
+  sexo: "O sexo biológico muda as faixas de referência de gordura, músculo e relação cintura-quadril, e também o cálculo do metabolismo basal.",
+  peso: "Seu peso em quilos, de preferência de manhã, em jejum e sem roupa pesada. Use sempre a mesma balança para comparar as avaliações.",
+  altura: "Sua altura em centímetros, em pé, descalço, encostado na parede. Ex.: 1,78 m = 178.",
+  idade: "Idade em anos completos. Já vem preenchida pelo seu cadastro quando você informou a data de nascimento; ajuste se estiver avaliando outra pessoa.",
+  metodo: "É a forma como a composição do corpo (quanto é gordura e quanto é músculo) foi medida.\n\n• Bioimpedância: balança ou aparelho com sensores que passam uma corrente elétrica bem fraca pelo corpo. Você não sente nada. Dá gordura, músculo, gordura visceral e idade corporal.\n• Adipômetro: uma pinça (compasso) que mede a espessura das dobras de pele e gordura em vários pontos do corpo. Feito por um profissional.\n• Circunferências (Marinha): só com fita métrica, medindo pescoço, cintura e quadril. Calcula o % de gordura por fórmula, sem aparelho.\n• Outro: qualquer outro método (DEXA, por exemplo).\n\nEscolha o que você usou. É só para constar no relatório.",
+  gorduraPct: "Quanto do seu peso é gordura, em porcentagem. Digite o valor que a balança de bioimpedância ou o adipômetro deu. Se você escolheu o método Circunferências (Marinha), este campo some e o app calcula sozinho. Sem o valor, deixe em branco.",
+  pescoco: "Fita ao redor do pescoço, logo abaixo do pomo de Adão (\"gogó\"), com a cabeça reta e os ombros relaxados. Serve para o app calcular o % de gordura pelo método Marinha.",
+  auto_gordura: "Percentual do seu peso que é gordura. No método Circunferências (Marinha) o Massi Pro calcula sozinho com altura, pescoço, cintura e (para mulher) quadril. É uma estimativa: a bioimpedância e o adipômetro costumam ser mais precisos.",
+  musculoPct: "Percentual do peso que é músculo esquelético (os músculos que você move ao treinar). Costuma vir da balança de bioimpedância. Sem o valor, deixe em branco.",
+  visceral: "Nível de gordura acumulada dentro do abdômen, em volta dos órgãos. Vem da balança de bioimpedância como um número de 1 em diante: até 9 é normal, 10 a 14 é alto e 15 ou mais é muito alto. Sem o valor, deixe em branco.",
+  idadeCorporal: "Estimativa de quão \"nova\" ou \"velha\" está a composição do seu corpo comparada à sua idade real. Quem calcula é a balança de bioimpedância. Sem o valor, deixe em branco.",
+  torax: "Fita métrica ao redor do peito, na altura dos mamilos, com os braços relaxados ao lado do corpo e respiração normal.",
+  cintura: "Fita ao redor da parte mais estreita do tronco (geralmente uns 2 dedos acima do umbigo), sem apertar e ao fim de uma expiração normal.",
+  abdome: "Fita ao redor da barriga, na altura do umbigo, sem apertar e sem encolher a barriga.",
+  quadril: "Fita ao redor da parte mais larga do quadril/glúteos, com os pés juntos e a fita bem reta.",
+  bracoE: "Braço esquerdo relaxado: fita no ponto médio entre o ombro e o cotovelo.",
+  antebracoE: "Antebraço esquerdo: fita na parte mais grossa, perto do cotovelo, com o braço relaxado.",
+  bracoD: "Braço direito relaxado: fita no ponto médio entre o ombro e o cotovelo.",
+  antebracoD: "Antebraço direito: fita na parte mais grossa, perto do cotovelo, com o braço relaxado.",
+  coxaE: "Coxa esquerda: fita no ponto médio entre a dobra da virilha e o joelho, em pé com o peso dividido nas duas pernas.",
+  panturrilhaE: "Panturrilha esquerda: fita na parte mais grossa, com o pé apoiado e a perna relaxada.",
+  coxaD: "Coxa direita: fita no ponto médio entre a dobra da virilha e o joelho, em pé com o peso dividido nas duas pernas.",
+  panturrilhaD: "Panturrilha direita: fita na parte mais grossa, com o pé apoiado e a perna relaxada.",
+  axilar: "Dobra cutânea axilar média: feita com adipômetro na lateral do tronco, na linha do meio da axila, na altura do osso do peito. Medida por um profissional, em milímetros.",
+  triceps: "Dobra do tríceps: adipômetro na parte de trás do braço, no ponto médio entre o ombro e o cotovelo. Medida por um profissional, em milímetros.",
+  subescapular: "Dobra subescapular: adipômetro logo abaixo da ponta da omoplata (\"osso\" das costas), na diagonal. Medida por um profissional, em milímetros.",
+  abdominal: "Dobra abdominal: adipômetro cerca de 2 cm ao lado do umbigo, na vertical. Medida por um profissional, em milímetros.",
+  supra: "Dobra supra-ilíaca: adipômetro logo acima do osso do quadril, na lateral da cintura. Medida por um profissional, em milímetros.",
+  coxaDobra: "Dobra da coxa: adipômetro na frente da coxa, no ponto médio entre a virilha e o joelho. Medida por um profissional, em milímetros.",
+  objetivoInicial: "A meta principal desta avaliação. Ex.: reduzir a gordura corporal, ganhar massa muscular. Aparece no relatório e na mensagem de compartilhar.",
+  objetivoCurto: "Uma meta menor, para os próximos dias ou semanas. Ex.: perder 2 kg em 30 dias.",
+  proximaAvaliacao: "Data em que a próxima avaliação está marcada. Aparece no relatório e na mensagem de compartilhar.",
+  anotacoes: "Texto livre: orientações, observações e recomendações para quem foi avaliado.",
+  auto_imc: "IMC = peso ÷ altura × altura. O Massi Pro calcula sozinho a partir do seu peso e altura. Não precisa preencher.",
+  auto_tmb: "Metabolismo basal é a quantidade de calorias que o corpo gasta em repouso, só para se manter vivo (respirar, bater o coração, manter a temperatura).\n\nComo é medido: o exame mais preciso é a calorimetria indireta, feita em clínica, que mede o oxigênio que você consome em repouso. Balanças de bioimpedância também dão uma estimativa.\n\nNo Massi Pro ele é calculado pela fórmula de Harris-Benedict, usando peso, altura, idade e sexo. Por isso você não preenche nada aqui.",
+  auto_rcq: "Relação cintura-quadril = cintura ÷ quadril. Mostra onde a gordura se concentra: quanto maior, mais gordura na barriga e maior o risco à saúde. O Massi Pro calcula sozinho a partir das medidas de cintura e quadril que você informou.",
+};
+
+// Título de um campo com o botão "?" ao lado.
+function RelCampo({ rotulo, ajudaId, onAjuda, estilo, children, extra }) {
+  return (
+    <div style={{ ...REL_LABEL, ...(estilo || {}) }} data-campo={ajudaId}>
+      <div style={{ display: "flex", alignItems: "center", gap: 6, minWidth: 0 }}>
+        <span style={{ minWidth: 0, wordBreak: "break-word" }}>{rotulo}</span>
+        <button
+          type="button"
+          aria-label={`O que é ${rotulo}`}
+          onClick={() => onAjuda({ nome: rotulo, info: REL_AJUDA[ajudaId] || "" })}
+          style={{ width: 20, height: 20, minWidth: 20, borderRadius: 10, border: "none", background: "#3AA9E0", color: "#fff", fontWeight: 700, fontSize: 12, cursor: "pointer", padding: 0, lineHeight: "20px" }}
+        >?</button>
+        {extra}
+      </div>
+      {children}
+    </div>
   );
 }
 
@@ -7580,6 +7659,7 @@ function RelatorioAvaliacao({ avaliacoesBase, onFechar, onImprimir }) {
   const [editandoProf, setEditandoProf] = useState(false);
   const [profForm, setProfForm] = useState(null);
   const [aviso, setAviso] = useState("");
+  const [erroFoto, setErroFoto] = useState("");
   const [erro, setErro] = useState("");
   const [nascimento, setNascimento] = useState("");
   const [f, setF] = useState({});
@@ -7600,10 +7680,11 @@ function RelatorioAvaliacao({ avaliacoesBase, onFechar, onImprimir }) {
       nome: nomePerfil || "", sexo: (ult && ult.sexo) || "masculino", idade: idadeAuto ? String(idadeAuto) : "",
       altura: ult && ult.altura ? String(ult.altura) : "", peso: ult && ult.peso ? String(ult.peso) : "",
       metodo: ult && ult.percentualGordura ? "Circunferências (Marinha)" : "Bioimpedância",
-      gorduraPct: ult && ult.percentualGordura ? String(ult.percentualGordura) : "",
-      musculoPct: "", visceral: "", tmb: "", idadeCorporal: "", anotacoes: "",
+      gorduraPct: "",
+      musculoPct: "", visceral: "", idadeCorporal: "", anotacoes: "", objetivoInicial: "", objetivoCurto: "", proximaAvaliacao: "",
       cintura: ult && ult.cintura ? String(ult.cintura) : "", quadril: ult && ult.quadril ? String(ult.quadril) : "",
       torax: ult && ult.peito ? String(ult.peito) : "",
+      pescoco: ult && ult.pescoco ? String(ult.pescoco) : "",
     };
     return base;
   };
@@ -7671,9 +7752,15 @@ function RelatorioAvaliacao({ avaliacoesBase, onFechar, onImprimir }) {
       id: uid(), data: agora.toISOString().slice(0, 10), hora: agora.toTimeString().slice(0, 5),
       nome: (f.nome || "").trim(), sexo: f.sexo || "masculino", metodo: f.metodo || "Bioimpedância",
       anotacoes: (f.anotacoes || "").trim(),
+      objetivoInicial: (f.objetivoInicial || "").trim(),
+      objetivoCurto: (f.objetivoCurto || "").trim(),
+      proximaAvaliacao: (f.proximaAvaliacao || "").trim(),
     };
-    ["idade", "altura", "peso", "gorduraPct", "musculoPct", "visceral", "tmb", "idadeCorporal"].forEach((k) => { nova[k] = relNum(f[k]); });
+    ["idade", "altura", "peso", "gorduraPct", "musculoPct", "visceral", "idadeCorporal"].forEach((k) => { nova[k] = relNum(f[k]); });
     REL_CAMPOS_MEDIDAS.forEach(([k]) => { nova[k] = relNum(f[k]); });
+    if (nova.metodo === REL_METODO_MARINHA) {
+      nova.gorduraPct = relGorduraAuto({ ...nova, metodo: nova.metodo });
+    }
     REL_CAMPOS_DOBRAS.forEach(([k]) => { nova[k] = relNum(f[k]); });
     await salvarLista([...lista, nova]);
     setSelId(nova.id);
@@ -7696,13 +7783,18 @@ function RelatorioAvaliacao({ avaliacoesBase, onFechar, onImprimir }) {
 
   const trocarFoto = async (vista, arquivo) => {
     if (!arquivo || !sel) return;
+    setErroFoto("");
     try {
       const dataUrl = await relRedimensionarFoto(arquivo, 720);
       const novoMapa = { ...fotosMap, [sel.id]: { ...(fotosMap[sel.id] || {}), [vista]: dataUrl } };
       setFotosMap(novoMapa);
-      await window.storage.set("relatorio-fotos", JSON.stringify(novoMapa));
+      try {
+        await window.storage.set("relatorio-fotos", JSON.stringify(novoMapa));
+      } catch (e2) {
+        setErroFoto("A foto apareceu, mas não foi possível guardá-la (espaço cheio?). Ela pode sumir ao fechar o app.");
+      }
     } catch (e) {
-      mostrarAviso("Não consegui salvar essa foto.");
+      setErroFoto("Não consegui abrir essa foto. Tente escolher outra imagem.");
     }
   };
 
@@ -7723,22 +7815,89 @@ function RelatorioAvaliacao({ avaliacoesBase, onFechar, onImprimir }) {
   };
 
   const calc = sel ? relCalcular(sel) : null;
+  const autoForm = modo === "form" ? relCalcular({ ...f, gorduraPct: f.metodo === REL_METODO_MARINHA ? "" : f.gorduraPct }).linhas.obesidade : [];
   const todasLinhas = calc ? calc.linhas.composicao.concat(calc.linhas.obesidade) : [];
 
   const textoResumo = () => {
     if (!sel || !calc) return "";
-    const partes = [`Controle Corporal — ${sel.nome || "Avaliação"} (${relDataLonga(sel.data)})`];
-    todasLinhas.forEach((l) => {
-      partes.push(`${l.nome}: ${l.valor.filter(Boolean).join(" / ")} → ${l.txt}`);
-    });
-    partes.push("Gerado no Massi Pro");
-    return partes.join("\n");
+    const nome = (sel.nome || "").trim();
+    const temObj = !!(sel.objetivoInicial || sel.objetivoCurto);
+    const linhas = [
+      nome ? `Olá, *${nome}*!` : "Olá!",
+      "",
+      "Como você está? Espero que bem 😊",
+      temObj
+        ? "Aqui está o link para acessar sua avaliação, nela já consta um objetivo inicial e a curto prazo, busque cumpri-lo!"
+        : "Aqui está o link para acessar sua avaliação!",
+      "Não desista, pois tudo isso é para o seu bem 💪",
+      "",
+      "_Clique e veja *agora*:_ 📊",
+      REL_APP_URL,
+      "",
+    ];
+    if (sel.proximaAvaliacao) linhas.push(`Sua próxima avaliação já está agendada: ${sel.proximaAvaliacao}`);
+    else linhas.push("Sua próxima avaliação será combinada em breve");
+    linhas.push("Qualquer dúvida estou à disposição");
+    linhas.push("Massi Pro");
+    return linhas.join("\n");
   };
 
   const compartilharWhats = () => {
     const texto = textoResumo();
     if (!texto) return;
     window.open(`https://wa.me/?text=${encodeURIComponent(texto)}`, "_blank");
+  };
+
+  const copiarMensagem = async () => {
+    const texto = textoResumo();
+    if (!texto) return;
+    let ok = false;
+    try {
+      await navigator.clipboard.writeText(texto);
+      ok = true;
+    } catch (e) {
+      try {
+        const ta = document.createElement("textarea");
+        ta.value = texto;
+        ta.style.position = "fixed";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.select();
+        ok = document.execCommand("copy");
+        document.body.removeChild(ta);
+      } catch (e2) {
+        ok = false;
+      }
+    }
+    mostrarAviso(ok ? "Mensagem copiada! Cole onde quiser." : "Não consegui copiar neste aparelho.");
+  };
+
+  // Compartilhar em qualquer app (Telegram, e-mail, Instagram...) — leva a imagem do
+  // relatório junto quando o aparelho permite; senão só a mensagem.
+  const compartilharGeral = async () => {
+    const texto = textoResumo();
+    if (!texto) return;
+    if (!navigator.share) {
+      await copiarMensagem();
+      return;
+    }
+    try {
+      if (navigator.canShare) {
+        try {
+          const blob = await gerarImagemRelatorio();
+          const arquivo = new File([blob], "avaliacao-massi-pro.jpg", { type: "image/jpeg" });
+          if (navigator.canShare({ files: [arquivo] })) {
+            await navigator.share({ files: [arquivo], text: texto });
+            return;
+          }
+        } catch (e) {
+          // imagem falhou — segue só com o texto
+        }
+      }
+      await navigator.share({ text: texto });
+    } catch (e) {
+      // pessoa cancelou o compartilhamento — sem problema
+    }
   };
 
   const gerarImagemRelatorio = () => new Promise((resolve) => {
@@ -7900,59 +8059,58 @@ function RelatorioAvaliacao({ avaliacoesBase, onFechar, onImprimir }) {
         {modo === "form" && (
           <div>
             <p style={{ fontSize: 13, color: REL_COR.suave, lineHeight: 1.45, margin: "0 0 10px" }}>
-              Preencha o que você tem. Peso e altura são obrigatórios; o resto é opcional e só aparece no relatório se você informar. Músculo, gordura visceral e idade corporal costumam vir de balança de bioimpedância ou de uma avaliação com profissional.
+              Preencha o que você tem. Peso e altura são obrigatórios; o resto é opcional e só aparece no relatório se você informar. Toque no <b style={{ color: "#3AA9E0" }}>?</b> ao lado de cada item para ver o que significa e como medir.
             </p>
             <div style={REL_CARD}>
               <div style={REL_GRID}>
-                <label style={{ ...REL_LABEL, gridColumn: "1 / span 2" }}>Nome
+                <RelCampo rotulo="Nome" ajudaId="nome" onAjuda={setInfoAberta} estilo={{ gridColumn: "1 / span 2" }}>
                   <input style={REL_INPUT} value={f.nome || ""} onChange={(e) => setCampo("nome", e.target.value)} placeholder="Nome do avaliado" />
-                </label>
+                </RelCampo>
               </div>
-              <div style={{ ...REL_LABEL, marginBottom: 14 }}>Sexo
+              <RelCampo rotulo="Sexo" ajudaId="sexo" onAjuda={setInfoAberta} estilo={{ marginBottom: 14 }}>
                 <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
                   {[["masculino", "Masculino"], ["feminino", "Feminino"]].map(([v, n]) => (
                     <button key={v} style={relChip(f.sexo === v)} onClick={() => setCampo("sexo", v)}>{n}</button>
                   ))}
                 </div>
-              </div>
+              </RelCampo>
               <div style={REL_GRID}>
-                <label style={REL_LABEL}>Peso (kg) *
+                <RelCampo rotulo="Peso (kg) *" ajudaId="peso" onAjuda={setInfoAberta}>
                   <input style={REL_INPUT} inputMode="decimal" value={f.peso || ""} onChange={setNum("peso")} placeholder="ex: 79,8" />
-                </label>
-                <label style={REL_LABEL}>Altura (cm) *
+                </RelCampo>
+                <RelCampo rotulo="Altura (cm) *" ajudaId="altura" onAjuda={setInfoAberta}>
                   <input style={REL_INPUT} inputMode="decimal" value={f.altura || ""} onChange={setNum("altura")} placeholder="ex: 178" />
-                </label>
-                <label style={{ ...REL_LABEL, gridColumn: "1 / span 2" }}>Idade (anos){nascimento ? " — calculada pelo seu cadastro" : ""}
+                </RelCampo>
+                <RelCampo rotulo="Idade (anos)" ajudaId="idade" onAjuda={setInfoAberta} estilo={{ gridColumn: "1 / span 2" }}>
                   <input style={REL_INPUT} inputMode="numeric" value={f.idade || ""} onChange={setNum("idade")} placeholder="ex: 29" />
-                </label>
+                </RelCampo>
               </div>
-              <div style={{ ...REL_LABEL, marginBottom: 14 }}>Método da composição corporal
+              <RelCampo rotulo="Método da composição corporal" ajudaId="metodo" onAjuda={setInfoAberta} estilo={{ marginBottom: 14 }}>
                 <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
                   {["Bioimpedância", "Adipômetro", "Circunferências (Marinha)", "Outro"].map((m) => (
                     <button key={m} style={relChip(f.metodo === m)} onClick={() => setCampo("metodo", m)}>{m}</button>
                   ))}
                 </div>
-              </div>
+              </RelCampo>
             </div>
 
             <div style={REL_SECAO}>Composição corporal</div>
             <div style={REL_CARD}>
               <div style={REL_GRID}>
-                <label style={REL_LABEL}>Gordura corporal (%)
-                  <input style={REL_INPUT} inputMode="decimal" value={f.gorduraPct || ""} onChange={setNum("gorduraPct")} placeholder="ex: 25,7" />
-                </label>
-                <label style={REL_LABEL}>Músculo esquelético (%)
+                {f.metodo !== REL_METODO_MARINHA && (
+                  <RelCampo rotulo="Gordura corporal (%)" ajudaId="gorduraPct" onAjuda={setInfoAberta}>
+                    <input style={REL_INPUT} inputMode="decimal" value={f.gorduraPct || ""} onChange={setNum("gorduraPct")} placeholder="ex: 25,7" />
+                  </RelCampo>
+                )}
+                <RelCampo rotulo="Músculo esquelético (%)" ajudaId="musculoPct" onAjuda={setInfoAberta}>
                   <input style={REL_INPUT} inputMode="decimal" value={f.musculoPct || ""} onChange={setNum("musculoPct")} placeholder="ex: 35,9" />
-                </label>
-                <label style={REL_LABEL}>Gordura visceral (nível)
+                </RelCampo>
+                <RelCampo rotulo="Gordura visceral (nível)" ajudaId="visceral" onAjuda={setInfoAberta}>
                   <input style={REL_INPUT} inputMode="decimal" value={f.visceral || ""} onChange={setNum("visceral")} placeholder="ex: 8" />
-                </label>
-                <label style={REL_LABEL}>Idade corporal (anos)
+                </RelCampo>
+                <RelCampo rotulo="Idade corporal (anos)" ajudaId="idadeCorporal" onAjuda={setInfoAberta}>
                   <input style={REL_INPUT} inputMode="numeric" value={f.idadeCorporal || ""} onChange={setNum("idadeCorporal")} placeholder="ex: 44" />
-                </label>
-                <label style={{ ...REL_LABEL, gridColumn: "1 / span 2" }}>Metabolismo basal (Kcal) — vazio = o app calcula
-                  <input style={REL_INPUT} inputMode="numeric" value={f.tmb || ""} onChange={setNum("tmb")} placeholder="ex: 1755" />
-                </label>
+                </RelCampo>
               </div>
             </div>
 
@@ -7960,9 +8118,9 @@ function RelatorioAvaliacao({ avaliacoesBase, onFechar, onImprimir }) {
             <div style={REL_CARD}>
               <div style={REL_GRID}>
                 {REL_CAMPOS_MEDIDAS.map(([k, nome]) => (
-                  <label key={k} style={REL_LABEL}>{nome}
+                  <RelCampo key={k} rotulo={nome} ajudaId={k} onAjuda={setInfoAberta}>
                     <input style={REL_INPUT} inputMode="decimal" value={f[k] || ""} onChange={setNum(k)} placeholder="cm" />
-                  </label>
+                  </RelCampo>
                 ))}
               </div>
             </div>
@@ -7971,21 +8129,67 @@ function RelatorioAvaliacao({ avaliacoesBase, onFechar, onImprimir }) {
             <div style={REL_CARD}>
               <div style={REL_GRID}>
                 {REL_CAMPOS_DOBRAS.map(([k, nome]) => (
-                  <label key={k} style={REL_LABEL}>{nome}
+                  <RelCampo key={k} rotulo={nome} ajudaId={k} onAjuda={setInfoAberta}>
                     <input style={REL_INPUT} inputMode="decimal" value={f[k] || ""} onChange={setNum(k)} placeholder="mm" />
-                  </label>
+                  </RelCampo>
                 ))}
               </div>
             </div>
 
+            <div style={REL_SECAO}>Objetivos e próxima avaliação</div>
+            <div style={REL_CARD}>
+              <RelCampo rotulo="Objetivo inicial" ajudaId="objetivoInicial" onAjuda={setInfoAberta} estilo={{ marginBottom: 10 }}>
+                <input style={REL_INPUT} value={f.objetivoInicial || ""} onChange={(e) => setCampo("objetivoInicial", e.target.value)} placeholder="ex: reduzir a gordura corporal" />
+              </RelCampo>
+              <RelCampo rotulo="Objetivo a curto prazo" ajudaId="objetivoCurto" onAjuda={setInfoAberta} estilo={{ marginBottom: 10 }}>
+                <input style={REL_INPUT} value={f.objetivoCurto || ""} onChange={(e) => setCampo("objetivoCurto", e.target.value)} placeholder="ex: perder 2 kg em 30 dias" />
+              </RelCampo>
+              <RelCampo rotulo="Próxima avaliação (data)" ajudaId="proximaAvaliacao" onAjuda={setInfoAberta}>
+                <input style={REL_INPUT} value={f.proximaAvaliacao || ""} onChange={(e) => setCampo("proximaAvaliacao", e.target.value)} placeholder="ex: 28/10/2026" />
+              </RelCampo>
+            </div>
+
             <div style={REL_SECAO}>Anotações</div>
             <div style={REL_CARD}>
-              <textarea
-                style={{ ...REL_INPUT, minHeight: 90, resize: "vertical" }}
-                value={f.anotacoes || ""}
-                onChange={(e) => setCampo("anotacoes", e.target.value)}
-                placeholder="Orientações, metas, observações..."
-              />
+              <RelCampo rotulo="Anotações" ajudaId="anotacoes" onAjuda={setInfoAberta}>
+                <textarea
+                  style={{ ...REL_INPUT, minHeight: 90, resize: "vertical" }}
+                  value={f.anotacoes || ""}
+                  onChange={(e) => setCampo("anotacoes", e.target.value)}
+                  placeholder="Orientações, metas, observações..."
+                />
+              </RelCampo>
+            </div>
+
+            <div style={REL_SECAO}>Calculado pelo Massi Pro</div>
+            <div style={REL_CARD}>
+              <p style={{ fontSize: 12.5, color: REL_COR.suave, lineHeight: 1.45, margin: "0 0 10px" }}>
+                Estes itens o app calcula sozinho com o que você preencheu acima. Não precisa digitar nada.
+              </p>
+              {[["imc", "IMC", "auto_imc"]].concat(f.metodo === REL_METODO_MARINHA ? [["gordura", "Gordura corporal", "auto_gordura"]] : []).concat([["tmb", "Metabolismo basal", "auto_tmb"], ["rcq", "Relação cintura-quadril", "auto_rcq"]]).map(([id, nome, aj]) => {
+                const linha = autoForm.find((l) => l.id === id);
+                return (
+                  <div key={id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8, background: REL_COR.celula, borderRadius: 8, padding: "10px 10px", marginBottom: 6 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 6, minWidth: 0 }}>
+                      <span style={{ fontSize: 13.5, fontWeight: 600, minWidth: 0, wordBreak: "break-word" }}>{nome}</span>
+                      <button
+                        type="button"
+                        aria-label={`O que é ${nome}`}
+                        onClick={() => setInfoAberta({ nome, info: REL_AJUDA[aj] })}
+                        style={{ width: 20, height: 20, minWidth: 20, borderRadius: 10, border: "none", background: "#3AA9E0", color: "#fff", fontWeight: 700, fontSize: 12, cursor: "pointer", padding: 0, lineHeight: "20px" }}
+                      >?</button>
+                    </div>
+                    {linha ? (
+                      <div style={{ textAlign: "right", flexShrink: 0 }}>
+                        <div style={{ fontWeight: 700, fontSize: 14 }}>{linha.valor.filter(Boolean).join(" ")}</div>
+                        <div style={{ fontSize: 11.5, color: linha.cor, fontWeight: 700 }}>{linha.txt}</div>
+                      </div>
+                    ) : (
+                      <div style={{ fontSize: 12, color: REL_COR.suave, textAlign: "right", flexShrink: 0 }}>{id === "rcq" ? "informe cintura e quadril" : id === "gordura" ? (f.sexo === "feminino" ? "informe pescoço, cintura e quadril" : "informe pescoço e cintura") : "informe peso e altura"}</div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
 
             {erro && <div style={{ color: "#FF7A68", fontWeight: 700, fontSize: 13, marginBottom: 8 }}>{erro}</div>}
@@ -8006,6 +8210,8 @@ function RelatorioAvaliacao({ avaliacoesBase, onFechar, onImprimir }) {
             )}
             <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 12 }}>
               <button style={{ ...REL_BTN, background: "#2E9E4F", color: "#fff" }} onClick={compartilharWhats}>WhatsApp</button>
+              <button style={REL_BTN} onClick={compartilharGeral}>↗ Compartilhar</button>
+              <button style={REL_BTN} onClick={copiarMensagem}>📋 Copiar</button>
               <button style={REL_BTN} onClick={exportarImagem}>🖼 Imagem</button>
               <button style={REL_BTN} onClick={() => onImprimir && onImprimir({ sel, calc, todasLinhas, prof })}>📄 PDF</button>
             </div>
@@ -8103,6 +8309,17 @@ function RelatorioAvaliacao({ avaliacoesBase, onFechar, onImprimir }) {
               Fontes das referências: OMS (peso e IMC), Omron Healthcare e diretrizes NIH/OMS (gordura e músculo), Omron/Tanita (gordura visceral), equação de Harris-Benedict (metabolismo basal) e Bray & Gray / OMS (relação cintura-quadril). Valores aproximados, apenas educativos.
             </p>
 
+            {(sel.objetivoInicial || sel.objetivoCurto || sel.proximaAvaliacao) && (
+              <div>
+                <div style={REL_SECAO}>Objetivos</div>
+                <div style={{ ...REL_CARD, fontSize: 14.5, lineHeight: 1.6 }}>
+                  {sel.objetivoInicial && <div style={{ wordBreak: "break-word" }}><b>Objetivo inicial:</b> {sel.objetivoInicial}</div>}
+                  {sel.objetivoCurto && <div style={{ wordBreak: "break-word" }}><b>A curto prazo:</b> {sel.objetivoCurto}</div>}
+                  {sel.proximaAvaliacao && <div style={{ wordBreak: "break-word" }}><b>Próxima avaliação:</b> {sel.proximaAvaliacao}</div>}
+                </div>
+              </div>
+            )}
+
             {sel.anotacoes && (
               <div>
                 <div style={REL_SECAO}>Anotações</div>
@@ -8153,9 +8370,9 @@ function RelatorioAvaliacao({ avaliacoesBase, onFechar, onImprimir }) {
 
       {infoAberta && (
         <div style={{ position: "fixed", inset: 0, zIndex: 665, background: "rgba(0,0,0,0.6)", display: "flex", alignItems: "center", justifyContent: "center", padding: 18 }} onClick={() => setInfoAberta(null)}>
-          <div style={{ background: "#1A2226", borderRadius: 14, padding: "20px 18px", maxWidth: 420, width: "100%", color: REL_COR.texto, boxSizing: "border-box" }} onClick={(e) => e.stopPropagation()}>
+          <div style={{ background: "#1A2226", borderRadius: 14, padding: "20px 18px", maxWidth: 420, width: "100%", maxHeight: "82%", overflowY: "auto", color: REL_COR.texto, boxSizing: "border-box" }} onClick={(e) => e.stopPropagation()}>
             <div style={{ fontFamily: guiadoFont, fontSize: 19, fontWeight: 700, color: REL_COR.titulo, marginBottom: 8 }}>{infoAberta.nome}</div>
-            <p style={{ fontSize: 14.5, lineHeight: 1.5, margin: "0 0 14px" }}>{infoAberta.info}</p>
+            <p style={{ fontSize: 14.5, lineHeight: 1.5, margin: "0 0 14px", whiteSpace: "pre-wrap", wordBreak: "break-word" }}>{infoAberta.info}</p>
             <button style={{ ...REL_BTN, width: "100%", background: "#9ACD32", color: "#101619" }} onClick={() => setInfoAberta(null)}>Entendi</button>
           </div>
         </div>
@@ -8165,8 +8382,9 @@ function RelatorioAvaliacao({ avaliacoesBase, onFechar, onImprimir }) {
         <div style={{ position: "fixed", inset: 0, zIndex: 665, background: "rgba(0,0,0,0.78)", overflowY: "auto", WebkitOverflowScrolling: "touch" }}>
           <div style={{ maxWidth: 520, margin: "0 auto", padding: "12px 12px 40px", boxSizing: "border-box" }}>
             <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 10 }}>
-              <button style={{ ...REL_BTN, background: "#EFA847", color: "#fff" }} onClick={() => setFotosAberto(false)}>✕ Fechar</button>
+              <button style={{ ...REL_BTN, background: "#EFA847", color: "#fff" }} onClick={() => { setErroFoto(""); setFotosAberto(false); }}>✕ Fechar</button>
             </div>
+            {erroFoto && <div style={{ background: "#F3D6D0", color: "#8A2A1A", fontWeight: 700, fontSize: 13, borderRadius: 8, padding: "9px 12px", marginBottom: 10, textAlign: "center" }}>{erroFoto}</div>}
             {REL_VISTAS_FOTO.map(([k, titulo]) => {
               const src = fotosMap[sel.id] && fotosMap[sel.id][k];
               return (
@@ -8183,10 +8401,16 @@ function RelatorioAvaliacao({ avaliacoesBase, onFechar, onImprimir }) {
                     </span>
                   </div>
                   <div style={{ display: "flex", flexWrap: "wrap", gap: 8, justifyContent: "center", marginTop: 10 }}>
-                    <label style={{ background: "#1B2226", color: "#fff", borderRadius: 8, padding: "9px 14px", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>
+                    <label htmlFor={"relFotoInput_" + k} style={{ background: "#1B2226", color: "#fff", borderRadius: 8, padding: "9px 14px", fontSize: 13, fontWeight: 700, cursor: "pointer", display: "inline-block" }}>
                       {src ? "Trocar foto" : "Adicionar foto"}
-                      <input type="file" accept="image/*" style={{ display: "none" }} onChange={(e) => { const a = e.target.files && e.target.files[0]; if (a) trocarFoto(k, a); e.target.value = ""; }} />
                     </label>
+                    <input
+                      id={"relFotoInput_" + k}
+                      type="file"
+                      accept="image/*"
+                      style={REL_INPUT_OCULTO}
+                      onChange={(e) => { const a = e.target.files && e.target.files[0]; if (a) trocarFoto(k, a); e.target.value = ""; }}
+                    />
                     {src && <button style={{ ...REL_BTN, background: "#F3D6D0", color: "#8A2A1A" }} onClick={() => removerFoto(k)}>Remover</button>}
                   </div>
                 </div>
