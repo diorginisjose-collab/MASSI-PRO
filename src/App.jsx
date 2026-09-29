@@ -47,6 +47,9 @@ if (typeof window !== "undefined" && !window.storage.__comPerfis) {
     "progressao-exercicios",
     "fotos-progresso",
     "onboarding-perfil",
+    "relatorio-avaliacoes",
+    "relatorio-fotos",
+    "relatorio-profissional",
   ];
 
   let prontoPromise = null;
@@ -5670,6 +5673,25 @@ function AppMassiPro({ onSolicitarRemount }) {
           .print-rotina-area table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
           .print-rotina-area th, .print-rotina-area td { border: 1px solid #999; padding: 5px 8px; font-size: 12px; text-align: left; }
         }
+        .print-avaliacao-area { display: none; }
+        @media print {
+          body * { visibility: hidden; }
+          .print-avaliacao-area, .print-avaliacao-area * { visibility: visible; }
+          .print-avaliacao-area {
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 24px;
+            color: #000;
+            background: #fff;
+          }
+          .print-avaliacao-area h1 { font-size: 22px; margin-bottom: 2px; }
+          .print-avaliacao-area h3 { font-size: 16px; margin: 18px 0 6px; }
+          .print-avaliacao-area table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+          .print-avaliacao-area th, .print-avaliacao-area td { border: 1px solid #999; padding: 5px 8px; font-size: 12px; text-align: left; }
+        }
         .print-relatorio-area { display: none; }
         @media print {
           body * { visibility: hidden; }
@@ -6069,7 +6091,7 @@ function AppMassiPro({ onSolicitarRemount }) {
       )}
 
       {showFeedback && (
-        <AvaliacaoPerguntasModal
+        <FeedbackModal
           onFechar={() => setShowFeedback(false)}
           onMensagem={(m) => setMensagemSucesso(m)}
         />
@@ -6960,6 +6982,1255 @@ function InicioTab({ perfilAtivoNome, rotina, diasSelecionados, historico, recor
 }
 
 
+// ===============================================================
+// RELATÓRIO DE AVALIAÇÃO FÍSICA (estilo laudo de academia)
+// Cálculos, faixas de referência e componentes de gráfico em SVG
+// (só SVG/opacity/flex simples — compatível com o WebView do celular).
+// ===============================================================
+const REL_COR = {
+  fundo: "#101619",
+  card: "#1A2226",
+  celula: "#242F34",
+  texto: "#EAF0F2",
+  suave: "#9AA8AF",
+  titulo: "#9ACD32",
+  verde: "#A5E37B",
+  amarelo: "#FFC700",
+  laranja: "#FFA24A",
+  vermelho: "#F47B5F",
+  azul: "#7FC8F8",
+  txtCelula: "#12200A",
+};
+
+const REL_FONTE_SANS = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
+const REL_FONTE_TITULO = "'Oswald', 'Helvetica Neue', Arial, sans-serif";
+
+const REL_NIVEIS_AVATAR = ["Abaixo", "Normal", "Acima 1", "Acima 2", "Acima 3", "Alto 1", "Alto 2", "Alto 3"];
+
+const REL_CAMPOS_MEDIDAS = [
+  ["torax", "Tórax"],
+  ["cintura", "Cintura"],
+  ["abdome", "Abdome"],
+  ["quadril", "Quadril"],
+  ["bracoE", "Braço E."],
+  ["antebracoE", "Antebraço E."],
+  ["bracoD", "Braço D."],
+  ["antebracoD", "Antebraço D."],
+  ["coxaE", "Coxa E."],
+  ["panturrilhaE", "Panturrilha E."],
+  ["coxaD", "Coxa D."],
+  ["panturrilhaD", "Panturrilha D."],
+];
+
+const REL_CAMPOS_DOBRAS = [
+  ["axilar", "Axilar Média"],
+  ["triceps", "Tríceps"],
+  ["subescapular", "Subescapular"],
+  ["abdominal", "Abdominal"],
+  ["supra", "Supra-ilíaca"],
+  ["coxaDobra", "Coxa"],
+];
+
+const REL_VISTAS_FOTO = [
+  ["frontal", "Vista Frontal"],
+  ["lateralD", "Vista Lateral Direita"],
+  ["posterior", "Vista Posterior"],
+  ["lateralE", "Vista Lateral Esquerda"],
+];
+
+const REL_CORES_SERIES = ["#7FC8F8", "#FFA24A", "#A5E37B", "#8FA8D0", "#F47B5F", "#E6D84A", "#C79BF2", "#5ED6C4"];
+
+function relNum(v) {
+  if (v === null || v === undefined || v === "") return null;
+  const n = Number(String(v).replace(",", "."));
+  return isNaN(n) || n <= 0 ? null : n;
+}
+
+function relFmt(n, casas) {
+  if (n === null || n === undefined || isNaN(n)) return "—";
+  return Number(n).toFixed(casas === undefined ? 1 : casas).replace(".", ",");
+}
+
+function relDataCurta(iso) {
+  if (!iso) return "";
+  const p = iso.slice(0, 10).split("-");
+  return `${p[2]}/${p[1]}/${p[0].slice(2)}`;
+}
+
+function relDataLonga(iso) {
+  if (!iso) return "";
+  const p = iso.slice(0, 10).split("-");
+  return `${p[2]}/${p[1]}/${p[0]}`;
+}
+
+function relIdadeDe(nascimento, dataRef) {
+  if (!nascimento) return null;
+  const n = nascimento.split("-");
+  const r = (dataRef || new Date().toISOString().slice(0, 10)).split("-");
+  if (n.length < 3 || r.length < 3) return null;
+  let idade = Number(r[0]) - Number(n[0]);
+  if (Number(r[1]) < Number(n[1]) || (Number(r[1]) === Number(n[1]) && Number(r[2]) < Number(n[2]))) idade -= 1;
+  return idade > 0 && idade < 120 ? idade : null;
+}
+
+// Faixas de referência aproximadas por sexo e idade (Omron / NIH / Bray & Gray).
+// São referências educativas, não diagnóstico.
+function relFaixaGordura(sexo, idade) {
+  const i = idade || 30;
+  if (sexo === "feminino") {
+    if (i < 40) return { min: 21, max: 32.9, alto: 38.9 };
+    if (i < 60) return { min: 23, max: 33.9, alto: 39.9 };
+    return { min: 24, max: 35.9, alto: 41.9 };
+  }
+  if (i < 40) return { min: 8, max: 19.9, alto: 24.9 };
+  if (i < 60) return { min: 11, max: 21.9, alto: 27.9 };
+  return { min: 13, max: 24.9, alto: 29.9 };
+}
+
+function relFaixaMusculo(sexo, idade) {
+  const i = idade || 30;
+  if (sexo === "feminino") {
+    if (i < 40) return { min: 24.3, max: 30.3 };
+    if (i < 60) return { min: 24.1, max: 30.1 };
+    return { min: 23.9, max: 29.9 };
+  }
+  if (i < 40) return { min: 33.3, max: 39.3 };
+  if (i < 60) return { min: 33.1, max: 39.1 };
+  return { min: 32.9, max: 38.9 };
+}
+
+function relFaixaRCQ(sexo, idade) {
+  const i = idade || 30;
+  if (sexo === "feminino") {
+    if (i < 30) return [0.71, 0.77, 0.82];
+    if (i < 40) return [0.72, 0.78, 0.84];
+    if (i < 50) return [0.73, 0.79, 0.87];
+    if (i < 60) return [0.74, 0.81, 0.88];
+    return [0.76, 0.83, 0.9];
+  }
+  if (i < 30) return [0.83, 0.88, 0.94];
+  if (i < 40) return [0.84, 0.91, 0.96];
+  if (i < 50) return [0.88, 0.95, 1.0];
+  if (i < 60) return [0.9, 0.96, 1.02];
+  return [0.91, 0.98, 1.03];
+}
+
+function relTMB(sexo, peso, alturaCm, idade) {
+  if (!peso || !alturaCm || !idade) return null;
+  if (sexo === "feminino") return Math.round(655.1 + 9.563 * peso + 1.85 * alturaCm - 4.676 * idade);
+  return Math.round(66.47 + 13.75 * peso + 5.003 * alturaCm - 6.755 * idade);
+}
+
+// Nível do avatar (0..7): usa % de gordura quando existe, senão o IMC.
+function relNivelAvatar(sexo, gorduraPct, imc) {
+  if (gorduraPct !== null && gorduraPct !== undefined) {
+    const d = sexo === "feminino" ? 8 : 0;
+    const g = gorduraPct - d;
+    if (g < 8) return 0;
+    if (g < 14) return 1;
+    if (g < 18) return 2;
+    if (g < 22) return 3;
+    if (g < 25) return 4;
+    if (g < 28) return 5;
+    if (g < 32) return 6;
+    return 7;
+  }
+  if (imc === null || imc === undefined) return 1;
+  if (imc < 18.5) return 0;
+  if (imc < 22.5) return 1;
+  if (imc < 25) return 2;
+  if (imc < 27.5) return 3;
+  if (imc < 30) return 4;
+  if (imc < 32.5) return 5;
+  if (imc < 35) return 6;
+  return 7;
+}
+
+// Monta todas as linhas das tabelas (valor, referência, avaliação, cor, explicação).
+function relCalcular(av) {
+  const linhas = { composicao: [], obesidade: [] };
+  const sexo = av.sexo || "masculino";
+  const peso = relNum(av.peso);
+  const alt = relNum(av.altura);
+  const idade = relNum(av.idade);
+  const altM = alt ? alt / 100 : null;
+  const imc = peso && altM ? peso / (altM * altM) : null;
+  const gordPct = relNum(av.gorduraPct);
+  const gordKg = gordPct !== null && peso ? (gordPct / 100) * peso : null;
+  const musPct = relNum(av.musculoPct);
+  const musKg = musPct !== null && peso ? (musPct / 100) * peso : null;
+
+  if (peso && altM) {
+    const min = 18.5 * altM * altM;
+    const max = 25 * altM * altM;
+    let txt = "Normal";
+    let cor = REL_COR.verde;
+    if (peso > max + 0.049) {
+      txt = `Acima ${relFmt(peso - max)} kg`;
+      cor = REL_COR.amarelo;
+    } else if (peso < min - 0.049) {
+      txt = `Abaixo ${relFmt(min - peso)} kg`;
+      cor = REL_COR.azul;
+    }
+    linhas.composicao.push({
+      id: "peso", nome: "Peso", valor: [`${relFmt(peso)} kg`], ref: `${relFmt(min)} ~ ${relFmt(max)} kg`, txt, cor,
+      info: "Peso corporal total. A faixa de referência vem do IMC saudável (18,5 a 25) para a sua altura. Peso isolado não diz tudo: avalie junto com gordura e músculo.",
+    });
+  }
+  if (musPct !== null) {
+    const f = relFaixaMusculo(sexo, idade);
+    let txt = "Normal";
+    let cor = REL_COR.verde;
+    if (musPct > f.max) { txt = "Alto"; cor = REL_COR.verde; }
+    else if (musPct < f.min) { txt = "Baixo"; cor = REL_COR.amarelo; }
+    linhas.composicao.push({
+      id: "musculo", nome: "Músculo Esquelético", valor: [`${relFmt(musPct)} %`, musKg ? `${relFmt(musKg)} kg` : ""],
+      ref: `${relFmt(f.min)} ~ ${relFmt(f.max)} %`, txt, cor,
+      info: "Percentual de músculo esquelético (os músculos que você move ao treinar) em relação ao peso. Quanto mais próximo ou acima da faixa, melhor para força e metabolismo.",
+    });
+  }
+  const idCorp = relNum(av.idadeCorporal);
+  if (idCorp !== null && idade) {
+    const dif = Math.round(idCorp - idade);
+    let txt = "Normal";
+    let cor = REL_COR.verde;
+    if (dif > 5) { txt = `+ ${dif} ano(s)`; cor = REL_COR.vermelho; }
+    else if (dif > 0) { txt = `+ ${dif} ano(s)`; cor = REL_COR.amarelo; }
+    else if (dif < 0) { txt = `${dif} ano(s)`; cor = REL_COR.verde; }
+    linhas.composicao.push({
+      id: "idadecorp", nome: "Idade Corporal", valor: [`${Math.round(idCorp)} ano(s)`], ref: "", txt, cor,
+      info: "Estimativa de quão \"nova\" ou \"velha\" está a composição do seu corpo comparada à sua idade real. Vem do aparelho de bioimpedância.",
+    });
+  }
+
+  if (imc !== null) {
+    let txt = "Normal";
+    let cor = REL_COR.verde;
+    if (imc < 18.5) { txt = "Abaixo"; cor = REL_COR.azul; }
+    else if (imc >= 30) { txt = "Obesidade"; cor = REL_COR.vermelho; }
+    else if (imc >= 25) { txt = "Acima"; cor = REL_COR.amarelo; }
+    linhas.obesidade.push({
+      id: "imc", nome: "IMC", valor: [`${relFmt(imc)} kg/m²`], ref: "18,5 ~ 25,0 kg/m²", txt, cor,
+      info: "Índice de Massa Corporal = peso ÷ altura². Não separa gordura de músculo, por isso pessoas musculosas podem aparecer como \"acima\".",
+    });
+  }
+  if (gordPct !== null) {
+    const f = relFaixaGordura(sexo, idade);
+    let txt = "Normal";
+    let cor = REL_COR.verde;
+    if (gordPct > f.alto) {
+      txt = `Muito Alto${peso ? " " + relFmt(((gordPct - f.max) / 100) * peso) + " kg" : ""}`;
+      cor = REL_COR.vermelho;
+    } else if (gordPct > f.max) {
+      txt = `Alto${peso ? " " + relFmt(((gordPct - f.max) / 100) * peso) + " kg" : ""}`;
+      cor = REL_COR.amarelo;
+    } else if (gordPct < f.min) {
+      txt = "Baixo";
+      cor = REL_COR.azul;
+    }
+    linhas.obesidade.push({
+      id: "gordura", nome: "Gordura Corporal", valor: [`${relFmt(gordPct)} %`, gordKg ? `${relFmt(gordKg)} kg` : ""],
+      ref: `${relFmt(f.min)} ~ ${relFmt(f.max)} %`, txt, cor,
+      info: "Percentual do peso que é gordura. É o indicador mais útil para acompanhar emagrecimento. A faixa muda conforme sexo e idade.",
+    });
+  }
+  const visc = relNum(av.visceral);
+  if (visc !== null) {
+    let txt = "Normal";
+    let cor = REL_COR.verde;
+    if (visc >= 15) { txt = "Muito Alto"; cor = REL_COR.vermelho; }
+    else if (visc >= 10) { txt = "Alto"; cor = REL_COR.amarelo; }
+    linhas.obesidade.push({
+      id: "visceral", nome: "Gordura Visceral", valor: [relFmt(visc, 0)], ref: "1 ~ 9", txt, cor,
+      info: "Gordura acumulada em volta dos órgãos, dentro do abdômen. Níveis altos aumentam o risco cardiovascular e metabólico.",
+    });
+  }
+  const tmbInformado = relNum(av.tmb);
+  const tmbEst = relTMB(sexo, peso, alt, idade);
+  const tmb = tmbInformado !== null ? Math.round(tmbInformado) : tmbEst;
+  if (tmb) {
+    const base = tmbEst || tmb;
+    const min = Math.round(base * 0.9);
+    const max = Math.round(base * 1.1);
+    let txt = "Normal";
+    let cor = REL_COR.verde;
+    if (tmb > max) { txt = "Acima"; cor = REL_COR.amarelo; }
+    else if (tmb < min) { txt = "Abaixo"; cor = REL_COR.amarelo; }
+    linhas.obesidade.push({
+      id: "tmb", nome: "Metabolismo Basal", valor: [`${tmb} Kcal`], ref: `${min}~${max} Kcal`, txt, cor,
+      info: "Calorias que o corpo gasta em repouso para manter as funções vitais. A referência é a equação de Harris-Benedict (±10%). Se você não informar o valor da balança, o app calcula por ela.",
+    });
+  }
+  const cint = relNum(av.cintura);
+  const quad = relNum(av.quadril);
+  if (cint && quad) {
+    const rcq = cint / quad;
+    const [b, m, a] = relFaixaRCQ(sexo, idade);
+    let txt = "Risco Baixo";
+    let cor = REL_COR.verde;
+    if (rcq > a) { txt = "Risco Muito Alto"; cor = REL_COR.vermelho; }
+    else if (rcq > m) { txt = "Risco Alto"; cor = REL_COR.laranja; }
+    else if (rcq >= b) { txt = "Risco Moderado"; cor = REL_COR.amarelo; }
+    linhas.obesidade.push({
+      id: "rcq", nome: "Relação Cintura Quadril", valor: [relFmt(rcq, 2)], ref: `${relFmt(b, 2)} ~ ${relFmt(m, 2)}`, txt, cor,
+      info: "Cintura ÷ quadril. Indica onde a gordura se concentra: quanto maior, mais gordura na barriga e maior o risco de saúde.",
+    });
+  }
+  return { linhas, imc, gordPct, gordKg, musPct, musKg, peso, idade, nivelAvatar: relNivelAvatar(sexo, gordPct, imc) };
+}
+
+function relEscalaY(valores, margemFrac) {
+  const v = valores.filter((x) => x !== null && x !== undefined && !isNaN(x));
+  if (v.length === 0) return { min: 0, max: 10, passos: [0, 5, 10] };
+  let min = Math.min(...v);
+  let max = Math.max(...v);
+  if (max === min) { max = max + 5; min = Math.max(0, min - 5); }
+  const folga = (max - min) * (margemFrac === undefined ? 0.15 : margemFrac);
+  min = Math.max(0, min - folga);
+  max = max + folga;
+  const bruto = (max - min) / 4;
+  const mag = Math.pow(10, Math.floor(Math.log10(bruto)));
+  const cand = [1, 2, 2.5, 5, 10].map((c) => c * mag);
+  let passo = cand[cand.length - 1];
+  for (let i = 0; i < cand.length; i++) { if (cand[i] >= bruto) { passo = cand[i]; break; } }
+  const ini = Math.floor(min / passo) * passo;
+  const fim = Math.ceil(max / passo) * passo;
+  const passos = [];
+  for (let x = ini; x <= fim + passo / 2; x += passo) passos.push(+x.toFixed(4));
+  return { min: ini, max: fim, passos };
+}
+
+function RelFormaMarcador({ forma, x, y, cor, r }) {
+  const s = r || 4.5;
+  if (forma === "losango") return <polygon points={`${x},${y - s - 1} ${x + s + 1},${y} ${x},${y + s + 1} ${x - s - 1},${y}`} fill={cor} />;
+  if (forma === "triangulo") return <polygon points={`${x},${y - s - 1} ${x + s + 1},${y + s} ${x - s - 1},${y + s}`} fill={cor} />;
+  if (forma === "quadrado") return <rect x={x - s} y={y - s} width={s * 2} height={s * 2} fill={cor} />;
+  return <circle cx={x} cy={y} r={s} fill={cor} />;
+}
+
+const REL_FORMAS = ["circulo", "losango", "triangulo", "quadrado"];
+
+function RelLegenda({ itens }) {
+  return (
+    <div style={{ display: "flex", flexWrap: "wrap", gap: "6px 14px", justifyContent: "center", background: "#232E33", borderRadius: 8, padding: "8px 10px", marginTop: 8 }}>
+      {itens.map((it) => (
+        <span key={it.nome} style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 12, color: REL_COR.texto, minWidth: 0 }}>
+          <span style={{ width: 10, height: 10, borderRadius: it.forma === "quadrado" ? 2 : 5, background: it.cor, display: "inline-block", flexShrink: 0 }} />
+          {it.nome}
+        </span>
+      ))}
+    </div>
+  );
+}
+
+function RelGraficoLinhas({ categorias, series, faixa }) {
+  const W = 340, H = 210, ML = 38, MR = 14, MT = 14, MB = 30;
+  const todos = [];
+  series.forEach((s) => s.valores.forEach((v) => todos.push(v)));
+  if (faixa) { faixa.min.forEach((v) => todos.push(v)); faixa.max.forEach((v) => todos.push(v)); }
+  const esc = relEscalaY(todos);
+  const n = categorias.length;
+  const px = (i) => ML + ((W - ML - MR) * (i + 0.5)) / n;
+  const py = (v) => MT + (H - MT - MB) * (1 - (v - esc.min) / (esc.max - esc.min || 1));
+  return (
+    <div>
+      <svg viewBox={`0 0 ${W} ${H}`} style={{ width: "100%", height: "auto", display: "block" }}>
+        {esc.passos.map((p) => (
+          <g key={p}>
+            <line x1={ML} x2={W - MR} y1={py(p)} y2={py(p)} stroke="rgba(255,255,255,0.10)" strokeWidth="1" />
+            <text x={ML - 6} y={py(p) + 4} textAnchor="end" fontSize="10" fill={REL_COR.suave}>{p}</text>
+          </g>
+        ))}
+        {categorias.map((c, i) => (
+          <text key={i} x={px(i)} y={H - 10} textAnchor="middle" fontSize="9.5" fill={REL_COR.suave}>{c}</text>
+        ))}
+        {faixa && [faixa.min, faixa.max].map((arr, k) => (
+          <g key={k}>
+            {arr.map((v, i) => (v === null ? null : <RelFormaMarcador key={i} forma="losango" x={px(i)} y={py(v)} cor="#8FD46A" r={3.5} />))}
+          </g>
+        ))}
+        {series.map((s, si) => {
+          const pts = [];
+          s.valores.forEach((v, i) => { if (v !== null) pts.push([px(i), py(v), v]); });
+          return (
+            <g key={s.nome}>
+              {pts.length > 1 && <polyline points={pts.map((p) => `${p[0]},${p[1]}`).join(" ")} fill="none" stroke={s.cor} strokeWidth="2" />}
+              {pts.map((p, i) => (
+                <g key={i}>
+                  <RelFormaMarcador forma={s.forma} x={p[0]} y={p[1]} cor={s.cor} />
+                  <text x={p[0] + 8} y={p[1] - 6} fontSize="10.5" fontWeight="700" fill={REL_COR.texto}>{relFmt(p[2], p[2] % 1 === 0 ? 0 : 1)}</text>
+                </g>
+              ))}
+            </g>
+          );
+        })}
+      </svg>
+      <RelLegenda itens={series.map((s) => ({ nome: s.nome, cor: s.cor, forma: s.forma }))} />
+    </div>
+  );
+}
+
+function RelGraficoBarras({ categorias, series, empilhado, mostrarTotal }) {
+  const W = 340, H = 220, ML = 38, MR = 14, MT = 18, MB = 30;
+  const n = categorias.length;
+  const totais = categorias.map((_, i) => series.reduce((a, s) => a + (s.valores[i] || 0), 0));
+  const topo = empilhado ? totais : series.reduce((arr, s) => arr.concat(s.valores.filter((v) => v !== null)), []);
+  const esc = relEscalaY([0].concat(topo), 0.1);
+  const py = (v) => MT + (H - MT - MB) * (1 - (v - esc.min) / (esc.max - esc.min || 1));
+  const larguraGrupo = (W - ML - MR) / n;
+  const largBarra = empilhado ? Math.min(70, larguraGrupo * 0.6) : Math.min(46, (larguraGrupo * 0.8) / series.length);
+  return (
+    <div>
+      <svg viewBox={`0 0 ${W} ${H}`} style={{ width: "100%", height: "auto", display: "block" }}>
+        {esc.passos.map((p) => (
+          <g key={p}>
+            <line x1={ML} x2={W - MR} y1={py(p)} y2={py(p)} stroke="rgba(255,255,255,0.10)" strokeWidth="1" />
+            <text x={ML - 6} y={py(p) + 4} textAnchor="end" fontSize="10" fill={REL_COR.suave}>{p}</text>
+          </g>
+        ))}
+        {categorias.map((c, i) => {
+          const cx = ML + larguraGrupo * (i + 0.5);
+          let acum = 0;
+          return (
+            <g key={i}>
+              <text x={cx} y={H - 10} textAnchor="middle" fontSize="9.5" fill={REL_COR.suave}>{c}</text>
+              {series.map((s, si) => {
+                const v = s.valores[i];
+                if (v === null || v === undefined) return null;
+                if (empilhado) {
+                  const y1 = py(acum + v);
+                  const y0 = py(acum);
+                  acum += v;
+                  return (
+                    <g key={s.nome}>
+                      <rect x={cx - largBarra / 2} y={y1} width={largBarra} height={Math.max(0, y0 - y1)} fill={s.cor} stroke="#101619" strokeWidth="1" />
+                      {y0 - y1 > 13 && <text x={cx} y={(y0 + y1) / 2 + 4} textAnchor="middle" fontSize="10.5" fontWeight="700" fill="#101619">{relFmt(v)}</text>}
+                    </g>
+                  );
+                }
+                const x0 = cx - (largBarra * series.length) / 2 + si * largBarra;
+                return (
+                  <g key={s.nome}>
+                    <rect x={x0 + 1} y={py(v)} width={largBarra - 2} height={Math.max(0, py(0) - py(v))} fill={s.cor} rx="2" />
+                    <text x={x0 + largBarra / 2} y={py(v) - 5} textAnchor="middle" fontSize="10.5" fontWeight="700" fill={REL_COR.texto}>{relFmt(v, v % 1 === 0 ? 0 : 1)}</text>
+                  </g>
+                );
+              })}
+              {empilhado && mostrarTotal && totais[i] > 0 && (
+                <text x={cx} y={py(totais[i]) - 5} textAnchor="middle" fontSize="11" fontWeight="700" fill={REL_COR.texto}>{relFmt(totais[i])}</text>
+              )}
+            </g>
+          );
+        })}
+      </svg>
+      <RelLegenda itens={series.map((s) => ({ nome: s.nome, cor: s.cor }))} />
+    </div>
+  );
+}
+
+function RelGraficoPizza({ gordura, magra }) {
+  const R = 78, cx = 130, cy = 100;
+  const total = gordura + magra;
+  const ang = (gordura / total) * Math.PI * 2;
+  const ponto = (a, r, dx, dy) => [cx + dx + r * Math.sin(a), cy + dy - r * Math.cos(a)];
+  const mid = ang / 2;
+  const dx = 7 * Math.sin(mid), dy = -7 * Math.cos(mid);
+  const [gx1, gy1] = ponto(0, R, dx, dy);
+  const [gx2, gy2] = ponto(ang, R, dx, dy);
+  const [mx1, my1] = ponto(ang, R, 0, 0);
+  const [mx2, my2] = ponto(Math.PI * 2 - 0.0001, R, 0, 0);
+  const grande = ang > Math.PI ? 1 : 0;
+  const grandeM = Math.PI * 2 - ang > Math.PI ? 1 : 0;
+  const [lx, ly] = ponto(mid, R + 22, 0, 0);
+  const [lx2, ly2] = ponto(mid + Math.PI, R + 22, 0, 0);
+  return (
+    <div>
+      <svg viewBox="0 0 260 205" style={{ width: "100%", height: "auto", display: "block" }}>
+        <path d={`M ${cx} ${cy} L ${mx1} ${my1} A ${R} ${R} 0 ${grandeM} 1 ${mx2} ${my2} Z`} fill="#E2521A" />
+        <path d={`M ${cx + dx} ${cy + dy} L ${gx1} ${gy1} A ${R} ${R} 0 ${grande} 1 ${gx2} ${gy2} Z`} fill="#E2BC10" />
+        <text x={lx} y={ly} textAnchor="middle" fontSize="12" fontWeight="700" fill={REL_COR.texto}>{relFmt(gordura)} %</text>
+        <text x={lx2} y={ly2} textAnchor="middle" fontSize="12" fontWeight="700" fill={REL_COR.texto}>{relFmt(magra)} %</text>
+      </svg>
+      <RelLegenda itens={[{ nome: "Massa Gorda", cor: "#E2BC10" }, { nome: "Massa Magra", cor: "#E2521A" }]} />
+    </div>
+  );
+}
+
+function RelAvatar({ nivel, largura }) {
+  // 8 silhuetas simples (desenho próprio): cintura/barriga crescem com o nível.
+  const ombro = [9, 10, 10.5, 11, 11.5, 12, 12.5, 13][nivel];
+  const cintura = [6.5, 8, 9, 10, 11, 12.5, 14, 15.5][nivel];
+  const barriga = [0, 0, 1, 2.2, 3.5, 5, 6.5, 8][nivel];
+  const quadril = [8, 9, 9.5, 10, 10.8, 11.5, 12.5, 13.5][nivel];
+  const braco = [3, 3.6, 3.9, 4.2, 4.5, 4.8, 5.2, 5.6][nivel];
+  const pele = "#C68B59";
+  const tronco =
+    `M ${30 - ombro} 27 Q 30 23 ${30 + ombro} 27 ` +
+    `L ${30 + cintura} 52 Q ${30 + cintura + barriga} 60 ${30 + cintura} 68 ` +
+    `L ${30 + quadril} 74 L ${30 - quadril} 74 ` +
+    `L ${30 - cintura} 68 Q ${30 - cintura - barriga} 60 ${30 - cintura} 52 Z`;
+  return (
+    <svg viewBox="0 0 60 118" style={{ width: largura || "100%", height: "auto", display: "block" }}>
+      <circle cx="30" cy="12" r="8" fill={pele} />
+      <rect x="26.5" y="18" width="7" height="8" fill={pele} />
+      <path d={tronco} fill={pele} />
+      <rect x={30 - ombro - braco + 1} y="27" width={braco} height="34" rx={braco / 2} fill={pele} />
+      <rect x={30 + ombro - 1} y="27" width={braco} height="34" rx={braco / 2} fill={pele} />
+      <rect x={30 - quadril + 0.5} y="72" width={quadril - 1.5} height="40" rx="3" fill={pele} />
+      <rect x="31" y="72" width={quadril - 1.5} height="40" rx="3" fill={pele} />
+      <path d={`M ${30 - quadril} 70 L ${30 + quadril} 70 L ${30 + quadril} 84 L 31 84 L 30 78 L 29 84 L ${30 - quadril} 84 Z`} fill="#1B1B1B" />
+    </svg>
+  );
+}
+
+function relRedimensionarFoto(arquivo, larguraMax) {
+  return new Promise((resolve, reject) => {
+    const leitor = new FileReader();
+    leitor.onerror = () => reject(new Error("leitura"));
+    leitor.onload = () => {
+      const img = new Image();
+      img.onerror = () => reject(new Error("imagem"));
+      img.onload = () => {
+        const escala = Math.min(1, larguraMax / img.width);
+        const canvas = document.createElement("canvas");
+        canvas.width = Math.round(img.width * escala);
+        canvas.height = Math.round(img.height * escala);
+        canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
+        resolve(canvas.toDataURL("image/jpeg", 0.72));
+      };
+      img.src = leitor.result;
+    };
+    leitor.readAsDataURL(arquivo);
+  });
+}
+
+const REL_INPUT = {
+  width: "100%", minWidth: 0, fontFamily: REL_FONTE_SANS, fontSize: 14, padding: "9px 10px", borderRadius: 7,
+  border: "1px solid #3A484F", background: "#232E33", color: "#EAF0F2", boxSizing: "border-box",
+};
+const REL_LABEL = { display: "flex", flexDirection: "column", gap: 4, fontSize: 12, fontWeight: 600, color: "#C9D3D8", minWidth: 0 };
+const REL_GRID = { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 14 };
+const REL_SECAO = { fontSize: 16, fontWeight: 700, color: "#9ACD32", margin: "18px 0 10px", fontFamily: REL_FONTE_TITULO };
+const REL_CARD = { background: "#1A2226", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 10, padding: "14px 12px", marginBottom: 14 };
+const REL_BTN = {
+  border: "none", borderRadius: 8, padding: "10px 12px", fontFamily: REL_FONTE_SANS, fontWeight: 700, fontSize: 13,
+  cursor: "pointer", background: "#232E33", color: "#EAF0F2", minWidth: 0,
+};
+function relChip(ativo) {
+  return {
+    border: `1px solid ${ativo ? "#9ACD32" : "#3A484F"}`, background: ativo ? "#9ACD32" : "transparent",
+    color: ativo ? "#101619" : "#EAF0F2", borderRadius: 18, padding: "7px 13px", fontSize: 13, fontWeight: 600,
+    cursor: "pointer", fontFamily: REL_FONTE_SANS,
+  };
+}
+
+// Área que só aparece na impressão/PDF. Fica na EvolucaoTab (fora do overlay
+// fixo) pra imprimir do mesmo jeito que a Rotina já faz.
+function RelAreaImpressao({ dados }) {
+  const { sel, calc, todasLinhas, prof } = dados;
+  return (
+    <div className="print-avaliacao-area">
+          <h1>Controle Corporal — Massi Pro</h1>
+          <p>
+            {sel.nome || "Avaliação"} • {sel.sexo === "feminino" ? "Feminino" : "Masculino"} • Altura {relFmt(sel.altura)} cm
+            {sel.idade ? ` • ${Math.round(sel.idade)} anos` : ""} • {relDataLonga(sel.data)} • Método: {sel.metodo || "—"}
+          </p>
+          <p>Perfil corporal: {REL_NIVEIS_AVATAR[calc.nivelAvatar]}</p>
+          <table>
+            <thead><tr><th>Descrição</th><th>Resultado</th><th>Referência</th><th>Avaliação</th></tr></thead>
+            <tbody>
+              {todasLinhas.map((l) => (
+                <tr key={l.id}><td>{l.nome}</td><td>{l.valor.filter(Boolean).join(" / ")}</td><td>{l.ref || "—"}</td><td>{l.txt}</td></tr>
+              ))}
+            </tbody>
+          </table>
+          {REL_CAMPOS_MEDIDAS.some(([k]) => relNum(sel[k]) !== null) && (
+            <div>
+              <h3>Medidas (cm)</h3>
+              <table><tbody>
+                {REL_CAMPOS_MEDIDAS.filter(([k]) => relNum(sel[k]) !== null).map(([k, n]) => (<tr key={k}><td>{n}</td><td>{relFmt(sel[k])}</td></tr>))}
+              </tbody></table>
+            </div>
+          )}
+          {REL_CAMPOS_DOBRAS.some(([k]) => relNum(sel[k]) !== null) && (
+            <div>
+              <h3>Dobras cutâneas (mm)</h3>
+              <table><tbody>
+                {REL_CAMPOS_DOBRAS.filter(([k]) => relNum(sel[k]) !== null).map(([k, n]) => (<tr key={k}><td>{n}</td><td>{relFmt(sel[k])}</td></tr>))}
+              </tbody></table>
+            </div>
+          )}
+          {sel.anotacoes && (<div><h3>Anotações</h3><p style={{ whiteSpace: "pre-wrap" }}>{sel.anotacoes}</p></div>)}
+          {prof.nome && (<div><h3>Contato</h3><p>{prof.nome}{prof.funcao ? ` — ${prof.funcao}` : ""}{prof.telefone ? ` • ${prof.telefone}` : ""}{prof.email ? ` • ${prof.email}` : ""}</p></div>)}
+          <p style={{ fontSize: 11 }}>Referências aproximadas (OMS, Omron, NIH, Harris-Benedict, Bray & Gray). Não substitui avaliação com profissional. Gerado no Massi Pro.</p>
+        </div>
+  );
+}
+
+function RelatorioAvaliacao({ avaliacoesBase, onFechar, onImprimir }) {
+  const [carregado, setCarregado] = useState(false);
+  const [lista, setLista] = useState([]);
+  const [fotosMap, setFotosMap] = useState({});
+  const [prof, setProf] = useState({ nome: "", funcao: "", telefone: "", email: "", whatsapp: "", instagram: "" });
+  const [modo, setModo] = useState("relatorio");
+  const [selId, setSelId] = useState(null);
+  const [infoAberta, setInfoAberta] = useState(null);
+  const [fotosAberto, setFotosAberto] = useState(false);
+  const [confirmExcluir, setConfirmExcluir] = useState(false);
+  const [editandoProf, setEditandoProf] = useState(false);
+  const [profForm, setProfForm] = useState(null);
+  const [aviso, setAviso] = useState("");
+  const [erro, setErro] = useState("");
+  const [nascimento, setNascimento] = useState("");
+  const [f, setF] = useState({});
+  const overlayRef = useRef(null);
+
+  const setCampo = (k, v) => setF((prev) => ({ ...prev, [k]: v }));
+  const setNum = (k) => (e) => setCampo(k, normalizarDecimal(e.target.value));
+  const mostrarAviso = (t) => {
+    setAviso(t);
+    setTimeout(() => setAviso(""), 2600);
+  };
+
+  const formInicial = (nomePerfil, nasc) => {
+    const ult = avaliacoesBase && avaliacoesBase.length ? avaliacoesBase[avaliacoesBase.length - 1] : null;
+    const hoje = new Date().toISOString().slice(0, 10);
+    const idadeAuto = relIdadeDe(nasc, hoje);
+    const base = {
+      nome: nomePerfil || "", sexo: (ult && ult.sexo) || "masculino", idade: idadeAuto ? String(idadeAuto) : "",
+      altura: ult && ult.altura ? String(ult.altura) : "", peso: ult && ult.peso ? String(ult.peso) : "",
+      metodo: ult && ult.percentualGordura ? "Circunferências (Marinha)" : "Bioimpedância",
+      gorduraPct: ult && ult.percentualGordura ? String(ult.percentualGordura) : "",
+      musculoPct: "", visceral: "", tmb: "", idadeCorporal: "", anotacoes: "",
+      cintura: ult && ult.cintura ? String(ult.cintura) : "", quadril: ult && ult.quadril ? String(ult.quadril) : "",
+      torax: ult && ult.peito ? String(ult.peito) : "",
+    };
+    return base;
+  };
+
+  useEffect(() => {
+    (async () => {
+      let nomePerfil = "";
+      let nasc = "";
+      let listaSalva = [];
+      try {
+        const r = await window.storage.get("relatorio-avaliacoes");
+        if (r && r.value) listaSalva = JSON.parse(r.value);
+      } catch (e) { /* sem relatórios ainda */ }
+      try {
+        const r = await window.storage.get("relatorio-fotos");
+        if (r && r.value) setFotosMap(JSON.parse(r.value));
+      } catch (e) { /* sem fotos ainda */ }
+      try {
+        const r = await window.storage.get("relatorio-profissional");
+        if (r && r.value) setProf((p) => ({ ...p, ...JSON.parse(r.value) }));
+      } catch (e) { /* sem profissional ainda */ }
+      try {
+        const r = await window.storage.get("onboarding-perfil");
+        if (r && r.value) {
+          const o = JSON.parse(r.value);
+          if (o && o.nascimento) nasc = o.nascimento;
+        }
+      } catch (e) { /* sem onboarding */ }
+      try {
+        const pl = await window.storage.get("perfis-lista");
+        const pa = await window.storage.get("perfil-ativo-id");
+        if (pl && pl.value && pa && pa.value) {
+          const achado = JSON.parse(pl.value).find((p) => p.id === pa.value);
+          if (achado && achado.nome && achado.nome !== "Eu") nomePerfil = achado.nome;
+        }
+      } catch (e) { /* segue sem nome */ }
+      setNascimento(nasc);
+      setLista(listaSalva);
+      setF(formInicial(nomePerfil, nasc));
+      if (listaSalva.length === 0) setModo("form");
+      else setSelId(listaSalva[listaSalva.length - 1].id);
+      setCarregado(true);
+    })();
+  }, []);
+
+  useEffect(() => {
+    if (overlayRef.current) overlayRef.current.scrollTop = 0;
+  }, [modo, selId]);
+
+  const ordenada = lista.slice().sort((a, b) => (a.data + (a.hora || "")).localeCompare(b.data + (b.hora || "")));
+  const sel = ordenada.find((a) => a.id === selId) || ordenada[ordenada.length - 1] || null;
+  const indiceSel = sel ? ordenada.findIndex((a) => a.id === sel.id) : -1;
+
+  const salvarLista = async (nova) => {
+    setLista(nova);
+    try { await window.storage.set("relatorio-avaliacoes", JSON.stringify(nova)); } catch (e) { /* segue */ }
+  };
+
+  const salvarRelatorio = async () => {
+    if (!relNum(f.peso)) { setErro("Informe o peso (kg)."); return; }
+    if (!relNum(f.altura)) { setErro("Informe a altura (cm)."); return; }
+    setErro("");
+    const agora = new Date();
+    const nova = {
+      id: uid(), data: agora.toISOString().slice(0, 10), hora: agora.toTimeString().slice(0, 5),
+      nome: (f.nome || "").trim(), sexo: f.sexo || "masculino", metodo: f.metodo || "Bioimpedância",
+      anotacoes: (f.anotacoes || "").trim(),
+    };
+    ["idade", "altura", "peso", "gorduraPct", "musculoPct", "visceral", "tmb", "idadeCorporal"].forEach((k) => { nova[k] = relNum(f[k]); });
+    REL_CAMPOS_MEDIDAS.forEach(([k]) => { nova[k] = relNum(f[k]); });
+    REL_CAMPOS_DOBRAS.forEach(([k]) => { nova[k] = relNum(f[k]); });
+    await salvarLista([...lista, nova]);
+    setSelId(nova.id);
+    setModo("relatorio");
+    mostrarAviso("✓ Avaliação salva!");
+  };
+
+  const excluirSelecionada = async () => {
+    if (!sel) return;
+    const nova = lista.filter((a) => a.id !== sel.id);
+    await salvarLista(nova);
+    const novoMapa = { ...fotosMap };
+    delete novoMapa[sel.id];
+    setFotosMap(novoMapa);
+    try { await window.storage.set("relatorio-fotos", JSON.stringify(novoMapa)); } catch (e) { /* segue */ }
+    setConfirmExcluir(false);
+    if (nova.length === 0) setModo("form");
+    else setSelId(nova[nova.length - 1].id);
+  };
+
+  const trocarFoto = async (vista, arquivo) => {
+    if (!arquivo || !sel) return;
+    try {
+      const dataUrl = await relRedimensionarFoto(arquivo, 720);
+      const novoMapa = { ...fotosMap, [sel.id]: { ...(fotosMap[sel.id] || {}), [vista]: dataUrl } };
+      setFotosMap(novoMapa);
+      await window.storage.set("relatorio-fotos", JSON.stringify(novoMapa));
+    } catch (e) {
+      mostrarAviso("Não consegui salvar essa foto.");
+    }
+  };
+
+  const removerFoto = async (vista) => {
+    if (!sel) return;
+    const atual = { ...(fotosMap[sel.id] || {}) };
+    delete atual[vista];
+    const novoMapa = { ...fotosMap, [sel.id]: atual };
+    setFotosMap(novoMapa);
+    try { await window.storage.set("relatorio-fotos", JSON.stringify(novoMapa)); } catch (e) { /* segue */ }
+  };
+
+  const salvarProf = async () => {
+    const novo = { ...profForm };
+    setProf(novo);
+    setEditandoProf(false);
+    try { await window.storage.set("relatorio-profissional", JSON.stringify(novo)); } catch (e) { /* segue */ }
+  };
+
+  const calc = sel ? relCalcular(sel) : null;
+  const todasLinhas = calc ? calc.linhas.composicao.concat(calc.linhas.obesidade) : [];
+
+  const textoResumo = () => {
+    if (!sel || !calc) return "";
+    const partes = [`Controle Corporal — ${sel.nome || "Avaliação"} (${relDataLonga(sel.data)})`];
+    todasLinhas.forEach((l) => {
+      partes.push(`${l.nome}: ${l.valor.filter(Boolean).join(" / ")} → ${l.txt}`);
+    });
+    partes.push("Gerado no Massi Pro");
+    return partes.join("\n");
+  };
+
+  const compartilharWhats = () => {
+    const texto = textoResumo();
+    if (!texto) return;
+    window.open(`https://wa.me/?text=${encodeURIComponent(texto)}`, "_blank");
+  };
+
+  const gerarImagemRelatorio = () => new Promise((resolve) => {
+    const L = 1000, M = 44, LIN = 62;
+    const h = 250 + todasLinhas.length * LIN + 130;
+    const canvas = document.createElement("canvas");
+    canvas.width = L;
+    canvas.height = h;
+    const ctx = canvas.getContext("2d");
+    const fundo = ctx.createLinearGradient(0, 0, L, h);
+    fundo.addColorStop(0, "#182226");
+    fundo.addColorStop(1, "#0F1417");
+    ctx.fillStyle = fundo;
+    ctx.fillRect(0, 0, L, h);
+    desenharLogoMassi(ctx, M + 34, 56, 68);
+    ctx.textAlign = "left";
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "bold 34px system-ui, sans-serif";
+    ctx.fillText("Controle Corporal", M + 84, 60);
+    ctx.font = "400 17px system-ui, sans-serif";
+    ctx.fillStyle = "#9AA8AF";
+    ctx.fillText(`Método: ${sel.metodo || "—"}`, M + 84, 88);
+    ctx.fillStyle = "#EAF0F2";
+    ctx.font = "600 20px system-ui, sans-serif";
+    ctx.fillText(`${sel.nome || "Avaliação"} — ${sel.sexo === "feminino" ? "Feminino" : "Masculino"}`, M, 150);
+    ctx.font = "400 17px system-ui, sans-serif";
+    ctx.fillStyle = "#9AA8AF";
+    ctx.fillText(`Altura ${relFmt(sel.altura)} cm • ${sel.idade ? Math.round(sel.idade) + " anos • " : ""}${relDataLonga(sel.data)}`, M, 178);
+    ctx.fillText(`Perfil corporal: ${REL_NIVEIS_AVATAR[calc.nivelAvatar]}`, M, 204);
+    let y = 240;
+    todasLinhas.forEach((l) => {
+      ctx.fillStyle = "#1E282C";
+      ctx.fillRect(M, y, L - M * 2, LIN - 8);
+      ctx.fillStyle = "#EAF0F2";
+      ctx.font = "600 20px system-ui, sans-serif";
+      ctx.textAlign = "left";
+      ctx.fillText(l.nome, M + 14, y + 26);
+      ctx.font = "400 14px system-ui, sans-serif";
+      ctx.fillStyle = "#9AA8AF";
+      ctx.fillText(l.ref ? `Ref.: ${l.ref}` : "", M + 14, y + 46);
+      ctx.fillStyle = "#EAF0F2";
+      ctx.font = "700 22px system-ui, sans-serif";
+      ctx.fillText(l.valor.filter(Boolean).join("  •  "), 430, y + 34);
+      ctx.fillStyle = l.cor;
+      ctx.fillRect(700, y + 6, L - M - 700, LIN - 20);
+      ctx.fillStyle = "#12200A";
+      ctx.font = "700 18px system-ui, sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText(l.txt, 700 + (L - M - 700) / 2, y + 35);
+      y += LIN;
+    });
+    ctx.textAlign = "left";
+    ctx.font = "italic 14px system-ui, sans-serif";
+    ctx.fillStyle = "#8b95a1";
+    ctx.fillText("Referência educativa — não substitui avaliação com profissional. Gerado no Massi Pro", M, h - 34);
+    canvas.toBlob((blob) => resolve(blob), "image/jpeg", 0.93);
+  });
+
+  const exportarImagem = async () => {
+    if (!sel || !calc) return;
+    try {
+      const blob = await gerarImagemRelatorio();
+      const arquivo = new File([blob], "avaliacao-massi-pro.jpg", { type: "image/jpeg" });
+      if (navigator.share && navigator.canShare && navigator.canShare({ files: [arquivo] })) {
+        await navigator.share({ files: [arquivo], text: "Minha avaliação no Massi Pro" });
+        return;
+      }
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "avaliacao-massi-pro.jpg";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 5000);
+      mostrarAviso("Imagem gerada!");
+    } catch (e) {
+      // usuário cancelou o compartilhamento — sem problema
+    }
+  };
+
+  const recentes = ordenada.slice(-8);
+  const cats = recentes.map((a) => `${ordenada.indexOf(a) + 1}º ${relDataCurta(a.data)}`);
+  const serie = (nome, campo, cor, forma) => ({ nome, cor, forma, valores: recentes.map((a) => relNum(a[campo])) });
+  const temDados = (s) => s.valores.some((v) => v !== null);
+  const mkSeries = (defs) => defs.map((d, i) => serie(d[1], d[0], REL_CORES_SERIES[i % REL_CORES_SERIES.length], REL_FORMAS[i % REL_FORMAS.length])).filter(temDados);
+  const serTronco = mkSeries([["torax", "Tórax"], ["cintura", "Cintura"], ["quadril", "Quadril"], ["abdome", "Abdome"]]);
+  const serSup = mkSeries([["bracoE", "Braço E."], ["antebracoE", "Antebraço E."], ["bracoD", "Braço D."], ["antebracoD", "Antebraço D."]]);
+  const serInf = mkSeries([["coxaE", "Coxa E."], ["panturrilhaE", "Panturrilha E."], ["coxaD", "Coxa D."], ["panturrilhaD", "Panturrilha D."]]);
+  const serDobras = REL_CAMPOS_DOBRAS.map((d, i) => serie(d[1], d[0], REL_CORES_SERIES[i % REL_CORES_SERIES.length], "circulo")).filter(temDados);
+  const serPeso = [serie("Peso", "peso", "#F0616D", "circulo")];
+  const faixaPeso = {
+    min: recentes.map((a) => (relNum(a.altura) ? 18.5 * Math.pow(relNum(a.altura) / 100, 2) : null)),
+    max: recentes.map((a) => (relNum(a.altura) ? 25 * Math.pow(relNum(a.altura) / 100, 2) : null)),
+  };
+  const serGordMus = [serie("Gordura %", "gorduraPct", "#E4E93B", "circulo"), serie("Músculo Esq. %", "musculoPct", "#E2521A", "circulo")].filter(temDados);
+  const serIdade = [serie("Idade Real", "idade", "#F7A241", "circulo"), serie("Idade Corporal", "idadeCorporal", "#7FB3EA", "circulo")];
+  const temIdadeCorp = recentes.some((a) => relNum(a.idadeCorporal) !== null);
+
+  const celulaLinha = (l) => (
+    <div key={l.id} style={{ display: "grid", gridTemplateColumns: "1.2fr 0.95fr 0.85fr", gap: 3, marginBottom: 3 }}>
+      <div style={{ background: REL_COR.celula, padding: "10px 8px", minWidth: 0, position: "relative" }}>
+        <button
+          onClick={() => setInfoAberta({ nome: l.nome, info: l.info })}
+          aria-label={`Sobre ${l.nome}`}
+          style={{ position: "absolute", top: 6, right: 6, width: 22, height: 22, borderRadius: 11, border: "none", background: "#3AA9E0", color: "#fff", fontWeight: 700, fontSize: 13, cursor: "pointer", padding: 0 }}
+        >?</button>
+        <div style={{ fontWeight: 700, fontSize: 14, color: REL_COR.texto, textAlign: "center", padding: "0 20px", wordBreak: "break-word" }}>{l.nome}</div>
+        {l.ref && <div style={{ fontSize: 11, color: REL_COR.suave, marginTop: 8, textAlign: "center" }}>Ref.: {l.ref}</div>}
+      </div>
+      <div style={{ background: REL_COR.celula, padding: "10px 6px", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", minWidth: 0, textAlign: "center" }}>
+        {l.valor.filter(Boolean).map((v, i) => (
+          <div key={i} style={{ fontSize: 14.5, color: REL_COR.texto, fontWeight: i === 0 ? 700 : 400 }}>{v}</div>
+        ))}
+      </div>
+      <div style={{ background: l.cor, color: REL_COR.txtCelula, padding: "10px 6px", display: "flex", alignItems: "center", justifyContent: "center", textAlign: "center", fontWeight: 700, fontSize: 13.5, minWidth: 0 }}>
+        {l.txt}
+      </div>
+    </div>
+  );
+
+  const cabecalhoTabela = (
+    <div style={{ display: "grid", gridTemplateColumns: "1.2fr 0.95fr 0.85fr", gap: 3, marginBottom: 3 }}>
+      {["Descrição", "Resultado", "Avaliação"].map((t) => (
+        <div key={t} style={{ background: "#3E8E41", color: "#fff", textAlign: "center", fontWeight: 700, fontSize: 13, padding: "8px 4px" }}>{t}</div>
+      ))}
+    </div>
+  );
+
+  const digitos = (s) => (s || "").split("").filter((c) => c >= "0" && c <= "9").join("");
+  const numWhats = () => {
+    const d = digitos(prof.whatsapp || prof.telefone);
+    if (!d) return "";
+    return d.length <= 11 ? "55" + d : d;
+  };
+
+  if (!carregado) {
+    return (
+      <div style={{ position: "fixed", inset: 0, zIndex: 650, background: REL_COR.fundo, display: "flex", alignItems: "center", justifyContent: "center", color: REL_COR.texto }}>
+        Carregando...
+      </div>
+    );
+  }
+
+  return (
+    <div ref={overlayRef} style={{ position: "fixed", inset: 0, zIndex: 650, background: REL_COR.fundo, overflowY: "auto", WebkitOverflowScrolling: "touch", color: REL_COR.texto, fontFamily: sansFont }}>
+      <div style={{ maxWidth: 560, margin: "0 auto", padding: "12px 12px 40px", boxSizing: "border-box" }}>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 8, alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
+          <button style={REL_BTN} onClick={onFechar}>← Voltar</button>
+          <div style={{ fontFamily: guiadoFont, fontSize: 18, fontWeight: 700, color: REL_COR.titulo, minWidth: 0 }}>Relatório de Avaliação</div>
+          {modo === "relatorio" ? (
+            <button style={{ ...REL_BTN, background: "#9ACD32", color: "#101619" }} onClick={() => { setErro(""); setModo("form"); }}>＋ Nova</button>
+          ) : lista.length > 0 ? (
+            <button style={REL_BTN} onClick={() => setModo("relatorio")}>Ver relatório</button>
+          ) : <span style={{ width: 60 }} />}
+        </div>
+        {aviso && <div style={{ background: "#9ACD32", color: "#101619", fontWeight: 700, borderRadius: 8, padding: "8px 12px", textAlign: "center", marginBottom: 10, fontSize: 13 }}>{aviso}</div>}
+
+        {modo === "form" && (
+          <div>
+            <p style={{ fontSize: 13, color: REL_COR.suave, lineHeight: 1.45, margin: "0 0 10px" }}>
+              Preencha o que você tem. Peso e altura são obrigatórios; o resto é opcional e só aparece no relatório se você informar. Músculo, gordura visceral e idade corporal costumam vir de balança de bioimpedância ou de uma avaliação com profissional.
+            </p>
+            <div style={REL_CARD}>
+              <div style={REL_GRID}>
+                <label style={{ ...REL_LABEL, gridColumn: "1 / span 2" }}>Nome
+                  <input style={REL_INPUT} value={f.nome || ""} onChange={(e) => setCampo("nome", e.target.value)} placeholder="Nome do avaliado" />
+                </label>
+              </div>
+              <div style={{ ...REL_LABEL, marginBottom: 14 }}>Sexo
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                  {[["masculino", "Masculino"], ["feminino", "Feminino"]].map(([v, n]) => (
+                    <button key={v} style={relChip(f.sexo === v)} onClick={() => setCampo("sexo", v)}>{n}</button>
+                  ))}
+                </div>
+              </div>
+              <div style={REL_GRID}>
+                <label style={REL_LABEL}>Peso (kg) *
+                  <input style={REL_INPUT} inputMode="decimal" value={f.peso || ""} onChange={setNum("peso")} placeholder="ex: 79,8" />
+                </label>
+                <label style={REL_LABEL}>Altura (cm) *
+                  <input style={REL_INPUT} inputMode="decimal" value={f.altura || ""} onChange={setNum("altura")} placeholder="ex: 178" />
+                </label>
+                <label style={{ ...REL_LABEL, gridColumn: "1 / span 2" }}>Idade (anos){nascimento ? " — calculada pelo seu cadastro" : ""}
+                  <input style={REL_INPUT} inputMode="numeric" value={f.idade || ""} onChange={setNum("idade")} placeholder="ex: 29" />
+                </label>
+              </div>
+              <div style={{ ...REL_LABEL, marginBottom: 14 }}>Método da composição corporal
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                  {["Bioimpedância", "Adipômetro", "Circunferências (Marinha)", "Outro"].map((m) => (
+                    <button key={m} style={relChip(f.metodo === m)} onClick={() => setCampo("metodo", m)}>{m}</button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div style={REL_SECAO}>Composição corporal</div>
+            <div style={REL_CARD}>
+              <div style={REL_GRID}>
+                <label style={REL_LABEL}>Gordura corporal (%)
+                  <input style={REL_INPUT} inputMode="decimal" value={f.gorduraPct || ""} onChange={setNum("gorduraPct")} placeholder="ex: 25,7" />
+                </label>
+                <label style={REL_LABEL}>Músculo esquelético (%)
+                  <input style={REL_INPUT} inputMode="decimal" value={f.musculoPct || ""} onChange={setNum("musculoPct")} placeholder="ex: 35,9" />
+                </label>
+                <label style={REL_LABEL}>Gordura visceral (nível)
+                  <input style={REL_INPUT} inputMode="decimal" value={f.visceral || ""} onChange={setNum("visceral")} placeholder="ex: 8" />
+                </label>
+                <label style={REL_LABEL}>Idade corporal (anos)
+                  <input style={REL_INPUT} inputMode="numeric" value={f.idadeCorporal || ""} onChange={setNum("idadeCorporal")} placeholder="ex: 44" />
+                </label>
+                <label style={{ ...REL_LABEL, gridColumn: "1 / span 2" }}>Metabolismo basal (Kcal) — vazio = o app calcula
+                  <input style={REL_INPUT} inputMode="numeric" value={f.tmb || ""} onChange={setNum("tmb")} placeholder="ex: 1755" />
+                </label>
+              </div>
+            </div>
+
+            <div style={REL_SECAO}>Medidas (cm)</div>
+            <div style={REL_CARD}>
+              <div style={REL_GRID}>
+                {REL_CAMPOS_MEDIDAS.map(([k, nome]) => (
+                  <label key={k} style={REL_LABEL}>{nome}
+                    <input style={REL_INPUT} inputMode="decimal" value={f[k] || ""} onChange={setNum(k)} placeholder="cm" />
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            <div style={REL_SECAO}>Dobras cutâneas (mm)</div>
+            <div style={REL_CARD}>
+              <div style={REL_GRID}>
+                {REL_CAMPOS_DOBRAS.map(([k, nome]) => (
+                  <label key={k} style={REL_LABEL}>{nome}
+                    <input style={REL_INPUT} inputMode="decimal" value={f[k] || ""} onChange={setNum(k)} placeholder="mm" />
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            <div style={REL_SECAO}>Anotações</div>
+            <div style={REL_CARD}>
+              <textarea
+                style={{ ...REL_INPUT, minHeight: 90, resize: "vertical" }}
+                value={f.anotacoes || ""}
+                onChange={(e) => setCampo("anotacoes", e.target.value)}
+                placeholder="Orientações, metas, observações..."
+              />
+            </div>
+
+            {erro && <div style={{ color: "#FF7A68", fontWeight: 700, fontSize: 13, marginBottom: 8 }}>{erro}</div>}
+            <button style={{ ...REL_BTN, width: "100%", padding: "14px", fontSize: 15, background: "#9ACD32", color: "#101619" }} onClick={salvarRelatorio}>
+              Gerar relatório
+            </button>
+          </div>
+        )}
+
+        {modo === "relatorio" && sel && calc && (
+          <div>
+            {ordenada.length > 1 && (
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 10 }}>
+                {ordenada.map((a, i) => (
+                  <button key={a.id} style={relChip(a.id === sel.id)} onClick={() => setSelId(a.id)}>{i + 1}ª {relDataCurta(a.data)}</button>
+                ))}
+              </div>
+            )}
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 12 }}>
+              <button style={{ ...REL_BTN, background: "#2E9E4F", color: "#fff" }} onClick={compartilharWhats}>WhatsApp</button>
+              <button style={REL_BTN} onClick={exportarImagem}>🖼 Imagem</button>
+              <button style={REL_BTN} onClick={() => onImprimir && onImprimir({ sel, calc, todasLinhas, prof })}>📄 PDF</button>
+            </div>
+
+            <div style={{ ...REL_CARD, padding: 0, overflow: "hidden" }}>
+              <div style={{ textAlign: "center", padding: "12px 10px 8px" }}>
+                <div style={{ fontFamily: guiadoFont, fontSize: 22, fontWeight: 700, color: REL_COR.texto }}>Controle Corporal</div>
+                <div style={{ fontSize: 12.5, color: REL_COR.suave }}>(Método: {sel.metodo || "—"})</div>
+              </div>
+              <div style={{ height: 3, background: "#E0C000" }} />
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 4, padding: "10px 12px", fontSize: 14 }}>
+                <div style={{ minWidth: 0 }}><b>Nome:</b> {sel.nome || "—"}</div>
+                <div style={{ minWidth: 0 }}><b>Altura:</b> {relFmt(sel.altura)} cm</div>
+                <div style={{ minWidth: 0 }}><b>Gênero:</b> {sel.sexo === "feminino" ? "Feminino" : "Masculino"}</div>
+                <div style={{ minWidth: 0 }}><b>Idade:</b> {sel.idade ? Math.round(sel.idade) + " anos" : "—"}</div>
+                <div style={{ gridColumn: "1 / span 2" }}><b>Data:</b> {relDataLonga(sel.data)}{sel.hora ? ` ${sel.hora.slice(0, 2)}h` : ""}</div>
+              </div>
+            </div>
+
+            <div style={REL_SECAO}>Seu Avatar</div>
+            <div style={{ display: "flex", gap: 3, marginBottom: 10 }}>
+              {REL_NIVEIS_AVATAR.map((n, i) => (
+                <div key={n} style={{ flex: 1, minWidth: 0, textAlign: "center", padding: "3px 1px", borderRadius: 8, border: `1.5px solid ${i === calc.nivelAvatar ? "#F0616D" : "transparent"}`, background: i === calc.nivelAvatar ? "rgba(240,97,109,0.16)" : "transparent" }}>
+                  <div style={{ fontSize: 8.5, color: REL_COR.suave, marginBottom: 2, whiteSpace: "nowrap" }}>{n}</div>
+                  <RelAvatar nivel={i} />
+                </div>
+              ))}
+            </div>
+            <button style={{ ...REL_BTN, width: "100%", background: "#EFA847", color: "#fff", padding: "12px" }} onClick={() => setFotosAberto(true)}>
+              Visualizar Fotos
+            </button>
+
+            {calc.linhas.composicao.length > 0 && (
+              <div>
+                <div style={REL_SECAO}>Composição Corporal</div>
+                {cabecalhoTabela}
+                {calc.linhas.composicao.map(celulaLinha)}
+              </div>
+            )}
+            {calc.linhas.obesidade.length > 0 && (
+              <div>
+                <div style={REL_SECAO}>Diagnóstico da Obesidade</div>
+                {cabecalhoTabela}
+                {calc.linhas.obesidade.map(celulaLinha)}
+              </div>
+            )}
+            <p style={{ fontSize: 12.5, color: REL_COR.suave, lineHeight: 1.45, margin: "12px 0 0" }}>
+              Use seus resultados como referência ao consultar seu médico, nutricionista ou preparador físico. Toque no <b style={{ color: "#3AA9E0" }}>?</b> para mais informações.
+            </p>
+
+            <div style={REL_SECAO}>Histórico</div>
+            <div style={REL_CARD}>
+              <div style={{ textAlign: "center", fontWeight: 700, fontFamily: guiadoFont, fontSize: 16 }}>PESO CORPORAL</div>
+              <div style={{ textAlign: "center", fontSize: 12, color: REL_COR.suave, marginBottom: 6 }}>Avalie o peso juntamente com os demais indicadores</div>
+              <RelGraficoLinhas categorias={cats} series={serPeso} faixa={faixaPeso} />
+            </div>
+            {calc.gordPct !== null && (
+              <div style={REL_CARD}>
+                <div style={{ textAlign: "center", fontWeight: 700, fontFamily: guiadoFont, fontSize: 16 }}>COMPOSIÇÃO CORPORAL</div>
+                <div style={{ textAlign: "center", fontSize: 12, color: REL_COR.suave, marginBottom: 6 }}>Bi-compartimental</div>
+                <RelGraficoPizza gordura={calc.gordPct} magra={100 - calc.gordPct} />
+              </div>
+            )}
+            {serGordMus.length > 0 && (
+              <div style={REL_CARD}>
+                <div style={{ textAlign: "center", fontWeight: 700, fontFamily: guiadoFont, fontSize: 16 }}>COMPOSIÇÃO CORPORAL</div>
+                <div style={{ textAlign: "center", fontSize: 12, color: REL_COR.suave, marginBottom: 6 }}>Músculo e Gordura em Percentual (%)</div>
+                <RelGraficoBarras categorias={cats} series={serGordMus} />
+              </div>
+            )}
+            {temIdadeCorp && (
+              <div style={REL_CARD}>
+                <div style={{ textAlign: "center", fontWeight: 700, fontFamily: guiadoFont, fontSize: 16 }}>IDADE CORPORAL</div>
+                <div style={{ textAlign: "center", fontSize: 12, color: REL_COR.suave, marginBottom: 6 }}>Idade avaliada conforme composição corporal</div>
+                <RelGraficoBarras categorias={cats} series={serIdade.filter(temDados)} />
+              </div>
+            )}
+            {[["MEDIDAS DO TRONCO", serTronco], ["MEMBROS SUPERIORES", serSup], ["MEMBROS INFERIORES", serInf]].map(([titulo, ser]) =>
+              ser.length > 0 ? (
+                <div key={titulo} style={REL_CARD}>
+                  <div style={{ textAlign: "center", fontWeight: 700, fontFamily: guiadoFont, fontSize: 16 }}>{titulo}</div>
+                  <div style={{ textAlign: "center", fontSize: 12, color: REL_COR.suave, marginBottom: 6 }}>Evolução das medidas em Centímetros (cm)</div>
+                  <RelGraficoLinhas categorias={cats} series={ser} />
+                </div>
+              ) : null
+            )}
+            {serDobras.length > 0 && (
+              <div style={REL_CARD}>
+                <div style={{ textAlign: "center", fontWeight: 700, fontFamily: guiadoFont, fontSize: 16 }}>DOBRAS CUTÂNEAS</div>
+                <div style={{ textAlign: "center", fontSize: 12, color: REL_COR.suave, marginBottom: 6 }}>Evolução das Dobras Cutâneas em Milímetros (mm)</div>
+                <RelGraficoBarras categorias={cats} series={serDobras} empilhado mostrarTotal />
+              </div>
+            )}
+            <p style={{ fontSize: 11.5, color: REL_COR.suave, lineHeight: 1.5, margin: "4px 0 0" }}>
+              Fontes das referências: OMS (peso e IMC), Omron Healthcare e diretrizes NIH/OMS (gordura e músculo), Omron/Tanita (gordura visceral), equação de Harris-Benedict (metabolismo basal) e Bray & Gray / OMS (relação cintura-quadril). Valores aproximados, apenas educativos.
+            </p>
+
+            {sel.anotacoes && (
+              <div>
+                <div style={REL_SECAO}>Anotações</div>
+                <div style={{ background: "#3B3418", border: "1px solid #6A5D22", borderRadius: 8, padding: "12px 14px", fontSize: 15, lineHeight: 1.5, color: "#F6E7A8", whiteSpace: "pre-wrap", wordBreak: "break-word" }}>{sel.anotacoes}</div>
+              </div>
+            )}
+
+            <div style={{ ...REL_CARD, marginTop: 18, textAlign: "center" }}>
+              {prof.nome ? (
+                <div>
+                  <div style={{ fontSize: 13, color: REL_COR.suave }}>Contato:</div>
+                  <div style={{ fontWeight: 700, fontSize: 18, color: "#7FC8F8", margin: "6px 0 2px" }}>{prof.nome}</div>
+                  {prof.funcao && <div style={{ fontSize: 14, color: REL_COR.suave }}>{prof.funcao}</div>}
+                  {prof.telefone && <div style={{ fontWeight: 700, fontSize: 15, margin: "4px 0" }}>{prof.telefone}</div>}
+                  {prof.email && <div style={{ fontSize: 14, color: REL_COR.suave, wordBreak: "break-word" }}>{prof.email}</div>}
+                  {prof.email && (
+                    <a href={`mailto:${prof.email}`} style={{ display: "inline-block", marginTop: 10, background: "#4AB8E0", color: "#fff", fontWeight: 700, fontSize: 14, borderRadius: 6, padding: "9px 14px", textDecoration: "none" }}>
+                      ✉ Enviar e-mail para o Profissional
+                    </a>
+                  )}
+                  {(numWhats() || prof.instagram) && (
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: 10, justifyContent: "center", marginTop: 12 }}>
+                      {numWhats() && (
+                        <a href={`https://wa.me/${numWhats()}`} target="_blank" rel="noopener noreferrer" style={{ background: "#2E9E4F", color: "#fff", fontWeight: 700, fontSize: 13, borderRadius: 20, padding: "8px 14px", textDecoration: "none" }}>WhatsApp</a>
+                      )}
+                      {prof.instagram && (
+                        <a href={`https://instagram.com/${prof.instagram.split("@").join("").trim()}`} target="_blank" rel="noopener noreferrer" style={{ background: "#C13584", color: "#fff", fontWeight: 700, fontSize: 13, borderRadius: 20, padding: "8px 14px", textDecoration: "none" }}>Instagram</a>
+                      )}
+                    </div>
+                  )}
+                  <div style={{ marginTop: 12 }}>
+                    <button style={{ ...REL_BTN, fontSize: 12 }} onClick={() => { setProfForm({ ...prof }); setEditandoProf(true); }}>Editar contato</button>
+                  </div>
+                </div>
+              ) : (
+                <button style={{ ...REL_BTN, width: "100%" }} onClick={() => { setProfForm({ ...prof }); setEditandoProf(true); }}>
+                  ＋ Adicionar contato do profissional (opcional)
+                </button>
+              )}
+            </div>
+
+            <button style={{ ...REL_BTN, width: "100%", background: "transparent", border: "1px solid #6b3a35", color: "#FF8E7D", marginTop: 6 }} onClick={() => setConfirmExcluir(true)}>
+              Excluir esta avaliação
+            </button>
+          </div>
+        )}
+      </div>
+
+      {infoAberta && (
+        <div style={{ position: "fixed", inset: 0, zIndex: 665, background: "rgba(0,0,0,0.6)", display: "flex", alignItems: "center", justifyContent: "center", padding: 18 }} onClick={() => setInfoAberta(null)}>
+          <div style={{ background: "#1A2226", borderRadius: 14, padding: "20px 18px", maxWidth: 420, width: "100%", color: REL_COR.texto, boxSizing: "border-box" }} onClick={(e) => e.stopPropagation()}>
+            <div style={{ fontFamily: guiadoFont, fontSize: 19, fontWeight: 700, color: REL_COR.titulo, marginBottom: 8 }}>{infoAberta.nome}</div>
+            <p style={{ fontSize: 14.5, lineHeight: 1.5, margin: "0 0 14px" }}>{infoAberta.info}</p>
+            <button style={{ ...REL_BTN, width: "100%", background: "#9ACD32", color: "#101619" }} onClick={() => setInfoAberta(null)}>Entendi</button>
+          </div>
+        </div>
+      )}
+
+      {fotosAberto && sel && (
+        <div style={{ position: "fixed", inset: 0, zIndex: 665, background: "rgba(0,0,0,0.78)", overflowY: "auto", WebkitOverflowScrolling: "touch" }}>
+          <div style={{ maxWidth: 520, margin: "0 auto", padding: "12px 12px 40px", boxSizing: "border-box" }}>
+            <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 10 }}>
+              <button style={{ ...REL_BTN, background: "#EFA847", color: "#fff" }} onClick={() => setFotosAberto(false)}>✕ Fechar</button>
+            </div>
+            {REL_VISTAS_FOTO.map(([k, titulo]) => {
+              const src = fotosMap[sel.id] && fotosMap[sel.id][k];
+              return (
+                <div key={k} style={{ background: "#E9ECEE", borderRadius: 12, padding: "10px 10px 14px", marginBottom: 14, textAlign: "center", color: "#1B2226" }}>
+                  <div style={{ fontSize: 22, marginBottom: 8 }}>{titulo}</div>
+                  {src ? (
+                    <img src={src} alt={titulo} style={{ width: "78%", maxWidth: 300, height: "auto", borderRadius: 10, boxShadow: "0 2px 8px rgba(0,0,0,0.4)" }} />
+                  ) : (
+                    <div style={{ padding: "40px 10px", color: "#66737A", fontSize: 14 }}>Sem foto nesta vista</div>
+                  )}
+                  <div style={{ marginTop: 8 }}>
+                    <span style={{ display: "inline-block", background: "#5B6469", color: "#fff", borderRadius: 14, padding: "3px 12px", fontSize: 13 }}>
+                      {indiceSel + 1}ª {relDataLonga(sel.data)}
+                    </span>
+                  </div>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: 8, justifyContent: "center", marginTop: 10 }}>
+                    <label style={{ background: "#1B2226", color: "#fff", borderRadius: 8, padding: "9px 14px", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>
+                      {src ? "Trocar foto" : "Adicionar foto"}
+                      <input type="file" accept="image/*" style={{ display: "none" }} onChange={(e) => { const a = e.target.files && e.target.files[0]; if (a) trocarFoto(k, a); e.target.value = ""; }} />
+                    </label>
+                    {src && <button style={{ ...REL_BTN, background: "#F3D6D0", color: "#8A2A1A" }} onClick={() => removerFoto(k)}>Remover</button>}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {confirmExcluir && (
+        <div style={{ position: "fixed", inset: 0, zIndex: 665, background: "rgba(0,0,0,0.6)", display: "flex", alignItems: "center", justifyContent: "center", padding: 18 }}>
+          <div style={{ background: "#1A2226", borderRadius: 14, padding: "20px 18px", maxWidth: 400, width: "100%", boxSizing: "border-box" }}>
+            <div style={{ fontWeight: 700, fontSize: 17, marginBottom: 8 }}>Excluir esta avaliação?</div>
+            <p style={{ fontSize: 14, color: REL_COR.suave, lineHeight: 1.45, margin: "0 0 14px" }}>O relatório e as fotos dessa avaliação serão apagados deste aparelho.</p>
+            <div style={{ display: "flex", gap: 10 }}>
+              <button style={{ ...REL_BTN, flex: 1 }} onClick={() => setConfirmExcluir(false)}>Cancelar</button>
+              <button style={{ ...REL_BTN, flex: 1, background: "#D9503A", color: "#fff" }} onClick={excluirSelecionada}>Excluir</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {editandoProf && profForm && (
+        <div style={{ position: "fixed", inset: 0, zIndex: 665, background: "rgba(0,0,0,0.7)", overflowY: "auto", padding: 14 }}>
+          <div style={{ background: "#1A2226", borderRadius: 14, padding: "18px 16px", maxWidth: 440, margin: "20px auto", boxSizing: "border-box" }}>
+            <div style={{ fontFamily: guiadoFont, fontSize: 19, fontWeight: 700, color: REL_COR.titulo, marginBottom: 12 }}>Contato do profissional</div>
+            {[["nome", "Nome"], ["funcao", "Função (ex: Profissional de Educação Física)"], ["telefone", "Telefone"], ["email", "E-mail"], ["whatsapp", "WhatsApp (se for diferente do telefone)"], ["instagram", "Instagram (@usuario)"]].map(([k, rot]) => (
+              <label key={k} style={{ ...REL_LABEL, marginBottom: 10 }}>{rot}
+                <input style={REL_INPUT} value={profForm[k] || ""} onChange={(e) => setProfForm({ ...profForm, [k]: e.target.value })} />
+              </label>
+            ))}
+            <div style={{ display: "flex", gap: 10, marginTop: 6 }}>
+              <button style={{ ...REL_BTN, flex: 1 }} onClick={() => setEditandoProf(false)}>Cancelar</button>
+              <button style={{ ...REL_BTN, flex: 1, background: "#9ACD32", color: "#101619" }} onClick={salvarProf}>Salvar</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+    </div>
+  );
+}
+
+
 function EvolucaoTab({ onAplicarTreino, refsTour }) {
   const [avaliacoes, setAvaliacoes] = useState([]);
   const [carregado, setCarregado] = useState(false);
@@ -6970,6 +8241,18 @@ function EvolucaoTab({ onAplicarTreino, refsTour }) {
   const [compararA, setCompararA] = useState(null);
   const [compararB, setCompararB] = useState(null);
   const [sliderComparar, setSliderComparar] = useState(50);
+  const [relatorioAberto, setRelatorioAberto] = useState(false);
+  const [dadosImpressao, setDadosImpressao] = useState(null);
+  useEffect(() => {
+    if (!dadosImpressao) return;
+    const timer = setTimeout(() => window.print(), 200);
+    const fim = () => setDadosImpressao(null);
+    window.addEventListener("afterprint", fim);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("afterprint", fim);
+    };
+  }, [dadosImpressao]);
 
   const [peso, setPeso] = useState("");
   const [altura, setAltura] = useState("");
@@ -7475,6 +8758,20 @@ function EvolucaoTab({ onAplicarTreino, refsTour }) {
           {salvando ? "Salvando..." : avaliacaoSalva ? "✓ Avaliação salva!" : "Salvar avaliação de hoje"}
         </button>
       </section>
+
+      <section style={styles.card}>
+        <div style={styles.cardLabel}>📄 Relatório de avaliação física</div>
+        <p style={{ ...styles.modalDisclaimer, color: INK, fontStyle: "normal", fontSize: 12.5, opacity: 0.85, marginTop: 0 }}>
+          Gere um laudo completo com avatar, tabelas coloridas (IMC, gordura, músculo, metabolismo, cintura/quadril), gráficos de evolução, fotos e anotações. Exporte em imagem, PDF ou WhatsApp.
+        </p>
+        <button style={{ ...styles.saveButton, marginTop: 8 }} onClick={() => setRelatorioAberto(true)}>
+          Abrir relatório completo
+        </button>
+      </section>
+      {relatorioAberto && (
+        <RelatorioAvaliacao avaliacoesBase={avaliacoes} onFechar={() => setRelatorioAberto(false)} onImprimir={setDadosImpressao} />
+      )}
+      {dadosImpressao && <RelAreaImpressao dados={dadosImpressao} />}
 
       {(peso || ultima) && (
         <section style={styles.card}>
@@ -8045,7 +9342,7 @@ function PerfilModal({ perfis, perfilAtivoId, onTrocar, onCriar, onApagar, onRen
   );
 }
 
-function AvaliacaoPerguntasModal({ onFechar, onMensagem }) {
+function FeedbackModal({ onFechar, onMensagem }) {
   const [aba, setAba] = useState("avaliar");
   const [nota, setNota] = useState(0);
   const [comentario, setComentario] = useState("");
@@ -8290,6 +9587,9 @@ const CHAVES_BACKUP = [
   "dores-exercicios",
   "progressao-exercicios",
   "fotos-progresso",
+  "relatorio-avaliacoes",
+  "relatorio-fotos",
+  "relatorio-profissional",
   "foto-compartilhamento",
   "recordes-pessoais",
   "cross-historico",
