@@ -6047,7 +6047,7 @@ function AppMassiPro({ onSolicitarRemount }) {
       )}
 
       {feedbackPendente && (
-        <FeedbackModal
+        <FeedbackTreinoModal
           onSelecionar={(sentimento) => {
             concluirTreino(feedbackPendente, sentimento);
             setFeedbackPendente(null);
@@ -9431,7 +9431,7 @@ function OnboardingModal({ onConcluir }) {
   );
 }
 
-function FeedbackModal({ onSelecionar, onPular }) {
+function FeedbackTreinoModal({ onSelecionar, onPular }) {
   const opcoes = [
     { emoji: "😫", label: "Difícil" },
     { emoji: "😐", label: "Ok" },
