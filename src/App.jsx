@@ -3707,6 +3707,10 @@ Object.assign(TRAD_TEXTOS.en, {"Procure qualquer exercício pelo nome aqui — o
 Object.assign(TRAD_TEXTOS.es, {"Procure qualquer exercício pelo nome aqui — o resultado abre o vídeo e a explicação completa.": "Busca cualquier ejercicio por nombre aquí: el resultado abre el vídeo y la explicación completa.", "Toque nos dias da semana em que você treina. Os dias desmarcados somem da lista e ficam como descanso.": "Toca los días de la semana en que entrenas. Los días desmarcados desaparecen de la lista y quedan como descanso.", "Cronômetro rápido: escolha um tempo (ou digite o seu) e toque em iniciar pra descansar entre as séries sem abrir o treino.": "Cronómetro rápido: elige un tiempo (o escribe el tuyo) y toca iniciar para descansar entre series sin abrir el entrenamiento.", "Dois atalhos: o Treino relâmpago monta um treino curto de 15-20 min e já abre guiado; o Treino ao ar livre registra corrida ou caminhada com cronômetro e distância.": "Dos atajos: el Entrenamiento relámpago arma un entrenamiento corto de 15-20 min y lo abre guiado; el Entrenamiento al aire libre registra carrera o caminata con cronómetro y distancia.", "Toque no foco do dia pra escolher o que treinar nesse dia — peito, costas, perna, cardio, descanso e mais.": "Toca el enfoque del día para elegir qué entrenar ese día: pecho, espalda, pierna, cardio, descanso y más.", "Escolha manhã, tarde ou noite: é o horário em que o app te lembra do treino desse dia (se as notificações estiverem ligadas no menu ⚙️).": "Elige mañana, tarde o noche: es la hora en que la app te recuerda el entrenamiento de ese día (si las notificaciones están activadas en el menú ⚙️).", "O círculo marca o exercício como feito, o ⚠️ registra dor ou desconforto (o app te avisa nos próximos treinos) e o × remove o exercício do dia.": "El círculo marca el ejercicio como hecho, ⚠️ registra dolor o molestia (la app te avisa en los próximos entrenamientos) y × quita el ejercicio del día.", "O 🔄 Trocar sugere outro exercício do mesmo grupo muscular e a 🔍 busca um exercício específico pelo nome.": "🔄 Cambiar sugiere otro ejercicio del mismo grupo muscular y 🔍 busca un ejercicio específico por nombre.", "Aqui você ajusta o número de séries e de repetições do exercício com os botões − e +.": "Aquí ajustas el número de series y de repeticiones del ejercicio con los botones − y +.", "Escreva uma anotação do exercício: pegada, regulagem do banco, como sentiu. Ela fica salva e aparece nos próximos treinos.": "Escribe una nota del ejercicio: agarre, ajuste del banco, cómo te sentiste. Queda guardada y aparece en los próximos entrenamientos.", "Quer mais um exercício nesse dia? Toque aqui pra adicionar outro do mesmo grupo muscular.": "¿Quieres un ejercicio más ese día? Toca aquí para añadir otro del mismo grupo muscular.", "Cardio no final do treino: toque pra adicionar. Com ele ativo, escolha o tipo, a duração e a intensidade — ou remova se não quiser fazer hoje.": "Cardio al final del entrenamiento: toca para añadirlo. Con él activo, elige el tipo, la duración y la intensidad, o quítalo si no quieres hacerlo hoy.", "Exporte sua rotina como imagem (pra mandar no WhatsApp) ou como PDF, e o CSV serve pra abrir numa planilha.": "Exporta tu rutina como imagen (para enviar por WhatsApp) o como PDF, y el CSV sirve para abrirlo en una hoja de cálculo.", "Terminou de treinar? Toque em \"Concluir treino de hoje\" pra salvar no histórico, contar na sua sequência e ver o mapa muscular do dia.": "¿Terminaste de entrenar? Toca \"Completar el entrenamiento de hoy\" para guardarlo en el historial, contarlo en tu racha y ver el mapa muscular del día.", "Fique parado e relaxado por um instante...": "Quédate quieto y relajado un momento...", "Suba mais os ombros, em direção às orelhas.": "Sube más los hombros, hacia las orejas."});
 Object.assign(TRAD_TEXTOS.en, {"Apoie o celular a uns 2 ou 3 metros, de lado para o aparelho, deixando você e o movimento inteiros no quadro.": "Place your phone about 2 or 3 meters away, sideways to the machine, keeping you and the whole movement in the frame.", "Apoie o celular no chão, a uns 2 ou 3 metros, ao lado do banco ou do tapete, com o corpo inteiro no quadro.": "Place your phone on the floor, about 2 or 3 meters away, beside the bench or mat, with your whole body in the frame.", "Desça mais: a barra ou os halteres devem chegar perto do peito.": "Go lower: the bar or dumbbells should get close to your chest.", "Mantenha os antebraços na vertical, com os punhos sobre os cotovelos.": "Keep your forearms vertical, with wrists stacked over elbows.", "Desça controlado, sem deixar o peso cair.": "Lower with control, don't let the weight drop.", "Desça até os cotovelos chegarem perto de 90°.": "Lower until your elbows get close to 90°.", "Não arqueie as costas: mantenha o abdômen firme e o tronco ereto.": "Don't arch your back: keep your abs tight and your torso upright.", "Desça mais: os cotovelos devem chegar perto de 90°.": "Go lower: your elbows should get close to 90°.", "Não desça demais: o ombro bem abaixo do cotovelo sobrecarrega a articulação.": "Don't go too low: a shoulder well below the elbow overloads the joint.", "Tríceps na polia": "Triceps pushdown", "Estenda os cotovelos por completo, empurrando para baixo.": "Fully extend your elbows, pushing down.", "Mantenha os cotovelos colados ao corpo: só os antebraços se movem.": "Keep your elbows tucked against your body: only the forearms move.", "Desça até perto da testa, dobrando só os cotovelos.": "Lower close to your forehead, bending only the elbows.", "Mantenha os braços parados, apontando para cima: só os antebraços se movem.": "Keep your upper arms still, pointing up: only the forearms move.", "Desça o peso atrás da cabeça, dobrando só os cotovelos.": "Lower the weight behind your head, bending only the elbows.", "Mantenha os cotovelos fixos e perto da cabeça.": "Keep your elbows fixed and close to your head.", "Tríceps coice": "Triceps kickback", "Estenda o braço para trás até ficar reto.": "Extend your arm back until it's straight.", "Mantenha o braço paralelo ao chão, junto ao corpo.": "Keep your upper arm parallel to the floor, close to your body.", "Puxe mais: leve os cotovelos para trás, perto do corpo.": "Pull more: take your elbows back, close to your body.", "Não balance o tronco para puxar: use as costas.": "Don't swing your torso to pull: use your back.", "Incline mais o tronco para frente (cerca de 45°).": "Lean your torso forward more (about 45°).", "Puxe mais: leve a barra até a altura do peito.": "Pull more: bring the bar to chest height.", "Não jogue o tronco muito para trás: incline só um pouco.": "Don't throw your torso too far back: lean only slightly.", "Puxe com controle, sem usar impulso.": "Pull with control, without using momentum.", "Suba mais: o queixo deve passar da barra.": "Go higher: your chin should pass the bar.", "Evite balançar o corpo: suba só com a força das costas e dos braços.": "Avoid swinging your body: rise using only your back and arm strength.", "Suba com controle, sem impulso.": "Rise with control, without momentum.", "Face pull": "Face pull", "Puxe a corda até o rosto, abrindo os cotovelos.": "Pull the rope to your face, spreading your elbows.", "Mantenha os cotovelos na altura dos ombros.": "Keep your elbows at shoulder height.", "Leve os braços mais para trás da cabeça, sentindo o alongamento.": "Take your arms further behind your head, feeling the stretch.", "Mantenha os cotovelos levemente flexionados, sem dobrar demais.": "Keep your elbows slightly bent, without bending too much.", "Desça o peso devagar, com controle.": "Lower the weight slowly, with control.", "Suba os ombros com controle, sem jogar o peso.": "Raise your shoulders with control, without throwing the weight.", "Abertura de peito": "Chest fly", "Feche mais: junte as mãos na frente do peito.": "Close more: bring your hands together in front of your chest.", "Mantenha os cotovelos levemente flexionados, sem transformar em supino.": "Keep your elbows slightly bent, without turning it into a press.", "Feche com controle, sem bater as mãos.": "Close with control, without slamming your hands.", "Voador invertido": "Reverse fly", "Abra mais os braços, apertando as escápulas.": "Open your arms wider, squeezing your shoulder blades.", "Mantenha os cotovelos levemente flexionados, sem puxar com os braços.": "Keep your elbows slightly bent, without pulling with your arms.", "Abra com controle, sem usar impulso.": "Open with control, without using momentum.", "Não balance o tronco para subir o peso.": "Don't swing your torso to lift the weight.", "Suba controlado, sem impulso.": "Rise with control, no momentum.", "Suba os cotovelos até a altura do peito.": "Raise your elbows to chest height.", "Não suba acima da altura dos ombros.": "Don't go above shoulder height.", "Leve os cotovelos acima das mãos.": "Lead with your elbows above your hands.", "Flexione mais: leve o peso até perto do ombro.": "Curl more: bring the weight close to your shoulder.", "Mantenha o cotovelo colado ao corpo.": "Keep your elbow tucked against your body.", "Suba sem impulso, com controle.": "Curl up without momentum, with control.", "Desça mais: os joelhos devem chegar perto de 90°.": "Go lower: your knees should get close to 90°.", "Não desça tanto: a lombar pode sair do apoio.": "Don't go that low: your lower back may lift off the pad.", "Estenda mais a perna, até quase esticar o joelho.": "Extend your leg further, until the knee is almost straight.", "Suba controlado, sem chutar o peso.": "Rise with control, don't kick the weight.", "Flexione mais: leve o calcanhar em direção ao glúteo.": "Curl more: bring your heel toward your glutes.", "Mantenha o quadril colado no apoio durante o movimento.": "Keep your hips glued to the pad during the movement.", "Puxe controlado, sem usar impulso.": "Curl with control, without using momentum.", "Suba mais os joelhos.": "Raise your knees higher.", "Mantenha o tronco ereto.": "Keep your torso upright.", "Suba mais na ponta dos pés.": "Rise higher onto your toes.", "Mantenha os joelhos estendidos durante o movimento.": "Keep your knees straight during the movement.", "Suba controlado, sem quicar.": "Rise with control, don't bounce.", "Suba o quadril até alinhar tronco e coxas.": "Raise your hips until your torso and thighs line up.", "Suba controlado e segure 1 segundo no topo.": "Rise with control and hold for 1 second at the top.", "Coice de glúteo": "Glute kickback", "Leve a perna mais para trás, contraindo o glúteo.": "Take your leg further back, squeezing the glute.", "Não arqueie a lombar: o movimento vem do glúteo.": "Don't arch your lower back: the movement comes from the glute.", "Abra mais as pernas, sem forçar a articulação.": "Open your legs wider, without forcing the joint.", "Feche mais as pernas, até quase juntar os joelhos.": "Close your legs more, until your knees almost touch.", "Feche com controle, sem bater o peso.": "Close with control, don't slam the weight.", "Suba mais o tronco, contraindo o abdômen.": "Raise your torso higher, contracting your abs.", "Suba controlado, sem puxar o pescoço.": "Rise with control, without pulling on your neck.", "Abdominal na máquina": "Ab machine crunch", "Flexione mais o tronco, contraindo o abdômen.": "Bend your torso more, contracting your abs.", "Volte controlado, sem soltar o peso.": "Return with control, don't drop the weight.", "Abdominal na polia": "Cable crunch", "Flexione mais o tronco, enrolando a coluna para baixo.": "Bend your torso more, curling your spine downward.", "Mantenha o quadril parado: o movimento é só do tronco.": "Keep your hips still: the movement is only from the torso.", "Suba mais as pernas, contraindo o abdômen.": "Raise your legs higher, contracting your abs.", "Evite balançar: suba as pernas só com o abdômen.": "Avoid swinging: raise your legs using only your abs.", "Desça as pernas com controle.": "Lower your legs with control.", "Traga mais o joelho em direção ao peito.": "Bring your knee closer to your chest.", "Gire mais o tronco, levando o ombro para o lado.": "Rotate your torso more, taking your shoulder to the side.", "Gire com controle, sem usar impulso.": "Rotate with control, without using momentum.", "Apoie o celular a uns 2 ou 3 metros, fique de lado para a câmera, com as costas na parede e o corpo inteiro no quadro.": "Place your phone about 2 or 3 meters away, stand sideways to the camera, with your back on the wall and your whole body in the frame.", "Você está baixo demais: suba até os joelhos ficarem perto de 90°.": "You're too low: rise until your knees are close to 90°.", "Desça mais: coxas paralelas ao chão (joelhos a 90°).": "Go lower: thighs parallel to the floor (knees at 90°)."});
 Object.assign(TRAD_TEXTOS.es, {"Apoie o celular a uns 2 ou 3 metros, de lado para o aparelho, deixando você e o movimento inteiros no quadro.": "Apoya el teléfono a unos 2 o 3 metros, de lado al aparato, dejando a ti y todo el movimiento en el encuadre.", "Apoie o celular no chão, a uns 2 ou 3 metros, ao lado do banco ou do tapete, com o corpo inteiro no quadro.": "Apoya el teléfono en el suelo, a unos 2 o 3 metros, junto al banco o la esterilla, con el cuerpo entero en el encuadre.", "Desça mais: a barra ou os halteres devem chegar perto do peito.": "Baja más: la barra o las mancuernas deben llegar cerca del pecho.", "Mantenha os antebraços na vertical, com os punhos sobre os cotovelos.": "Mantén los antebrazos verticales, con las muñecas sobre los codos.", "Desça controlado, sem deixar o peso cair.": "Baja controlado, sin dejar caer el peso.", "Desça até os cotovelos chegarem perto de 90°.": "Baja hasta que los codos lleguen cerca de 90°.", "Não arqueie as costas: mantenha o abdômen firme e o tronco ereto.": "No arquees la espalda: mantén el abdomen firme y el tronco erguido.", "Desça mais: os cotovelos devem chegar perto de 90°.": "Baja más: los codos deben llegar cerca de 90°.", "Não desça demais: o ombro bem abaixo do cotovelo sobrecarrega a articulação.": "No bajes demasiado: el hombro muy por debajo del codo sobrecarga la articulación.", "Tríceps na polia": "Tríceps en polea", "Estenda os cotovelos por completo, empurrando para baixo.": "Extiende los codos por completo, empujando hacia abajo.", "Mantenha os cotovelos colados ao corpo: só os antebraços se movem.": "Mantén los codos pegados al cuerpo: solo se mueven los antebrazos.", "Desça até perto da testa, dobrando só os cotovelos.": "Baja cerca de la frente, doblando solo los codos.", "Mantenha os braços parados, apontando para cima: só os antebraços se movem.": "Mantén los brazos quietos, apuntando hacia arriba: solo se mueven los antebrazos.", "Desça o peso atrás da cabeça, dobrando só os cotovelos.": "Baja el peso detrás de la cabeza, doblando solo los codos.", "Mantenha os cotovelos fixos e perto da cabeça.": "Mantén los codos fijos y cerca de la cabeza.", "Tríceps coice": "Patada de tríceps", "Estenda o braço para trás até ficar reto.": "Extiende el brazo hacia atrás hasta quedar recto.", "Mantenha o braço paralelo ao chão, junto ao corpo.": "Mantén el brazo paralelo al suelo, junto al cuerpo.", "Puxe mais: leve os cotovelos para trás, perto do corpo.": "Tira más: lleva los codos hacia atrás, cerca del cuerpo.", "Não balance o tronco para puxar: use as costas.": "No balancees el tronco para tirar: usa la espalda.", "Incline mais o tronco para frente (cerca de 45°).": "Inclina más el tronco hacia delante (unos 45°).", "Puxe mais: leve a barra até a altura do peito.": "Tira más: lleva la barra hasta la altura del pecho.", "Não jogue o tronco muito para trás: incline só um pouco.": "No eches el tronco muy atrás: inclínate solo un poco.", "Puxe com controle, sem usar impulso.": "Tira con control, sin usar impulso.", "Suba mais: o queixo deve passar da barra.": "Sube más: la barbilla debe pasar la barra.", "Evite balançar o corpo: suba só com a força das costas e dos braços.": "Evita balancear el cuerpo: sube solo con la fuerza de la espalda y los brazos.", "Suba com controle, sem impulso.": "Sube con control, sin impulso.", "Face pull": "Face pull", "Puxe a corda até o rosto, abrindo os cotovelos.": "Tira de la cuerda hacia la cara, abriendo los codos.", "Mantenha os cotovelos na altura dos ombros.": "Mantén los codos a la altura de los hombros.", "Leve os braços mais para trás da cabeça, sentindo o alongamento.": "Lleva los brazos más atrás de la cabeza, sintiendo el estiramiento.", "Mantenha os cotovelos levemente flexionados, sem dobrar demais.": "Mantén los codos ligeramente flexionados, sin doblar demasiado.", "Desça o peso devagar, com controle.": "Baja el peso despacio, con control.", "Suba os ombros com controle, sem jogar o peso.": "Sube los hombros con control, sin lanzar el peso.", "Abertura de peito": "Aperturas de pecho", "Feche mais: junte as mãos na frente do peito.": "Cierra más: junta las manos frente al pecho.", "Mantenha os cotovelos levemente flexionados, sem transformar em supino.": "Mantén los codos ligeramente flexionados, sin convertirlo en un press.", "Feche com controle, sem bater as mãos.": "Cierra con control, sin chocar las manos.", "Voador invertido": "Aperturas inversas", "Abra mais os braços, apertando as escápulas.": "Abre más los brazos, apretando los omóplatos.", "Mantenha os cotovelos levemente flexionados, sem puxar com os braços.": "Mantén los codos ligeramente flexionados, sin tirar con los brazos.", "Abra com controle, sem usar impulso.": "Abre con control, sin usar impulso.", "Não balance o tronco para subir o peso.": "No balancees el tronco para subir el peso.", "Suba controlado, sem impulso.": "Sube controlado, sin impulso.", "Suba os cotovelos até a altura do peito.": "Sube los codos hasta la altura del pecho.", "Não suba acima da altura dos ombros.": "No subas por encima de la altura de los hombros.", "Leve os cotovelos acima das mãos.": "Lleva los codos por encima de las manos.", "Flexione mais: leve o peso até perto do ombro.": "Flexiona más: lleva el peso cerca del hombro.", "Mantenha o cotovelo colado ao corpo.": "Mantén el codo pegado al cuerpo.", "Suba sem impulso, com controle.": "Sube sin impulso, con control.", "Desça mais: os joelhos devem chegar perto de 90°.": "Baja más: las rodillas deben llegar cerca de 90°.", "Não desça tanto: a lombar pode sair do apoio.": "No bajes tanto: la zona lumbar puede despegarse del apoyo.", "Estenda mais a perna, até quase esticar o joelho.": "Extiende más la pierna, hasta casi estirar la rodilla.", "Suba controlado, sem chutar o peso.": "Sube controlado, sin patear el peso.", "Flexione mais: leve o calcanhar em direção ao glúteo.": "Flexiona más: lleva el talón hacia el glúteo.", "Mantenha o quadril colado no apoio durante o movimento.": "Mantén la cadera pegada al apoyo durante el movimiento.", "Puxe controlado, sem usar impulso.": "Tira controlado, sin usar impulso.", "Suba mais os joelhos.": "Sube más las rodillas.", "Mantenha o tronco ereto.": "Mantén el tronco erguido.", "Suba mais na ponta dos pés.": "Sube más sobre las puntas de los pies.", "Mantenha os joelhos estendidos durante o movimento.": "Mantén las rodillas extendidas durante el movimiento.", "Suba controlado, sem quicar.": "Sube controlado, sin rebotar.", "Suba o quadril até alinhar tronco e coxas.": "Sube la cadera hasta alinear tronco y muslos.", "Suba controlado e segure 1 segundo no topo.": "Sube controlado y mantén 1 segundo arriba.", "Coice de glúteo": "Patada de glúteo", "Leve a perna mais para trás, contraindo o glúteo.": "Lleva la pierna más atrás, contrayendo el glúteo.", "Não arqueie a lombar: o movimento vem do glúteo.": "No arquees la zona lumbar: el movimiento viene del glúteo.", "Abra mais as pernas, sem forçar a articulação.": "Abre más las piernas, sin forzar la articulación.", "Feche mais as pernas, até quase juntar os joelhos.": "Cierra más las piernas, hasta casi juntar las rodillas.", "Feche com controle, sem bater o peso.": "Cierra con control, sin chocar el peso.", "Suba mais o tronco, contraindo o abdômen.": "Sube más el tronco, contrayendo el abdomen.", "Suba controlado, sem puxar o pescoço.": "Sube controlado, sin tirar del cuello.", "Abdominal na máquina": "Abdominales en máquina", "Flexione mais o tronco, contraindo o abdômen.": "Flexiona más el tronco, contrayendo el abdomen.", "Volte controlado, sem soltar o peso.": "Vuelve controlado, sin soltar el peso.", "Abdominal na polia": "Abdominales en polea", "Flexione mais o tronco, enrolando a coluna para baixo.": "Flexiona más el tronco, enrollando la columna hacia abajo.", "Mantenha o quadril parado: o movimento é só do tronco.": "Mantén la cadera quieta: el movimiento es solo del tronco.", "Suba mais as pernas, contraindo o abdômen.": "Sube más las piernas, contrayendo el abdomen.", "Evite balançar: suba as pernas só com o abdômen.": "Evita balancearte: sube las piernas solo con el abdomen.", "Desça as pernas com controle.": "Baja las piernas con control.", "Traga mais o joelho em direção ao peito.": "Acerca más la rodilla al pecho.", "Gire mais o tronco, levando o ombro para o lado.": "Gira más el tronco, llevando el hombro hacia el lado.", "Gire com controle, sem usar impulso.": "Gira con control, sin usar impulso.", "Apoie o celular a uns 2 ou 3 metros, fique de lado para a câmera, com as costas na parede e o corpo inteiro no quadro.": "Apoya el teléfono a unos 2 o 3 metros, ponte de lado a la cámara, con la espalda en la pared y el cuerpo entero en el encuadre.", "Você está baixo demais: suba até os joelhos ficarem perto de 90°.": "Estás demasiado abajo: sube hasta que las rodillas queden cerca de 90°.", "Desça mais: coxas paralelas ao chão (joelhos a 90°).": "Baja más: muslos paralelos al suelo (rodillas a 90°)."});
+Object.assign(TRAD_TEXTOS.en, {"1 exercício": "1 exercise", "Anote como se sentiu, dicas e lembretes do treino.": "Write down how you felt, tips and workout reminders.", "Aqui estão os 4 hábitos que formam o índice: constância, sequência, equilíbrio muscular e evolução. Cada medidor diz o que falta pra completar.": "Here are the 4 habits that make up the index: consistency, streak, muscle balance and progress. Each gauge tells you what's missing to complete it.", "As 4 zonas:": "The 4 zones:", "Atalhos ilustrados pras outras telas do app: toque num card pra ir direto.": "Illustrated shortcuts to the other screens of the app: tap a card to go straight there.", "Ativo": "Active", "Atlético": "Athletic", "Cada ✓ marca um dia em que você concluiu o treino.": "Each ✓ marks a day you completed your workout.", "Conclua um treino pra mexer o ponteiro.": "Complete a workout to move the needle.", "Constância": "Consistency", "Continue treinando: em 3 semanas eu comparo com a sua média.": "Keep training: in 3 weeks I'll compare you with your average.", "Dias seguidos treinando. Uma folga por semana não quebra a sequência.": "Days in a row training. One day off per week doesn't break the streak.", "Dica: o ponto fraco agora é {0}.": "Tip: your weak spot right now is {0}.", "Equilíbrio": "Balance", "Esportivo": "Sporty", "Esse é o seu Índice Massi, de 0 a 100. O ponteiro sobe conforme você treina com constância. Toque em \"Como esse índice é calculado?\" pra ver a explicação.": "This is your Massi Index, from 0 to 100. The needle rises as you train consistently. Tap \"How is this index calculated?\" to see the explanation.", "Evolução": "Progress", "Exercícios dos últimos 7 dias, comparados com a sua média das 3 semanas anteriores.": "Exercises from the last 7 days, compared with your average of the previous 3 weeks.", "Falta 1 treino pra fechar essa meta.": "1 workout left to hit this goal.", "Falta treinar: {0}.": "Still to train: {0}.", "Faltam {0} pontos pra zona {1}.": "{0} points to go to the {1} zone.", "Faltam {0} treinos pra fechar essa meta.": "{0} workouts left to hit this goal.", "Faça mais {0} pra igualar a sua média.": "Do {0} more to match your average.", "Fechar explicação ▲": "Close explanation ▲", "Grupos musculares da sua rotina que você treinou nos últimos 14 dias.": "Muscle groups in your routine that you trained in the last 14 days.", "Meta da semana batida! 🎉": "Weekly goal reached! 🎉", "Monte e ajuste seus treinos, com vídeo de cada exercício.": "Build and adjust your workouts, with a video for each exercise.", "Monte sua rotina pra medir o equilíbrio.": "Build your routine to measure your balance.", "Muito": "A lot", "O Índice Massi vai de 0 a 100 e junta os 4 hábitos que mais pesam nos seus resultados. Cada um vale até 25 pontos e é recalculado sempre que você abre o app.": "The Massi Index goes from 0 to 100 and combines the 4 habits that matter most for your results. Each is worth up to 25 points and is recalculated every time you open the app.", "Peso, medidas e gráficos pra ver sua evolução.": "Weight, measurements and charts to see your progress.", "Pouco": "Little", "Quanto mais forte a cor, mais você treinou aquela região.": "The stronger the color, the more you trained that region.", "Reveja cada treino concluído, com datas e cargas.": "Review every completed workout, with dates and loads.", "Rotina": "Routine", "Sedentário": "Sedentary", "Sequência": "Streak", "Todos os grupos em dia! 💪": "All groups up to date! 💪", "Treine hoje pra começar sua sequência.": "Train today to start your streak.", "Treine hoje pra manter a chama acesa.": "Train today to keep the flame alive.", "Treinos feitos nos últimos 7 dias, comparados com os planejados na sua rotina.": "Workouts done in the last 7 days, compared with the ones planned in your routine.", "Uma semana inteira de sequência! 🔥": "A whole week of streak! 🔥", "Você está acima da sua média! 📈": "You're above your average! 📈", "Você está na zona máxima! Mantenha o ritmo. 🏆": "You're in the top zone! Keep the pace. 🏆", "{0} exercícios": "{0} exercises", "{0}/7 dias": "{0}/7 days", "{0}/{1} grupos": "{0}/{1} groups", "{0}/{1} treinos": "{0}/{1} workouts", "ÍNDICE MASSI": "MASSI INDEX", "ℹ️ Como esse índice é calculado? ▼": "ℹ️ How is this index calculated? ▼", "🧭 Pra onde ir daqui": "🧭 Where to go from here"});
+Object.assign(TRAD_TEXTOS.es, {"1 exercício": "1 ejercicio", "Anote como se sentiu, dicas e lembretes do treino.": "Anota cómo te sentiste, consejos y recordatorios del entrenamiento.", "Aqui estão os 4 hábitos que formam o índice: constância, sequência, equilíbrio muscular e evolução. Cada medidor diz o que falta pra completar.": "Aquí están los 4 hábitos que forman el índice: constancia, racha, equilibrio muscular y evolución. Cada medidor dice qué falta para completarlo.", "As 4 zonas:": "Las 4 zonas:", "Atalhos ilustrados pras outras telas do app: toque num card pra ir direto.": "Atajos ilustrados a las otras pantallas de la app: toca una tarjeta para ir directo.", "Ativo": "Activo", "Atlético": "Atlético", "Cada ✓ marca um dia em que você concluiu o treino.": "Cada ✓ marca un día en que completaste el entrenamiento.", "Conclua um treino pra mexer o ponteiro.": "Completa un entrenamiento para mover la aguja.", "Constância": "Constancia", "Continue treinando: em 3 semanas eu comparo com a sua média.": "Sigue entrenando: en 3 semanas te comparo con tu promedio.", "Dias seguidos treinando. Uma folga por semana não quebra a sequência.": "Días seguidos entrenando. Un descanso por semana no rompe la racha.", "Dica: o ponto fraco agora é {0}.": "Consejo: tu punto débil ahora es {0}.", "Equilíbrio": "Equilibrio", "Esportivo": "Deportivo", "Esse é o seu Índice Massi, de 0 a 100. O ponteiro sobe conforme você treina com constância. Toque em \"Como esse índice é calculado?\" pra ver a explicação.": "Este es tu Índice Massi, de 0 a 100. La aguja sube a medida que entrenas con constancia. Toca \"¿Cómo se calcula este índice?\" para ver la explicación.", "Evolução": "Evolución", "Exercícios dos últimos 7 dias, comparados com a sua média das 3 semanas anteriores.": "Ejercicios de los últimos 7 días, comparados con tu promedio de las 3 semanas anteriores.", "Falta 1 treino pra fechar essa meta.": "Falta 1 entrenamiento para cumplir esta meta.", "Falta treinar: {0}.": "Falta entrenar: {0}.", "Faltam {0} pontos pra zona {1}.": "Faltan {0} puntos para la zona {1}.", "Faltam {0} treinos pra fechar essa meta.": "Faltan {0} entrenamientos para cumplir esta meta.", "Faça mais {0} pra igualar a sua média.": "Haz {0} más para igualar tu promedio.", "Fechar explicação ▲": "Cerrar explicación ▲", "Grupos musculares da sua rotina que você treinou nos últimos 14 dias.": "Grupos musculares de tu rutina que entrenaste en los últimos 14 días.", "Meta da semana batida! 🎉": "¡Meta de la semana cumplida! 🎉", "Monte e ajuste seus treinos, com vídeo de cada exercício.": "Arma y ajusta tus entrenamientos, con vídeo de cada ejercicio.", "Monte sua rotina pra medir o equilíbrio.": "Arma tu rutina para medir el equilibrio.", "Muito": "Mucho", "O Índice Massi vai de 0 a 100 e junta os 4 hábitos que mais pesam nos seus resultados. Cada um vale até 25 pontos e é recalculado sempre que você abre o app.": "El Índice Massi va de 0 a 100 y junta los 4 hábitos que más pesan en tus resultados. Cada uno vale hasta 25 puntos y se recalcula cada vez que abres la app.", "Peso, medidas e gráficos pra ver sua evolução.": "Peso, medidas y gráficos para ver tu evolución.", "Pouco": "Poco", "Quanto mais forte a cor, mais você treinou aquela região.": "Cuanto más fuerte el color, más entrenaste esa región.", "Reveja cada treino concluído, com datas e cargas.": "Revisa cada entrenamiento completado, con fechas y cargas.", "Rotina": "Rutina", "Sedentário": "Sedentario", "Sequência": "Racha", "Todos os grupos em dia! 💪": "¡Todos los grupos al día! 💪", "Treine hoje pra começar sua sequência.": "Entrena hoy para empezar tu racha.", "Treine hoje pra manter a chama acesa.": "Entrena hoy para mantener la llama encendida.", "Treinos feitos nos últimos 7 dias, comparados com os planejados na sua rotina.": "Entrenamientos hechos en los últimos 7 días, comparados con los planificados en tu rutina.", "Uma semana inteira de sequência! 🔥": "¡Una semana entera de racha! 🔥", "Você está acima da sua média! 📈": "¡Estás por encima de tu promedio! 📈", "Você está na zona máxima! Mantenha o ritmo. 🏆": "¡Estás en la zona máxima! Mantén el ritmo. 🏆", "{0} exercícios": "{0} ejercicios", "{0}/7 dias": "{0}/7 días", "{0}/{1} grupos": "{0}/{1} grupos", "{0}/{1} treinos": "{0}/{1} entrenamientos", "ÍNDICE MASSI": "ÍNDICE MASSI", "ℹ️ Como esse índice é calculado? ▼": "ℹ️ ¿Cómo se calcula este índice? ▼", "🧭 Pra onde ir daqui": "🧭 A dónde ir desde aquí"});
+Object.assign(TRAD_TEXTOS.en, {"% de gordura": "% body fat", "Abaixo de 0,5 costuma indicar menos gordura na barriga.": "Below 0.5 usually means less belly fat.", "Alta": "High", "Atenção": "Caution", "Calculados com a sua última avaliação. São referências gerais, não um diagnóstico.": "Calculated from your latest assessment. They are general references, not a diagnosis.", "Carga da semana": "Weekly load", "Cintura ÷ altura": "Waist ÷ height", "Dias seguidos treinando. Meta: 7.": "Days in a row training. Goal: 7.", "Em 3 semanas eu comparo com a sua média.": "In 3 weeks I'll compare you with your average.", "Em forma": "Fit", "Estimativa pelas medidas (método da Marinha). Varia conforme o sexo informado.": "Estimated from measurements (Navy method). Varies with the sex entered.", "Excessiva": "Excessive", "Exercícios por dia": "Exercises per day", "Faça outra avaliação pra ver a variação.": "Do another assessment to see the change.", "Ideal": "Ideal", "Informe a cintura.": "Enter your waist.", "Informe pescoço e cintura (e quadril, se mulher).": "Enter neck and waist (and hips, if female).", "Informe peso e altura.": "Enter weight and height.", "Meta: 12 por mês (3 por semana).": "Goal: 12 per month (3 per week).", "Minutos de treino": "Workout minutes", "Médio": "Average", "Nenhum treino registrado nos últimos 7 dias.": "No workouts logged in the last 7 days.", "Normal": "Normal", "Peso dividido pela altura ao quadrado. Não separa músculo de gordura.": "Weight divided by height squared. It doesn't separate muscle from fat.", "Prontidão": "Readiness", "Recuperando: {0}.": "Recovering: {0}.", "Registre as cargas pra ver o volume aqui.": "Log your loads to see the volume here.", "Risco": "Risk", "Saudável": "Healthy", "Sobrepeso": "Overweight", "Tempo estimado nos últimos 7 dias, comparado com os 7 anteriores.": "Estimated time in the last 7 days, compared with the previous 7.", "Treinos no mês": "Workouts this month", "Tudo recuperado: pode treinar pesado.": "Fully recovered: you can train hard.", "Um resumo rápido de como você está treinando. Os valores são estimativas feitas com o seu histórico.": "A quick summary of how you're training. Values are estimates based on your history.", "Variação desde a avaliação anterior.": "Change since the previous assessment.", "Volume (14 dias)": "Volume (14 days)", "dias": "days", "min vs semana passada": "min vs last week", "{0} exercícios nos últimos 7 dias.": "{0} exercises in the last 7 days.", "{0} kg levantados nos últimos 7 dias.": "{0} kg lifted in the last 7 days.", "{0}% da sua média das 3 semanas anteriores. Acima de 110% pede mais descanso.": "{0}% of your average of the previous 3 weeks. Above 110% calls for more rest.", "📊 Painel do seu treino": "📊 Your training dashboard", "🩺 Seus indicadores": "🩺 Your indicators"});
+Object.assign(TRAD_TEXTOS.es, {"% de gordura": "% de grasa", "Abaixo de 0,5 costuma indicar menos gordura na barriga.": "Por debajo de 0,5 suele indicar menos grasa abdominal.", "Alta": "Alta", "Atenção": "Atención", "Calculados com a sua última avaliação. São referências gerais, não um diagnóstico.": "Calculados con tu última evaluación. Son referencias generales, no un diagnóstico.", "Carga da semana": "Carga de la semana", "Cintura ÷ altura": "Cintura ÷ altura", "Dias seguidos treinando. Meta: 7.": "Días seguidos entrenando. Meta: 7.", "Em 3 semanas eu comparo com a sua média.": "En 3 semanas te comparo con tu promedio.", "Em forma": "En forma", "Estimativa pelas medidas (método da Marinha). Varia conforme o sexo informado.": "Estimación por las medidas (método de la Marina). Varía según el sexo indicado.", "Excessiva": "Excesiva", "Exercícios por dia": "Ejercicios por día", "Faça outra avaliação pra ver a variação.": "Haz otra evaluación para ver la variación.", "Ideal": "Ideal", "Informe a cintura.": "Indica la cintura.", "Informe pescoço e cintura (e quadril, se mulher).": "Indica cuello y cintura (y cadera, si eres mujer).", "Informe peso e altura.": "Indica peso y altura.", "Meta: 12 por mês (3 por semana).": "Meta: 12 por mes (3 por semana).", "Minutos de treino": "Minutos de entrenamiento", "Médio": "Medio", "Nenhum treino registrado nos últimos 7 dias.": "Ningún entrenamiento registrado en los últimos 7 días.", "Normal": "Normal", "Peso dividido pela altura ao quadrado. Não separa músculo de gordura.": "Peso dividido por la altura al cuadrado. No separa músculo de grasa.", "Prontidão": "Preparación", "Recuperando: {0}.": "Recuperando: {0}.", "Registre as cargas pra ver o volume aqui.": "Registra las cargas para ver el volumen aquí.", "Risco": "Riesgo", "Saudável": "Saludable", "Sobrepeso": "Sobrepeso", "Tempo estimado nos últimos 7 dias, comparado com os 7 anteriores.": "Tiempo estimado en los últimos 7 días, comparado con los 7 anteriores.", "Treinos no mês": "Entrenamientos del mes", "Tudo recuperado: pode treinar pesado.": "Todo recuperado: puedes entrenar fuerte.", "Um resumo rápido de como você está treinando. Os valores são estimativas feitas com o seu histórico.": "Un resumen rápido de cómo estás entrenando. Los valores son estimaciones con tu historial.", "Variação desde a avaliação anterior.": "Variación desde la evaluación anterior.", "Volume (14 dias)": "Volumen (14 días)", "dias": "días", "min vs semana passada": "min vs semana pasada", "{0} exercícios nos últimos 7 dias.": "{0} ejercicios en los últimos 7 días.", "{0} kg levantados nos últimos 7 dias.": "{0} kg levantados en los últimos 7 días.", "{0}% da sua média das 3 semanas anteriores. Acima de 110% pede mais descanso.": "{0}% de tu promedio de las 3 semanas anteriores. Por encima de 110% pide más descanso.", "📊 Painel do seu treino": "📊 Panel de tu entrenamiento", "🩺 Seus indicadores": "🩺 Tus indicadores"});
 const TRAD_NORM = {};
 function trNormalizar(idioma) {
   if (TRAD_NORM[idioma]) return TRAD_NORM[idioma];
@@ -3933,6 +3937,9 @@ function AppMassiPro({ onSolicitarRemount }) {
   const tourPersonalizadoRef = useRef(null);
   const tourDuplicarRef = useRef(null);
   const tourBuscaRef = useRef(null);
+  const tourMedidorRef = useRef(null);
+  const tourMinisRef = useRef(null);
+  const tourAtalhosRef = useRef(null);
   const tourDiasRef = useRef(null);
   const tourCronoRapidoRef = useRef(null);
   const tourRapidosRef = useRef(null);
@@ -3965,7 +3972,7 @@ function AppMassiPro({ onSolicitarRemount }) {
   const [toursVistos, setToursVistos] = useState({
     rotina: undefined, inicio: undefined, cross: undefined, novidades: undefined,
     historico: undefined, evolucao: undefined, notas: undefined, premium: undefined,
-    rotina2: undefined,
+    rotina2: undefined, inicio2: undefined,
   });
   const toursDef = {
     rotina: [
@@ -3979,6 +3986,12 @@ function AppMassiPro({ onSolicitarRemount }) {
     inicio: [
       { ref: tourTreinoHojeRef, texto: "Esse card mostra o treino de hoje. Toque nele pra ir direto pro dia certo lá na Rotina." },
       { ref: tourSobreBtnRef, texto: "Aqui na aba Sobre tem o tutorial completo do app e outras informações — dá uma olhada quando quiser." },
+    ],
+    // Tour 2 do Início: o medidor e os atalhos novos.
+    inicio2: [
+      { ref: tourMedidorRef, texto: "Esse é o seu Índice Massi, de 0 a 100. O ponteiro sobe conforme você treina com constância. Toque em \"Como esse índice é calculado?\" pra ver a explicação." },
+      { ref: tourMinisRef, texto: "Aqui estão os 4 hábitos que formam o índice: constância, sequência, equilíbrio muscular e evolução. Cada medidor diz o que falta pra completar." },
+      { ref: tourAtalhosRef, texto: "Atalhos ilustrados pras outras telas do app: toque num card pra ir direto." },
     ],
     cross: [
       { ref: tourWodBtnRef, texto: "Toque aqui pra começar o WOD do dia — o cronômetro certo pro treino já vem embutido pra te guiar." },
@@ -4068,7 +4081,7 @@ function AppMassiPro({ onSolicitarRemount }) {
   // (sem marcar como visto) em vez de deixá-lo "vazando" pra tela nova.
   useEffect(() => {
     if (!tourAtivo) return;
-    const abaEquivalente = (tourAtivo.aba === "novidades" || tourAtivo.aba === "rotina2" || tourAtivo.aba === "rotinaTudo") ? "rotina" : tourAtivo.aba;
+    const abaEquivalente = (tourAtivo.aba === "novidades" || tourAtivo.aba === "rotina2" || tourAtivo.aba === "rotinaTudo") ? "rotina" : tourAtivo.aba === "inicio2" ? "inicio" : tourAtivo.aba;
     if (abaEquivalente !== activeTab) {
       setTourAtivo(null);
     }
@@ -4113,6 +4126,23 @@ function AppMassiPro({ onSolicitarRemount }) {
     const timeoutId = setTimeout(() => {
       if (!cancelado) setTourAtivo({ aba: "novidades", passo: 0 });
     }, 600);
+    return () => {
+      cancelado = true;
+      clearTimeout(timeoutId);
+    };
+  }, [activeTab, loaded, toursVistos, onboardingPendente]);
+  // Tour 2 do Início (inicio2): só depois do tour antigo do Início.
+  useEffect(() => {
+    if (tourAtivo) return;
+    if (onboardingPendente) return;
+    if (activeTab !== "inicio") return;
+    if (!loaded) return;
+    if (toursVistos.inicio !== true) return;
+    if (toursVistos.inicio2 !== false) return;
+    let cancelado = false;
+    const timeoutId = setTimeout(() => {
+      if (!cancelado) setTourAtivo({ aba: "inicio2", passo: 0 });
+    }, 900);
     return () => {
       cancelado = true;
       clearTimeout(timeoutId);
@@ -4365,7 +4395,7 @@ function AppMassiPro({ onSolicitarRemount }) {
         // segue com os padrões
       }
       const vistosCarregados = {};
-      for (const aba of ["rotina", "inicio", "cross", "novidades", "rotina2", "historico", "evolucao", "notas", "premium"]) {
+      for (const aba of ["rotina", "inicio", "inicio2", "cross", "novidades", "rotina2", "historico", "evolucao", "notas", "premium"]) {
         try {
           const res = await window.storage.get(`tour-${aba}-visto`);
           vistosCarregados[aba] = !!(res && res.value === "1");
@@ -6471,9 +6501,13 @@ function AppMassiPro({ onSolicitarRemount }) {
             setActiveTab("rotina");
             setDiaParaFocar(dia || null);
           }}
+          onIrAba={(aba) => setActiveTab(aba)}
           t={t}
           idioma={idioma}
           refTreinoHojeTour={tourTreinoHojeRef}
+          refMedidorTour={tourMedidorRef}
+          refMinisTour={tourMinisRef}
+          refAtalhosTour={tourAtalhosRef}
         />
       )}
 
@@ -6818,7 +6852,278 @@ function getDicaDoDia(idioma) {
 }
 
 // ---------- INÍCIO — painel principal ----------
-function InicioTab({ perfilAtivoNome, rotina, diasSelecionados, historico, recordes, onIrTreino, t, idioma, refTreinoHojeTour }) {
+// ===============================================================
+// ÍNDICE MASSI — medidor da tela Início (estilo velocímetro)
+// Junta 4 hábitos (25 pontos cada) numa nota de 0 a 100. Tudo calculado
+// com o histórico que o app já guarda; desenho em SVG simples (sem CSS
+// animation: o ponteiro anima por JS, que funciona no WebView do celular).
+// ===============================================================
+const ZONAS_MASSI = [
+  { nome: "Sedentário", cor: "#F0524F", faixa: "0–24" },
+  { nome: "Ativo", cor: "#F5A524", faixa: "25–49" },
+  { nome: "Esportivo", cor: "#D3DE3F", faixa: "50–74" },
+  { nome: "Atlético", cor: "#4FCB6B", faixa: "75–100" },
+];
+
+function calcularIndiceMassi(historico, rotina, diasSelecionados, streak) {
+  const ymd = (off) => new Date(Date.now() - off * 86400000).toISOString().slice(0, 10);
+  const lim7 = ymd(6);
+  const lim14 = ymd(13);
+  const lim28 = ymd(27);
+  const hist = historico || [];
+  const ult7 = hist.filter((h) => h.data >= lim7);
+  const ant21 = hist.filter((h) => h.data >= lim28 && h.data < lim7);
+
+  const diasPlanejados = (rotina || []).filter((d) => (diasSelecionados || []).includes(d.dia) && d.foco !== "Descanso");
+  const planejados = diasPlanejados.length;
+  const diasFeitos7 = new Set(ult7.map((h) => h.data)).size;
+
+  // 1) Constância
+  const pctConst = planejados > 0 ? Math.min(1, diasFeitos7 / planejados) : diasFeitos7 > 0 ? 1 : 0;
+
+  // 2) Sequência (meta: 7 dias)
+  const pctSeq = Math.min(1, (streak || 0) / 7);
+
+  // 3) Equilíbrio muscular (grupos da rotina treinados nos últimos 14 dias)
+  const regioesPlan = new Set();
+  diasPlanejados.forEach((d) => {
+    const pesos = FOCO_REGIOES[d.foco];
+    if (pesos) Object.keys(pesos).forEach((r) => regioesPlan.add(r));
+  });
+  const regioesFeitas = new Set();
+  hist.filter((h) => h.data >= lim14).forEach((h) => {
+    const pesos = FOCO_REGIOES[h.foco];
+    if (pesos) Object.keys(pesos).forEach((r) => regioesFeitas.add(r));
+  });
+  const regioesLista = [...regioesPlan];
+  const feitasPlan = regioesLista.filter((r) => regioesFeitas.has(r));
+  const faltamRegioes = regioesLista.filter((r) => !regioesFeitas.has(r));
+  const pctEqui = regioesLista.length > 0 ? feitasPlan.length / regioesLista.length : 0;
+
+  // 4) Evolução (exercícios dos últimos 7 dias x média semanal dos 21 dias anteriores)
+  const ex7 = ult7.reduce((a, h) => a + (h.totalExercicios || 0), 0);
+  const base = ant21.reduce((a, h) => a + (h.totalExercicios || 0), 0) / 3;
+  const pctEvo = base > 0 ? Math.min(1, ex7 / base) : ex7 > 0 ? 0.6 : 0;
+
+  const comps = [
+    {
+      id: "const", emoji: "📅", titulo: "Constância", pct: pctConst,
+      valorTexto: trt("{0}/{1} treinos", [diasFeitos7, planejados]),
+      explica: "Treinos feitos nos últimos 7 dias, comparados com os planejados na sua rotina.",
+      dica: pctConst >= 1 ? tr("Meta da semana batida! 🎉") : planejados - diasFeitos7 === 1 ? tr("Falta 1 treino pra fechar essa meta.") : trt("Faltam {0} treinos pra fechar essa meta.", [Math.max(0, planejados - diasFeitos7)]),
+    },
+    {
+      id: "seq", emoji: "🔥", titulo: "Sequência", pct: pctSeq,
+      valorTexto: trt("{0}/7 dias", [Math.min(streak || 0, 7)]),
+      explica: "Dias seguidos treinando. Uma folga por semana não quebra a sequência.",
+      dica: pctSeq >= 1 ? tr("Uma semana inteira de sequência! 🔥") : (streak || 0) === 0 ? tr("Treine hoje pra começar sua sequência.") : tr("Treine hoje pra manter a chama acesa."),
+    },
+    {
+      id: "equi", emoji: "⚖️", titulo: "Equilíbrio", pct: pctEqui,
+      valorTexto: trt("{0}/{1} grupos", [feitasPlan.length, regioesLista.length]),
+      explica: "Grupos musculares da sua rotina que você treinou nos últimos 14 dias.",
+      dica: regioesLista.length === 0 ? tr("Monte sua rotina pra medir o equilíbrio.") : faltamRegioes.length === 0 ? tr("Todos os grupos em dia! 💪") : trt("Falta treinar: {0}.", [faltamRegioes.slice(0, 2).map((r) => String(tr(REGIAO_LABEL[r]))).join(", ")]),
+    },
+    {
+      id: "evo", emoji: "📈", titulo: "Evolução", pct: pctEvo,
+      valorTexto: ex7 === 1 ? tr("1 exercício") : trt("{0} exercícios", [ex7]),
+      explica: "Exercícios dos últimos 7 dias, comparados com a sua média das 3 semanas anteriores.",
+      dica: base <= 0 ? tr("Continue treinando: em 3 semanas eu comparo com a sua média.") : pctEvo >= 1 ? tr("Você está acima da sua média! 📈") : trt("Faça mais {0} pra igualar a sua média.", [Math.max(1, Math.ceil(base - ex7))]),
+    },
+  ];
+  const total = Math.round(comps.reduce((a, c) => a + c.pct * 25, 0));
+  const zonaIdx = total >= 75 ? 3 : total >= 50 ? 2 : total >= 25 ? 1 : 0;
+  const fraco = [...comps].sort((a, b) => a.pct - b.pct)[0];
+  return { total, zonaIdx, comps, fraco };
+}
+
+// Número que "corre" até o alvo (ponteiro animado, só JS + atributo SVG).
+function useValorAnimado(alvo, passo = 1.4, ms = 22) {
+  const [v, setV] = useState(0);
+  const ref = useRef(0);
+  useEffect(() => {
+    let atual = ref.current;
+    const id = setInterval(() => {
+      if (Math.abs(atual - alvo) <= passo) {
+        atual = alvo;
+        ref.current = alvo;
+        setV(alvo);
+        clearInterval(id);
+        return;
+      }
+      atual += alvo > atual ? passo : -passo;
+      ref.current = atual;
+      setV(atual);
+    }, ms);
+    return () => clearInterval(id);
+  }, [alvo]);
+  return v;
+}
+
+function MedidorMassiSVG({ valor, zonaIdx }) {
+  const cx = 150, cy = 150, R = 104, W = 27;
+  const pol = (r, a) => ({ x: cx + r * Math.sin((a * Math.PI) / 180), y: cy - r * Math.cos((a * Math.PI) / 180) });
+  const arco = (a1, a2) => {
+    const p1 = pol(R, a1), p2 = pol(R, a2);
+    return `M ${p1.x.toFixed(2)} ${p1.y.toFixed(2)} A ${R} ${R} 0 0 1 ${p2.x.toFixed(2)} ${p2.y.toFixed(2)}`;
+  };
+  const ang = -90 + 1.8 * Math.max(0, Math.min(100, valor));
+  return (
+    <svg viewBox="0 0 300 176" width="100%" style={{ display: "block", maxWidth: 360, margin: "0 auto" }} role="img" aria-label="Medidor Massi">
+      {ZONAS_MASSI.map((z, i) => {
+        const a1 = -90 + 45 * i + 1.2, a2 = -90 + 45 * (i + 1) - 1.2;
+        const ativa = i === zonaIdx;
+        return (
+          <g key={z.nome}>
+            <path d={arco(a1, a2)} stroke={z.cor} strokeWidth={ativa ? W + 5 : W} fill="none" opacity={ativa ? 1 : 0.5} />
+            <text
+              transform={`translate(${pol(R, -90 + 45 * i + 22.5).x.toFixed(2)} ${pol(R, -90 + 45 * i + 22.5).y.toFixed(2)}) rotate(${-90 + 45 * i + 22.5})`}
+              textAnchor="middle" dy="3.2" fontSize="9" fontWeight="800" letterSpacing="0.8" fill="#10150A" opacity={ativa ? 1 : 0.8}
+            >
+              {String(tr(z.nome)).toUpperCase()}
+            </text>
+          </g>
+        );
+      })}
+      {[0, 25, 50, 75, 100].map((n) => {
+        const a = -90 + 1.8 * n;
+        const p1 = pol(R - W / 2 - 3, a), p2 = pol(R - W / 2 - 9, a);
+        return <line key={n} x1={p1.x} y1={p1.y} x2={p2.x} y2={p2.y} stroke="rgba(255,255,255,0.35)" strokeWidth="1.5" />;
+      })}
+      <text x={cx - R} y={cy + 20} textAnchor="middle" fontSize="10" fill="rgba(255,255,255,0.55)">0</text>
+      <text x={cx + R} y={cy + 20} textAnchor="middle" fontSize="10" fill="rgba(255,255,255,0.55)">100</text>
+      <g transform={`rotate(${ang.toFixed(2)} ${cx} ${cy})`}>
+        <polygon points={`${cx},${cy - R + 20} ${cx + 6.5},${cy} ${cx - 6.5},${cy}`} fill="#F4F6F2" />
+      </g>
+      <circle cx={cx} cy={cy} r="11" fill="#F4F6F2" />
+      <circle cx={cx} cy={cy} r="4.5" fill="#1A2226" />
+    </svg>
+  );
+}
+
+function MiniMedidorSVG({ pct }) {
+  const cx = 50, cy = 50, R = 38;
+  const p = Math.max(0, Math.min(1, pct));
+  const pol = (a) => ({ x: cx + R * Math.sin((a * Math.PI) / 180), y: cy - R * Math.cos((a * Math.PI) / 180) });
+  const arco = (a1, a2) => {
+    const p1 = pol(a1), p2 = pol(a2);
+    return `M ${p1.x.toFixed(2)} ${p1.y.toFixed(2)} A ${R} ${R} 0 0 1 ${p2.x.toFixed(2)} ${p2.y.toFixed(2)}`;
+  };
+  const cor = p < 0.34 ? "#F0524F" : p < 0.67 ? "#F5A524" : "#4FCB6B";
+  const fim = -90 + Math.min(179.5, 180 * p);
+  const ponta = pol(fim);
+  return (
+    <svg viewBox="0 0 100 60" width="100%" style={{ display: "block", maxWidth: 130, margin: "0 auto" }}>
+      <path d={arco(-90, 89.9)} stroke="rgba(255,255,255,0.12)" strokeWidth="9" fill="none" strokeLinecap="round" />
+      {p > 0.01 && <path d={arco(-90, fim)} stroke={cor} strokeWidth="9" fill="none" strokeLinecap="round" />}
+      <circle cx={ponta.x} cy={ponta.y} r={p > 0.01 ? 2.6 : 0} fill="#fff" />
+      <text x={cx} y={cy - 2} textAnchor="middle" fontSize="15" fontWeight="800" fill="#fff">{Math.round(p * 100)}%</text>
+    </svg>
+  );
+}
+
+function IndiceMassiCard({ indice, refTour, refMinis }) {
+  const [aberto, setAberto] = useState(false);
+  const valor = useValorAnimado(indice.total);
+  const zona = ZONAS_MASSI[indice.zonaIdx];
+  const proxima = ZONAS_MASSI[indice.zonaIdx + 1];
+  const faltam = (indice.zonaIdx + 1) * 25 - indice.total;
+  const dim = CROSS_TEXT_DIM;
+  return (
+    <>
+      <section
+        ref={refTour}
+        style={{ background: "linear-gradient(160deg, rgba(40,48,52,0.95), rgba(18,22,25,0.98))", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 16, padding: "16px 14px 14px", marginBottom: 14 }}
+      >
+        <div style={{ textAlign: "center", fontSize: 11, fontWeight: 800, letterSpacing: 2, color: dim }}>{String(tr("ÍNDICE MASSI")).toUpperCase()}</div>
+        <MedidorMassiSVG valor={valor} zonaIdx={indice.zonaIdx} />
+        <div style={{ textAlign: "center", marginTop: -2 }}>
+          <div style={{ fontSize: 40, fontWeight: 800, color: "#fff", lineHeight: 1 }}>{Math.round(valor)}<span style={{ fontSize: 14, color: dim, fontWeight: 600 }}> /100</span></div>
+          <div style={{ marginTop: 6, display: "inline-block", padding: "4px 14px", borderRadius: 999, background: zona.cor, color: "#10150A", fontWeight: 800, fontSize: 13, letterSpacing: 1 }}>
+            {String(tr(zona.nome)).toUpperCase()}
+          </div>
+        </div>
+        <div style={{ marginTop: 12, height: 8, borderRadius: 999, background: "rgba(255,255,255,0.1)", overflow: "hidden" }}>
+          <div style={{ width: `${Math.max(2, indice.total)}%`, height: "100%", background: zona.cor, borderRadius: 999 }} />
+        </div>
+        <div style={{ marginTop: 8, textAlign: "center", fontSize: 12.5, color: "#E6EBE7", lineHeight: 1.5 }}>
+          {proxima
+            ? trt("Faltam {0} pontos pra zona {1}.", [faltam, String(tr(proxima.nome))])
+            : tr("Você está na zona máxima! Mantenha o ritmo. 🏆")}
+          {" "}
+          {indice.total === 0 ? tr("Conclua um treino pra mexer o ponteiro.") : trt("Dica: o ponto fraco agora é {0}.", [String(tr(indice.fraco.titulo)).toLowerCase()])}
+        </div>
+        <button
+          onClick={() => setAberto(!aberto)}
+          style={{ display: "block", margin: "12px auto 0", background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.15)", color: "#fff", borderRadius: 999, padding: "7px 16px", fontSize: 12.5, fontWeight: 700, cursor: "pointer" }}
+        >
+          {aberto ? tr("Fechar explicação ▲") : tr("ℹ️ Como esse índice é calculado? ▼")}
+        </button>
+        {aberto && (
+          <div style={{ marginTop: 12, fontSize: 12.5, color: "#E6EBE7", lineHeight: 1.55 }}>
+            <p style={{ margin: "0 0 8px" }}>{tr("O Índice Massi vai de 0 a 100 e junta os 4 hábitos que mais pesam nos seus resultados. Cada um vale até 25 pontos e é recalculado sempre que você abre o app.")}</p>
+            {indice.comps.map((c) => (
+              <div key={c.id} style={{ display: "flex", gap: 8, marginBottom: 6 }}>
+                <span style={{ fontSize: 18 }}>{c.emoji}</span>
+                <span><strong>{tr(c.titulo)}</strong> — {tr(c.explica)}</span>
+              </div>
+            ))}
+            <div style={{ marginTop: 10, fontWeight: 700 }}>{tr("As 4 zonas:")}</div>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 6 }}>
+              {ZONAS_MASSI.map((z) => (
+                <span key={z.nome} style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 12 }}>
+                  <span style={{ width: 11, height: 11, borderRadius: 999, background: z.cor, display: "inline-block" }} />
+                  {tr(z.nome)} ({z.faixa})
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+      </section>
+
+      <div ref={refMinis} style={{ display: "flex", flexWrap: "wrap", gap: 10, marginBottom: 14 }}>
+        {indice.comps.map((c) => (
+          <div key={c.id} style={{ flex: "1 1 calc(50% - 5px)", minWidth: 0, boxSizing: "border-box", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.09)", borderRadius: 14, padding: "10px 10px 12px" }}>
+            <div style={{ fontSize: 12.5, fontWeight: 800, color: "#fff", marginBottom: 2 }}>{c.emoji} {tr(c.titulo)}</div>
+            <MiniMedidorSVG pct={c.pct} />
+            <div style={{ textAlign: "center", fontSize: 13, fontWeight: 800, color: "#fff", marginTop: 2 }}>{c.valorTexto}</div>
+            <div style={{ fontSize: 11, color: dim, lineHeight: 1.4, marginTop: 4 }}>{tr(c.explica)}</div>
+            <div style={{ fontSize: 11.5, color: c.pct >= 1 ? "#7FE08F" : "#F5C26B", fontWeight: 700, lineHeight: 1.4, marginTop: 5 }}>{c.dica}</div>
+          </div>
+        ))}
+      </div>
+    </>
+  );
+}
+
+function AtalhosIlustradosCard({ onIrAba, refTour }) {
+  const itens = [
+    { aba: "rotina", emoji: "💪", titulo: "Rotina", texto: "Monte e ajuste seus treinos, com vídeo de cada exercício." },
+    { aba: "historico", emoji: "📜", titulo: "Histórico", texto: "Reveja cada treino concluído, com datas e cargas." },
+    { aba: "evolucao", emoji: "📏", titulo: "Avaliação", texto: "Peso, medidas e gráficos pra ver sua evolução." },
+    { aba: "notas", emoji: "📝", titulo: "Notas", texto: "Anote como se sentiu, dicas e lembretes do treino." },
+  ];
+  return (
+    <section style={{ marginBottom: 14 }} ref={refTour}>
+      <div style={{ fontSize: 13, fontWeight: 800, color: "#fff", marginBottom: 8 }}>{tr("🧭 Pra onde ir daqui")}</div>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
+        {itens.map((it) => (
+          <button
+            key={it.aba}
+            onClick={() => onIrAba && onIrAba(it.aba)}
+            style={{ flex: "1 1 calc(50% - 5px)", minWidth: 0, boxSizing: "border-box", textAlign: "left", cursor: "pointer", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.09)", borderRadius: 14, padding: "12px 12px 13px", color: "#fff" }}
+          >
+            <div style={{ fontSize: 30, lineHeight: 1 }}>{it.emoji}</div>
+            <div style={{ fontSize: 14, fontWeight: 800, marginTop: 6 }}>{tr(it.titulo)}</div>
+            <div style={{ fontSize: 11.5, color: CROSS_TEXT_DIM, lineHeight: 1.4, marginTop: 3 }}>{tr(it.texto)}</div>
+          </button>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function InicioTab({ perfilAtivoNome, rotina, diasSelecionados, historico, recordes, onIrTreino, onIrAba, t, idioma, refTreinoHojeTour, refMedidorTour, refMinisTour, refAtalhosTour }) {
   const [avaliacoes, setAvaliacoes] = useState([]);
   const [agora, setAgora] = useState(() => new Date());
 
@@ -6843,6 +7148,7 @@ function InicioTab({ perfilAtivoNome, rotina, diasSelecionados, historico, recor
   const hojeEhDiaDeTreino = diasSelecionados.includes(diaHoje) && treinoHoje && treinoHoje.foco !== "Descanso";
 
   const streak = calcularStreak(historico);
+  const indiceMassi = calcularIndiceMassi(historico, rotina, diasSelecionados, streak);
 
   const hojeData = new Date();
   const diaSemanaIdx = (hojeData.getDay() + 6) % 7;
@@ -7000,6 +7306,8 @@ function InicioTab({ perfilAtivoNome, rotina, diasSelecionados, historico, recor
         {streak > 0 && <span style={styles.resumoDiaStreak}>🔥 {tr(streak)}</span>}
       </div>
 
+      <IndiceMassiCard indice={indiceMassi} refTour={refMedidorTour} refMinis={refMinisTour} />
+
       {mostrarAvisoQuaseLa && (
         <div style={styles.inicioQuaseLaBanner}>
           {tr("🚀 Só mais 1 treino essa semana pra igualar seu recorde de ")}{tr(recordeSemanalAnterior)} {tr("treinos numa semana!")}</div>
@@ -7030,7 +7338,13 @@ function InicioTab({ perfilAtivoNome, rotina, diasSelecionados, historico, recor
         return (
           <section style={styles.card}>
             <div style={styles.cardLabel}>{tr("🗺️ Mapa muscular (últimos 14 dias)")}</div>
+            <div style={{ fontSize: 11.5, color: CROSS_TEXT_DIM, lineHeight: 1.45, margin: "-2px 0 8px" }}>{tr("Quanto mais forte a cor, mais você treinou aquela região.")}</div>
             <MapaMuscularSVG volumePorRegiao={volumePorRegiaoInicio} />
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 8, fontSize: 11, color: CROSS_TEXT_DIM }}>
+              <span>{tr("Pouco")}</span>
+              <div style={{ flex: 1, height: 6, borderRadius: 999, background: "linear-gradient(90deg, rgba(255,255,255,0.15), #F5A524, #F0524F)" }} />
+              <span>{tr("Muito")}</span>
+            </div>
           </section>
         );
       })()}
@@ -7083,6 +7397,7 @@ function InicioTab({ perfilAtivoNome, rotina, diasSelecionados, historico, recor
 
       <section style={styles.inicioCard}>
         <div style={styles.inicioCardLabel}>📅 {t("inicioResumoSemanal")}</div>
+        <div style={{ fontSize: 11.5, color: CROSS_TEXT_DIM, lineHeight: 1.45, margin: "-2px 0 8px" }}>{tr("Cada ✓ marca um dia em que você concluiu o treino.")}</div>
         <div style={styles.inicioSemanaRow}>
           {diasDaSemana.map((d) => (
             <div key={d.nomeDia} style={styles.inicioSemanaDia}>
@@ -7110,6 +7425,8 @@ function InicioTab({ perfilAtivoNome, rotina, diasSelecionados, historico, recor
           </div>
         )}
       </section>
+
+      <AtalhosIlustradosCard onIrAba={onIrAba} refTour={refAtalhosTour} />
 
       <section style={styles.inicioCard}>
         <div style={styles.inicioCardLabel}>{tr("🗓️ Seu mês de ")}{tr(nomeMesAtual)}</div>
@@ -8950,6 +9267,8 @@ function EvolucaoTab({ onAplicarTreino, refsTour }) {
 
   return (
     <div>
+      <PainelIndicadoresAvaliacao ultima={ultima} anterior={anterior} />
+
       <section style={styles.card} ref={refsTour ? refsTour.registrar : undefined}>
         <div style={styles.cardLabel}>{tr("Registrar avaliação de hoje")}</div>
 
@@ -12201,6 +12520,234 @@ function MapaMuscularSVG({ volumePorRegiao, ativacao, piscando, mini }) {
   );
 }
 
+// ===============================================================
+// PAINÉIS ESTILO "OVERVIEW" (anéis, barras, linha e medidor em arco)
+// Usados no Histórico e na Avaliação. Só SVG e atributos simples, com a
+// animação feita por JS (funciona no WebView do celular).
+// ===============================================================
+const PAINEL_CARD = { background: "#1B2328", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 18, padding: "12px 12px 13px", boxSizing: "border-box", minWidth: 0 };
+// Fundo escuro opaco: os painéis ficam legíveis sobre qualquer fundo da aba.
+const PAINEL_SECAO = { background: "#11171A", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 16, padding: "14px 12px 14px", marginBottom: 14 };
+const PAINEL_TITULO = { fontSize: 14, fontWeight: 800, color: "#fff", marginBottom: 6 };
+const PAINEL_DIM = "#AAB7BE";
+
+function AnelMedidor({ pct, centro, unidade, emoji, rotulo, cor, dica }) {
+  const alvo = Math.round(Math.max(0, Math.min(1, pct)) * 100);
+  const v = useValorAnimado(alvo);
+  const R = 44, C = 2 * Math.PI * R;
+  return (
+    <div style={{ flex: "1 1 0", minWidth: 0, textAlign: "center" }}>
+      <svg viewBox="0 0 110 110" width="100%" style={{ display: "block", maxWidth: 112, margin: "0 auto" }}>
+        <circle cx="55" cy="55" r={R} fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="9" />
+        {v > 0.5 && <circle cx="55" cy="55" r={R} fill="none" stroke={cor} strokeWidth="9" strokeLinecap="round" strokeDasharray={`${(C * v) / 100} ${C}`} transform="rotate(-90 55 55)" />}
+        <text x="55" y={unidade ? 57 : 62} textAnchor="middle" fontSize="27" fontWeight="800" fill="#fff">{centro}</text>
+        {unidade && <text x="55" y="74" textAnchor="middle" fontSize="11" fill={PAINEL_DIM}>{unidade}</text>}
+      </svg>
+      <div style={{ fontSize: 12.5, fontWeight: 800, color: "#fff", marginTop: 2 }}>{emoji} {rotulo}</div>
+      <div style={{ fontSize: 11, color: PAINEL_DIM, lineHeight: 1.35, marginTop: 3 }}>{dica}</div>
+    </div>
+  );
+}
+
+// Posição (0–1) de um valor numa escala com zonas de tamanhos diferentes,
+// desenhadas com a mesma largura no arco.
+function posicaoNasZonas(v, min, zonas) {
+  let lo = min;
+  for (let i = 0; i < zonas.length; i++) {
+    const hi = zonas[i].ate;
+    if (v <= hi || i === zonas.length - 1) {
+      const f = hi > lo ? Math.max(0, Math.min(1, (v - lo) / (hi - lo))) : 0;
+      return (i + f) / zonas.length;
+    }
+    lo = hi;
+  }
+  return 0;
+}
+
+function MedidorArcoZonas({ valor, min, zonas, texto }) {
+  const pos = posicaoNasZonas(valor, min, zonas);
+  const anim = useValorAnimado(Math.round(pos * 100)) / 100;
+  const zi = Math.max(0, zonas.findIndex((z) => valor <= z.ate));
+  const zona = zonas[zi === -1 ? zonas.length - 1 : zi];
+  const cx = 50, cy = 52, R = 38;
+  const pol = (r, a) => ({ x: cx + r * Math.sin((a * Math.PI) / 180), y: cy - r * Math.cos((a * Math.PI) / 180) });
+  const arco = (a1, a2) => {
+    const p1 = pol(R, a1), p2 = pol(R, a2);
+    return `M ${p1.x.toFixed(2)} ${p1.y.toFixed(2)} A ${R} ${R} 0 0 1 ${p2.x.toFixed(2)} ${p2.y.toFixed(2)}`;
+  };
+  const n = zonas.length, passo = 180 / n;
+  const ang = -90 + 180 * anim;
+  const ponta = pol(R - 17, ang);
+  return (
+    <div>
+      <svg viewBox="0 0 100 64" width="100%" style={{ display: "block", maxWidth: 150, margin: "0 auto" }}>
+        {zonas.map((z, i) => (
+          <path key={z.nome} d={arco(-90 + passo * i + 1.6, -90 + passo * (i + 1) - 1.6)} stroke={z.cor} strokeWidth="9" fill="none" opacity={i === zi ? 1 : 0.45} />
+        ))}
+        <line x1={cx} y1={cy} x2={ponta.x} y2={ponta.y} stroke="#F4F6F2" strokeWidth="2.6" strokeLinecap="round" />
+        <circle cx={cx} cy={cy} r="4" fill="#F4F6F2" />
+      </svg>
+      <div style={{ textAlign: "center", marginTop: -2 }}>
+        <span style={{ fontSize: 22, fontWeight: 800, color: "#fff" }}>{texto}</span>
+        <span style={{ fontSize: 12, color: zona.cor, fontWeight: 800 }}> · {tr(zona.nome)}</span>
+      </div>
+    </div>
+  );
+}
+
+function CartaoPainel({ icone, titulo, children, explica }) {
+  return (
+    <div style={{ ...PAINEL_CARD, flex: "1 1 calc(50% - 5px)" }}>
+      <div style={{ fontSize: 12.5, fontWeight: 700, color: "#E6EBE7", marginBottom: 6 }}>{icone} {titulo}</div>
+      {children}
+      {explica && <div style={{ fontSize: 11, color: PAINEL_DIM, lineHeight: 1.4, marginTop: 6 }}>{explica}</div>}
+    </div>
+  );
+}
+
+const ZONAS_CARGA = [
+  { ate: 70, cor: "#6FB7F5", nome: "Leve" },
+  { ate: 110, cor: "#4FCB6B", nome: "Ideal" },
+  { ate: 140, cor: "#F5A524", nome: "Alta" },
+  { ate: 220, cor: "#F0524F", nome: "Excessiva" },
+];
+
+function PainelTreinoHistorico({ historico }) {
+  const hist = historico || [];
+  const ymd = (off) => new Date(Date.now() - off * 86400000).toISOString().slice(0, 10);
+  const somaDia = (d, campo) => hist.filter((h) => h.data === d).reduce((a, h) => a + (campo === "min" ? estimarDuracaoMinPorRegistro(h) : (h[campo] || 0)), 0);
+  const dias7 = [6, 5, 4, 3, 2, 1, 0].map((off) => {
+    const d = ymd(off);
+    return { d, ex: somaDia(d, "totalExercicios"), rotulo: String(new Date(d + "T12:00:00").toLocaleDateString(localeAtual(), { weekday: "narrow" })).toUpperCase() };
+  });
+  const ex7 = dias7.reduce((a, x) => a + x.ex, 0);
+  const min7 = dias7.reduce((a, x) => a + somaDia(x.d, "min"), 0);
+  const min7ant = [13, 12, 11, 10, 9, 8, 7].reduce((a, off) => a + somaDia(ymd(off), "min"), 0);
+  const ex21 = [27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7].reduce((a, off) => a + somaDia(ymd(off), "totalExercicios"), 0);
+  const base = ex21 / 3;
+  const ratio = base > 0 ? ex7 / base : ex7 > 0 ? 1 : 0;
+  const cargaPct = Math.round(ratio * 100);
+  const vol14 = [13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0].map((off) => somaDia(ymd(off), "volumeTotal"));
+  const vol7 = vol14.slice(7).reduce((a, x) => a + x, 0);
+
+  // treinos do mês (meta: 12 = 3 por semana)
+  const agora = new Date();
+  const treinosMes = new Set(hist.filter((h) => { const d = new Date(h.data + "T00:00:00"); return d.getMonth() === agora.getMonth() && d.getFullYear() === agora.getFullYear(); }).map((h) => h.data)).size;
+  const streak = calcularStreak(hist);
+
+  // prontidão: recuperação estimada dos grupos treinados nos últimos 3 dias
+  const REC = [0.25, 0.6, 0.9, 1];
+  const ultimaPorRegiao = {};
+  hist.filter((h) => h.data >= ymd(3)).forEach((h) => {
+    const pesos = FOCO_REGIOES[h.foco];
+    if (!pesos) return;
+    const dias = Math.max(0, Math.round((new Date(ymd(0) + "T00:00:00") - new Date(h.data + "T00:00:00")) / 86400000));
+    Object.keys(pesos).forEach((r) => { if (ultimaPorRegiao[r] === undefined || dias < ultimaPorRegiao[r]) ultimaPorRegiao[r] = dias; });
+  });
+  const regs = Object.entries(ultimaPorRegiao);
+  const prontidao = regs.length === 0 ? 100 : Math.round((regs.reduce((a, [, dias]) => a + REC[Math.min(3, dias)], 0) / regs.length) * 100);
+  const recuperando = regs.filter(([, dias]) => dias < 2).map(([r]) => String(tr(REGIAO_LABEL[r]))).slice(0, 2);
+
+  const maxEx = Math.max(1, ...dias7.map((x) => x.ex));
+  const maxVol = Math.max(1, ...vol14);
+  const pts = vol14.map((v, i) => `${(i * (100 / 13)).toFixed(1)},${(34 - (v / maxVol) * 30).toFixed(1)}`).join(" ");
+  const difMin = min7 - min7ant;
+  const corProntidao = prontidao >= 80 ? "#4FCB6B" : prontidao >= 50 ? "#F5A524" : "#F0524F";
+
+  return (
+    <section style={PAINEL_SECAO}>
+      <div style={PAINEL_TITULO}>{tr("📊 Painel do seu treino")}</div>
+      <div style={{ fontSize: 11.5, color: PAINEL_DIM, lineHeight: 1.45, margin: "-2px 0 12px" }}>{tr("Um resumo rápido de como você está treinando. Os valores são estimativas feitas com o seu histórico.")}</div>
+      <div style={{ display: "flex", gap: 6, marginBottom: 14 }}>
+        <AnelMedidor pct={treinosMes / 12} centro={treinosMes} unidade="/12" emoji="🏋️" rotulo={tr("Treinos no mês")} cor="#7FB4FF" dica={tr("Meta: 12 por mês (3 por semana).")} />
+        <AnelMedidor pct={prontidao / 100} centro={prontidao} emoji="🔋" rotulo={tr("Prontidão")} cor={corProntidao} dica={recuperando.length ? trt("Recuperando: {0}.", [recuperando.join(", ")]) : tr("Tudo recuperado: pode treinar pesado.")} />
+        <AnelMedidor pct={Math.min(1, streak / 7)} centro={streak} unidade={tr("dias")} emoji="🔥" rotulo={tr("Sequência")} cor="#FF9A4D" dica={tr("Dias seguidos treinando. Meta: 7.")} />
+      </div>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
+        <CartaoPainel icone="🏃" titulo={tr("Exercícios por dia")} explica={ex7 === 0 ? tr("Nenhum treino registrado nos últimos 7 dias.") : trt("{0} exercícios nos últimos 7 dias.", [ex7])}>
+          <div style={{ fontSize: 26, fontWeight: 800, color: "#fff", lineHeight: 1 }}>{ex7}</div>
+          <div style={{ display: "flex", alignItems: "flex-end", gap: 5, height: 52, marginTop: 8 }}>
+            {dias7.map((x) => (
+              <div key={x.d} style={{ flex: 1, textAlign: "center" }}>
+                <div style={{ height: Math.max(4, Math.round((x.ex / maxEx) * 38)), borderRadius: 6, background: x.ex > 0 ? "#8F9CFF" : "rgba(255,255,255,0.12)", margin: "0 auto", width: "70%" }} />
+                <div style={{ fontSize: 9.5, color: PAINEL_DIM, marginTop: 3 }}>{x.rotulo}</div>
+              </div>
+            ))}
+          </div>
+        </CartaoPainel>
+        <CartaoPainel icone="⏱️" titulo={tr("Minutos de treino")} explica={tr("Tempo estimado nos últimos 7 dias, comparado com os 7 anteriores.")}>
+          <div style={{ fontSize: 26, fontWeight: 800, color: "#fff", lineHeight: 1 }}>{min7}<span style={{ fontSize: 13, color: PAINEL_DIM, fontWeight: 600 }}> min</span></div>
+          <div style={{ fontSize: 12, color: difMin >= 0 ? "#7FE08F" : "#F5A58F", fontWeight: 700, marginTop: 10 }}>
+            {difMin >= 0 ? "▲ +" : "▼ "}{difMin} {tr("min vs semana passada")}
+          </div>
+        </CartaoPainel>
+        <CartaoPainel icone="📈" titulo={tr("Volume (14 dias)")} explica={vol7 > 0 ? trt("{0} kg levantados nos últimos 7 dias.", [vol7]) : tr("Registre as cargas pra ver o volume aqui.")}>
+          <svg viewBox="0 0 100 38" width="100%" height="52" preserveAspectRatio="none" style={{ display: "block" }}>
+            <polyline points={pts} fill="none" stroke="#F26B6B" strokeWidth="1.8" strokeLinejoin="round" strokeLinecap="round" />
+          </svg>
+        </CartaoPainel>
+        <CartaoPainel icone="⚡" titulo={tr("Carga da semana")} explica={base > 0 ? trt("{0}% da sua média das 3 semanas anteriores. Acima de 110% pede mais descanso.", [cargaPct]) : tr("Em 3 semanas eu comparo com a sua média.")}>
+          <MedidorArcoZonas valor={cargaPct} min={0} zonas={ZONAS_CARGA} texto={`${cargaPct}%`} />
+        </CartaoPainel>
+      </div>
+    </section>
+  );
+}
+
+const ZONAS_IMC = [
+  { ate: 18.5, cor: "#6FB7F5", nome: "Abaixo" },
+  { ate: 25, cor: "#4FCB6B", nome: "Normal" },
+  { ate: 30, cor: "#F5A524", nome: "Sobrepeso" },
+  { ate: 45, cor: "#F0524F", nome: "Obesidade" },
+];
+const ZONAS_GORDURA = {
+  masculino: [{ ate: 13, cor: "#4FCB6B", nome: "Atlético" }, { ate: 17, cor: "#B8D93F", nome: "Em forma" }, { ate: 24, cor: "#F5A524", nome: "Médio" }, { ate: 45, cor: "#F0524F", nome: "Alto" }],
+  feminino: [{ ate: 20, cor: "#4FCB6B", nome: "Atlético" }, { ate: 24, cor: "#B8D93F", nome: "Em forma" }, { ate: 31, cor: "#F5A524", nome: "Médio" }, { ate: 55, cor: "#F0524F", nome: "Alto" }],
+};
+const ZONAS_RCE = [
+  { ate: 0.43, cor: "#6FB7F5", nome: "Baixo" },
+  { ate: 0.5, cor: "#4FCB6B", nome: "Saudável" },
+  { ate: 0.6, cor: "#F5A524", nome: "Atenção" },
+  { ate: 0.9, cor: "#F0524F", nome: "Risco" },
+];
+
+function PainelIndicadoresAvaliacao({ ultima, anterior }) {
+  if (!ultima) return null;
+  const alt = Number(ultima.altura) || 0;
+  const peso = Number(ultima.peso) || 0;
+  const imc = alt > 0 && peso > 0 ? peso / ((alt / 100) * (alt / 100)) : null;
+  const gord = ultima.percentualGordura !== null && ultima.percentualGordura !== undefined && !isNaN(Number(ultima.percentualGordura)) ? Number(ultima.percentualGordura) : null;
+  const rce = alt > 0 && Number(ultima.cintura) > 0 ? Number(ultima.cintura) / alt : null;
+  const zonasGord = ZONAS_GORDURA[ultima.sexo === "feminino" ? "feminino" : "masculino"];
+  const delta = anterior ? +(peso - Number(anterior.peso)).toFixed(1) : null;
+  const vazio = (txt) => <div style={{ fontSize: 12, color: PAINEL_DIM, lineHeight: 1.45, padding: "18px 0 6px", textAlign: "center" }}>{txt}</div>;
+  return (
+    <section style={PAINEL_SECAO}>
+      <div style={PAINEL_TITULO}>{tr("🩺 Seus indicadores")}</div>
+      <div style={{ fontSize: 11.5, color: PAINEL_DIM, lineHeight: 1.45, margin: "-2px 0 12px" }}>{tr("Calculados com a sua última avaliação. São referências gerais, não um diagnóstico.")}</div>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
+        <CartaoPainel icone="⚖️" titulo={tr("IMC")} explica={tr("Peso dividido pela altura ao quadrado. Não separa músculo de gordura.")}>
+          {imc !== null ? <MedidorArcoZonas valor={imc} min={15} zonas={ZONAS_IMC} texto={imc.toFixed(1)} /> : vazio(tr("Informe peso e altura."))}
+        </CartaoPainel>
+        <CartaoPainel icone="🧬" titulo={tr("% de gordura")} explica={tr("Estimativa pelas medidas (método da Marinha). Varia conforme o sexo informado.")}>
+          {gord !== null ? <MedidorArcoZonas valor={gord} min={5} zonas={zonasGord} texto={`${gord.toFixed(1)}%`} /> : vazio(tr("Informe pescoço e cintura (e quadril, se mulher)."))}
+        </CartaoPainel>
+        <CartaoPainel icone="📏" titulo={tr("Cintura ÷ altura")} explica={tr("Abaixo de 0,5 costuma indicar menos gordura na barriga.")}>
+          {rce !== null ? <MedidorArcoZonas valor={rce} min={0.35} zonas={ZONAS_RCE} texto={rce.toFixed(2).replace(".", ",")} /> : vazio(tr("Informe a cintura."))}
+        </CartaoPainel>
+        <CartaoPainel icone="🪪" titulo={tr("Peso")} explica={delta === null ? tr("Faça outra avaliação pra ver a variação.") : tr("Variação desde a avaliação anterior.")}>
+          <div style={{ fontSize: 26, fontWeight: 800, color: "#fff", lineHeight: 1, marginTop: 6 }}>{peso}<span style={{ fontSize: 13, color: PAINEL_DIM, fontWeight: 600 }}> kg</span></div>
+          {delta !== null && (
+            <div style={{ fontSize: 13, color: delta === 0 ? PAINEL_DIM : delta < 0 ? "#7FE08F" : "#F5C26B", fontWeight: 800, marginTop: 10 }}>
+              {delta === 0 ? "—" : delta < 0 ? "▼ " : "▲ +"}{delta === 0 ? "" : delta} kg
+            </div>
+          )}
+        </CartaoPainel>
+      </div>
+    </section>
+  );
+}
+
 function HistoricoTab({ isPremium, onVerPlanos, refsTour }) {
   const [modoImpressaoRelatorio, setModoImpressaoRelatorio] = useState(false);
   const [historico, setHistorico] = useState([]);
@@ -12330,6 +12877,8 @@ function HistoricoTab({ isPremium, onVerPlanos, refsTour }) {
 
   return (
     <div>
+      <PainelTreinoHistorico historico={historico} />
+
       <section style={styles.card} ref={refsTour ? refsTour.pdf : undefined}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
           <div style={styles.cardLabel}>{tr("📄 Relatório mensal")}</div>
