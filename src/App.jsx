@@ -11843,6 +11843,186 @@ async function anCarregarDetector() {
   throw ultimoErro || new Error("modelo");
 }
 
+// ===============================================================
+// Conserta o WebM gravado pelo navegador (MediaRecorder).
+// O arquivo bruto sai SEM duração e SEM índice de busca: no celular a galeria
+// mostra "0:00" e fecha ao dar play. Aqui o arquivo é remontado com duração,
+// índice (Cues) e tamanhos definidos, que é o formato que os players esperam.
+// ===============================================================
+const WB = {
+  EBML: 0x1A45DFA3, SEGMENT: 0x18538067, INFO: 0x1549A966, TRACKS: 0x1654AE6B,
+  CLUSTER: 0x1F43B675, CUES: 0x1C53BB6B, SEEKHEAD: 0x114D9B74, TAGS: 0x1254C367,
+  CHAPTERS: 0x1043A770, ATTACH: 0x1941A469, TIMECODE: 0xE7, SIMPLEBLOCK: 0xA3,
+  BLOCKGROUP: 0xA0, BLOCK: 0xA1, REFBLOCK: 0xFB, TSCALE: 0x2AD7B1,
+};
+const WB_NIVEL1 = new Set([WB.CLUSTER, WB.CUES, WB.SEEKHEAD, WB.TAGS, WB.CHAPTERS, WB.ATTACH, WB.INFO, WB.TRACKS]);
+
+function wbElem(b, p) {
+  if (p >= b.length) return null;
+  const f = b[p];
+  if (!f) return null;
+  let il = 1, m = 0x80;
+  while (!(f & m)) { il++; m >>= 1; }
+  if (il > 4 || p + il >= b.length) return null;
+  let id = 0;
+  for (let i = 0; i < il; i++) id = id * 256 + b[p + i];
+  const sp = p + il, sf = b[sp];
+  if (!sf) return null;
+  let sl = 1, sm = 0x80;
+  while (!(sf & sm)) { sl++; sm >>= 1; }
+  if (sl > 8 || sp + sl > b.length) return null;
+  let val = sf & (sm - 1), unk = val === sm - 1;
+  for (let i = 1; i < sl; i++) { val = val * 256 + b[sp + i]; if (b[sp + i] !== 0xFF) unk = false; }
+  const ds = sp + sl;
+  return { id, start: p, dataStart: ds, size: unk ? -1 : val, end: unk ? -1 : ds + val };
+}
+function wbUint(b, s, e) { let v = 0; for (let i = s; i < e; i++) v = v * 256 + b[i]; return v; }
+function wbBytes(n, len) { const o = new Uint8Array(len); let v = n; for (let i = len - 1; i >= 0; i--) { o[i] = v % 256; v = Math.floor(v / 256); } return o; }
+function wbMinBytes(n) { let len = 1; while (len < 8 && n >= Math.pow(256, len)) len++; return wbBytes(n, len); }
+function wbSize(n) { // tamanho EBML no menor número de bytes possível
+  let len = 1;
+  while (len < 8 && n >= Math.pow(2, 7 * len) - 1) len++;
+  const o = wbBytes(n, len);
+  o[0] |= 0x80 >> (len - 1);
+  return o;
+}
+function wbIdBytes(id) { let len = 1; while (len < 4 && id >= Math.pow(256, len)) len++; return wbBytes(id, len); }
+function wbJunta(partes) {
+  let t = 0; partes.forEach((x) => { t += x.length; });
+  const o = new Uint8Array(t); let p = 0;
+  partes.forEach((x) => { o.set(x, p); p += x.length; });
+  return o;
+}
+function wbEl(id, dados) { return wbJunta([wbIdBytes(id), wbSize(dados.length), dados]); }
+
+function webmCorrigir(b) {
+  try {
+    const eb = wbElem(b, 0);
+    if (!eb || eb.id !== WB.EBML || eb.end < 0) return null;
+    const seg = wbElem(b, eb.end);
+    if (!seg || seg.id !== WB.SEGMENT) return null;
+    const segFim = seg.end < 0 ? b.length : Math.min(seg.end, b.length);
+    let tracks = null, escala = 1000000;
+    const clusters = [];
+    let p = seg.dataStart;
+    while (p < segFim) {
+      const e = wbElem(b, p);
+      if (!e) break;
+      if (e.id === WB.CLUSTER) {
+        const lim = e.end < 0 ? segFim : Math.min(e.end, segFim);
+        let q = e.dataStart, tc = null;
+        const filhos = [];
+        while (q < lim) {
+          const c = wbElem(b, q);
+          if (!c) { q = lim; break; }
+          if (e.end < 0 && WB_NIVEL1.has(c.id)) break;
+          const ce = c.end < 0 ? lim : Math.min(c.end, lim);
+          if (c.id === WB.TIMECODE) tc = wbUint(b, c.dataStart, ce);
+          else filhos.push({ id: c.id, s: q, ds: c.dataStart, e: ce });
+          q = ce;
+        }
+        if (tc !== null) clusters.push({ tc, filhos });
+        p = e.end < 0 ? q : lim;
+      } else {
+        const fim = e.end < 0 ? segFim : Math.min(e.end, segFim);
+        if (e.id === WB.TRACKS) tracks = b.slice(e.start, fim);
+        else if (e.id === WB.INFO) {
+          let q = e.dataStart;
+          while (q < fim) {
+            const c = wbElem(b, q);
+            if (!c || c.end < 0) break;
+            if (c.id === WB.TSCALE) escala = wbUint(b, c.dataStart, c.end) || 1000000;
+            q = c.end;
+          }
+        }
+        p = fim;
+      }
+    }
+    if (!tracks || !clusters.length) return null;
+
+    // tempos de cada bloco (em unidades da escala) + quadros-chave
+    const base = clusters[0].tc;
+    const blocos = [];
+    clusters.forEach((cl, ci) => {
+      cl.filhos.forEach((f) => {
+        let ds = null, chave = false;
+        if (f.id === WB.SIMPLEBLOCK) { ds = f.ds; }
+        else if (f.id === WB.BLOCKGROUP) {
+          let q = f.ds, temRef = false;
+          while (q < f.e) {
+            const c = wbElem(b, q);
+            if (!c || c.end < 0) break;
+            if (c.id === WB.BLOCK) ds = c.dataStart;
+            if (c.id === WB.REFBLOCK) temRef = true;
+            q = c.end;
+          }
+          chave = !temRef;
+        }
+        if (ds === null) return;
+        let q = ds;
+        const first = b[q]; let l = 1, m = 0x80;
+        while (!(first & m) && l < 8) { l++; m >>= 1; }
+        q += l;
+        let rel = (b[q] << 8) | b[q + 1];
+        if (rel & 0x8000) rel -= 0x10000;
+        const flags = b[q + 2];
+        if (f.id === WB.SIMPLEBLOCK) chave = !!(flags & 0x80);
+        blocos.push({ t: cl.tc - base + rel, chave, ci });
+      });
+    });
+    if (!blocos.length) return null;
+    const tempos = blocos.map((x) => x.t).sort((x, y) => x - y);
+    const difs = [];
+    for (let i = 1; i < tempos.length; i++) { const d = tempos[i] - tempos[i - 1]; if (d > 0) difs.push(d); }
+    difs.sort((x, y) => x - y);
+    const passo = difs.length ? difs[Math.floor(difs.length / 2)] : 33;
+    const duracao = tempos[tempos.length - 1] - tempos[0] + passo;
+
+    // Info nova
+    const f64 = new Uint8Array(8);
+    new DataView(f64.buffer).setFloat64(0, duracao, false);
+    const app = new TextEncoder().encode("MassiPro");
+    const info = wbEl(WB.INFO, wbJunta([
+      wbEl(WB.TSCALE, wbMinBytes(escala)),
+      wbEl(0x4489, f64),
+      wbEl(0x4D80, app),
+      wbEl(0x5741, app),
+    ]));
+
+    // Clusters novos (tamanho definido, tempo começando em zero)
+    const clBytes = clusters.map((cl) => {
+      const partes = [wbEl(WB.TIMECODE, wbMinBytes(cl.tc - base))];
+      cl.filhos.forEach((f) => partes.push(b.slice(f.s, f.e)));
+      return wbEl(WB.CLUSTER, wbJunta(partes));
+    });
+
+    // Cues: um ponto de busca por quadro-chave
+    const chaves = blocos.filter((x) => x.chave);
+    if (!chaves.length) chaves.push({ t: 0, ci: 0 });
+    const montarCues = (offs) => wbEl(WB.CUES, wbJunta(chaves.map((k) => wbEl(0xBB, wbJunta([
+      wbEl(0xB3, wbBytes(Math.max(0, k.t), 4)),
+      wbEl(0xB7, wbJunta([wbEl(0xF7, new Uint8Array([1])), wbEl(0xF1, wbBytes(offs[k.ci] || 0, 4))])),
+    ])))));
+    const cuesTam = montarCues([]).length;
+    const seekEntry = (id, pos) => wbEl(0x4DBB, wbJunta([wbEl(0x53AB, wbIdBytes(id)), wbEl(0x53AC, wbBytes(pos, 4))]));
+    const seekHeadTam = wbEl(WB.SEEKHEAD, wbJunta([seekEntry(WB.INFO, 0), seekEntry(WB.TRACKS, 0), seekEntry(WB.CUES, 0), seekEntry(WB.CLUSTER, 0)])).length;
+    const posInfo = seekHeadTam;
+    const posTracks = posInfo + info.length;
+    const posCues = posTracks + tracks.length;
+    let pos = posCues + cuesTam;
+    const offs = [];
+    clBytes.forEach((c) => { offs.push(pos); pos += c.length; });
+    const seekHead = wbEl(WB.SEEKHEAD, wbJunta([seekEntry(WB.INFO, posInfo), seekEntry(WB.TRACKS, posTracks), seekEntry(WB.CUES, posCues), seekEntry(WB.CLUSTER, offs[0])]));
+    const cues = montarCues(offs);
+    const conteudo = wbJunta([seekHead, info, tracks, cues, ...clBytes]);
+    const idSeg = wbIdBytes(WB.SEGMENT);
+    const tamSeg = wbBytes(conteudo.length, 8); tamSeg[0] = 0x01; // tamanho em 8 bytes
+    return wbJunta([b.slice(0, eb.end), idSeg, tamSeg, conteudo]);
+  } catch (e) {
+    return null;
+  }
+}
+
 function AnaliseExecucaoModal({ tipo, nomeExercicio, dicaGuia, onFechar }) {
   const def = AN_EXERCICIOS[tipo];
   const [etapa, setEtapa] = useState("intro"); // intro | carregando | pronto | contagem | analisando | resumo | erro
@@ -11876,6 +12056,7 @@ function AnaliseExecucaoModal({ tipo, nomeExercicio, dicaGuia, onFechar }) {
   const urlRef = useRef(null);
   const blobRef = useRef(null);
   const replayRef = useRef(null);
+  const sessaoRef = useRef(0);
   const frenteRef = useRef(false);
   frenteRef.current = frente;
 
@@ -11888,6 +12069,7 @@ function AnaliseExecucaoModal({ tipo, nomeExercicio, dicaGuia, onFechar }) {
   };
 
   useEffect(() => () => {
+    sessaoRef.current += 1;
     gravandoRef.current = false;
     if (recLimiteRef.current) clearTimeout(recLimiteRef.current);
     if (recRef.current && recRef.current.state !== "inactive") { try { recRef.current.onstop = null; recRef.current.stop(); } catch (e) { /* ok */ } }
@@ -11905,12 +12087,26 @@ function AnaliseExecucaoModal({ tipo, nomeExercicio, dicaGuia, onFechar }) {
     if (v) { v.srcObject = stream; v.muted = true; v.playsInline = true; try { await v.play(); } catch (e) { /* autoplay */ } }
   };
 
-  const finalizarGravacao = () => {
+  const finalizarGravacao = async () => {
     recRef.current = null;
+    const minhaSessao = sessaoRef.current;
     const partes = recChunksRef.current;
     recChunksRef.current = [];
     if (!partes || !partes.length) { setVideoEstado("indisponivel"); return; }
-    const blob = new Blob(partes, { type: recMimeRef.current || "video/webm" });
+    const tipo = recMimeRef.current || "video/webm";
+    let blob = new Blob(partes, { type: tipo });
+    if (/webm/i.test(tipo)) {
+      // O WebM que o navegador grava vem sem duração nem índice de busca (a galeria do
+      // celular mostra 0:00 e fecha ao dar play). Aqui o arquivo é remontado direito.
+      try {
+        const ab = blob.arrayBuffer
+          ? await blob.arrayBuffer()
+          : await new Promise((ok, no) => { const r = new FileReader(); r.onload = () => ok(r.result); r.onerror = no; r.readAsArrayBuffer(blob); });
+        const arrumado = webmCorrigir(new Uint8Array(ab));
+        if (arrumado) blob = new Blob([arrumado], { type: "video/webm" });
+      } catch (e) { /* mantém o arquivo original */ }
+    }
+    if (minhaSessao !== sessaoRef.current) return; // já fechou ou descartou enquanto preparava
     if (urlRef.current) { try { URL.revokeObjectURL(urlRef.current); } catch (e) { /* ok */ } }
     const url = URL.createObjectURL(blob);
     urlRef.current = url;
@@ -11933,11 +12129,12 @@ function AnaliseExecucaoModal({ tipo, nomeExercicio, dicaGuia, onFechar }) {
     try {
       const v = videoRef.current;
       if (!v || !v.videoWidth || typeof MediaRecorder === "undefined") { setVideoEstado("indisponivel"); return; }
+      sessaoRef.current += 1;
       const c = recCanvasRef.current || (recCanvasRef.current = document.createElement("canvas"));
       if (!c.captureStream) { setVideoEstado("indisponivel"); return; }
       c.width = v.videoWidth;
       c.height = v.videoHeight;
-      const candidatos = ["video/webm;codecs=vp9", "video/webm;codecs=vp8", "video/webm", "video/mp4"];
+      const candidatos = ["video/webm;codecs=vp8", "video/webm;codecs=vp9", "video/webm", "video/mp4"];
       let mime = "";
       for (let i = 0; i < candidatos.length; i++) {
         try { if (MediaRecorder.isTypeSupported(candidatos[i])) { mime = candidatos[i]; break; } } catch (e) { /* tenta o próximo */ }
@@ -12044,6 +12241,7 @@ function AnaliseExecucaoModal({ tipo, nomeExercicio, dicaGuia, onFechar }) {
   };
 
   const descartarVideo = (estado) => {
+    sessaoRef.current += 1;
     if (urlRef.current) { try { URL.revokeObjectURL(urlRef.current); } catch (e) { /* ok */ } urlRef.current = null; }
     blobRef.current = null;
     setVideoUrl(null);
@@ -12172,6 +12370,7 @@ function AnaliseExecucaoModal({ tipo, nomeExercicio, dicaGuia, onFechar }) {
   };
 
   const fechar = () => {
+    sessaoRef.current += 1;
     pararGravacao();
     if (urlRef.current) { try { URL.revokeObjectURL(urlRef.current); } catch (e) { /* ok */ } urlRef.current = null; }
     pararCamera();
