@@ -4318,6 +4318,10 @@ Object.assign(TRAD_TEXTOS.en, {"Teste do punho para descobrir o biotipo": "Wrist
 Object.assign(TRAD_TEXTOS.es, {"Teste do punho para descobrir o biotipo": "Prueba de la muñeca para descubrir tu biotipo", "Teste do punho: com o dedo médio e o polegar de uma mão, envolva o pulso da outra. Se não encostam, é endomorfo; se só as pontas se tocam, mesomorfo; se um dedo passa sobre o outro, ectomorfo. Toque na coluna que combina com você.": "Prueba de la muñeca: con el dedo medio y el pulgar de una mano, rodea la muñeca de la otra. Si no se tocan, eres endomorfo; si solo se tocan las puntas, mesomorfo; si un dedo pasa sobre el otro, ectomorfo. Toca la columna que coincide contigo.", "Não sabe seu biotipo? Faça o teste do punho mostrado na imagem e toque na coluna que mais combina com você.": "¿No sabes tu biotipo? Haz la prueba de la muñeca de la imagen y toca la columna que más te corresponda."});
 Object.assign(TRAD_TEXTOS.en, {"GRAVANDO": "RECORDING", "Preparando o vídeo da sua análise...": "Preparing your analysis video...", "↻ Ver de novo": "↻ Watch again", "💾 Salvar no celular": "💾 Save to phone", "🗑 Excluir": "🗑 Delete", "Excluir o vídeo? Se você ainda não salvou, não dá para recuperar.": "Delete the video? If you haven't saved it yet, it can't be recovered.", "Sim, excluir": "Yes, delete", "O vídeo toca sozinho. Toque nele para pausar ou continuar.": "The video plays by itself. Tap it to pause or resume.", "🗑 Vídeo excluído. Ele não ficou guardado em nenhum lugar.": "🗑 Video deleted. It wasn't kept anywhere.", "Este aparelho não conseguiu gravar o vídeo da análise, mas o resultado abaixo vale do mesmo jeito.": "This device couldn't record the analysis video, but the result below is just as valid.", "Escolha \"Salvar vídeo\" na janela que abriu para guardar no celular.": "Choose \"Save video\" in the window that opened to keep it on your phone.", "Download iniciado: o vídeo vai direto para o seu celular (pasta Downloads).": "Download started: the video goes straight to your phone (Downloads folder).", "Não consegui salvar o vídeo neste aparelho. Tente de novo ou abra o app no navegador do celular.": "I couldn't save the video on this device. Try again or open the app in your phone's browser.", "🔒 O vídeo é analisado e gravado só no seu celular, não é enviado a ninguém e some quando você sai desta tela, a menos que você toque em salvar. Na primeira vez é preciso internet para baixar o detector (uns 10 MB); depois ele fica guardado. A análise é uma referência e não substitui um profissional.": "🔒 The video is analyzed and recorded only on your phone, isn't sent to anyone and disappears when you leave this screen, unless you tap save. The first time you need internet to download the detector (about 10 MB); after that it stays saved. The analysis is a reference and doesn't replace a professional."});
 Object.assign(TRAD_TEXTOS.es, {"GRAVANDO": "GRABANDO", "Preparando o vídeo da sua análise...": "Preparando el vídeo de tu análisis...", "↻ Ver de novo": "↻ Ver de nuevo", "💾 Salvar no celular": "💾 Guardar en el teléfono", "🗑 Excluir": "🗑 Eliminar", "Excluir o vídeo? Se você ainda não salvou, não dá para recuperar.": "¿Eliminar el vídeo? Si aún no lo guardaste, no se puede recuperar.", "Sim, excluir": "Sí, eliminar", "O vídeo toca sozinho. Toque nele para pausar ou continuar.": "El vídeo se reproduce solo. Tócalo para pausar o continuar.", "🗑 Vídeo excluído. Ele não ficou guardado em nenhum lugar.": "🗑 Vídeo eliminado. No quedó guardado en ningún lugar.", "Este aparelho não conseguiu gravar o vídeo da análise, mas o resultado abaixo vale do mesmo jeito.": "Este dispositivo no pudo grabar el vídeo del análisis, pero el resultado de abajo vale igual.", "Escolha \"Salvar vídeo\" na janela que abriu para guardar no celular.": "Elige \"Guardar vídeo\" en la ventana que se abrió para guardarlo en el teléfono.", "Download iniciado: o vídeo vai direto para o seu celular (pasta Downloads).": "Descarga iniciada: el vídeo va directo a tu teléfono (carpeta Descargas).", "Não consegui salvar o vídeo neste aparelho. Tente de novo ou abra o app no navegador do celular.": "No pude guardar el vídeo en este dispositivo. Inténtalo de nuevo o abre la app en el navegador del teléfono.", "🔒 O vídeo é analisado e gravado só no seu celular, não é enviado a ninguém e some quando você sai desta tela, a menos que você toque em salvar. Na primeira vez é preciso internet para baixar o detector (uns 10 MB); depois ele fica guardado. A análise é uma referência e não substitui um profissional.": "🔒 El vídeo se analiza y se graba solo en tu teléfono, no se envía a nadie y desaparece cuando sales de esta pantalla, a menos que toques en guardar. La primera vez hace falta internet para descargar el detector (unos 10 MB); después queda guardado. El análisis es una referencia y no sustituye a un profesional."});
+Object.assign(TRAD_TEXTOS.en, {"Novato": "Rookie", "Iniciante": "Beginner", "Dedicado": "Dedicated", "Consistente": "Consistent", "Esportivo": "Sporty", "Avançado": "Advanced", "Performance": "Performance", "Elite": "Elite", "Mestre": "Master", "Lendário": "Legendary", "Ativo": "Active", "Atlético": "Athletic", "NÍVEL {0}": "LEVEL {0}", "Seu recorde: nível {0} · {1}": "Your record: level {0} · {1}", "Próximo: {0} {1} — cumpridos {2} de 4 requisitos.": "Next: {0} {1} — {2} of 4 requirements met.", "Você chegou ao topo: Lendário! Mantenha o ritmo. 🏆": "You reached the top: Legendary! Keep the pace. 🏆", "Pontos": "Points", "Treinos concluídos": "Workouts completed", "Semanas boas": "Good weeks", "Dias de uso": "Days using the app", "🔒 Seus hábitos já valem {0} pontos, mas o nível só sobe quando os requisitos de treinos, semanas e tempo de uso forem cumpridos.": "🔒 Your habits are already worth {0} points, but the level only goes up when the workout, week and usage-time requirements are met.", "Faltam {0} pontos. Hábito mais fraco agora: {1}.": "{0} points to go. Weakest habit right now: {1}.", "Conclua um treino pra mexer o ponteiro.": "Finish a workout to move the needle.", "ℹ️ Como funciona e caminho dos níveis ▼": "ℹ️ How it works and the level path ▼", "O Índice Massi tem 12 níveis. Os pontos (0 a 100) vêm de 6 hábitos medidos nas últimas 12 semanas: semana sem treino pesa contra você. Mas pontos não bastam: cada nível também exige um número de treinos, de semanas boas (meta de treinos batida) e de dias de uso. Não dá pra pular etapas.": "The Massi Index has 12 levels. The points (0 to 100) come from 6 habits measured over the last 12 weeks: a week without training counts against you. But points are not enough: each level also requires a number of workouts, good weeks (workout goal met) and days of use. There are no shortcuts.", "pts": "pts", "Caminho dos níveis:": "Level path:", "ponto de partida": "starting point", "{0} pts · {1} treinos · {2} sem. boas · {3} dias": "{0} pts · {1} workouts · {2} good wks · {3} days", "Tempo ativo": "Active time", "Qualidade": "Quality", "Progressão": "Progression", "{0}/{1} semanas": "{0}/{1} weeks", "{0} min/sem": "{0} min/wk", "{0}% dos grupos": "{0}% of groups", "{0}% completos": "{0}% complete", "sem base ainda": "no baseline yet", "Semanas completas (meta de treinos batida) nas últimas 12. Semana vazia pesa contra você.": "Full weeks (workout goal met) in the last 12. An empty week counts against you.", "Minutos de treino por semana nas últimas 12 semanas. Referência da OMS: 150 min por semana.": "Training minutes per week over the last 12 weeks. WHO reference: 150 min per week.", "Quanto dos grupos musculares da sua rotina você treina em cada semana, nas últimas 12.": "How many of your routine's muscle groups you train each week, over the last 12.", "Treinos completos: 4+ exercícios e 30+ min (ou 20+ min de cardio). Treino pela metade vale menos.": "Complete workouts: 4+ exercises and 30+ min (or 20+ min of cardio). Half workouts count less.", "Volume levantado em cada semana contra a média das 4 anteriores. Estagnar rende pouco: é preciso evoluir.": "Volume lifted each week versus the average of the previous 4. Standing still pays little: you must progress.", "Dias seguidos treinando (meta: 21). Uma folga por semana não quebra a sequência.": "Days in a row training (goal: 21). One rest day per week does not break the streak.", "Constância de elite! 🎉": "Elite consistency! 🎉", "Meta desta semana batida. Repita na próxima!": "This week's goal is done. Repeat next week!", "Faltam {0} treino(s) pra fechar esta semana.": "{0} workout(s) left to close this week.", "Acima dos 150 min da OMS! 💪": "Above the WHO's 150 min! 💪", "Faltam {0} min por semana pra bater os 150.": "{0} more min per week to reach 150.", "Conclua um treino completo pra começar a pontuar.": "Finish a complete workout to start scoring.", "Todos os treinos completos! 🔥": "All workouts complete! 🔥", "Termine os treinos inteiros: o tempo e os exercícios contam.": "Finish whole workouts: time and exercises count.", "Continue treinando: em 5 semanas eu comparo a sua evolução.": "Keep training: in 5 weeks I'll compare your progress.", "Você está evoluindo! 📈": "You're progressing! 📈", "Aumente um pouco a carga ou as repetições nas próximas semanas.": "Increase the load or reps a bit in the coming weeks.", "Três semanas seguidas de sequência! 🔥": "Three weeks in a row of streak! 🔥", "Esse é o seu Índice Massi: 12 níveis, do Novato ao Lendário. Subir exige pontos, treinos, semanas boas e tempo de uso. Toque em \"Como funciona e caminho dos níveis\" pra ver tudo.": "This is your Massi Index: 12 levels, from Rookie to Legendary. Leveling up takes points, workouts, good weeks and time using the app. Tap \"How it works and the level path\" to see everything.", "Aqui estão os 6 hábitos que formam os pontos: constância, tempo ativo, equilíbrio, qualidade, progressão e sequência. Cada medidor diz o que falta pra evoluir.": "Here are the 6 habits that make up the points: consistency, active time, balance, quality, progression and streak. Each gauge tells you what's missing to improve."});
+Object.assign(TRAD_TEXTOS.es, {"Novato": "Novato", "Iniciante": "Principiante", "Dedicado": "Dedicado", "Consistente": "Constante", "Esportivo": "Deportista", "Avançado": "Avanzado", "Performance": "Rendimiento", "Elite": "Élite", "Mestre": "Maestro", "Lendário": "Legendario", "Ativo": "Activo", "Atlético": "Atlético", "NÍVEL {0}": "NIVEL {0}", "Seu recorde: nível {0} · {1}": "Tu récord: nivel {0} · {1}", "Próximo: {0} {1} — cumpridos {2} de 4 requisitos.": "Siguiente: {0} {1} — {2} de 4 requisitos cumplidos.", "Você chegou ao topo: Lendário! Mantenha o ritmo. 🏆": "¡Llegaste a la cima: Legendario! Mantén el ritmo. 🏆", "Pontos": "Puntos", "Treinos concluídos": "Entrenamientos completados", "Semanas boas": "Semanas buenas", "Dias de uso": "Días de uso", "🔒 Seus hábitos já valem {0} pontos, mas o nível só sobe quando os requisitos de treinos, semanas e tempo de uso forem cumpridos.": "🔒 Tus hábitos ya valen {0} puntos, pero el nivel solo sube cuando se cumplan los requisitos de entrenamientos, semanas y tiempo de uso.", "Faltam {0} pontos. Hábito mais fraco agora: {1}.": "Faltan {0} puntos. Hábito más débil ahora: {1}.", "Conclua um treino pra mexer o ponteiro.": "Completa un entrenamiento para mover la aguja.", "ℹ️ Como funciona e caminho dos níveis ▼": "ℹ️ Cómo funciona y camino de niveles ▼", "O Índice Massi tem 12 níveis. Os pontos (0 a 100) vêm de 6 hábitos medidos nas últimas 12 semanas: semana sem treino pesa contra você. Mas pontos não bastam: cada nível também exige um número de treinos, de semanas boas (meta de treinos batida) e de dias de uso. Não dá pra pular etapas.": "El Índice Massi tiene 12 niveles. Los puntos (0 a 100) vienen de 6 hábitos medidos en las últimas 12 semanas: una semana sin entrenar cuenta en tu contra. Pero los puntos no bastan: cada nivel también exige una cantidad de entrenamientos, de semanas buenas (meta de entrenamientos cumplida) y de días de uso. No hay atajos.", "pts": "pts", "Caminho dos níveis:": "Camino de niveles:", "ponto de partida": "punto de partida", "{0} pts · {1} treinos · {2} sem. boas · {3} dias": "{0} pts · {1} entrenos · {2} sem. buenas · {3} días", "Tempo ativo": "Tiempo activo", "Qualidade": "Calidad", "Progressão": "Progresión", "{0}/{1} semanas": "{0}/{1} semanas", "{0} min/sem": "{0} min/sem", "{0}% dos grupos": "{0}% de los grupos", "{0}% completos": "{0}% completos", "sem base ainda": "sin base aún", "Semanas completas (meta de treinos batida) nas últimas 12. Semana vazia pesa contra você.": "Semanas completas (meta de entrenamientos cumplida) en las últimas 12. Una semana vacía cuenta en tu contra.", "Minutos de treino por semana nas últimas 12 semanas. Referência da OMS: 150 min por semana.": "Minutos de entrenamiento por semana en las últimas 12 semanas. Referencia de la OMS: 150 min por semana.", "Quanto dos grupos musculares da sua rotina você treina em cada semana, nas últimas 12.": "Cuántos de los grupos musculares de tu rutina entrenas cada semana, en las últimas 12.", "Treinos completos: 4+ exercícios e 30+ min (ou 20+ min de cardio). Treino pela metade vale menos.": "Entrenamientos completos: 4+ ejercicios y 30+ min (o 20+ min de cardio). Un entrenamiento a medias vale menos.", "Volume levantado em cada semana contra a média das 4 anteriores. Estagnar rende pouco: é preciso evoluir.": "Volumen levantado cada semana frente al promedio de las 4 anteriores. Estancarse rinde poco: hay que progresar.", "Dias seguidos treinando (meta: 21). Uma folga por semana não quebra a sequência.": "Días seguidos entrenando (meta: 21). Un descanso por semana no rompe la racha.", "Constância de elite! 🎉": "¡Constancia de élite! 🎉", "Meta desta semana batida. Repita na próxima!": "¡Meta de esta semana cumplida! ¡Repite la próxima!", "Faltam {0} treino(s) pra fechar esta semana.": "Faltan {0} entrenamiento(s) para cerrar esta semana.", "Acima dos 150 min da OMS! 💪": "¡Por encima de los 150 min de la OMS! 💪", "Faltam {0} min por semana pra bater os 150.": "Faltan {0} min por semana para llegar a 150.", "Conclua um treino completo pra começar a pontuar.": "Completa un entrenamiento completo para empezar a puntuar.", "Todos os treinos completos! 🔥": "¡Todos los entrenamientos completos! 🔥", "Termine os treinos inteiros: o tempo e os exercícios contam.": "Termina los entrenamientos enteros: cuentan el tiempo y los ejercicios.", "Continue treinando: em 5 semanas eu comparo a sua evolução.": "Sigue entrenando: en 5 semanas comparo tu evolución.", "Você está evoluindo! 📈": "¡Estás progresando! 📈", "Aumente um pouco a carga ou as repetições nas próximas semanas.": "Aumenta un poco la carga o las repeticiones en las próximas semanas.", "Três semanas seguidas de sequência! 🔥": "¡Tres semanas seguidas de racha! 🔥", "Esse é o seu Índice Massi: 12 níveis, do Novato ao Lendário. Subir exige pontos, treinos, semanas boas e tempo de uso. Toque em \"Como funciona e caminho dos níveis\" pra ver tudo.": "Este es tu Índice Massi: 12 niveles, de Novato a Legendario. Subir exige puntos, entrenamientos, semanas buenas y tiempo de uso. Toca \"Cómo funciona y camino de niveles\" para verlo todo.", "Aqui estão os 6 hábitos que formam os pontos: constância, tempo ativo, equilíbrio, qualidade, progressão e sequência. Cada medidor diz o que falta pra evoluir.": "Aquí están los 6 hábitos que forman los puntos: constancia, tiempo activo, equilibrio, calidad, progresión y racha. Cada medidor dice qué falta para mejorar."});
+Object.assign(TRAD_TEXTOS.en, {"tronco": "trunk", "corpo": "body", "braço": "arm", "joelho": "knee", "Ângulo": "Angle", "Frente": "Front", "Diagonal": "Diagonal", "Lado": "Side", "Ângulo da gravação: {0}.": "Recording angle: {0}.", "Suas medidas": "Your measurements", "Não deu para avaliar neste ângulo": "Could not be checked from this angle", "grave {0}": "record {0}", "de frente": "from the front", "em diagonal": "at a diagonal", "de lado": "from the side", "Para uma análise completa, grave uma série também em outro ângulo.": "For a complete analysis, also record a set from another angle.", "Repetição por repetição": "Rep by rep", "({0} de {1} reps)": "({0} of {1} reps)", "{0}% da canela": "{0}% of shin length", "1 a 3 s": "1 to 3 s", "até 100°": "up to 100°", "até 110°": "up to 110°", "até 20°": "up to 20°", "até 55°": "up to 55°", "até 90°": "up to 90°", "acima de 160°": "above 160°", "menos de 5%": "less than 5%", "Profundidade (ângulo do joelho)": "Depth (knee angle)", "Inclinação do tronco no fundo": "Trunk lean at the bottom", "Inclinação do tronco": "Trunk lean", "Maior subida do calcanhar": "Highest heel lift", "Tempo de descida": "Lowering time", "Joelho da frente no fundo": "Front knee at the bottom", "Flexão do cotovelo no fundo": "Elbow bend at the bottom", "Alinhamento do corpo (pior ponto)": "Body alignment (worst point)", "Ângulo do quadril no fundo": "Hip angle at the bottom", "Calcanhar da frente (as duas pernas e os pés precisam aparecer no quadro)": "Front heel (both legs and feet must be in the frame)", "Pode filmar de lado, de frente ou em diagonal, com o celular a uns 2 ou 3 metros e o corpo inteiro no quadro. O app descobre o ângulo sozinho e diz o que consegue avaliar em cada um.": "You can film from the side, front or at a diagonal, with the phone 2 or 3 meters away and your whole body in the frame. The app detects the angle by itself and tells you what it can check in each one.", "Apoie o celular no chão, a uns 2 metros, e fique de lado, de frente ou em diagonal para a câmera, com o corpo inteiro no quadro (cabeça aos pés). Para ver o quadril, o melhor é de lado; para ver os cotovelos, de frente.": "Place the phone on the floor about 2 meters away and stand sideways, facing it or at a diagonal, with your whole body in the frame (head to feet). To see the hips, side is best; to see the elbows, front.", "Apoie o celular no chão, a uns 2 metros, e fique de lado ou em diagonal para a câmera, com o corpo inteiro no quadro.": "Place the phone on the floor about 2 meters away and stand sideways or at a diagonal, with your whole body in the frame.", "Apoie o celular a uns 2 ou 3 metros e deixe o corpo inteiro no quadro, de frente ou em diagonal para a câmera. De frente é o ideal para comparar os dois braços.": "Place the phone 2 or 3 meters away with your whole body in the frame, facing it or at a diagonal. Facing it is best to compare both arms.", "Vire de lado ou em diagonal para a câmera: de frente não dá para ver o quadril.": "Turn sideways or at a diagonal: from the front the hips can't be seen.", "Fique de frente ou em diagonal para a câmera: de lado não dá para ver a altura dos braços.": "Face the camera or stand at a diagonal: from the side the arm height can't be seen.", "Desça mais: busque a coxa paralela ao chão (joelho perto de 90°).": "Go lower: aim for thighs parallel to the floor (knee near 90°).", "Sente o quadril pra trás e pra baixo e abra um pouco os pés. Desça devagar até a coxa ficar paralela ao chão.": "Sit your hips back and down and widen your feet a bit. Lower slowly until your thighs are parallel to the floor.", "Falta pouco para a profundidade ideal: desça mais alguns centímetros.": "Almost at the ideal depth: go a few centimeters lower.", "Mantenha o controle e desça um pouco mais, até a coxa ficar paralela ao chão.": "Stay in control and go a little lower, until your thighs are parallel to the floor.", "Tronco muito inclinado à frente: mantenha o peito aberto e olhe para frente.": "Trunk leaning too far forward: keep your chest open and look ahead.", "Abra o peito, olhe um pouco acima do horizonte e mantenha o peso no meio do pé. Se o tronco cair, reduza a carga.": "Open your chest, look slightly above the horizon and keep your weight over mid-foot. If your trunk drops, reduce the load.", "O tronco está bem mais inclinado que a canela: o quadril está indo para trás demais.": "Your trunk is leaning much more than your shin: your hips are going back too far.", "Leve os joelhos um pouco mais à frente e mantenha o peito alto, para o tronco acompanhar a inclinação da canela.": "Move your knees a little further forward and keep your chest up so your trunk follows your shin's angle.", "Calcanhar saindo do chão": "Heel lifting off the floor", "Calcanhar saindo do chão.": "Heel lifting off the floor.", "Calcanhar saindo do chão (os dois pés).": "Heel lifting off the floor (both feet).", "Calcanhar saindo do chão (pé esquerdo).": "Heel lifting off the floor (left foot).", "Calcanhar saindo do chão (pé direito).": "Heel lifting off the floor (right foot).", "Calcanhar começando a levantar": "Heel starting to lift", "Calcanhar começando a levantar.": "Heel starting to lift.", "Calcanhar começando a levantar (os dois pés).": "Heel starting to lift (both feet).", "Calcanhar começando a levantar (pé esquerdo).": "Heel starting to lift (left foot).", "Calcanhar começando a levantar (pé direito).": "Heel starting to lift (right foot).", "Distribua o peso no pé inteiro e empurre o chão com o calcanhar. Se continuar subindo, falta mobilidade de tornozelo: abra um pouco mais os pés, alongue a panturrilha e pratique o agachamento sem carga.": "Spread your weight across the whole foot and push the floor with your heel. If it keeps lifting, ankle mobility is lacking: widen your feet a bit, stretch your calves and practice the squat without load.", "Calcanhar levantando! Empurre o chão com o pé inteiro.": "Heel lifting! Push the floor with your whole foot.", "Joelho caindo pra dentro durante o movimento.": "Knee caving inward during the movement.", "Joelho começando a fechar para dentro.": "Knee starting to close inward.", "Empurre os joelhos para fora, na direção da ponta dos pés, na descida e na subida. Uma mini-band acima dos joelhos ajuda a treinar esse comando.": "Push your knees outward, toward your toes, on the way down and up. A mini-band above the knees helps train this cue.", "Joelhos caindo pra dentro! Empurre-os para fora.": "Knees caving in! Push them outward.", "Você está descendo mais de um lado do que do outro.": "You are going lower on one side than the other.", "Divida o peso igualmente nos dois pés e desça com o quadril centralizado, sem carregar mais uma perna.": "Share your weight evenly on both feet and lower with your hips centered, without loading one leg more.", "O quadril está deslocando para um dos lados na descida.": "Your hips are shifting to one side on the way down.", "Mantenha o quadril no meio, entre os dois pés, durante todo o movimento.": "Keep your hips centered between your feet throughout the movement.", "Desça controlado, sem despencar.": "Lower with control, don't drop.", "Desça em 2 a 3 segundos, controlando o movimento até o fundo.": "Lower in 2 to 3 seconds, controlling the movement to the bottom.", "Tronco muito inclinado! Abra o peito.": "Trunk leaning too much! Open your chest.", "A profundidade variou muito de uma repetição para outra.": "Depth varied a lot from one rep to another.", "Escolha uma altura de referência (um banco ou uma marca) e faça todas as repetições até ela.": "Pick a reference height (a bench or a mark) and take every rep down to it.", "Desça mais: o joelho da frente deve chegar perto de 90°.": "Go lower: your front knee should reach about 90°.", "Dê um passo um pouco maior e desça o quadril reto para baixo, até o joelho da frente ficar perto de 90°.": "Take a slightly bigger step and lower your hips straight down until your front knee is near 90°.", "Mantenha o tronco mais ereto durante a descida.": "Keep your trunk more upright while lowering.", "Olhe para frente, abra o peito e imagine descer em linha reta, sem se jogar para a frente.": "Look ahead, open your chest and imagine lowering straight down, without lunging forward.", "O joelho da frente passou muito da ponta do pé: dê um passo um pouco maior.": "Your front knee went well past your toes: take a slightly bigger step.", "Aumente o passo para que a canela da frente fique quase vertical no fundo.": "Lengthen your step so your front shin is almost vertical at the bottom.", "Calcanhar do pé da frente saindo do chão.": "Front foot heel lifting off the floor.", "Calcanhar do pé da frente começando a levantar.": "Front foot heel starting to lift.", "Apoie o pé da frente inteiro no chão e empurre pelo calcanhar na subida.": "Keep your whole front foot on the floor and push through the heel on the way up.", "Calcanhar da frente levantando! Apoie o pé inteiro.": "Front heel lifting! Plant your whole foot.", "O joelho da frente está caindo para dentro.": "Your front knee is caving inward.", "O joelho da frente está começando a fechar.": "Your front knee is starting to close in.", "Empurre o joelho da frente para fora, na direção do segundo dedo do pé.": "Push your front knee outward, toward your second toe.", "Joelho da frente fechando! Empurre-o para fora.": "Front knee closing in! Push it outward.", "O quadril balançou para o lado durante o movimento.": "Your hips swayed sideways during the movement.", "Aperte o abdômen e mantenha o quadril centralizado. Se precisar, abra um pouco mais a base dos pés.": "Tighten your abs and keep your hips centered. If needed, widen your stance a bit.", "Desça em 2 a 3 segundos, sem deixar o joelho de trás bater no chão.": "Lower in 2 to 3 seconds without letting your back knee hit the floor.", "Desça mais: o peito deve chegar perto do chão.": "Go lower: your chest should get close to the floor.", "Desça até os cotovelos chegarem perto de 90° e o peito quase tocar o chão, sem apoiar o corpo.": "Lower until your elbows reach about 90° and your chest almost touches the floor, without resting your body.", "O quadril está caindo: contraia o abdômen e o glúteo.": "Your hips are dropping: tighten your abs and glutes.", "O quadril está subindo: mantenha o corpo em linha reta.": "Your hips are rising: keep your body in a straight line.", "O quadril está alto demais: abaixe até ficar em linha reta.": "Your hips are too high: lower them into a straight line.", "Contraia o abdômen e o glúteo como se fosse uma prancha. Se não conseguir, apoie os joelhos no chão.": "Tighten your abs and glutes like in a plank. If you can't, rest your knees on the floor.", "Abaixe o quadril até alinhar com ombros e tornozelos e aperte o glúteo.": "Lower your hips until they line up with shoulders and ankles and squeeze your glutes.", "Abaixe o quadril até alinhar ombros, quadril e tornozelos, e mantenha o abdômen contraído.": "Lower your hips to line up shoulders, hips and ankles, and keep your abs tight.", "Contraia o abdômen e o glúteo e empurre o chão com os antebraços. Se o quadril continuar caindo, encurte o tempo e descanse.": "Tighten your abs and glutes and push the floor with your forearms. If your hips keep dropping, shorten the time and rest.", "Quadril caindo! Contraia abdômen e glúteo.": "Hips dropping! Tighten abs and glutes.", "Quadril subindo! Mantenha o corpo em linha reta.": "Hips rising! Keep your body in a straight line.", "Cotovelos muito abertos para os lados.": "Elbows flaring out too wide.", "Mantenha os cotovelos a uns 45° do corpo, como uma seta, e não em cruz.": "Keep your elbows about 45° from your body, like an arrow, not a T.", "Um braço está descendo mais que o outro.": "One arm is going lower than the other.", "Desça com os dois braços ao mesmo tempo e distribua o peso igualmente nas duas mãos.": "Lower both arms at the same time and share your weight evenly on both hands.", "Desça controlado.": "Lower with control.", "Desça em 2 segundos, sem cair no chão.": "Lower in 2 seconds without dropping to the floor.", "Incline mais o tronco: empurre o quadril para trás.": "Lean your trunk further: push your hips back.", "Leve o quadril para trás como se fosse sentar numa cadeira atrás de você, mantendo as costas retas e a barra perto das pernas.": "Send your hips back as if sitting on a chair behind you, keeping your back straight and the bar close to your legs.", "Os joelhos estão dobrando demais e isso vira agachamento: mantenha-os levemente flexionados.": "Your knees are bending too much and it becomes a squat: keep them slightly bent.", "No stiff, mantenha os joelhos quase estendidos e empurre o quadril para trás.": "In the stiff-leg deadlift, keep your knees almost straight and push your hips back.", "Calcanhares saindo do chão: o peso foi para a ponta dos pés.": "Heels lifting off the floor: your weight moved to your toes.", "Mantenha o peso no meio do pé e no calcanhar. Empurre o quadril para trás em vez de jogar o corpo para frente.": "Keep your weight over mid-foot and heel. Push your hips back instead of throwing your body forward.", "Calcanhares levantando! Mantenha o peso no meio do pé.": "Heels lifting! Keep your weight over mid-foot.", "Um ombro está mais baixo que o outro: o tronco está torcendo.": "One shoulder is lower than the other: your trunk is twisting.", "Mantenha os ombros na mesma altura e distribua o peso igualmente nas duas mãos e nos dois pés.": "Keep your shoulders level and share your weight evenly on both hands and both feet.", "Controle a descida.": "Control the descent.", "Desça em cerca de 2 segundos, mantendo a tensão no movimento.": "Lower in about 2 seconds, keeping tension throughout.", "Suba até a altura dos ombros.": "Raise up to shoulder height.", "Eleve os braços até ficarem na linha dos ombros, com o cotovelo um pouco mais alto que o punho.": "Raise your arms to shoulder level, with the elbow slightly higher than the wrist.", "Não suba acima da linha dos ombros.": "Don't go above shoulder level.", "Pare quando os braços chegarem na altura dos ombros; acima disso o trapézio assume o trabalho.": "Stop when your arms reach shoulder height; above that the traps take over.", "Os dois braços subiram em alturas diferentes.": "Both arms rose to different heights.", "Suba os dois braços juntos, na mesma altura. Se um é mais fraco, comece por ele.": "Raise both arms together to the same height. If one is weaker, start with it.", "Cotovelo muito dobrado: mantenha-o levemente flexionado.": "Elbow bent too much: keep it slightly bent.", "Deixe uma leve flexão fixa no cotovelo e imagine derramar água de uma jarra ao subir.": "Keep a slight fixed bend in the elbow and imagine pouring water from a jug as you rise.", "Os ombros estão subindo em direção às orelhas.": "Your shoulders are rising toward your ears.", "Pense em manter os ombros baixos e afastar as mãos do corpo. Se o trapézio assumir, reduza a carga.": "Think of keeping your shoulders down and moving your hands away from your body. If the traps take over, reduce the load.", "Ombros subindo! Mantenha-os baixos, longe das orelhas.": "Shoulders rising! Keep them down, away from your ears.", "O tronco balançou: o impulso do corpo está ajudando a subir.": "Your trunk swung: body momentum is helping the lift.", "Fique firme, com o abdômen contraído e os pés bem apoiados. Se precisar balançar, reduza a carga.": "Stay solid, abs tight and feet firmly planted. If you need to swing, reduce the load.", "Suba controlado, sem balançar o corpo.": "Raise with control, without swinging your body.", "Suba em 1 a 2 segundos e desça em 2 a 3, sem usar impulso.": "Raise in 1 to 2 seconds and lower in 2 to 3, without momentum."});
+Object.assign(TRAD_TEXTOS.es, {"tronco": "tronco", "corpo": "cuerpo", "braço": "brazo", "joelho": "rodilla", "Ângulo": "Ángulo", "Frente": "Frente", "Diagonal": "Diagonal", "Lado": "Lado", "Ângulo da gravação: {0}.": "Ángulo de la grabación: {0}.", "Suas medidas": "Tus medidas", "Não deu para avaliar neste ângulo": "No se pudo evaluar desde este ángulo", "grave {0}": "graba {0}", "de frente": "de frente", "em diagonal": "en diagonal", "de lado": "de lado", "Para uma análise completa, grave uma série também em outro ângulo.": "Para un análisis completo, graba también una serie desde otro ángulo.", "Repetição por repetição": "Repetición por repetición", "({0} de {1} reps)": "({0} de {1} reps)", "{0}% da canela": "{0}% de la tibia", "1 a 3 s": "1 a 3 s", "até 100°": "hasta 100°", "até 110°": "hasta 110°", "até 20°": "hasta 20°", "até 55°": "hasta 55°", "até 90°": "hasta 90°", "acima de 160°": "por encima de 160°", "menos de 5%": "menos del 5%", "Profundidade (ângulo do joelho)": "Profundidad (ángulo de la rodilla)", "Inclinação do tronco no fundo": "Inclinación del tronco en el fondo", "Inclinação do tronco": "Inclinación del tronco", "Maior subida do calcanhar": "Mayor elevación del talón", "Tempo de descida": "Tiempo de bajada", "Joelho da frente no fundo": "Rodilla delantera en el fondo", "Flexão do cotovelo no fundo": "Flexión del codo en el fondo", "Alinhamento do corpo (pior ponto)": "Alineación del cuerpo (peor punto)", "Ângulo do quadril no fundo": "Ángulo de la cadera en el fondo", "Calcanhar da frente (as duas pernas e os pés precisam aparecer no quadro)": "Talón delantero (las dos piernas y los pies deben aparecer en el encuadre)", "Pode filmar de lado, de frente ou em diagonal, com o celular a uns 2 ou 3 metros e o corpo inteiro no quadro. O app descobre o ângulo sozinho e diz o que consegue avaliar em cada um.": "Puedes grabar de lado, de frente o en diagonal, con el celular a 2 o 3 metros y el cuerpo entero en el encuadre. La app detecta el ángulo sola y te dice qué puede evaluar en cada uno.", "Apoie o celular no chão, a uns 2 metros, e fique de lado, de frente ou em diagonal para a câmera, com o corpo inteiro no quadro (cabeça aos pés). Para ver o quadril, o melhor é de lado; para ver os cotovelos, de frente.": "Apoya el celular en el suelo, a unos 2 metros, y colócate de lado, de frente o en diagonal, con el cuerpo entero en el encuadre (de la cabeza a los pies). Para ver la cadera, lo mejor es de lado; para ver los codos, de frente.", "Apoie o celular no chão, a uns 2 metros, e fique de lado ou em diagonal para a câmera, com o corpo inteiro no quadro.": "Apoya el celular en el suelo, a unos 2 metros, y colócate de lado o en diagonal, con el cuerpo entero en el encuadre.", "Apoie o celular a uns 2 ou 3 metros e deixe o corpo inteiro no quadro, de frente ou em diagonal para a câmera. De frente é o ideal para comparar os dois braços.": "Apoya el celular a 2 o 3 metros y deja el cuerpo entero en el encuadre, de frente o en diagonal. De frente es lo ideal para comparar los dos brazos.", "Vire de lado ou em diagonal para a câmera: de frente não dá para ver o quadril.": "Gírate de lado o en diagonal: de frente no se ve la cadera.", "Fique de frente ou em diagonal para a câmera: de lado não dá para ver a altura dos braços.": "Colócate de frente o en diagonal: de lado no se ve la altura de los brazos.", "Desça mais: busque a coxa paralela ao chão (joelho perto de 90°).": "Baja más: busca el muslo paralelo al suelo (rodilla cerca de 90°).", "Sente o quadril pra trás e pra baixo e abra um pouco os pés. Desça devagar até a coxa ficar paralela ao chão.": "Lleva la cadera hacia atrás y abajo y abre un poco los pies. Baja despacio hasta que el muslo quede paralelo al suelo.", "Falta pouco para a profundidade ideal: desça mais alguns centímetros.": "Falta poco para la profundidad ideal: baja unos centímetros más.", "Mantenha o controle e desça um pouco mais, até a coxa ficar paralela ao chão.": "Mantén el control y baja un poco más, hasta que el muslo quede paralelo al suelo.", "Tronco muito inclinado à frente: mantenha o peito aberto e olhe para frente.": "Tronco muy inclinado hacia delante: mantén el pecho abierto y mira al frente.", "Abra o peito, olhe um pouco acima do horizonte e mantenha o peso no meio do pé. Se o tronco cair, reduza a carga.": "Abre el pecho, mira un poco por encima del horizonte y mantén el peso en el medio del pie. Si el tronco cae, reduce la carga.", "O tronco está bem mais inclinado que a canela: o quadril está indo para trás demais.": "El tronco está mucho más inclinado que la tibia: la cadera se va demasiado hacia atrás.", "Leve os joelhos um pouco mais à frente e mantenha o peito alto, para o tronco acompanhar a inclinação da canela.": "Lleva las rodillas un poco más adelante y mantén el pecho alto, para que el tronco acompañe la inclinación de la tibia.", "Calcanhar saindo do chão": "Talón levantándose del suelo", "Calcanhar saindo do chão.": "Talón levantándose del suelo.", "Calcanhar saindo do chão (os dois pés).": "Talón levantándose del suelo (los dos pies).", "Calcanhar saindo do chão (pé esquerdo).": "Talón levantándose del suelo (pie izquierdo).", "Calcanhar saindo do chão (pé direito).": "Talón levantándose del suelo (pie derecho).", "Calcanhar começando a levantar": "Talón empezando a levantarse", "Calcanhar começando a levantar.": "Talón empezando a levantarse.", "Calcanhar começando a levantar (os dois pés).": "Talón empezando a levantarse (los dos pies).", "Calcanhar começando a levantar (pé esquerdo).": "Talón empezando a levantarse (pie izquierdo).", "Calcanhar começando a levantar (pé direito).": "Talón empezando a levantarse (pie derecho).", "Distribua o peso no pé inteiro e empurre o chão com o calcanhar. Se continuar subindo, falta mobilidade de tornozelo: abra um pouco mais os pés, alongue a panturrilha e pratique o agachamento sem carga.": "Reparte el peso en todo el pie y empuja el suelo con el talón. Si sigue subiendo, falta movilidad de tobillo: abre un poco más los pies, estira la pantorrilla y practica la sentadilla sin carga.", "Calcanhar levantando! Empurre o chão com o pé inteiro.": "¡Talón levantándose! Empuja el suelo con todo el pie.", "Joelho caindo pra dentro durante o movimento.": "Rodilla cayendo hacia dentro durante el movimiento.", "Joelho começando a fechar para dentro.": "Rodilla empezando a cerrarse hacia dentro.", "Empurre os joelhos para fora, na direção da ponta dos pés, na descida e na subida. Uma mini-band acima dos joelhos ajuda a treinar esse comando.": "Empuja las rodillas hacia fuera, en dirección a la punta de los pies, al bajar y al subir. Una mini-band sobre las rodillas ayuda a entrenar esta indicación.", "Joelhos caindo pra dentro! Empurre-os para fora.": "¡Rodillas cayendo hacia dentro! Empújalas hacia fuera.", "Você está descendo mais de um lado do que do outro.": "Estás bajando más de un lado que del otro.", "Divida o peso igualmente nos dois pés e desça com o quadril centralizado, sem carregar mais uma perna.": "Reparte el peso por igual en los dos pies y baja con la cadera centrada, sin cargar más una pierna.", "O quadril está deslocando para um dos lados na descida.": "La cadera se desplaza hacia un lado al bajar.", "Mantenha o quadril no meio, entre os dois pés, durante todo o movimento.": "Mantén la cadera en el medio, entre los dos pies, durante todo el movimiento.", "Desça controlado, sem despencar.": "Baja con control, sin dejarte caer.", "Desça em 2 a 3 segundos, controlando o movimento até o fundo.": "Baja en 2 a 3 segundos, controlando el movimiento hasta el fondo.", "Tronco muito inclinado! Abra o peito.": "¡Tronco muy inclinado! Abre el pecho.", "A profundidade variou muito de uma repetição para outra.": "La profundidad varió mucho de una repetición a otra.", "Escolha uma altura de referência (um banco ou uma marca) e faça todas as repetições até ela.": "Elige una altura de referencia (un banco o una marca) y haz todas las repeticiones hasta ella.", "Desça mais: o joelho da frente deve chegar perto de 90°.": "Baja más: la rodilla delantera debe llegar cerca de 90°.", "Dê um passo um pouco maior e desça o quadril reto para baixo, até o joelho da frente ficar perto de 90°.": "Da un paso un poco mayor y baja la cadera en línea recta hasta que la rodilla delantera quede cerca de 90°.", "Mantenha o tronco mais ereto durante a descida.": "Mantén el tronco más erguido durante la bajada.", "Olhe para frente, abra o peito e imagine descer em linha reta, sem se jogar para a frente.": "Mira al frente, abre el pecho e imagina bajar en línea recta, sin lanzarte hacia delante.", "O joelho da frente passou muito da ponta do pé: dê um passo um pouco maior.": "La rodilla delantera pasó mucho la punta del pie: da un paso un poco mayor.", "Aumente o passo para que a canela da frente fique quase vertical no fundo.": "Alarga el paso para que la tibia delantera quede casi vertical en el fondo.", "Calcanhar do pé da frente saindo do chão.": "Talón del pie delantero levantándose del suelo.", "Calcanhar do pé da frente começando a levantar.": "Talón del pie delantero empezando a levantarse.", "Apoie o pé da frente inteiro no chão e empurre pelo calcanhar na subida.": "Apoya todo el pie delantero en el suelo y empuja con el talón al subir.", "Calcanhar da frente levantando! Apoie o pé inteiro.": "¡Talón delantero levantándose! Apoya todo el pie.", "O joelho da frente está caindo para dentro.": "La rodilla delantera está cayendo hacia dentro.", "O joelho da frente está começando a fechar.": "La rodilla delantera está empezando a cerrarse.", "Empurre o joelho da frente para fora, na direção do segundo dedo do pé.": "Empuja la rodilla delantera hacia fuera, hacia el segundo dedo del pie.", "Joelho da frente fechando! Empurre-o para fora.": "¡Rodilla delantera cerrándose! Empújala hacia fuera.", "O quadril balançou para o lado durante o movimento.": "La cadera se balanceó hacia un lado durante el movimiento.", "Aperte o abdômen e mantenha o quadril centralizado. Se precisar, abra um pouco mais a base dos pés.": "Aprieta el abdomen y mantén la cadera centrada. Si hace falta, abre un poco más la base de los pies.", "Desça em 2 a 3 segundos, sem deixar o joelho de trás bater no chão.": "Baja en 2 a 3 segundos, sin dejar que la rodilla de atrás golpee el suelo.", "Desça mais: o peito deve chegar perto do chão.": "Baja más: el pecho debe llegar cerca del suelo.", "Desça até os cotovelos chegarem perto de 90° e o peito quase tocar o chão, sem apoiar o corpo.": "Baja hasta que los codos lleguen cerca de 90° y el pecho casi toque el suelo, sin apoyar el cuerpo.", "O quadril está caindo: contraia o abdômen e o glúteo.": "La cadera está cayendo: contrae el abdomen y el glúteo.", "O quadril está subindo: mantenha o corpo em linha reta.": "La cadera está subiendo: mantén el cuerpo en línea recta.", "O quadril está alto demais: abaixe até ficar em linha reta.": "La cadera está demasiado alta: bájala hasta quedar en línea recta.", "Contraia o abdômen e o glúteo como se fosse uma prancha. Se não conseguir, apoie os joelhos no chão.": "Contrae el abdomen y el glúteo como en una plancha. Si no puedes, apoya las rodillas en el suelo.", "Abaixe o quadril até alinhar com ombros e tornozelos e aperte o glúteo.": "Baja la cadera hasta alinearla con hombros y tobillos y aprieta el glúteo.", "Abaixe o quadril até alinhar ombros, quadril e tornozelos, e mantenha o abdômen contraído.": "Baja la cadera hasta alinear hombros, cadera y tobillos, y mantén el abdomen contraído.", "Contraia o abdômen e o glúteo e empurre o chão com os antebraços. Se o quadril continuar caindo, encurte o tempo e descanse.": "Contrae el abdomen y el glúteo y empuja el suelo con los antebrazos. Si la cadera sigue cayendo, acorta el tiempo y descansa.", "Quadril caindo! Contraia abdômen e glúteo.": "¡Cadera cayendo! Contrae abdomen y glúteo.", "Quadril subindo! Mantenha o corpo em linha reta.": "¡Cadera subiendo! Mantén el cuerpo en línea recta.", "Cotovelos muito abertos para os lados.": "Codos demasiado abiertos hacia los lados.", "Mantenha os cotovelos a uns 45° do corpo, como uma seta, e não em cruz.": "Mantén los codos a unos 45° del cuerpo, como una flecha, no en cruz.", "Um braço está descendo mais que o outro.": "Un brazo está bajando más que el otro.", "Desça com os dois braços ao mesmo tempo e distribua o peso igualmente nas duas mãos.": "Baja con los dos brazos a la vez y reparte el peso por igual en las dos manos.", "Desça controlado.": "Baja con control.", "Desça em 2 segundos, sem cair no chão.": "Baja en 2 segundos, sin caer al suelo.", "Incline mais o tronco: empurre o quadril para trás.": "Inclina más el tronco: empuja la cadera hacia atrás.", "Leve o quadril para trás como se fosse sentar numa cadeira atrás de você, mantendo as costas retas e a barra perto das pernas.": "Lleva la cadera hacia atrás como si te sentaras en una silla detrás de ti, con la espalda recta y la barra cerca de las piernas.", "Os joelhos estão dobrando demais e isso vira agachamento: mantenha-os levemente flexionados.": "Las rodillas se doblan demasiado y se convierte en sentadilla: mantenlas ligeramente flexionadas.", "No stiff, mantenha os joelhos quase estendidos e empurre o quadril para trás.": "En el peso muerto rumano, mantén las rodillas casi estiradas y empuja la cadera hacia atrás.", "Calcanhares saindo do chão: o peso foi para a ponta dos pés.": "Talones levantándose del suelo: el peso pasó a la punta de los pies.", "Mantenha o peso no meio do pé e no calcanhar. Empurre o quadril para trás em vez de jogar o corpo para frente.": "Mantén el peso en el medio del pie y el talón. Empuja la cadera hacia atrás en vez de lanzar el cuerpo hacia delante.", "Calcanhares levantando! Mantenha o peso no meio do pé.": "¡Talones levantándose! Mantén el peso en el medio del pie.", "Um ombro está mais baixo que o outro: o tronco está torcendo.": "Un hombro está más bajo que el otro: el tronco se está torciendo.", "Mantenha os ombros na mesma altura e distribua o peso igualmente nas duas mãos e nos dois pés.": "Mantén los hombros a la misma altura y reparte el peso por igual en las dos manos y los dos pies.", "Controle a descida.": "Controla la bajada.", "Desça em cerca de 2 segundos, mantendo a tensão no movimento.": "Baja en unos 2 segundos, manteniendo la tensión en el movimiento.", "Suba até a altura dos ombros.": "Sube hasta la altura de los hombros.", "Eleve os braços até ficarem na linha dos ombros, com o cotovelo um pouco mais alto que o punho.": "Eleva los brazos hasta la línea de los hombros, con el codo un poco más alto que la muñeca.", "Não suba acima da linha dos ombros.": "No subas por encima de la línea de los hombros.", "Pare quando os braços chegarem na altura dos ombros; acima disso o trapézio assume o trabalho.": "Detente cuando los brazos lleguen a la altura de los hombros; por encima el trapecio asume el trabajo.", "Os dois braços subiram em alturas diferentes.": "Los dos brazos subieron a alturas diferentes.", "Suba os dois braços juntos, na mesma altura. Se um é mais fraco, comece por ele.": "Sube los dos brazos juntos, a la misma altura. Si uno es más débil, empieza por él.", "Cotovelo muito dobrado: mantenha-o levemente flexionado.": "Codo demasiado doblado: mantenlo ligeramente flexionado.", "Deixe uma leve flexão fixa no cotovelo e imagine derramar água de uma jarra ao subir.": "Deja una leve flexión fija en el codo e imagina verter agua de una jarra al subir.", "Os ombros estão subindo em direção às orelhas.": "Los hombros están subiendo hacia las orejas.", "Pense em manter os ombros baixos e afastar as mãos do corpo. Se o trapézio assumir, reduza a carga.": "Piensa en mantener los hombros bajos y alejar las manos del cuerpo. Si el trapecio asume, reduce la carga.", "Ombros subindo! Mantenha-os baixos, longe das orelhas.": "¡Hombros subiendo! Mantenlos bajos, lejos de las orejas.", "O tronco balançou: o impulso do corpo está ajudando a subir.": "El tronco se balanceó: el impulso del cuerpo está ayudando a subir.", "Fique firme, com o abdômen contraído e os pés bem apoiados. Se precisar balançar, reduza a carga.": "Mantente firme, con el abdomen contraído y los pies bien apoyados. Si necesitas balancearte, reduce la carga.", "Suba controlado, sem balançar o corpo.": "Sube con control, sin balancear el cuerpo.", "Suba em 1 a 2 segundos e desça em 2 a 3, sem usar impulso.": "Sube en 1 a 2 segundos y baja en 2 a 3, sin usar impulso."});
 const TRAD_NORM = {};
 function trNormalizar(idioma) {
   if (TRAD_NORM[idioma]) return TRAD_NORM[idioma];
@@ -4598,8 +4602,8 @@ function AppMassiPro({ onSolicitarRemount }) {
     ],
     // Tour 2 do Início: o medidor e os atalhos novos.
     inicio2: [
-      { ref: tourMedidorRef, texto: "Esse é o seu Índice Massi, de 0 a 100. O ponteiro sobe conforme você treina com constância. Toque em \"Como esse índice é calculado?\" pra ver a explicação." },
-      { ref: tourMinisRef, texto: "Aqui estão os 4 hábitos que formam o índice: constância, sequência, equilíbrio muscular e evolução. Cada medidor diz o que falta pra completar." },
+      { ref: tourMedidorRef, texto: "Esse é o seu Índice Massi: 12 níveis, do Novato ao Lendário. Subir exige pontos, treinos, semanas boas e tempo de uso. Toque em \"Como funciona e caminho dos níveis\" pra ver tudo." },
+      { ref: tourMinisRef, texto: "Aqui estão os 6 hábitos que formam os pontos: constância, tempo ativo, equilíbrio, qualidade, progressão e sequência. Cada medidor diz o que falta pra evoluir." },
       { ref: tourAtalhosRef, texto: "Atalhos ilustrados pras outras telas do app: toque num card pra ir direto." },
     ],
     cross: [
@@ -7496,87 +7500,195 @@ function getDicaDoDia(idioma) {
 // ---------- INÍCIO — painel principal ----------
 // ===============================================================
 // ÍNDICE MASSI — medidor da tela Início (estilo velocímetro)
-// Junta 4 hábitos (25 pontos cada) numa nota de 0 a 100. Tudo calculado
+// Junta 6 hábitos (últimas 12 semanas) numa nota de 0 a 100 e 12 níveis com requisitos de tempo. Tudo calculado
 // com o histórico que o app já guarda; desenho em SVG simples (sem CSS
 // animation: o ponteiro anima por JS, que funciona no WebView do celular).
 // ===============================================================
-const ZONAS_MASSI = [
-  { nome: "Sedentário", cor: "#F0524F", faixa: "0–24" },
-  { nome: "Ativo", cor: "#F5A524", faixa: "25–49" },
-  { nome: "Esportivo", cor: "#D3DE3F", faixa: "50–74" },
-  { nome: "Atlético", cor: "#4FCB6B", faixa: "75–100" },
+const NIVEIS_MASSI = [
+  { nome: "Novato", emoji: "🌱", cor: "#F0524F", texto: "#10150A", pontos: 0, treinos: 0, semanas: 0, dias: 0 },
+  { nome: "Iniciante", emoji: "🥉", cor: "#F27A3A", texto: "#10150A", pontos: 8, treinos: 3, semanas: 0, dias: 0 },
+  { nome: "Ativo", emoji: "🏃", cor: "#F5A524", texto: "#10150A", pontos: 16, treinos: 8, semanas: 1, dias: 14 },
+  { nome: "Dedicado", emoji: "💪", cor: "#E8C53A", texto: "#10150A", pontos: 26, treinos: 20, semanas: 3, dias: 30 },
+  { nome: "Consistente", emoji: "🔥", cor: "#D3DE3F", texto: "#10150A", pontos: 36, treinos: 36, semanas: 5, dias: 60 },
+  { nome: "Esportivo", emoji: "⚡", cor: "#9ACD32", texto: "#10150A", pontos: 46, treinos: 60, semanas: 8, dias: 90 },
+  { nome: "Avançado", emoji: "🎯", cor: "#4FCB6B", texto: "#10150A", pontos: 56, treinos: 90, semanas: 12, dias: 150 },
+  { nome: "Atlético", emoji: "🏅", cor: "#2FC4A0", texto: "#10150A", pontos: 66, treinos: 130, semanas: 18, dias: 220 },
+  { nome: "Performance", emoji: "🚀", cor: "#27B5D6", texto: "#06161C", pontos: 75, treinos: 180, semanas: 26, dias: 300 },
+  { nome: "Elite", emoji: "💎", cor: "#4E8DF0", texto: "#FFFFFF", pontos: 83, treinos: 250, semanas: 36, dias: 400 },
+  { nome: "Mestre", emoji: "👑", cor: "#9B6BF0", texto: "#FFFFFF", pontos: 90, treinos: 340, semanas: 48, dias: 550 },
+  { nome: "Lendário", emoji: "🏆", cor: "#F2C94C", texto: "#2A1D00", pontos: 96, treinos: 480, semanas: 70, dias: 730 },
 ];
 
-function calcularIndiceMassi(historico, rotina, diasSelecionados, streak) {
-  const ymd = (off) => new Date(Date.now() - off * 86400000).toISOString().slice(0, 10);
-  const lim7 = ymd(6);
-  const lim14 = ymd(13);
-  const lim28 = ymd(27);
-  const hist = historico || [];
-  const ult7 = hist.filter((h) => h.data >= lim7);
-  const ant21 = hist.filter((h) => h.data >= lim28 && h.data < lim7);
+// Quanto cada hábito vale dos 100 pontos (soma = 100).
+const PESOS_INDICE_MASSI = { const: 30, ativ: 15, equi: 15, qual: 15, prog: 15, seq: 10 };
+const JANELA_SEMANAS_MASSI = 12; // cada hábito é a média das últimas 12 semanas (semana vazia = 0)
+const META_MINUTOS_SEMANA_MASSI = 150; // referência da OMS
+const META_SEQUENCIA_MASSI = 21; // dias seguidos pra pontuar 100% na sequência
 
+function calcularIndiceMassi(historico, rotina, diasSelecionados, streak) {
+  const DIA = 86400000;
+  const hist = (historico || []).filter((h) => h && h.data);
+  const somaDias = (dataStr, n) => new Date(Date.parse(dataStr + "T12:00:00Z") + n * DIA).toISOString().slice(0, 10);
+  const segundaDe = (dataStr) => {
+    const d = new Date(dataStr + "T12:00:00Z");
+    return somaDias(dataStr, -((d.getUTCDay() + 6) % 7));
+  };
+  const hoje = new Date().toISOString().slice(0, 10);
+  const dowHoje = (new Date(hoje + "T12:00:00Z").getUTCDay() + 6) % 7; // 0 = segunda
+  const segundaAtual = segundaDe(hoje);
+
+  // Meta de treinos por semana: o que está planejado na rotina (entre 2 e 5; sem rotina, 3).
   const diasPlanejados = (rotina || []).filter((d) => (diasSelecionados || []).includes(d.dia) && d.foco !== "Descanso");
   const planejados = diasPlanejados.length;
-  const diasFeitos7 = new Set(ult7.map((h) => h.data)).size;
-
-  // 1) Constância
-  const pctConst = planejados > 0 ? Math.min(1, diasFeitos7 / planejados) : diasFeitos7 > 0 ? 1 : 0;
-
-  // 2) Sequência (meta: 7 dias)
-  const pctSeq = Math.min(1, (streak || 0) / 7);
-
-  // 3) Equilíbrio muscular (grupos da rotina treinados nos últimos 14 dias)
+  const meta = planejados > 0 ? Math.min(5, Math.max(2, planejados)) : 3;
   const regioesPlan = new Set();
   diasPlanejados.forEach((d) => {
     const pesos = FOCO_REGIOES[d.foco];
     if (pesos) Object.keys(pesos).forEach((r) => regioesPlan.add(r));
   });
-  const regioesFeitas = new Set();
-  hist.filter((h) => h.data >= lim14).forEach((h) => {
-    const pesos = FOCO_REGIOES[h.foco];
-    if (pesos) Object.keys(pesos).forEach((r) => regioesFeitas.add(r));
-  });
-  const regioesLista = [...regioesPlan];
-  const feitasPlan = regioesLista.filter((r) => regioesFeitas.has(r));
-  const faltamRegioes = regioesLista.filter((r) => !regioesFeitas.has(r));
-  const pctEqui = regioesLista.length > 0 ? feitasPlan.length / regioesLista.length : 0;
 
-  // 4) Evolução (exercícios dos últimos 7 dias x média semanal dos 21 dias anteriores)
-  const ex7 = ult7.reduce((a, h) => a + (h.totalExercicios || 0), 0);
-  const base = ant21.reduce((a, h) => a + (h.totalExercicios || 0), 0) / 3;
-  const pctEvo = base > 0 ? Math.min(1, ex7 / base) : ex7 > 0 ? 0.6 : 0;
+  // Agrupa o histórico por semana (segunda a domingo).
+  const semanas = {};
+  hist.forEach((h) => {
+    const k = segundaDe(h.data);
+    const s = semanas[k] || (semanas[k] = { dias: new Set(), min: 0, vol: 0, regs: new Set(), sess: 0, boas: 0 });
+    s.dias.add(h.data);
+    s.sess += 1;
+    const cardioMin = h.cardio && h.cardio.duracao ? h.cardio.duracao : 0;
+    const min = h.duracaoMin || (h.totalExercicios || 0) * 4 + cardioMin;
+    s.min += min;
+    s.vol += h.volumeTotal || 0;
+    const pesos = FOCO_REGIOES[h.foco];
+    if (pesos) Object.keys(pesos).forEach((r) => s.regs.add(r));
+    const completo = ((h.totalExercicios || 0) >= 4 && min >= 30) || ((h.totalExercicios || 0) === 0 && min >= 20);
+    if (completo) s.boas += 1;
+  });
+
+  const credito = (x) => Math.max(0, Math.min(1, x));
+  const lista = []; // semana 0 = atual, 1 = passada...
+  for (let k = 0; k < JANELA_SEMANAS_MASSI + 4; k++) lista.push(semanas[somaDias(segundaAtual, -7 * k)] || null);
+
+  // Semana atual ainda no começo e sem treino: não conta contra a pessoa.
+  const atualVazia = !lista[0] && dowHoje <= 2;
+  const comp = { const: [], ativ: [], equi: [], qual: [], prog: [] };
+  let semanasCheias = 0;
+  for (let k = 0; k < JANELA_SEMANAS_MASSI; k++) {
+    if (k === 0 && atualVazia) continue;
+    const s = lista[k];
+    const fracao = k === 0 ? (dowHoje + 1) / 7 : 1; // semana em andamento: a meta cresce com os dias
+    const metaDias = Math.max(1, Math.ceil(meta * fracao));
+    const nDias = s ? s.dias.size : 0;
+    const razao = credito(nDias / metaDias);
+    const cConst = razao >= 1 ? 1 : razao * 0.7;
+    if (cConst >= 1 && k > 0) semanasCheias += 1;
+    comp.const.push(cConst);
+    comp.ativ.push(credito((s ? s.min : 0) / (META_MINUTOS_SEMANA_MASSI * fracao)));
+    comp.equi.push(regioesPlan.size > 0 ? (s ? [...regioesPlan].filter((r) => s.regs.has(r)).length / regioesPlan.size : 0) : s ? 0.5 : 0);
+    comp.qual.push(s && s.sess > 0 ? s.boas / s.sess : 0);
+    // progressão: volume da semana contra a média das 4 semanas anteriores
+    let soma = 0, qtd = 0;
+    for (let j = k + 1; j <= k + 4; j++) { if (lista[j] && lista[j].vol > 0) { soma += lista[j].vol; qtd += 1; } }
+    const base = qtd ? soma / qtd : 0;
+    let cProg = 0;
+    if (s && s.sess > 0) {
+      if (s.vol <= 0) cProg = 0.3;
+      else if (base <= 0) cProg = 0.5;
+      else {
+        const r = s.vol / base;
+        cProg = r >= 1.03 ? 1 : r >= 0.9 ? 0.5 + ((r - 0.9) / 0.13) * 0.5 : credito((r - 0.5) / 0.4) * 0.5;
+      }
+    }
+    comp.prog.push(cProg);
+  }
+  const media = (arr) => (arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : 0);
+  const pct = {
+    const: media(comp.const),
+    ativ: media(comp.ativ),
+    equi: media(comp.equi),
+    qual: media(comp.qual),
+    prog: media(comp.prog),
+    seq: credito((streak || 0) / META_SEQUENCIA_MASSI),
+  };
+  const pts = (id) => PESOS_INDICE_MASSI[id] * Math.pow(pct[id], 1.2);
+  const bruto = Math.round(Object.keys(PESOS_INDICE_MASSI).reduce((a, id) => a + pts(id), 0));
+
+  // Requisitos de tempo/esforço acumulado (os "obstáculos" de cada nível).
+  const treinosTotal = hist.length;
+  const semanasBoas = Object.keys(semanas).filter((k) => semanas[k].dias.size >= meta).length;
+  let diasDeUso = 0;
+  if (hist.length) {
+    const primeiro = hist.reduce((a, h) => (h.data < a ? h.data : a), hist[0].data);
+    diasDeUso = Math.max(0, Math.round((Date.parse(hoje + "T12:00:00Z") - Date.parse(primeiro + "T12:00:00Z")) / DIA)) + 1;
+  }
+  let nivelLiberado = 0;
+  NIVEIS_MASSI.forEach((n, i) => { if (treinosTotal >= n.treinos && semanasBoas >= n.semanas && diasDeUso >= n.dias) nivelLiberado = i; });
+  const teto = nivelLiberado + 1 < NIVEIS_MASSI.length ? NIVEIS_MASSI[nivelLiberado + 1].pontos - 1 : 100;
+  const total = Math.min(bruto, teto);
+  let nivelIdx = 0;
+  NIVEIS_MASSI.forEach((n, i) => { if (total >= n.pontos) nivelIdx = i; });
+  const travado = bruto > teto;
+
+  const prox = nivelIdx + 1 < NIVEIS_MASSI.length ? NIVEIS_MASSI[nivelIdx + 1] : null;
+  const reqs = prox
+    ? [
+        { id: "pts", rotulo: "Pontos", atual: bruto, meta: prox.pontos },
+        { id: "treinos", rotulo: "Treinos concluídos", atual: treinosTotal, meta: prox.treinos },
+        { id: "semanas", rotulo: "Semanas boas", atual: semanasBoas, meta: prox.semanas },
+        { id: "dias", rotulo: "Dias de uso", atual: diasDeUso, meta: prox.dias },
+      ].map((r) => ({ ...r, ok: r.atual >= r.meta }))
+    : [];
+
+  // Dados de cada hábito pra tela
+  const ult4 = [0, 1, 2, 3].map((k) => lista[k]).filter((s) => s);
+  const minMedia = Math.round(media([0, 1, 2, 3].map((k) => (lista[k] ? lista[k].min : 0))));
+  const sessTot = lista.slice(0, JANELA_SEMANAS_MASSI).reduce((a, s) => a + (s ? s.sess : 0), 0);
+  const boasTot = lista.slice(0, JANELA_SEMANAS_MASSI).reduce((a, s) => a + (s ? s.boas : 0), 0);
+  const volRecente = media([0, 1].map((k) => (lista[k] ? lista[k].vol : 0)));
+  const volAntes = media([2, 3, 4, 5].map((k) => (lista[k] ? lista[k].vol : 0)));
+  const tendencia = volAntes > 0 ? Math.round((volRecente / volAntes - 1) * 100) : null;
+  const faltaDias = Math.max(0, meta - (lista[0] ? lista[0].dias.size : 0));
+  const regioesFaltando = [...regioesPlan].filter((r) => !(lista[0] && lista[0].regs.has(r)) && !(lista[1] && lista[1].regs.has(r)));
 
   const comps = [
     {
-      id: "const", emoji: "📅", titulo: "Constância", pct: pctConst,
-      valorTexto: trt("{0}/{1} treinos", [diasFeitos7, planejados]),
-      explica: "Treinos feitos nos últimos 7 dias, comparados com os planejados na sua rotina.",
-      dica: pctConst >= 1 ? tr("Meta da semana batida! 🎉") : planejados - diasFeitos7 === 1 ? tr("Falta 1 treino pra fechar essa meta.") : trt("Faltam {0} treinos pra fechar essa meta.", [Math.max(0, planejados - diasFeitos7)]),
+      id: "const", emoji: "📅", titulo: "Constância", pct: pct.const,
+      valorTexto: trt("{0}/{1} semanas", [semanasCheias, JANELA_SEMANAS_MASSI - 1]),
+      explica: "Semanas completas (meta de treinos batida) nas últimas 12. Semana vazia pesa contra você.",
+      dica: pct.const >= 0.95 ? tr("Constância de elite! 🎉") : lista[0] && faltaDias === 0 ? tr("Meta desta semana batida. Repita na próxima!") : trt("Faltam {0} treino(s) pra fechar esta semana.", [faltaDias || meta]),
     },
     {
-      id: "seq", emoji: "🔥", titulo: "Sequência", pct: pctSeq,
-      valorTexto: trt("{0}/7 dias", [Math.min(streak || 0, 7)]),
-      explica: "Dias seguidos treinando. Uma folga por semana não quebra a sequência.",
-      dica: pctSeq >= 1 ? tr("Uma semana inteira de sequência! 🔥") : (streak || 0) === 0 ? tr("Treine hoje pra começar sua sequência.") : tr("Treine hoje pra manter a chama acesa."),
+      id: "ativ", emoji: "⏱️", titulo: "Tempo ativo", pct: pct.ativ,
+      valorTexto: trt("{0} min/sem", [minMedia]),
+      explica: "Minutos de treino por semana nas últimas 12 semanas. Referência da OMS: 150 min por semana.",
+      dica: minMedia >= META_MINUTOS_SEMANA_MASSI ? tr("Acima dos 150 min da OMS! 💪") : trt("Faltam {0} min por semana pra bater os 150.", [META_MINUTOS_SEMANA_MASSI - minMedia]),
     },
     {
-      id: "equi", emoji: "⚖️", titulo: "Equilíbrio", pct: pctEqui,
-      valorTexto: trt("{0}/{1} grupos", [feitasPlan.length, regioesLista.length]),
-      explica: "Grupos musculares da sua rotina que você treinou nos últimos 14 dias.",
-      dica: regioesLista.length === 0 ? tr("Monte sua rotina pra medir o equilíbrio.") : faltamRegioes.length === 0 ? tr("Todos os grupos em dia! 💪") : trt("Falta treinar: {0}.", [faltamRegioes.slice(0, 2).map((r) => String(tr(REGIAO_LABEL[r]))).join(", ")]),
+      id: "equi", emoji: "⚖️", titulo: "Equilíbrio", pct: pct.equi,
+      valorTexto: trt("{0}% dos grupos", [Math.round(pct.equi * 100)]),
+      explica: "Quanto dos grupos musculares da sua rotina você treina em cada semana, nas últimas 12.",
+      dica: regioesPlan.size === 0 ? tr("Monte sua rotina pra medir o equilíbrio.") : regioesFaltando.length === 0 ? tr("Todos os grupos em dia! 💪") : trt("Falta treinar: {0}.", [regioesFaltando.slice(0, 2).map((r) => String(tr(r))).join(", ")]),
     },
     {
-      id: "evo", emoji: "📈", titulo: "Evolução", pct: pctEvo,
-      valorTexto: ex7 === 1 ? tr("1 exercício") : trt("{0} exercícios", [ex7]),
-      explica: "Exercícios dos últimos 7 dias, comparados com a sua média das 3 semanas anteriores.",
-      dica: base <= 0 ? tr("Continue treinando: em 3 semanas eu comparo com a sua média.") : pctEvo >= 1 ? tr("Você está acima da sua média! 📈") : trt("Faça mais {0} pra igualar a sua média.", [Math.max(1, Math.ceil(base - ex7))]),
+      id: "qual", emoji: "🎯", titulo: "Qualidade", pct: pct.qual,
+      valorTexto: trt("{0}% completos", [sessTot ? Math.round((boasTot / sessTot) * 100) : 0]),
+      explica: "Treinos completos: 4+ exercícios e 30+ min (ou 20+ min de cardio). Treino pela metade vale menos.",
+      dica: sessTot === 0 ? tr("Conclua um treino completo pra começar a pontuar.") : boasTot === sessTot ? tr("Todos os treinos completos! 🔥") : tr("Termine os treinos inteiros: o tempo e os exercícios contam."),
+    },
+    {
+      id: "prog", emoji: "📈", titulo: "Progressão", pct: pct.prog,
+      valorTexto: tendencia === null ? tr("sem base ainda") : (tendencia >= 0 ? "+" : "") + tendencia + "%",
+      explica: "Volume levantado em cada semana contra a média das 4 anteriores. Estagnar rende pouco: é preciso evoluir.",
+      dica: tendencia === null ? tr("Continue treinando: em 5 semanas eu comparo a sua evolução.") : tendencia >= 3 ? tr("Você está evoluindo! 📈") : tr("Aumente um pouco a carga ou as repetições nas próximas semanas."),
+    },
+    {
+      id: "seq", emoji: "🔥", titulo: "Sequência", pct: pct.seq,
+      valorTexto: trt("{0}/{1} dias", [Math.min(streak || 0, META_SEQUENCIA_MASSI), META_SEQUENCIA_MASSI]),
+      explica: "Dias seguidos treinando (meta: 21). Uma folga por semana não quebra a sequência.",
+      dica: pct.seq >= 1 ? tr("Três semanas seguidas de sequência! 🔥") : (streak || 0) === 0 ? tr("Treine hoje pra começar sua sequência.") : tr("Treine hoje pra manter a chama acesa."),
     },
   ];
-  const total = Math.round(comps.reduce((a, c) => a + c.pct * 25, 0));
-  const zonaIdx = total >= 75 ? 3 : total >= 50 ? 2 : total >= 25 ? 1 : 0;
-  const fraco = [...comps].sort((a, b) => a.pct - b.pct)[0];
-  return { total, zonaIdx, comps, fraco };
+  const fraco = [...comps].sort((a, b) => PESOS_INDICE_MASSI[b.id] * (1 - b.pct) - PESOS_INDICE_MASSI[a.id] * (1 - a.pct))[0];
+  return { total, bruto, nivelIdx, nivelLiberado, travado, teto, comps, fraco, prox, reqs, treinosTotal, semanasBoas, diasDeUso };
 }
 
 // Número que "corre" até o alvo (ponteiro animado, só JS + atributo SVG).
@@ -7602,7 +7714,7 @@ function useValorAnimado(alvo, passo = 1.4, ms = 22) {
   return v;
 }
 
-function MedidorMassiSVG({ valor, zonaIdx }) {
+function MedidorMassiSVG({ valor, nivelIdx }) {
   const cx = 150, cy = 150, R = 104, W = 27;
   const pol = (r, a) => ({ x: cx + r * Math.sin((a * Math.PI) / 180), y: cy - r * Math.cos((a * Math.PI) / 180) });
   const arco = (a1, a2) => {
@@ -7612,20 +7724,12 @@ function MedidorMassiSVG({ valor, zonaIdx }) {
   const ang = -90 + 1.8 * Math.max(0, Math.min(100, valor));
   return (
     <svg viewBox="0 0 300 176" width="100%" style={{ display: "block", maxWidth: 360, margin: "0 auto" }} role="img" aria-label="Medidor Massi">
-      {ZONAS_MASSI.map((z, i) => {
-        const a1 = -90 + 45 * i + 1.2, a2 = -90 + 45 * (i + 1) - 1.2;
-        const ativa = i === zonaIdx;
-        return (
-          <g key={z.nome}>
-            <path d={arco(a1, a2)} stroke={z.cor} strokeWidth={ativa ? W + 5 : W} fill="none" opacity={ativa ? 1 : 0.5} />
-            <text
-              transform={`translate(${pol(R, -90 + 45 * i + 22.5).x.toFixed(2)} ${pol(R, -90 + 45 * i + 22.5).y.toFixed(2)}) rotate(${-90 + 45 * i + 22.5})`}
-              textAnchor="middle" dy="3.2" fontSize="9" fontWeight="800" letterSpacing="0.8" fill="#10150A" opacity={ativa ? 1 : 0.8}
-            >
-              {String(tr(z.nome)).toUpperCase()}
-            </text>
-          </g>
-        );
+      {NIVEIS_MASSI.map((n, i) => {
+        const ini = n.pontos;
+        const fim = i + 1 < NIVEIS_MASSI.length ? NIVEIS_MASSI[i + 1].pontos : 100;
+        const a1 = -90 + 1.8 * ini + 0.7, a2 = -90 + 1.8 * fim - 0.7;
+        const ativa = i === nivelIdx;
+        return <path key={n.nome} d={arco(a1, a2)} stroke={n.cor} strokeWidth={ativa ? W + 5 : W} fill="none" opacity={ativa ? 1 : i < nivelIdx ? 0.8 : 0.35} />;
       })}
       {[0, 25, 50, 75, 100].map((n) => {
         const a = -90 + 1.8 * n;
@@ -7666,11 +7770,38 @@ function MiniMedidorSVG({ pct }) {
 
 function IndiceMassiCard({ indice, refTour, refMinis }) {
   const [aberto, setAberto] = useState(false);
+  const [melhor, setMelhor] = useState(0);
   const valor = useValorAnimado(indice.total);
-  const zona = ZONAS_MASSI[indice.zonaIdx];
-  const proxima = ZONAS_MASSI[indice.zonaIdx + 1];
-  const faltam = (indice.zonaIdx + 1) * 25 - indice.total;
+  const nivel = NIVEIS_MASSI[indice.nivelIdx];
+  const prox = indice.prox;
   const dim = CROSS_TEXT_DIM;
+
+  // Guarda o melhor nível que a pessoa já alcançou (recorde pessoal).
+  useEffect(() => {
+    let vivo = true;
+    (async () => {
+      let salvo = 0;
+      try {
+        const r = await window.storage.get("indice-massi-melhor");
+        if (r && r.value) salvo = parseInt(r.value, 10) || 0;
+      } catch (e) {
+        // ainda não existe
+      }
+      if (indice.nivelIdx > salvo) {
+        salvo = indice.nivelIdx;
+        try { await window.storage.set("indice-massi-melhor", String(salvo)); } catch (e) { /* segue */ }
+      }
+      if (vivo) setMelhor(salvo);
+    })();
+    return () => { vivo = false; };
+  }, [indice.nivelIdx]);
+
+  const faixaIni = nivel.pontos;
+  const faixaFim = prox ? prox.pontos : 100;
+  const pctFaixa = faixaFim > faixaIni ? Math.max(2, Math.min(100, ((indice.total - faixaIni) / (faixaFim - faixaIni)) * 100)) : 100;
+  const faltamPontos = prox ? Math.max(0, prox.pontos - indice.total) : 0;
+  const cumpridos = indice.reqs.filter((r) => r.ok).length;
+
   return (
     <>
       <section
@@ -7678,46 +7809,87 @@ function IndiceMassiCard({ indice, refTour, refMinis }) {
         style={{ background: "linear-gradient(160deg, rgba(40,48,52,0.95), rgba(18,22,25,0.98))", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 16, padding: "16px 14px 14px", marginBottom: 14 }}
       >
         <div style={{ textAlign: "center", fontSize: 11, fontWeight: 800, letterSpacing: 2, color: dim }}>{String(tr("ÍNDICE MASSI")).toUpperCase()}</div>
-        <MedidorMassiSVG valor={valor} zonaIdx={indice.zonaIdx} />
+        <MedidorMassiSVG valor={valor} nivelIdx={indice.nivelIdx} />
         <div style={{ textAlign: "center", marginTop: -2 }}>
           <div style={{ fontSize: 40, fontWeight: 800, color: "#fff", lineHeight: 1 }}>{Math.round(valor)}<span style={{ fontSize: 14, color: dim, fontWeight: 600 }}> /100</span></div>
-          <div style={{ marginTop: 6, display: "inline-block", padding: "4px 14px", borderRadius: 999, background: zona.cor, color: "#10150A", fontWeight: 800, fontSize: 13, letterSpacing: 1 }}>
-            {String(tr(zona.nome)).toUpperCase()}
+          <div style={{ marginTop: 6, display: "inline-block", padding: "5px 14px", borderRadius: 999, background: nivel.cor, color: nivel.texto, fontWeight: 800, fontSize: 13, letterSpacing: 1 }}>
+            {nivel.emoji} {trt("NÍVEL {0}", [indice.nivelIdx + 1])} · {String(tr(nivel.nome)).toUpperCase()}
           </div>
+          {melhor > indice.nivelIdx && (
+            <div style={{ marginTop: 6, fontSize: 11.5, color: dim }}>{trt("Seu recorde: nível {0} · {1}", [melhor + 1, String(tr(NIVEIS_MASSI[melhor].nome))])}</div>
+          )}
         </div>
+
         <div style={{ marginTop: 12, height: 8, borderRadius: 999, background: "rgba(255,255,255,0.1)", overflow: "hidden" }}>
-          <div style={{ width: `${Math.max(2, indice.total)}%`, height: "100%", background: zona.cor, borderRadius: 999 }} />
+          <div style={{ width: `${pctFaixa}%`, height: "100%", background: nivel.cor, borderRadius: 999 }} />
         </div>
         <div style={{ marginTop: 8, textAlign: "center", fontSize: 12.5, color: "#E6EBE7", lineHeight: 1.5 }}>
-          {proxima
-            ? trt("Faltam {0} pontos pra zona {1}.", [faltam, String(tr(proxima.nome))])
-            : tr("Você está na zona máxima! Mantenha o ritmo. 🏆")}
-          {" "}
-          {indice.total === 0 ? tr("Conclua um treino pra mexer o ponteiro.") : trt("Dica: o ponto fraco agora é {0}.", [String(tr(indice.fraco.titulo)).toLowerCase()])}
+          {prox
+            ? trt("Próximo: {0} {1} — cumpridos {2} de 4 requisitos.", [prox.emoji, String(tr(prox.nome)), cumpridos])
+            : tr("Você chegou ao topo: Lendário! Mantenha o ritmo. 🏆")}
         </div>
+
+        {prox && (
+          <div style={{ marginTop: 10 }}>
+            {indice.reqs.map((r) => {
+              const p = Math.max(0, Math.min(100, (r.atual / Math.max(1, r.meta)) * 100));
+              return (
+                <div key={r.id} style={{ marginBottom: 8 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 8, fontSize: 12 }}>
+                    <span style={{ color: r.ok ? "#7FE08F" : "#E6EBE7", fontWeight: 700, minWidth: 0 }}>{r.ok ? "✓ " : "🔒 "}{tr(r.rotulo)}</span>
+                    <span style={{ color: dim, flexShrink: 0 }}>{r.atual}/{r.meta}</span>
+                  </div>
+                  <div style={{ marginTop: 3, height: 5, borderRadius: 999, background: "rgba(255,255,255,0.1)", overflow: "hidden" }}>
+                    <div style={{ width: `${p}%`, height: "100%", background: r.ok ? "#4FCB6B" : "#F5A524", borderRadius: 999 }} />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {indice.travado && prox && (
+          <div style={{ marginTop: 8, padding: "9px 11px", borderRadius: 10, background: "rgba(245,165,36,0.14)", border: "1px solid rgba(245,165,36,0.35)", fontSize: 12, color: "#F5C26B", lineHeight: 1.45 }}>
+            {trt("🔒 Seus hábitos já valem {0} pontos, mas o nível só sobe quando os requisitos de treinos, semanas e tempo de uso forem cumpridos.", [indice.bruto])}
+          </div>
+        )}
+        {!indice.travado && prox && indice.total > 0 && (
+          <div style={{ marginTop: 6, textAlign: "center", fontSize: 12, color: dim }}>
+            {trt("Faltam {0} pontos. Hábito mais fraco agora: {1}.", [faltamPontos, String(tr(indice.fraco.titulo)).toLowerCase()])}
+          </div>
+        )}
+        {indice.total === 0 && <div style={{ marginTop: 6, textAlign: "center", fontSize: 12, color: dim }}>{tr("Conclua um treino pra mexer o ponteiro.")}</div>}
+
         <button
           onClick={() => setAberto(!aberto)}
           style={{ display: "block", margin: "12px auto 0", background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.15)", color: "#fff", borderRadius: 999, padding: "7px 16px", fontSize: 12.5, fontWeight: 700, cursor: "pointer" }}
         >
-          {aberto ? tr("Fechar explicação ▲") : tr("ℹ️ Como esse índice é calculado? ▼")}
+          {aberto ? tr("Fechar explicação ▲") : tr("ℹ️ Como funciona e caminho dos níveis ▼")}
         </button>
         {aberto && (
           <div style={{ marginTop: 12, fontSize: 12.5, color: "#E6EBE7", lineHeight: 1.55 }}>
-            <p style={{ margin: "0 0 8px" }}>{tr("O Índice Massi vai de 0 a 100 e junta os 4 hábitos que mais pesam nos seus resultados. Cada um vale até 25 pontos e é recalculado sempre que você abre o app.")}</p>
+            <p style={{ margin: "0 0 8px" }}>{tr("O Índice Massi tem 12 níveis. Os pontos (0 a 100) vêm de 6 hábitos medidos nas últimas 12 semanas: semana sem treino pesa contra você. Mas pontos não bastam: cada nível também exige um número de treinos, de semanas boas (meta de treinos batida) e de dias de uso. Não dá pra pular etapas.")}</p>
             {indice.comps.map((c) => (
               <div key={c.id} style={{ display: "flex", gap: 8, marginBottom: 6 }}>
                 <span style={{ fontSize: 18 }}>{c.emoji}</span>
-                <span><strong>{tr(c.titulo)}</strong> — {tr(c.explica)}</span>
+                <span><strong>{tr(c.titulo)}</strong> ({PESOS_INDICE_MASSI[c.id]} {tr("pts")}) — {tr(c.explica)}</span>
               </div>
             ))}
-            <div style={{ marginTop: 10, fontWeight: 700 }}>{tr("As 4 zonas:")}</div>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 6 }}>
-              {ZONAS_MASSI.map((z) => (
-                <span key={z.nome} style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 12 }}>
-                  <span style={{ width: 11, height: 11, borderRadius: 999, background: z.cor, display: "inline-block" }} />
-                  {tr(z.nome)} ({z.faixa})
-                </span>
-              ))}
+            <div style={{ marginTop: 10, fontWeight: 700 }}>{tr("Caminho dos níveis:")}</div>
+            <div style={{ marginTop: 6 }}>
+              {NIVEIS_MASSI.map((n, i) => {
+                const atual = i === indice.nivelIdx;
+                const feito = i < indice.nivelIdx;
+                return (
+                  <div key={n.nome} style={{ display: "flex", alignItems: "flex-start", gap: 8, padding: "6px 8px", marginBottom: 4, borderRadius: 10, background: atual ? "rgba(255,255,255,0.1)" : "transparent", border: atual ? `1px solid ${n.cor}` : "1px solid transparent", opacity: feito || atual ? 1 : 0.7 }}>
+                    <span style={{ width: 11, height: 11, borderRadius: 999, background: n.cor, display: "inline-block", marginTop: 4, flexShrink: 0 }} />
+                    <span style={{ minWidth: 0, fontSize: 12 }}>
+                      <strong>{i + 1}. {n.emoji} {tr(n.nome)}</strong>
+                      <span style={{ color: dim }}> — {i === 0 ? tr("ponto de partida") : trt("{0} pts · {1} treinos · {2} sem. boas · {3} dias", [n.pontos, n.treinos, n.semanas, n.dias])}</span>
+                    </span>
+                  </div>
+                );
+              })}
             </div>
           </div>
         )}
@@ -7730,7 +7902,7 @@ function IndiceMassiCard({ indice, refTour, refMinis }) {
             <MiniMedidorSVG pct={c.pct} />
             <div style={{ textAlign: "center", fontSize: 13, fontWeight: 800, color: "#fff", marginTop: 2 }}>{c.valorTexto}</div>
             <div style={{ fontSize: 11, color: dim, lineHeight: 1.4, marginTop: 4 }}>{tr(c.explica)}</div>
-            <div style={{ fontSize: 11.5, color: c.pct >= 1 ? "#7FE08F" : "#F5C26B", fontWeight: 700, lineHeight: 1.4, marginTop: 5 }}>{c.dica}</div>
+            <div style={{ fontSize: 11.5, color: c.pct >= 0.95 ? "#7FE08F" : "#F5C26B", fontWeight: 700, lineHeight: 1.4, marginTop: 5 }}>{c.dica}</div>
           </div>
         ))}
       </div>
@@ -11939,124 +12111,623 @@ function anLinhaCorpo(l) {
   return { ang, cai: l.quadril.y > yLinha };
 }
 
+// ---------------------------------------------------------------
+// Esqueleto completo (33 pontos do MediaPipe), medidas em 3D e ângulo da câmera.
+// O modelo entrega duas listas de pontos: as da imagem (x, y) e as "do mundo"
+// (metros, com profundidade). Com a profundidade dá pra medir o ângulo de uma
+// articulação mesmo quando a câmera não está exatamente de lado.
+// ---------------------------------------------------------------
+const AN_CONEXOES_TOTAL = [
+  [0, 1], [1, 2], [2, 3], [3, 7], [0, 4], [4, 5], [5, 6], [6, 8], [9, 10],
+  [11, 12], [11, 13], [13, 15], [15, 17], [15, 19], [15, 21], [17, 19],
+  [12, 14], [14, 16], [16, 18], [16, 20], [16, 22], [18, 20],
+  [11, 23], [12, 24], [23, 24], [23, 25], [24, 26], [25, 27], [26, 28],
+  [27, 29], [28, 30], [29, 31], [30, 32], [27, 31], [28, 32],
+];
+const AN_PONTOS_PRINCIPAIS = [11, 12, 13, 14, 15, 16, 23, 24, 25, 26, 27, 28];
+const AN_TODAS = ["frente", "diagonal", "lado"];
+const AN_LADO_DIAG = ["diagonal", "lado"];
+const AN_SO_FRENTE = ["frente"];
+const AN_ROTULO_VISTA = { frente: "Frente", diagonal: "Diagonal", lado: "Lado" };
+const AN_GRAVAR_VISTA = { frente: "de frente", diagonal: "em diagonal", lado: "de lado" };
+
+function anP3(mundo, i) {
+  const p = mundo && mundo[i];
+  if (!p) return null;
+  return { x: p.x, y: p.y, z: p.z, v: p.visibility === undefined ? 1 : p.visibility };
+}
+function anAngulo3(a, b, c) {
+  if (!a || !b || !c) return null;
+  const v1x = a.x - b.x, v1y = a.y - b.y, v1z = a.z - b.z, v2x = c.x - b.x, v2y = c.y - b.y, v2z = c.z - b.z;
+  const m = Math.hypot(v1x, v1y, v1z) * Math.hypot(v2x, v2y, v2z);
+  if (!m) return null;
+  const cos = Math.max(-1, Math.min(1, (v1x * v2x + v1y * v2y + v1z * v2z) / m));
+  return (Math.acos(cos) * 180) / Math.PI;
+}
+// Inclinação de a→b em relação à vertical, em 3D (0° = em pé, 90° = deitado).
+function anInclinacao3(a, b) {
+  if (!a || !b) return null;
+  const dx = b.x - a.x, dy = b.y - a.y, dz = b.z - a.z;
+  const m = Math.hypot(dx, dy, dz);
+  if (!m) return null;
+  return (Math.acos(Math.max(-1, Math.min(1, Math.abs(dy) / m))) * 180) / Math.PI;
+}
+function anMeio3(mundo, i, j) {
+  const a = anP3(mundo, i), b = anP3(mundo, j);
+  if (!a || !b) return null;
+  return { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2, z: (a.z + b.z) / 2, v: Math.min(a.v, b.v) };
+}
+function anMeio2(a, b) { return { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2, v: Math.min(a.v, b.v) }; }
+
+// Ângulo da câmera em relação ao corpo: 0° = de frente, 90° = de lado.
+function anAzimute(lm, W, H, mundo) {
+  if (mundo) {
+    const oe = mundo[11], od = mundo[12], qe = mundo[23], qd = mundo[24];
+    if (oe && od && qe && qd) {
+      const dx = Math.abs(od.x - oe.x) + Math.abs(qd.x - qe.x);
+      const dz = Math.abs(od.z - oe.z) + Math.abs(qd.z - qe.z);
+      if (dx + dz > 0.05) return (Math.atan2(dz, dx) * 180) / Math.PI;
+    }
+  }
+  const r = anRazaoFrente(lm, W, H);
+  return 90 - 90 * Math.max(0, Math.min(1, (r - 0.15) / 0.65));
+}
+function anClasseVista(az) {
+  if (az === null || az === undefined || isNaN(az)) return "lado";
+  return az < 30 ? "frente" : az < 65 ? "diagonal" : "lado";
+}
+function anLadoMaisVisivel(lm) {
+  const soma = (ids) => ids.reduce((a, i) => a + (lm[i].visibility === undefined ? 1 : lm[i].visibility), 0);
+  return soma([11, 13, 15, 23, 25, 27]) >= soma([12, 14, 16, 24, 26, 28]) ? "E" : "D";
+}
+// Ângulo em b (entre a e c): 3D quando a câmera não está de lado, 2D quando está.
+function anAngLm(lm, W, H, mundo, az, ia, ib, ic) {
+  const pa = anPonto(lm, ia, W, H), pb = anPonto(lm, ib, W, H), pc = anPonto(lm, ic, W, H);
+  if (!anVisivel([pa, pb, pc])) return null;
+  if (mundo && az < 65) {
+    const a3 = anAngulo3(anP3(mundo, ia), anP3(mundo, ib), anP3(mundo, ic));
+    if (a3 !== null) return a3;
+  }
+  return anAngulo(pa, pb, pc);
+}
+// Inclinação de um segmento do corpo (ex.: tronco = quadril→ombro) em relação à vertical.
+function anSegInc(lm, W, H, mundo, az, baixoE, baixoD, cimaE, cimaD) {
+  if (mundo && az < 65) {
+    const a = anMeio3(mundo, baixoE, baixoD), b = anMeio3(mundo, cimaE, cimaD);
+    const inc = anInclinacao3(a, b);
+    if (inc !== null) return inc;
+  }
+  const L = anLadoMaisVisivel(lm) === "E";
+  const a = anPonto(lm, L ? baixoE : baixoD, W, H), b = anPonto(lm, L ? cimaE : cimaD, W, H);
+  if (!anVisivel([a, b])) return NaN;
+  return anInclinacao(a, b);
+}
+// Calcanhar e ponta do pé (posição vertical na imagem) e comprimento da canela.
+function anExtrasPes(lm, W, H) {
+  const pt = (i) => anPonto(lm, i, W, H);
+  const ce = pt(29), cd = pt(30), pe = pt(31), pd = pt(32);
+  const joE = pt(25), toE = pt(27), joD = pt(26), toD = pt(28);
+  const ok = (c, p) => c.v >= 0.5 && p.v >= 0.5;
+  const canelas = [];
+  if (joE.v >= AN_VIS_MIN && toE.v >= AN_VIS_MIN) canelas.push(anDist(joE, toE));
+  if (joD.v >= AN_VIS_MIN && toD.v >= AN_VIS_MIN) canelas.push(anDist(joD, toD));
+  return {
+    calcEY: ok(ce, pe) ? ce.y : NaN, calcDY: ok(cd, pd) ? cd.y : NaN,
+    ponEY: ok(ce, pe) ? pe.y : NaN, ponDY: ok(cd, pd) ? pd.y : NaN,
+    canelaPx: canelas.length ? anMedia(canelas) : NaN,
+  };
+}
+// Quanto o calcanhar subiu em relação ao repouso (em "canelas"). Se a ponta do pé subiu junto,
+// é o pé inteiro se mexendo (ou a câmera tremendo), então não conta como calcanhar levantado.
+function anSubidaCalcanhar(atual, base) {
+  if (!atual || !base) return null;
+  const canela = base.canelaPx;
+  if (!canela || isNaN(canela)) return null;
+  const lados = [];
+  [["E", "calcEY", "ponEY"], ["D", "calcDY", "ponDY"]].forEach(([lado, kc, kp]) => {
+    const c = atual[kc], c0 = base[kc], p = atual[kp], p0 = base[kp];
+    if ([c, c0].some((x) => x === undefined || x === null || isNaN(x))) return;
+    const h = (c0 - c) / canela;
+    const t = [p, p0].some((x) => x === undefined || x === null || isNaN(x)) ? 0 : (p0 - p) / canela;
+    lados.push({ lado, v: h - Math.max(0, t) * 0.8 });
+  });
+  if (!lados.length) return null;
+  return { v: Math.max(...lados.map((l) => l.v)), lados };
+}
+// Joelho "caindo pra dentro" (só vale de frente): quanto o joelho sai da linha quadril→tornozelo, em larguras de quadril.
+function anValgoLado(lm, W, H, az, ids) {
+  if (az >= 35) return NaN;
+  const [iq, ij, it, iqOutro] = ids;
+  const q = anPonto(lm, iq, W, H), j = anPonto(lm, ij, W, H), t = anPonto(lm, it, W, H), qo = anPonto(lm, iqOutro, W, H);
+  if (!anVisivel([q, j, t, qo])) return NaN;
+  const larg = Math.abs(q.x - qo.x);
+  const dh = t.y - q.y;
+  if (larg < 4 || Math.abs(dh) < 1) return NaN;
+  const xLinha = q.x + ((t.x - q.x) * (j.y - q.y)) / dh;
+  const meioX = (q.x + qo.x) / 2;
+  const dentro = Math.sign(meioX - t.x) || 0; // lado do corpo que fica "pra dentro"
+  if (!dentro) return NaN;
+  return ((j.x - xLinha) * dentro) / larg;
+}
+// Cria o "quadro de checagens": cada checagem só vale nos ângulos de câmera em que dá pra medir direito.
+function anQuadro(r) {
+  const f = [];
+  f.naoAv = [];
+  const vista = anClasseVista(r.fundo ? r.fundo.azim : 90);
+  const quando = (id, rotulo, vistas, fn) => {
+    if (vistas.indexOf(vista) < 0) { f.naoAv.push({ id, rotulo, vistas }); return; }
+    const x = fn();
+    if (x) f.push(x);
+  };
+  return { f, quando, vista };
+}
+function anLadosTexto(lados, lim) {
+  const acima = lados.filter((l) => l.v > lim).map((l) => l.lado);
+  if (lados.length < 2) return acima[0] === "E" ? "umE" : "umD"; // só um pé estava visível: não dá pra dizer qual é
+  return acima.length >= 2 ? "ambos" : acima[0] === "E" ? "esq" : "dir";
+}
+function anIdsPes(q) { return q === "esq" || q === "umE" ? [29, 31] : q === "dir" || q === "umD" ? [30, 32] : [29, 30, 31, 32]; }
+// Qual perna está na frente (afundo): a que fica mais adiante na direção em que os pés apontam.
+function anPernaFrente(lm, W, H, mundo) {
+  if (mundo) {
+    const g = (i) => anP3(mundo, i);
+    const dirs = [[29, 31], [30, 32]].map(([c, p]) => { const a = g(c), b = g(p); return a && b ? { x: b.x - a.x, z: b.z - a.z } : null; }).filter(Boolean);
+    const te = g(27), td = g(28);
+    if (dirs.length && te && td) {
+      const fx = dirs.reduce((a, v) => a + v.x, 0) / dirs.length, fz = dirs.reduce((a, v) => a + v.z, 0) / dirs.length;
+      const mm = Math.hypot(fx, fz);
+      if (mm > 0.02) {
+        const pe = (te.x * fx + te.z * fz) / mm, pd = (td.x * fx + td.z * fz) / mm;
+        if (Math.abs(pe - pd) > 0.08) return pe > pd ? "E" : "D";
+      }
+    }
+  }
+  const te = anPonto(lm, 27, W, H), td = anPonto(lm, 28, W, H), pe = anPonto(lm, 31, W, H), pd = anPonto(lm, 32, W, H);
+  if (te.v >= AN_VIS_MIN && td.v >= AN_VIS_MIN && pe.v >= AN_VIS_MIN && pd.v >= AN_VIS_MIN) {
+    const dir = Math.sign((pe.x - te.x + pd.x - td.x) / 2) || 0;
+    if (dir && Math.abs(te.x - td.x) > 0.06 * W) return (te.x - td.x) * dir > 0 ? "E" : "D";
+  }
+  return null;
+}
+
 // Cada exercício: como filmar, o que medir (principal: alto = repouso, baixo = esforço),
 // limites para contar a repetição e as regras de correção.
+// `multivista: true` = funciona de frente, em diagonal ou de lado (cada checagem diz em quais ângulos vale).
+const AN_POS_ANGULOS = "Pode filmar de lado, de frente ou em diagonal, com o celular a uns 2 ou 3 metros e o corpo inteiro no quadro. O app descobre o ângulo sozinho e diz o que consegue avaliar em cada um.";
 const AN_EXERCICIOS = {
   agachamento: {
-    titulo: "Agachamento", vista: "lado", tipo: "rep",
-    posicao: "Apoie o celular no chão ou numa cadeira, a uns 2 ou 3 metros, e fique de lado para a câmera, com o corpo inteiro no quadro.",
+    titulo: "Agachamento", vista: "lado", multivista: true, tipo: "rep",
+    posicao: AN_POS_ANGULOS,
     inicio: 150, fim: 160, valida: 140,
-    medir(lm, W, H) {
-      const l = anLado(lm, W, H);
-      if (!anVisivel([l.ombro, l.quadril, l.joelho, l.tornozelo])) return null;
-      return { principal: anAngulo(l.quadril, l.joelho, l.tornozelo), extras: { tronco: anInclinacao(l.quadril, l.ombro) } };
+    medir(lm, W, H, mundo) {
+      const az = anAzimute(lm, W, H, mundo);
+      if (!mundo && az < 40) return null;
+      const angE = anAngLm(lm, W, H, mundo, az, 23, 25, 27), angD = anAngLm(lm, W, H, mundo, az, 24, 26, 28);
+      let principal;
+      if (az >= 65 || !mundo) {
+        const lado = anLadoMaisVisivel(lm);
+        principal = lado === "E" ? angE : angD;
+        if (principal === null) principal = lado === "E" ? angD : angE;
+      } else principal = anMedia([angE, angD]);
+      if (principal === null || principal === undefined || isNaN(principal)) return null;
+      const ombros = [anPonto(lm, 11, W, H), anPonto(lm, 12, W, H)];
+      const qe = anPonto(lm, 23, W, H), qd = anPonto(lm, 24, W, H), te = anPonto(lm, 27, W, H), td = anPonto(lm, 28, W, H);
+      const larg = Math.abs(qe.x - qd.x);
+      const frente = az < 35 && anVisivel([qe, qd, te, td]) && larg > 4;
+      return {
+        principal,
+        extras: {
+          azim: az,
+          tronco: anSegInc(lm, W, H, mundo, az, 23, 24, 11, 12),
+          canelaInc: anSegInc(lm, W, H, mundo, az, 27, 28, 25, 26),
+          angE: angE === null ? NaN : angE, angD: angD === null ? NaN : angD,
+          valgoE: anValgoLado(lm, W, H, az, [23, 25, 27, 24]), valgoD: anValgoLado(lm, W, H, az, [24, 26, 28, 23]),
+          shiftQ: frente ? ((qe.x + qd.x) / 2 - (te.x + td.x) / 2) / larg : NaN,
+          ...anExtrasPes(lm, W, H),
+        },
+      };
+    },
+    vivo(ex, base, p) {
+      if (!base || p >= 150) return null;
+      const h = anSubidaCalcanhar(ex, base);
+      if (h && h.v > 0.09) {
+        const q = anLadosTexto(h.lados, 0.06);
+        return { texto: "Calcanhar levantando! Empurre o chão com o pé inteiro.", ids: anIdsPes(q) };
+      }
+      const v = Math.max(ex.valgoE || 0, ex.valgoD || 0);
+      if (ex.azim < 35 && v > 0.28) return { texto: "Joelhos caindo pra dentro! Empurre-os para fora.", ids: [25, 26] };
+      if (ex.tronco > 70 && ex.azim >= 30) return { texto: "Tronco muito inclinado! Abra o peito.", ids: [11, 12, 23, 24] };
+      return null;
+    },
+    rotulos(ex) {
+      const r = [];
+      if (!isNaN(ex.angE)) r.push({ i: 25, t: Math.round(ex.angE) + "°" });
+      if (!isNaN(ex.angD)) r.push({ i: 26, t: Math.round(ex.angD) + "°" });
+      if (!isNaN(ex.tronco)) r.push({ i: [23, 24], t: tr("tronco") + " " + Math.round(ex.tronco) + "°" });
+      return r;
     },
     avaliar(r) {
-      const f = [];
-      if (r.min > 115) f.push({ id: "prof", peso: 30, texto: "Desça mais: busque a coxa paralela ao chão (joelho perto de 90°)." });
-      if (r.fundo && r.fundo.tronco > 60) f.push({ id: "tronco", peso: 25, texto: "Tronco muito inclinado à frente: mantenha o peito aberto e olhe para frente." });
-      if (r.tDesc < 0.7) f.push({ id: "vel", peso: 10, texto: "Desça controlado, sem despencar." });
+      const { f, quando } = anQuadro(r);
+      const fu = r.fundo || {};
+      quando("prof", "Profundidade", AN_TODAS, () => {
+        if (r.min > 115) return { id: "prof", peso: 30, texto: "Desça mais: busque a coxa paralela ao chão (joelho perto de 90°).", corrige: "Sente o quadril pra trás e pra baixo e abra um pouco os pés. Desça devagar até a coxa ficar paralela ao chão.", ids: [23, 24, 25, 26] };
+        if (r.min > 103) return { id: "prof", peso: 12, texto: "Falta pouco para a profundidade ideal: desça mais alguns centímetros.", corrige: "Mantenha o controle e desça um pouco mais, até a coxa ficar paralela ao chão.", ids: [23, 24, 25, 26] };
+        return null;
+      });
+      quando("tronco", "Inclinação do tronco", AN_LADO_DIAG, () => {
+        if (fu.tronco > 60) return { id: "tronco", peso: 25, texto: "Tronco muito inclinado à frente: mantenha o peito aberto e olhe para frente.", corrige: "Abra o peito, olhe um pouco acima do horizonte e mantenha o peso no meio do pé. Se o tronco cair, reduza a carga.", ids: [11, 12, 23, 24] };
+        if (fu.tronco - fu.canelaInc > 28 && fu.tronco > 45) return { id: "troncoCanela", peso: 15, texto: "O tronco está bem mais inclinado que a canela: o quadril está indo para trás demais.", corrige: "Leve os joelhos um pouco mais à frente e mantenha o peito alto, para o tronco acompanhar a inclinação da canela.", ids: [11, 12, 23, 24] };
+        return null;
+      });
+      quando("calcanhar", "Calcanhares no chão", AN_TODAS, () => {
+        const h = anSubidaCalcanhar({ calcEY: r.minExtras.calcEY, calcDY: r.minExtras.calcDY, ponEY: r.minExtras.ponEY, ponDY: r.minExtras.ponDY }, r.inicio);
+        if (!h) return null;
+        const q = anLadosTexto(h.lados, h.v > 0.09 ? 0.06 : 0.035);
+        const ids = anIdsPes(q);
+        const suf = q === "ambos" ? " (os dois pés)" : q === "esq" ? " (pé esquerdo)" : q === "dir" ? " (pé direito)" : "";
+        const corrige = "Distribua o peso no pé inteiro e empurre o chão com o calcanhar. Se continuar subindo, falta mobilidade de tornozelo: abra um pouco mais os pés, alongue a panturrilha e pratique o agachamento sem carga.";
+        if (h.v > 0.09) return { id: "calcanhar", peso: 30, texto: "Calcanhar saindo do chão" + suf + ".", corrige, ids };
+        if (h.v > 0.05) return { id: "calcanhar", peso: 12, texto: "Calcanhar começando a levantar" + suf + ".", corrige, ids };
+        return null;
+      });
+      quando("valgo", "Joelhos alinhados com os pés", AN_SO_FRENTE, () => {
+        const v = Math.max(r.maxExtras.valgoE === undefined ? 0 : r.maxExtras.valgoE, r.maxExtras.valgoD === undefined ? 0 : r.maxExtras.valgoD);
+        const corrige = "Empurre os joelhos para fora, na direção da ponta dos pés, na descida e na subida. Uma mini-band acima dos joelhos ajuda a treinar esse comando.";
+        if (v > 0.28) return { id: "valgo", peso: 28, texto: "Joelho caindo pra dentro durante o movimento.", corrige, ids: [25, 26] };
+        if (v > 0.15) return { id: "valgo", peso: 12, texto: "Joelho começando a fechar para dentro.", corrige, ids: [25, 26] };
+        return null;
+      });
+      quando("simetria", "Simetria entre os lados", AN_SO_FRENTE, () => {
+        const dif = Math.abs(fu.angE - fu.angD);
+        const desvio = r.inicio && !isNaN(fu.shiftQ) && !isNaN(r.inicio.shiftQ) ? Math.abs(fu.shiftQ - r.inicio.shiftQ) : 0;
+        if (dif > 18) return { id: "simetria", peso: 18, texto: "Você está descendo mais de um lado do que do outro.", corrige: "Divida o peso igualmente nos dois pés e desça com o quadril centralizado, sem carregar mais uma perna.", ids: [23, 24, 25, 26] };
+        if (desvio > 0.25) return { id: "shift", peso: 15, texto: "O quadril está deslocando para um dos lados na descida.", corrige: "Mantenha o quadril no meio, entre os dois pés, durante todo o movimento.", ids: [23, 24] };
+        return null;
+      });
+      quando("vel", "Ritmo da descida", AN_TODAS, () => (r.tDesc < 0.7 && r.min < 125 ? { id: "vel", peso: 10, texto: "Desça controlado, sem despencar.", corrige: "Desça em 2 a 3 segundos, controlando o movimento até o fundo.", ids: [] } : null));
       return f;
+    },
+    metricas(reps) {
+      const v = (fn) => anMedia(reps.map(fn));
+      const out = [];
+      const prof = v((r) => r.min);
+      if (prof !== null) out.push({ rotulo: "Profundidade (ângulo do joelho)", valor: Math.round(prof) + "°", ideal: "até 100°", ok: prof <= 105 });
+      const tr1 = v((r) => (r.ext.fundo && !isNaN(r.ext.fundo.tronco) ? r.ext.fundo.tronco : null));
+      if (tr1 !== null) out.push({ rotulo: "Inclinação do tronco no fundo", valor: Math.round(tr1) + "°", ideal: "até 55°", ok: tr1 <= 60 });
+      let pior = null;
+      reps.forEach((r) => {
+        const h = anSubidaCalcanhar({ calcEY: r.ext.mn.calcEY, calcDY: r.ext.mn.calcDY, ponEY: r.ext.mn.ponEY, ponDY: r.ext.mn.ponDY }, r.ext.ini);
+        if (h && (pior === null || h.v > pior)) pior = h.v;
+      });
+      if (pior !== null) out.push({ rotulo: "Maior subida do calcanhar", valor: trt("{0}% da canela", [Math.max(0, Math.round(pior * 100))]), ideal: "menos de 5%", ok: pior <= 0.05 });
+      const td = v((r) => r.tDesc);
+      if (td !== null) out.push({ rotulo: "Tempo de descida", valor: td.toFixed(1) + " s", ideal: "1 a 3 s", ok: td >= 0.8 });
+      return out;
+    },
+    extras(reps) {
+      const out = [];
+      if (reps.length >= 3) {
+        const mins = reps.map((r) => r.min);
+        if (Math.max(...mins) - Math.min(...mins) > 28) out.push({ texto: "A profundidade variou muito de uma repetição para outra.", corrige: "Escolha uma altura de referência (um banco ou uma marca) e faça todas as repetições até ela.", peso: 10, n: reps.length });
+      }
+      return out;
     },
   },
   afundo: {
-    titulo: "Afundo", vista: "lado", tipo: "rep",
-    posicao: "Apoie o celular a uns 2 ou 3 metros, fique de lado para a câmera e deixe o corpo inteiro no quadro.",
+    titulo: "Afundo", vista: "lado", multivista: true, tipo: "rep",
+    posicao: AN_POS_ANGULOS,
     inicio: 150, fim: 160, valida: 140,
-    medir(lm, W, H) {
-      const e = { ombro: anPonto(lm, 11, W, H), quadril: anPonto(lm, 23, W, H), joelho: anPonto(lm, 25, W, H), tornozelo: anPonto(lm, 27, W, H), ponta: anPonto(lm, 31, W, H) };
-      const d = { ombro: anPonto(lm, 12, W, H), quadril: anPonto(lm, 24, W, H), joelho: anPonto(lm, 26, W, H), tornozelo: anPonto(lm, 28, W, H), ponta: anPonto(lm, 32, W, H) };
-      if (!anVisivel([e.quadril, e.joelho, e.tornozelo, d.quadril, d.joelho, d.tornozelo])) return null;
-      const ae = anAngulo(e.quadril, e.joelho, e.tornozelo), ad = anAngulo(d.quadril, d.joelho, d.tornozelo);
-      if (ae === null || ad === null) return null;
-      const frente = ae <= ad ? e : d;
-      const dir = Math.sign(frente.ponta.x - frente.tornozelo.x) || 1;
-      const canela = Math.hypot(frente.joelho.x - frente.tornozelo.x, frente.joelho.y - frente.tornozelo.y) || 1;
-      return { principal: Math.min(ae, ad), extras: { tronco: anInclinacao(frente.quadril, frente.ombro), joelhoAdiante: ((frente.joelho.x - frente.ponta.x) * dir) / canela } };
+    medir(lm, W, H, mundo) {
+      const az = anAzimute(lm, W, H, mundo);
+      if (!mundo && az < 40) return null;
+      const angE = anAngLm(lm, W, H, mundo, az, 23, 25, 27), angD = anAngLm(lm, W, H, mundo, az, 24, 26, 28);
+      if (angE === null && angD === null) return null;
+      const lf = anPernaFrente(lm, W, H, mundo);
+      const sabe = lf !== null && angE !== null && angD !== null; // só avalia a perna da frente se souber qual é
+      const ladoFrente = lf || (angE !== null && (angD === null || angE <= angD) ? "E" : "D");
+      const angFrente = ladoFrente === "E" ? angE : angD;
+      let principal = sabe ? angFrente : anMedia([angE === null ? null : angE, angD === null ? null : angD].filter((x) => x !== null).length ? [Math.min(...[angE, angD].filter((x) => x !== null))] : []);
+      if (principal === null || isNaN(principal)) return null;
+      const ids = ladoFrente === "E" ? [11, 23, 25, 27, 29, 31, 24] : [12, 24, 26, 28, 30, 32, 23];
+      const [io, iq, ij, it, ic, ip, iqo] = ids;
+      const q = anPonto(lm, iq, W, H), j = anPonto(lm, ij, W, H), t = anPonto(lm, it, W, H), c = anPonto(lm, ic, W, H), pn = anPonto(lm, ip, W, H);
+      const dir = Math.sign(pn.x - t.x) || 1;
+      const canela = Math.hypot(j.x - t.x, j.y - t.y) || 1;
+      const ex = anExtrasPes(lm, W, H);
+      const qE = anPonto(lm, 23, W, H), qD = anPonto(lm, 24, W, H), tE = anPonto(lm, 27, W, H), tD = anPonto(lm, 28, W, H);
+      const larg = Math.abs(qE.x - qD.x);
+      const pesOk = sabe && c.v >= 0.5 && pn.v >= 0.5;
+      void io; void q;
+      return {
+        principal,
+        extras: {
+          azim: az,
+          tronco: anSegInc(lm, W, H, mundo, az, 23, 24, 11, 12),
+          joelhoAdiante: sabe ? ((j.x - pn.x) * dir) / canela : NaN,
+          valgo: sabe ? anValgoLado(lm, W, H, az, [iq, ij, it, iqo]) : NaN,
+          shiftQ: az < 35 && anVisivel([qE, qD, tE, tD]) && larg > 4 ? ((qE.x + qD.x) / 2 - (tE.x + tD.x) / 2) / larg : NaN,
+          calcFY: pesOk ? c.y : NaN,
+          ponFY: pesOk ? pn.y : NaN,
+          canelaPx: ex.canelaPx,
+          angFrente: principal,
+        },
+      };
+    },
+    vivo(ex, base, p) {
+      if (!base || p >= 150) return null;
+      const h = anSubidaCalcanhar({ calcEY: ex.calcFY, ponEY: ex.ponFY }, { calcEY: base.calcFY, ponEY: base.ponFY, canelaPx: base.canelaPx });
+      if (h && h.v > 0.1) return { texto: "Calcanhar da frente levantando! Apoie o pé inteiro.", ids: [29, 30, 31, 32] };
+      if (ex.azim < 35 && ex.valgo > 0.28) return { texto: "Joelho da frente fechando! Empurre-o para fora.", ids: [25, 26] };
+      return null;
+    },
+    rotulos(ex) {
+      const r = [];
+      if (!isNaN(ex.angFrente)) r.push({ i: [25, 26], t: Math.round(ex.angFrente) + "°" });
+      if (!isNaN(ex.tronco)) r.push({ i: [23, 24], t: tr("tronco") + " " + Math.round(ex.tronco) + "°" });
+      return r;
     },
     avaliar(r) {
-      const f = [];
-      if (r.min > 115) f.push({ id: "prof", peso: 30, texto: "Desça mais: o joelho da frente deve chegar perto de 90°." });
-      if (r.fundo && r.fundo.tronco > 25) f.push({ id: "tronco", peso: 20, texto: "Mantenha o tronco mais ereto durante a descida." });
-      if (r.fundo && r.fundo.joelhoAdiante > 0.3) f.push({ id: "joelho", peso: 15, texto: "O joelho da frente passou muito da ponta do pé: dê um passo um pouco maior." });
-      if (r.tDesc < 0.6) f.push({ id: "vel", peso: 10, texto: "Desça controlado, sem despencar." });
+      const { f, quando } = anQuadro(r);
+      const fu = r.fundo || {};
+      quando("prof", "Profundidade", AN_TODAS, () => (r.min > 115 ? { id: "prof", peso: 30, texto: "Desça mais: o joelho da frente deve chegar perto de 90°.", corrige: "Dê um passo um pouco maior e desça o quadril reto para baixo, até o joelho da frente ficar perto de 90°.", ids: [23, 24, 25, 26] } : null));
+      quando("tronco", "Inclinação do tronco", AN_LADO_DIAG, () => (fu.tronco > 25 ? { id: "tronco", peso: 20, texto: "Mantenha o tronco mais ereto durante a descida.", corrige: "Olhe para frente, abra o peito e imagine descer em linha reta, sem se jogar para a frente.", ids: [11, 12, 23, 24] } : null));
+      quando("joelho", "Joelho em relação à ponta do pé", AN_LADO_DIAG, () => (fu.joelhoAdiante > 0.3 ? { id: "joelho", peso: 15, texto: "O joelho da frente passou muito da ponta do pé: dê um passo um pouco maior.", corrige: "Aumente o passo para que a canela da frente fique quase vertical no fundo.", ids: [25, 26, 27, 28] } : null));
+      quando("calcanhar", "Calcanhar da frente no chão", AN_TODAS, () => {
+        if (r.minExtras.calcFY === undefined) { f.naoAv.push({ id: "calcanhar", rotulo: "Calcanhar da frente (as duas pernas e os pés precisam aparecer no quadro)", vistas: [] }); return null; }
+        const h = anSubidaCalcanhar({ calcEY: r.minExtras.calcFY, ponEY: r.minExtras.ponFY }, { calcEY: r.inicio.calcFY, ponEY: r.inicio.ponFY, canelaPx: r.inicio.canelaPx });
+        const corrige = "Apoie o pé da frente inteiro no chão e empurre pelo calcanhar na subida.";
+        if (h && h.v > 0.1) return { id: "calcanhar", peso: 28, texto: "Calcanhar do pé da frente saindo do chão.", corrige, ids: [29, 30, 31, 32] };
+        if (h && h.v > 0.055) return { id: "calcanhar", peso: 12, texto: "Calcanhar do pé da frente começando a levantar.", corrige, ids: [29, 30, 31, 32] };
+        return null;
+      });
+      quando("valgo", "Joelho da frente alinhado", AN_SO_FRENTE, () => {
+        const v = r.maxExtras.valgo === undefined ? 0 : r.maxExtras.valgo;
+        const corrige = "Empurre o joelho da frente para fora, na direção do segundo dedo do pé.";
+        if (v > 0.28) return { id: "valgo", peso: 25, texto: "O joelho da frente está caindo para dentro.", corrige, ids: [25, 26] };
+        if (v > 0.15) return { id: "valgo", peso: 12, texto: "O joelho da frente está começando a fechar.", corrige, ids: [25, 26] };
+        return null;
+      });
+      quando("balanco", "Equilíbrio lateral", AN_SO_FRENTE, () => {
+        const desvio = r.inicio && !isNaN(fu.shiftQ) && !isNaN(r.inicio.shiftQ) ? Math.abs(fu.shiftQ - r.inicio.shiftQ) : 0;
+        return desvio > 0.3 ? { id: "balanco", peso: 15, texto: "O quadril balançou para o lado durante o movimento.", corrige: "Aperte o abdômen e mantenha o quadril centralizado. Se precisar, abra um pouco mais a base dos pés.", ids: [23, 24] } : null;
+      });
+      quando("vel", "Ritmo da descida", AN_TODAS, () => (r.tDesc < 0.6 ? { id: "vel", peso: 10, texto: "Desça controlado, sem despencar.", corrige: "Desça em 2 a 3 segundos, sem deixar o joelho de trás bater no chão.", ids: [] } : null));
       return f;
+    },
+    metricas(reps) {
+      const out = [];
+      const prof = anMedia(reps.map((r) => r.min));
+      if (prof !== null) out.push({ rotulo: "Joelho da frente no fundo", valor: Math.round(prof) + "°", ideal: "até 100°", ok: prof <= 105 });
+      const tr1 = anMedia(reps.map((r) => (r.ext.fundo && !isNaN(r.ext.fundo.tronco) ? r.ext.fundo.tronco : null)));
+      if (tr1 !== null) out.push({ rotulo: "Inclinação do tronco", valor: Math.round(tr1) + "°", ideal: "até 20°", ok: tr1 <= 25 });
+      return out;
     },
   },
   flexao: {
-    titulo: "Flexão de braço", vista: "lado", tipo: "rep",
-    posicao: "Apoie o celular no chão, a uns 2 metros, e fique de lado para a câmera, com o corpo inteiro no quadro (cabeça aos pés).",
+    titulo: "Flexão de braço", vista: "lado", multivista: true, tipo: "rep",
+    posicao: "Apoie o celular no chão, a uns 2 metros, e fique de lado, de frente ou em diagonal para a câmera, com o corpo inteiro no quadro (cabeça aos pés). Para ver o quadril, o melhor é de lado; para ver os cotovelos, de frente.",
     inicio: 150, fim: 160, valida: 125,
-    medir(lm, W, H) {
-      const l = anLado(lm, W, H);
-      if (!anVisivel([l.ombro, l.cotovelo, l.punho, l.quadril, l.tornozelo])) return null;
-      const lc = anLinhaCorpo(l);
-      return { principal: anAngulo(l.ombro, l.cotovelo, l.punho), extras: { linha: lc.ang, cai: lc.cai ? 1 : 0 } };
+    medir(lm, W, H, mundo) {
+      const az = anAzimute(lm, W, H, mundo);
+      if (!mundo && az < 40) return null;
+      const angE = anAngLm(lm, W, H, mundo, az, 11, 13, 15), angD = anAngLm(lm, W, H, mundo, az, 12, 14, 16);
+      let principal;
+      if (az >= 65 || !mundo) {
+        const lado = anLadoMaisVisivel(lm);
+        principal = lado === "E" ? angE : angD;
+        if (principal === null) principal = lado === "E" ? angD : angE;
+      } else principal = anMedia([angE, angD]);
+      if (principal === null || principal === undefined || isNaN(principal)) return null;
+      let linha = NaN, cai = 0;
+      if (az < 65 && mundo) {
+        const oe = anAngulo3(anP3(mundo, 11), anP3(mundo, 23), anP3(mundo, 27)), od = anAngulo3(anP3(mundo, 12), anP3(mundo, 24), anP3(mundo, 28));
+        const a = anMedia([oe, od]);
+        if (a !== null) {
+          linha = a;
+          const mq = anMeio3(mundo, 23, 24), mo = anMeio3(mundo, 11, 12), mt = anMeio3(mundo, 27, 28);
+          if (mq && mo && mt) cai = mq.y > (mo.y + mt.y) / 2 ? 1 : 0; // y do mundo cresce pra baixo
+        }
+      } else {
+        const L = anLadoMaisVisivel(lm) === "E";
+        const l = { ombro: anPonto(lm, L ? 11 : 12, W, H), quadril: anPonto(lm, L ? 23 : 24, W, H), tornozelo: anPonto(lm, L ? 27 : 28, W, H) };
+        if (anVisivel([l.ombro, l.quadril, l.tornozelo])) { const lc = anLinhaCorpo(l); linha = lc.ang === null ? NaN : lc.ang; cai = lc.cai ? 1 : 0; }
+      }
+      const oE = anPonto(lm, 11, W, H), oD = anPonto(lm, 12, W, H), cE = anPonto(lm, 13, W, H), cD = anPonto(lm, 14, W, H);
+      const largOmbros = Math.abs(oE.x - oD.x);
+      return {
+        principal,
+        extras: {
+          azim: az, linha, cai,
+          angE: angE === null ? NaN : angE, angD: angD === null ? NaN : angD,
+          abertura: az < 35 && anVisivel([oE, oD, cE, cD]) && largOmbros > 4 ? Math.abs(cE.x - cD.x) / largOmbros : NaN,
+        },
+      };
+    },
+    vivo(ex, base, p) {
+      if (p >= 150) return null;
+      if (ex.azim >= 30 && !isNaN(ex.linha) && ex.linha < 150) return { texto: ex.cai > 0.5 ? "Quadril caindo! Contraia abdômen e glúteo." : "Quadril subindo! Mantenha o corpo em linha reta.", ids: [23, 24] };
+      return null;
+    },
+    rotulos(ex) {
+      const r = [];
+      if (!isNaN(ex.angE)) r.push({ i: 13, t: Math.round(ex.angE) + "°" });
+      if (!isNaN(ex.angD)) r.push({ i: 14, t: Math.round(ex.angD) + "°" });
+      if (!isNaN(ex.linha)) r.push({ i: [23, 24], t: tr("corpo") + " " + Math.round(ex.linha) + "°" });
+      return r;
     },
     avaliar(r) {
-      const f = [];
-      if (r.min > 100) f.push({ id: "prof", peso: 30, texto: "Desça mais: o peito deve chegar perto do chão." });
-      if (r.minExtras.linha !== undefined && r.minExtras.linha < 160) {
-        f.push({ id: "linha", peso: 25, texto: r.fundo && r.fundo.cai > 0.5 ? "O quadril está caindo: contraia o abdômen e o glúteo." : "O quadril está subindo: mantenha o corpo em linha reta." });
-      }
-      if (r.tDesc < 0.5) f.push({ id: "vel", peso: 10, texto: "Desça controlado." });
+      const { f, quando } = anQuadro(r);
+      const fu = r.fundo || {};
+      quando("prof", "Profundidade", AN_TODAS, () => (r.min > 100 ? { id: "prof", peso: 30, texto: "Desça mais: o peito deve chegar perto do chão.", corrige: "Desça até os cotovelos chegarem perto de 90° e o peito quase tocar o chão, sem apoiar o corpo.", ids: [13, 14] } : null));
+      quando("linha", "Alinhamento do quadril", AN_LADO_DIAG, () => {
+        if (r.minExtras.linha !== undefined && r.minExtras.linha < 157) {
+          return { id: "linha", peso: 25, texto: fu.cai > 0.5 ? "O quadril está caindo: contraia o abdômen e o glúteo." : "O quadril está subindo: mantenha o corpo em linha reta.", corrige: fu.cai > 0.5 ? "Contraia o abdômen e o glúteo como se fosse uma prancha. Se não conseguir, apoie os joelhos no chão." : "Abaixe o quadril até alinhar com ombros e tornozelos e aperte o glúteo.", ids: [23, 24] };
+        }
+        return null;
+      });
+      quando("cotovelos", "Posição dos cotovelos", AN_SO_FRENTE, () => {
+        const a = r.maxExtras.abertura;
+        return a !== undefined && a > 1.75 ? { id: "cotovelos", peso: 18, texto: "Cotovelos muito abertos para os lados.", corrige: "Mantenha os cotovelos a uns 45° do corpo, como uma seta, e não em cruz.", ids: [13, 14] } : null;
+      });
+      quando("simetria", "Simetria entre os braços", AN_SO_FRENTE, () => (Math.abs(fu.angE - fu.angD) > 22 ? { id: "simetria", peso: 15, texto: "Um braço está descendo mais que o outro.", corrige: "Desça com os dois braços ao mesmo tempo e distribua o peso igualmente nas duas mãos.", ids: [13, 14] } : null));
+      quando("vel", "Ritmo da descida", AN_TODAS, () => (r.tDesc < 0.5 ? { id: "vel", peso: 10, texto: "Desça controlado.", corrige: "Desça em 2 segundos, sem cair no chão.", ids: [] } : null));
       return f;
+    },
+    metricas(reps) {
+      const out = [];
+      const prof = anMedia(reps.map((r) => r.min));
+      if (prof !== null) out.push({ rotulo: "Flexão do cotovelo no fundo", valor: Math.round(prof) + "°", ideal: "até 90°", ok: prof <= 95 });
+      const ln = anMedia(reps.map((r) => (r.ext.mn.linha !== undefined ? r.ext.mn.linha : null)));
+      if (ln !== null) out.push({ rotulo: "Alinhamento do corpo (pior ponto)", valor: Math.round(ln) + "°", ideal: "acima de 160°", ok: ln >= 157, vistas: AN_LADO_DIAG });
+      return out;
     },
   },
   prancha: {
-    titulo: "Prancha", vista: "lado", tipo: "tempo",
-    posicao: "Apoie o celular no chão, a uns 2 metros, e fique de lado para a câmera, com o corpo inteiro no quadro.",
-    medir(lm, W, H) {
-      const l = anLado(lm, W, H);
-      if (!anVisivel([l.ombro, l.quadril, l.tornozelo])) return null;
-      const lc = anLinhaCorpo(l);
-      return { principal: lc.ang, extras: { linha: lc.ang, cai: lc.cai ? 1 : 0 } };
+    titulo: "Prancha", vista: "lado", multivista: true, vistasAceitas: ["diagonal", "lado"], avisoVista: "Vire de lado ou em diagonal para a câmera: de frente não dá para ver o quadril.", tipo: "tempo",
+    posicao: "Apoie o celular no chão, a uns 2 metros, e fique de lado ou em diagonal para a câmera, com o corpo inteiro no quadro.",
+    medir(lm, W, H, mundo) {
+      const az = anAzimute(lm, W, H, mundo);
+      let ang = NaN, cai = 0;
+      if (mundo && az < 65) {
+        const oe = anAngulo3(anP3(mundo, 11), anP3(mundo, 23), anP3(mundo, 27)), od = anAngulo3(anP3(mundo, 12), anP3(mundo, 24), anP3(mundo, 28));
+        const a = anMedia([oe, od]);
+        if (a !== null) {
+          ang = a;
+          const mq = anMeio3(mundo, 23, 24), mo = anMeio3(mundo, 11, 12), mt = anMeio3(mundo, 27, 28);
+          if (mq && mo && mt) cai = mq.y > (mo.y + mt.y) / 2 ? 1 : 0;
+        }
+      } else {
+        const l = anLado(lm, W, H);
+        if (!anVisivel([l.ombro, l.quadril, l.tornozelo])) return null;
+        const lc = anLinhaCorpo(l);
+        if (lc.ang !== null) { ang = lc.ang; cai = lc.cai ? 1 : 0; }
+      }
+      if (isNaN(ang)) return null;
+      return { principal: ang, extras: { azim: az, linha: ang, cai } };
     },
     avaliarQuadro(ex) {
-      if (ex.linha >= 165) return null;
-      return { id: "linha", texto: ex.cai > 0.5 ? "O quadril está caindo: contraia o abdômen e o glúteo." : "O quadril está alto demais: abaixe até ficar em linha reta." };
+      if (ex.linha >= 158) return null;
+      return ex.cai > 0.5
+        ? { id: "linha", texto: "O quadril está caindo: contraia o abdômen e o glúteo.", corrige: "Contraia o abdômen e o glúteo e empurre o chão com os antebraços. Se o quadril continuar caindo, encurte o tempo e descanse.", ids: [23, 24] }
+        : { id: "linhaAlto", texto: "O quadril está alto demais: abaixe até ficar em linha reta.", corrige: "Abaixe o quadril até alinhar ombros, quadril e tornozelos, e mantenha o abdômen contraído.", ids: [23, 24] };
     },
+    rotulos(ex) { return isNaN(ex.linha) ? [] : [{ i: [23, 24], t: tr("corpo") + " " + Math.round(ex.linha) + "°" }]; },
   },
   terra: {
-    titulo: "Terra / Stiff", vista: "lado", tipo: "rep",
-    posicao: "Apoie o celular a uns 2 ou 3 metros, fique de lado para a câmera e deixe o corpo inteiro no quadro.",
+    titulo: "Terra / Stiff", vista: "lado", multivista: true, tipo: "rep",
+    posicao: AN_POS_ANGULOS,
     inicio: 155, fim: 165, valida: 140,
-    medir(lm, W, H) {
-      const l = anLado(lm, W, H);
-      if (!anVisivel([l.ombro, l.quadril, l.joelho, l.tornozelo])) return null;
-      return { principal: anAngulo(l.ombro, l.quadril, l.joelho), extras: { joelho: anAngulo(l.quadril, l.joelho, l.tornozelo), tronco: anInclinacao(l.quadril, l.ombro) } };
+    medir(lm, W, H, mundo) {
+      const az = anAzimute(lm, W, H, mundo);
+      if (!mundo && az < 40) return null;
+      const qE = anAngLm(lm, W, H, mundo, az, 11, 23, 25), qD = anAngLm(lm, W, H, mundo, az, 12, 24, 26);
+      let principal;
+      if (az >= 65 || !mundo) {
+        const lado = anLadoMaisVisivel(lm);
+        principal = lado === "E" ? qE : qD;
+        if (principal === null) principal = lado === "E" ? qD : qE;
+      } else principal = anMedia([qE, qD]);
+      if (principal === null || principal === undefined || isNaN(principal)) return null;
+      const jE = anAngLm(lm, W, H, mundo, az, 23, 25, 27), jD = anAngLm(lm, W, H, mundo, az, 24, 26, 28);
+      const oE = anPonto(lm, 11, W, H), oD = anPonto(lm, 12, W, H);
+      const largO = Math.abs(oE.x - oD.x);
+      return {
+        principal,
+        extras: {
+          azim: az,
+          joelho: anMedia([jE, jD]) === null ? NaN : anMedia([jE, jD]),
+          tronco: anSegInc(lm, W, H, mundo, az, 23, 24, 11, 12),
+          ombroDif: az < 35 && anVisivel([oE, oD]) && largO > 4 ? Math.abs(oE.y - oD.y) / largO : NaN,
+          ...anExtrasPes(lm, W, H),
+        },
+      };
+    },
+    vivo(ex, base, p) {
+      if (!base || p >= 155) return null;
+      const h = anSubidaCalcanhar(ex, base);
+      if (h && h.v > 0.1) return { texto: "Calcanhares levantando! Mantenha o peso no meio do pé.", ids: [29, 30, 31, 32] };
+      return null;
+    },
+    rotulos(ex) {
+      const r = [];
+      if (!isNaN(ex.joelho)) r.push({ i: [25, 26], t: tr("joelho") + " " + Math.round(ex.joelho) + "°" });
+      if (!isNaN(ex.tronco)) r.push({ i: [23, 24], t: tr("tronco") + " " + Math.round(ex.tronco) + "°" });
+      return r;
     },
     avaliar(r, opc) {
-      const f = [];
-      if (r.min > 125) f.push({ id: "amp", peso: 30, texto: "Incline mais o tronco: empurre o quadril para trás." });
-      if (opc && opc.stiff && r.fundo && r.fundo.joelho < 135) f.push({ id: "joelho", peso: 25, texto: "Os joelhos estão dobrando demais e isso vira agachamento: mantenha-os levemente flexionados." });
-      if (r.tDesc < 0.8) f.push({ id: "vel", peso: 10, texto: "Controle a descida." });
+      const { f, quando } = anQuadro(r);
+      const fu = r.fundo || {};
+      quando("amp", "Amplitude do movimento", AN_TODAS, () => (r.min > 125 ? { id: "amp", peso: 30, texto: "Incline mais o tronco: empurre o quadril para trás.", corrige: "Leve o quadril para trás como se fosse sentar numa cadeira atrás de você, mantendo as costas retas e a barra perto das pernas.", ids: [23, 24] } : null));
+      quando("joelho", "Flexão dos joelhos", AN_TODAS, () => (opc && opc.stiff && fu.joelho < 135 ? { id: "joelho", peso: 25, texto: "Os joelhos estão dobrando demais e isso vira agachamento: mantenha-os levemente flexionados.", corrige: "No stiff, mantenha os joelhos quase estendidos e empurre o quadril para trás.", ids: [25, 26] } : null));
+      quando("calcanhar", "Calcanhares no chão", AN_TODAS, () => {
+        const h = anSubidaCalcanhar({ calcEY: r.minExtras.calcEY, calcDY: r.minExtras.calcDY, ponEY: r.minExtras.ponEY, ponDY: r.minExtras.ponDY }, r.inicio);
+        if (h && h.v > 0.09) return { id: "calcanhar", peso: 22, texto: "Calcanhares saindo do chão: o peso foi para a ponta dos pés.", corrige: "Mantenha o peso no meio do pé e no calcanhar. Empurre o quadril para trás em vez de jogar o corpo para frente.", ids: [29, 30, 31, 32] };
+        return null;
+      });
+      quando("ombros", "Ombros nivelados", AN_SO_FRENTE, () => (r.maxExtras.ombroDif !== undefined && r.maxExtras.ombroDif > 0.14 ? { id: "ombros", peso: 15, texto: "Um ombro está mais baixo que o outro: o tronco está torcendo.", corrige: "Mantenha os ombros na mesma altura e distribua o peso igualmente nas duas mãos e nos dois pés.", ids: [11, 12] } : null));
+      quando("vel", "Ritmo da descida", AN_TODAS, () => (r.tDesc < 0.8 ? { id: "vel", peso: 10, texto: "Controle a descida.", corrige: "Desça em cerca de 2 segundos, mantendo a tensão no movimento.", ids: [] } : null));
       return f;
+    },
+    metricas(reps) {
+      const out = [];
+      const q = anMedia(reps.map((r) => r.min));
+      if (q !== null) out.push({ rotulo: "Ângulo do quadril no fundo", valor: Math.round(q) + "°", ideal: "até 110°", ok: q <= 120 });
+      return out;
     },
   },
   elevacaoLateral: {
-    titulo: "Elevação lateral", vista: "frente", tipo: "rep",
-    posicao: "Apoie o celular a uns 2 ou 3 metros, fique de frente para a câmera e deixe o corpo inteiro no quadro.",
+    titulo: "Elevação lateral", vista: "frente", multivista: true, vistasAceitas: ["frente", "diagonal"], avisoVista: "Fique de frente ou em diagonal para a câmera: de lado não dá para ver a altura dos braços.", tipo: "rep",
+    posicao: "Apoie o celular a uns 2 ou 3 metros e deixe o corpo inteiro no quadro, de frente ou em diagonal para a câmera. De frente é o ideal para comparar os dois braços.",
     inicio: 150, fim: 160, valida: 120,
-    medir(lm, W, H) {
-      const eo = anPonto(lm, 11, W, H), ec = anPonto(lm, 13, W, H), ep = anPonto(lm, 15, W, H), eq = anPonto(lm, 23, W, H);
-      const dO = anPonto(lm, 12, W, H), dc = anPonto(lm, 14, W, H), dp = anPonto(lm, 16, W, H), dq = anPonto(lm, 24, W, H);
-      if (!anVisivel([eo, ep, eq, dO, dp, dq])) return null;
-      const elevE = anAngulo(eq, eo, ep), elevD = anAngulo(dq, dO, dp);
-      if (elevE === null || elevD === null) return null;
+    medir(lm, W, H, mundo) {
+      const az = anAzimute(lm, W, H, mundo);
+      if (!mundo && az > 50) return null;
+      const elE = anAngLm(lm, W, H, mundo, az, 23, 11, 15), elD = anAngLm(lm, W, H, mundo, az, 24, 12, 16);
+      if (elE === null && elD === null) return null;
+      const elev = anMedia([elE, elD]);
+      const coE = anAngLm(lm, W, H, mundo, az, 11, 13, 15), coD = anAngLm(lm, W, H, mundo, az, 12, 14, 16);
+      const orelha = [[7, 11], [8, 12]].map(([io, is]) => { const o = anPonto(lm, io, W, H), s = anPonto(lm, is, W, H); return o.v >= 0.5 && s.v >= 0.5 ? anDist(o, s) : null; });
+      const qm = anMeio2(anPonto(lm, 23, W, H), anPonto(lm, 24, W, H)), om = anMeio2(anPonto(lm, 11, W, H), anPonto(lm, 12, W, H));
+      const troncoPx = anDist(qm, om) || 1;
+      const org = anMedia(orelha);
       return {
-        principal: 180 - (elevE + elevD) / 2,
-        extras: { elev: (elevE + elevD) / 2, assim: Math.abs(elevE - elevD), cotovelo: anMedia([anAngulo(eo, ec, ep), anAngulo(dO, dc, dp)]) },
+        principal: 180 - elev,
+        extras: {
+          azim: az, elev,
+          assim: elE !== null && elD !== null ? Math.abs(elE - elD) : NaN,
+          cotovelo: anMedia([coE, coD]) === null ? NaN : anMedia([coE, coD]),
+          orelhaOmbro: org === null ? NaN : org / troncoPx,
+          tronco: anSegInc(lm, W, H, mundo, az, 23, 24, 11, 12),
+        },
       };
     },
+    vivo(ex, base, p) {
+      if (!base || p >= 150) return null;
+      if (!isNaN(ex.orelhaOmbro) && !isNaN(base.orelhaOmbro) && ex.orelhaOmbro < base.orelhaOmbro * 0.8) return { texto: "Ombros subindo! Mantenha-os baixos, longe das orelhas.", ids: [11, 12] };
+      return null;
+    },
+    rotulos(ex) { return isNaN(ex.elev) ? [] : [{ i: [11, 12], t: tr("braço") + " " + Math.round(ex.elev) + "°" }]; },
     avaliar(r) {
-      const f = [];
-      const pico = r.fundo ? r.fundo.elev : 0;
-      if (pico < 70) f.push({ id: "baixo", peso: 25, texto: "Suba até a altura dos ombros." });
-      if (pico > 105) f.push({ id: "alto", peso: 20, texto: "Não suba acima da linha dos ombros." });
-      if (r.fundo && r.fundo.assim > 18) f.push({ id: "assim", peso: 15, texto: "Os dois braços subiram em alturas diferentes." });
-      if (r.fundo && r.fundo.cotovelo !== null && r.fundo.cotovelo < 120) f.push({ id: "cot", peso: 10, texto: "Cotovelo muito dobrado: mantenha-o levemente flexionado." });
-      if (r.tDesc < 0.5) f.push({ id: "vel", peso: 10, texto: "Suba controlado, sem balançar o corpo." });
+      const { f, quando } = anQuadro(r);
+      const fu = r.fundo || {};
+      const pico = fu.elev || 0;
+      quando("baixo", "Altura do braço", AN_TODAS, () => {
+        if (pico < 70) return { id: "baixo", peso: 25, texto: "Suba até a altura dos ombros.", corrige: "Eleve os braços até ficarem na linha dos ombros, com o cotovelo um pouco mais alto que o punho.", ids: [13, 14, 15, 16] };
+        if (pico > 105) return { id: "alto", peso: 20, texto: "Não suba acima da linha dos ombros.", corrige: "Pare quando os braços chegarem na altura dos ombros; acima disso o trapézio assume o trabalho.", ids: [13, 14, 15, 16] };
+        return null;
+      });
+      quando("assim", "Simetria entre os braços", AN_SO_FRENTE, () => (fu.assim > 18 ? { id: "assim", peso: 15, texto: "Os dois braços subiram em alturas diferentes.", corrige: "Suba os dois braços juntos, na mesma altura. Se um é mais fraco, comece por ele.", ids: [13, 14, 15, 16] } : null));
+      quando("cot", "Cotovelo levemente flexionado", AN_TODAS, () => (fu.cotovelo !== null && !isNaN(fu.cotovelo) && fu.cotovelo < 120 ? { id: "cot", peso: 10, texto: "Cotovelo muito dobrado: mantenha-o levemente flexionado.", corrige: "Deixe uma leve flexão fixa no cotovelo e imagine derramar água de uma jarra ao subir.", ids: [13, 14] } : null));
+      quando("ombros", "Ombros baixos", AN_TODAS, () => {
+        const base = r.inicio ? r.inicio.orelhaOmbro : NaN;
+        const mn = r.minExtras.orelhaOmbro;
+        return !isNaN(base) && mn !== undefined && mn < base * 0.8 ? { id: "ombros", peso: 18, texto: "Os ombros estão subindo em direção às orelhas.", corrige: "Pense em manter os ombros baixos e afastar as mãos do corpo. Se o trapézio assumir, reduza a carga.", ids: [11, 12] } : null;
+      });
+      quando("balanco", "Tronco parado", AN_TODAS, () => {
+        const a = r.maxExtras.tronco, b = r.minExtras.tronco;
+        return a !== undefined && b !== undefined && a - b > 12 ? { id: "balanco", peso: 18, texto: "O tronco balançou: o impulso do corpo está ajudando a subir.", corrige: "Fique firme, com o abdômen contraído e os pés bem apoiados. Se precisar balançar, reduza a carga.", ids: [11, 12, 23, 24] } : null;
+      });
+      quando("vel", "Ritmo da subida", AN_TODAS, () => (r.tDesc < 0.5 ? { id: "vel", peso: 10, texto: "Suba controlado, sem balançar o corpo.", corrige: "Suba em 1 a 2 segundos e desça em 2 a 3, sem usar impulso.", ids: [] } : null));
       return f;
     },
   },
@@ -12533,7 +13204,7 @@ function anOpcoes(nome) {
 
 // --- máquina de repetições (pura: recebe medidas e tempo; não mexe em tela/câmera) ---
 function anCriarMaquina(tipo, opc) {
-  return { tipo, def: AN_EXERCICIOS[tipo], opc: opc || {}, suave: null, rep: null, reps: [], descartadas: 0, tempo: { total: 0, bom: 0, ult: null }, falhasQuadro: {}, msg: "", msgBoa: false };
+  return { tipo, def: AN_EXERCICIOS[tipo], opc: opc || {}, suave: null, rep: null, reps: [], descartadas: 0, tempo: { total: 0, bom: 0, ult: null }, falhasQuadro: {}, msg: "", msgBoa: false, vistas: {}, repouso: null, vivo: null, rotulos: null };
 }
 function anSuavizar(m, med) {
   const a = 0.55;
@@ -12543,11 +13214,11 @@ function anSuavizar(m, med) {
     const v = med.extras[k];
     if (v === null || v === undefined || isNaN(v)) return;
     const ant = m.suave.extras[k];
-    m.suave.extras[k] = ant === undefined || ant === null ? v : a * v + (1 - a) * ant;
+    m.suave.extras[k] = ant === undefined || ant === null || isNaN(ant) ? v : a * v + (1 - a) * ant;
   });
   return m.suave;
 }
-function anAtualizar(m, med, t) {
+function anAtualizar(m, med, t, vista) {
   const d = m.def;
   if (d.relativo) {
     // Exercícios de movimento pequeno (encolhimento, abdominal...): o app mede o seu
@@ -12564,20 +13235,36 @@ function anAtualizar(m, med, t) {
     med = { principal: anNorm(med.principal, base, base * d.relativo.frac), extras: med.extras };
   }
   const s = anSuavizar(m, med);
+  if (vista && vista.classe) m.vistas[vista.classe] = (m.vistas[vista.classe] || 0) + 1;
   if (d.tipo === "tempo") {
     if (m.tempo.ult !== null) {
       const dt = Math.min(0.5, Math.max(0, t - m.tempo.ult));
       m.tempo.total += dt;
       const falha = d.avaliarQuadro(s.extras);
-      if (!falha) { m.tempo.bom += dt; m.msg = "Corpo alinhado ✅"; m.msgBoa = true; }
-      else { m.falhasQuadro[falha.id] = (m.falhasQuadro[falha.id] || { n: 0, texto: falha.texto }); m.falhasQuadro[falha.id].n += dt; m.msg = falha.texto; m.msgBoa = false; }
+      if (!falha) { m.tempo.bom += dt; m.msg = "Corpo alinhado ✅"; m.msgBoa = true; m.vivo = null; }
+      else {
+        const fq = m.falhasQuadro[falha.id] || (m.falhasQuadro[falha.id] = { n: 0, texto: falha.texto, corrige: falha.corrige || null });
+        fq.n += dt;
+        m.msg = falha.texto;
+        m.msgBoa = false;
+        m.vivo = falha.ids ? { texto: falha.texto, ids: falha.ids } : null;
+      }
     }
     m.tempo.ult = t;
+    m.rotulos = d.rotulos ? d.rotulos(s.extras) : null;
     return m;
   }
   const p = s.principal;
+  // Em pé (repouso): guarda como o corpo está, pra comparar durante a repetição (ex.: calcanhar levantando).
+  if (!m.rep && p > d.fim) {
+    if (!m.repouso) m.repouso = {};
+    Object.keys(s.extras).forEach((k) => {
+      const v = s.extras[k];
+      if (v !== null && v !== undefined && !isNaN(v)) m.repouso[k] = v;
+    });
+  }
   if (!m.rep && p < d.inicio) {
-    m.rep = { t0: t, tMin: t, min: p, fundo: { ...s.extras }, minExtras: {}, maxExtras: {} };
+    m.rep = { t0: t, tMin: t, min: p, fundo: { ...s.extras }, inicio: { ...(m.repouso || s.extras) }, minExtras: {}, maxExtras: {} };
   }
   if (m.rep) {
     const r = m.rep;
@@ -12594,7 +13281,7 @@ function anAtualizar(m, med, t) {
         r.dur = t - r.t0;
         const falhas = d.avaliar(r, m.opc);
         const nota = Math.max(0, 100 - falhas.reduce((a, f) => a + f.peso, 0));
-        m.reps.push({ falhas, nota, min: r.min, dur: r.dur });
+        m.reps.push({ falhas, naoAv: falhas.naoAv || [], nota, min: r.min, dur: r.dur, tDesc: r.tDesc, ext: { fundo: r.fundo, ini: r.inicio, mn: r.minExtras, mx: r.maxExtras } });
         m.msg = falhas.length ? falhas[0].texto : "Boa repetição! ✅";
         m.msgBoa = falhas.length === 0;
       } else {
@@ -12603,21 +13290,119 @@ function anAtualizar(m, med, t) {
       m.rep = null;
     }
   }
+  m.vivo = d.vivo ? d.vivo(s.extras, m.repouso, p, m) : null;
+  m.rotulos = d.rotulos ? d.rotulos(s.extras) : null;
   return m;
 }
 function anResumo(m) {
+  const vistaFreq = Object.keys(m.vistas || {}).sort((a, b) => m.vistas[b] - m.vistas[a])[0] || null;
   if (m.def.tipo === "tempo") {
     const pct = m.tempo.total > 0 ? Math.round((m.tempo.bom / m.tempo.total) * 100) : 0;
-    const problemas = Object.keys(m.falhasQuadro).map((k) => ({ texto: m.falhasQuadro[k].texto, n: Math.round(m.falhasQuadro[k].n) })).sort((a, b) => b.n - a.n);
-    return { tipo: "tempo", segundos: Math.round(m.tempo.total), segundosBons: Math.round(m.tempo.bom), pct, problemas };
+    const problemas = Object.keys(m.falhasQuadro).map((k) => ({ texto: m.falhasQuadro[k].texto, corrige: m.falhasQuadro[k].corrige, n: Math.round(m.falhasQuadro[k].n), peso: 20 })).sort((a, b) => b.n - a.n);
+    return { tipo: "tempo", segundos: Math.round(m.tempo.total), segundosBons: Math.round(m.tempo.bom), pct, problemas, naoAvaliado: [], metricas: [], vista: vistaFreq, notas: [] };
   }
   const n = m.reps.length;
   const boas = m.reps.filter((r) => r.falhas.length === 0).length;
   const media = n ? Math.round(m.reps.reduce((a, r) => a + r.nota, 0) / n) : 0;
   const cont = {};
-  m.reps.forEach((r) => r.falhas.forEach((f) => { cont[f.texto] = (cont[f.texto] || 0) + 1; }));
-  const problemas = Object.keys(cont).map((t) => ({ texto: t, n: cont[t] })).sort((a, b) => b.n - a.n);
-  return { tipo: "rep", reps: n, boas, media, problemas };
+  m.reps.forEach((r) => r.falhas.forEach((f) => {
+    const c = cont[f.texto] || (cont[f.texto] = { texto: f.texto, corrige: f.corrige || null, peso: f.peso || 10, n: 0, de: n });
+    c.n += 1;
+    if ((f.peso || 0) > c.peso) c.peso = f.peso;
+  }));
+  const problemas = Object.keys(cont).map((k) => cont[k]);
+  if (m.def.extras && n) m.def.extras(m.reps).forEach((x) => problemas.push({ texto: x.texto, corrige: x.corrige || null, peso: x.peso || 10, n: x.n, de: n }));
+  problemas.sort((a, b) => b.peso * b.n - a.peso * a.n);
+  // Checagens que não deu pra fazer neste ângulo de câmera (em pelo menos metade das repetições).
+  const naoMap = {};
+  m.reps.forEach((r) => (r.naoAv || []).forEach((x) => {
+    const c = naoMap[x.id] || (naoMap[x.id] = { rotulo: x.rotulo, vistas: x.vistas, n: 0 });
+    c.n += 1;
+  }));
+  const naoAvaliado = Object.keys(naoMap).map((k) => naoMap[k]).filter((c) => c.n >= n / 2);
+  const metricas = (m.def.metricas && n ? m.def.metricas(m.reps) : []).filter((mt) => !mt.vistas || mt.vistas.indexOf(vistaFreq) >= 0);
+  return { tipo: "rep", reps: n, boas, media, problemas, naoAvaliado, metricas, vista: vistaFreq, notas: m.reps.map((r) => r.nota) };
+}
+
+// Lê um quadro do vídeo: avisa se algo impede de medir e devolve a medida + o ângulo da câmera.
+function anAnalisarQuadro(def, lm, W, H, mundo) {
+  if (!lm) return { aviso: "Não estou vendo você. Enquadre o corpo inteiro.", medida: null, vista: null };
+  const az = anAzimute(lm, W, H, mundo);
+  const vista = { az, classe: anClasseVista(az) };
+  let aviso = "";
+  if (def.multivista) {
+    if (def.vistasAceitas && def.vistasAceitas.indexOf(vista.classe) < 0) aviso = def.avisoVista || "Mude o ângulo da câmera.";
+  } else {
+    const razao = anRazaoFrente(lm, W, H);
+    if (def.vista === "lado" && razao > 0.75) aviso = "Vire de lado para a câmera.";
+    else if (def.vista === "frente" && razao < 0.3) aviso = "Fique de frente para a câmera.";
+  }
+  let medida = null;
+  if (!aviso) {
+    medida = def.medir(lm, W, H, mundo);
+    if (!medida || medida.principal === null || isNaN(medida.principal)) { medida = null; aviso = "Enquadre o corpo inteiro (da cabeça aos pés)."; }
+  }
+  return { aviso, medida, vista };
+}
+
+// Desenha o esqueleto completo (33 pontos): rosto, mãos, pés com calcanhar, linha de prumo,
+// pontos com problema em vermelho e os ângulos medidos.
+function anDesenharCorpo(ctx, lm, w, h, o) {
+  const dest = o && o.destaques ? new Set(o.destaques) : null;
+  const vis = (i) => lm[i] && (lm[i].visibility === undefined || lm[i].visibility >= 0.3);
+  const u = Math.max(3, w / 120);
+  ctx.lineCap = "round";
+  if (o && o.prumo) {
+    const xs = [29, 30, 31, 32].filter(vis).map((i) => lm[i].x);
+    if (xs.length) {
+      const x = (xs.reduce((a, b) => a + b, 0) / xs.length) * w;
+      ctx.save();
+      ctx.setLineDash([u * 2.5, u * 2.5]);
+      ctx.lineWidth = Math.max(1.5, u * 0.5);
+      ctx.strokeStyle = "rgba(120,220,255,0.55)";
+      ctx.beginPath(); ctx.moveTo(x, h * 0.04); ctx.lineTo(x, h * 0.98); ctx.stroke();
+      ctx.restore();
+    }
+  }
+  AN_CONEXOES_TOTAL.forEach(([a, b]) => {
+    if (!vis(a) || !vis(b)) return;
+    const alerta = dest && (dest.has(a) || dest.has(b));
+    const corpo = a >= 11 && b >= 11;
+    ctx.lineWidth = alerta ? u * 1.6 : corpo ? u : u * 0.55;
+    ctx.strokeStyle = alerta ? "#FF4D4D" : o && o.corOk ? (corpo ? "#9ACD32" : "rgba(154,205,50,0.75)") : corpo ? "#FFC700" : "rgba(255,199,0,0.75)";
+    ctx.beginPath(); ctx.moveTo(lm[a].x * w, lm[a].y * h); ctx.lineTo(lm[b].x * w, lm[b].y * h); ctx.stroke();
+  });
+  for (let i = 0; i < lm.length; i++) {
+    if (!vis(i)) continue;
+    const alerta = dest && dest.has(i);
+    const principal = AN_PONTOS_PRINCIPAIS.indexOf(i) >= 0;
+    const raio = alerta ? u * 1.9 : principal ? u * 1.35 : i < 11 ? u * 0.6 : u * 0.95;
+    ctx.fillStyle = alerta ? "#FF4D4D" : "#ffffff";
+    ctx.beginPath(); ctx.arc(lm[i].x * w, lm[i].y * h, raio, 0, Math.PI * 2); ctx.fill();
+  }
+  if (o && o.rotulos && o.rotulos.length) {
+    const fs = Math.max(12, Math.round(w / 36));
+    ctx.font = "700 " + fs + "px sans-serif";
+    ctx.textBaseline = "middle";
+    ctx.textAlign = "left";
+    o.rotulos.forEach((r) => {
+      let idx = r.i;
+      if (Array.isArray(idx)) {
+        const vv = (k) => (lm[k] ? (lm[k].visibility === undefined ? 1 : lm[k].visibility) : 0);
+        idx = idx.reduce((best, k) => (vv(k) > vv(best) ? k : best), idx[0]);
+      }
+      if (!vis(idx)) return;
+      const tw = ctx.measureText(r.t).width;
+      ctx.save();
+      ctx.translate(lm[idx].x * w + u * 2, lm[idx].y * h);
+      if (o.espelhado) ctx.scale(-1, 1); // anula o espelho da câmera frontal pra o texto não sair invertido
+      ctx.fillStyle = "rgba(0,0,0,0.62)";
+      ctx.fillRect(0, -fs * 0.8, tw + 10, fs * 1.6);
+      ctx.fillStyle = "#ffffff";
+      ctx.fillText(r.t, 5, 0);
+      ctx.restore();
+    });
+  }
 }
 
 async function anCarregarDetector() {
@@ -12956,26 +13741,14 @@ function AnaliseExecucaoModal({ tipo, nomeExercicio, dicaGuia, onFechar }) {
   };
 
   // Desenha o quadro da câmera + esqueleto + contador no canvas que está sendo gravado.
-  const desenharGravacao = (lm, corOk, m) => {
+  const desenharGravacao = (lm, corOk, m, destaques) => {
     const c = recCanvasRef.current, v = videoRef.current;
     if (!c || !v || !v.videoWidth) return;
     const ctx = c.getContext("2d");
     ctx.save();
     if (frenteRef.current) { ctx.translate(c.width, 0); ctx.scale(-1, 1); }
     ctx.drawImage(v, 0, 0, c.width, c.height);
-    if (lm) {
-      ctx.lineWidth = Math.max(3, c.width / 120);
-      ctx.strokeStyle = corOk ? "#9ACD32" : "#FFC700";
-      AN_LIGACOES.forEach(([a, b]) => {
-        if ((lm[a].visibility !== undefined && lm[a].visibility < AN_VIS_MIN) || (lm[b].visibility !== undefined && lm[b].visibility < AN_VIS_MIN)) return;
-        ctx.beginPath(); ctx.moveTo(lm[a].x * c.width, lm[a].y * c.height); ctx.lineTo(lm[b].x * c.width, lm[b].y * c.height); ctx.stroke();
-      });
-      ctx.fillStyle = "#ffffff";
-      [11, 12, 13, 14, 15, 16, 23, 24, 25, 26, 27, 28].forEach((i) => {
-        if (lm[i].visibility !== undefined && lm[i].visibility < AN_VIS_MIN) return;
-        ctx.beginPath(); ctx.arc(lm[i].x * c.width, lm[i].y * c.height, Math.max(4, c.width / 110), 0, Math.PI * 2); ctx.fill();
-      });
-    }
+    if (lm) anDesenharCorpo(ctx, lm, c.width, c.height, { corOk, destaques, rotulos: m && m.rotulos, prumo: ["agachamento", "afundo", "terra"].indexOf(tipo) >= 0, espelhado: frenteRef.current });
     ctx.restore();
     if (m) {
       const txt = def.tipo === "tempo" ? `${Math.round(m.tempo.total)}s` : `${m.reps.length} reps`;
@@ -13075,24 +13848,14 @@ function AnaliseExecucaoModal({ tipo, nomeExercicio, dicaGuia, onFechar }) {
     }
   };
 
-  const desenhar = (lm, corOk) => {
+  const desenhar = (lm, corOk, destaques, rotulos) => {
     const c = canvasRef.current, v = videoRef.current;
     if (!c || !v || !v.videoWidth) return;
     if (c.width !== v.videoWidth) { c.width = v.videoWidth; c.height = v.videoHeight; }
     const ctx = c.getContext("2d");
     ctx.clearRect(0, 0, c.width, c.height);
     if (!lm) return;
-    ctx.lineWidth = Math.max(3, c.width / 120);
-    ctx.strokeStyle = corOk ? "#9ACD32" : "#FFC700";
-    AN_LIGACOES.forEach(([a, b]) => {
-      if ((lm[a].visibility !== undefined && lm[a].visibility < AN_VIS_MIN) || (lm[b].visibility !== undefined && lm[b].visibility < AN_VIS_MIN)) return;
-      ctx.beginPath(); ctx.moveTo(lm[a].x * c.width, lm[a].y * c.height); ctx.lineTo(lm[b].x * c.width, lm[b].y * c.height); ctx.stroke();
-    });
-    ctx.fillStyle = "#ffffff";
-    [11, 12, 13, 14, 15, 16, 23, 24, 25, 26, 27, 28].forEach((i) => {
-      if (lm[i].visibility !== undefined && lm[i].visibility < AN_VIS_MIN) return;
-      ctx.beginPath(); ctx.arc(lm[i].x * c.width, lm[i].y * c.height, Math.max(4, c.width / 110), 0, Math.PI * 2); ctx.fill();
-    });
+    anDesenharCorpo(ctx, lm, c.width, c.height, { corOk, destaques, rotulos, prumo: ["agachamento", "afundo", "terra"].indexOf(tipo) >= 0, espelhado: frenteRef.current });
   };
 
   const laco = () => {
@@ -13107,31 +13870,25 @@ function AnaliseExecucaoModal({ tipo, nomeExercicio, dicaGuia, onFechar }) {
     let res = null;
     try { res = det.detectForVideo(v, ts); } catch (e) { return; }
     const lm = res && res.landmarks && res.landmarks[0];
+    const mundo = res && res.worldLandmarks && res.worldLandmarks[0];
     const agora = Date.now();
     const W = v.videoWidth, H = v.videoHeight;
-    let aviso = "";
-    let medida = null;
-    if (!lm) {
-      aviso = "Não estou vendo você. Enquadre o corpo inteiro.";
-    } else {
-      const razao = anRazaoFrente(lm, W, H);
-      if (def.vista === "lado" && razao > 0.75) aviso = "Vire de lado para a câmera.";
-      else if (def.vista === "frente" && razao < 0.3) aviso = "Fique de frente para a câmera.";
-      if (!aviso) {
-        medida = def.medir(lm, W, H);
-        if (!medida || medida.principal === null || isNaN(medida.principal)) { medida = null; aviso = "Enquadre o corpo inteiro (da cabeça aos pés)."; }
-      }
-    }
+    const an = anAnalisarQuadro(def, lm, W, H, mundo);
+    const aviso = an.aviso;
     const m = maquinaRef.current;
-    if (etapaRef.current === "analisando" && medida && m) anAtualizar(m, medida, agora / 1000);
-    desenhar(lm, !aviso && (!m || m.msgBoa || !m.msg));
-    if (gravandoRef.current) desenharGravacao(lm, !aviso && (!m || m.msgBoa || !m.msg), m);
+    if (etapaRef.current === "analisando" && an.medida && m) anAtualizar(m, an.medida, agora / 1000, an.vista);
+    const vivo = m && m.vivo ? m.vivo : null;
+    const corOk = !aviso && (!m || m.msgBoa || !m.msg) && !vivo;
+    const destaques = vivo && vivo.ids && vivo.ids.length ? vivo.ids : null;
+    desenhar(lm, corOk, destaques, m && m.rotulos);
+    if (gravandoRef.current) desenharGravacao(lm, corOk, m, destaques);
     if (agora - ultHudRef.current > 150) {
       ultHudRef.current = agora;
+      const classe = an.vista ? an.vista.classe : "";
       if (m) {
         const boas = m.reps.filter((r) => r.falhas.length === 0).length;
-        setHud({ reps: m.reps.length, boas, msg: m.msg, boa: m.msgBoa, aviso, seg: Math.round(m.tempo.total) });
-      } else setHud((h) => ({ ...h, aviso }));
+        setHud({ reps: m.reps.length, boas, msg: m.msg, boa: m.msgBoa, aviso, seg: Math.round(m.tempo.total), vivo: vivo ? vivo.texto : "", vista: classe });
+      } else setHud((h) => ({ ...h, aviso, vista: classe }));
     }
   };
 
@@ -13216,6 +13973,11 @@ function AnaliseExecucaoModal({ tipo, nomeExercicio, dicaGuia, onFechar }) {
               <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(0,0,0,0.55)", textAlign: "center", padding: 20, fontWeight: 700 }}>
                 {tr("Carregando câmera e detector...")}</div>
             )}
+            {(etapa === "pronto" || etapa === "analisando") && hud.vista && (
+              <div style={{ position: "absolute", left: 8, top: hud.aviso ? 58 : 8, background: "rgba(0,0,0,0.6)", color: "#EAF0F2", borderRadius: 999, padding: "4px 10px", fontSize: 12, fontWeight: 700 }}>
+                👁 {tr("Ângulo")}: {tr(AN_ROTULO_VISTA[hud.vista] || hud.vista)}
+              </div>
+            )}
             {etapa === "contagem" && (
               <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", background: "rgba(0,0,0,0.45)", textAlign: "center", padding: 20 }}>
                 <div style={{ fontSize: 88, fontWeight: 800, color: cor.lime, lineHeight: 1 }}>{tr(contagem)}</div>
@@ -13237,7 +13999,7 @@ function AnaliseExecucaoModal({ tipo, nomeExercicio, dicaGuia, onFechar }) {
                     <div style={{ fontSize: 30, fontWeight: 800, color: cor.lime }}>{tr(hud.reps)} <span style={{ fontSize: 13, fontWeight: 600, color: cor.suave }}>{tr("reps • ")}{tr(hud.boas)} ✅</span></div>
                   )}
                 </div>
-                {hud.msg && <div style={{ marginTop: 4, fontWeight: 700, fontSize: 14, color: hud.boa ? cor.lime : cor.aviso, lineHeight: 1.35 }}>{tr(hud.msg)}</div>}
+                {(hud.vivo || hud.msg) && <div style={{ marginTop: 4, fontWeight: 700, fontSize: 14, color: hud.vivo ? "#FF6B5E" : hud.boa ? cor.lime : cor.aviso, lineHeight: 1.35 }}>{tr(hud.vivo || hud.msg)}</div>}
               </div>
             )}
           </div>
@@ -13312,7 +14074,7 @@ function AnaliseExecucaoModal({ tipo, nomeExercicio, dicaGuia, onFechar }) {
                   <div style={{ fontSize: 14, color: cor.suave }}>{trt("{0}s com o corpo alinhado ({1}% do tempo)", [resumo.segundosBons, resumo.pct])}</div>
                 </div>
               ) : resumo.reps === 0 ? (
-                <div style={{ fontSize: 15, lineHeight: 1.5 }}>{def.vista === "lado" ? trt("Não consegui contar nenhuma repetição completa. Confira se o corpo inteiro aparece no quadro e se você está de lado para a câmera.", []) : trt("Não consegui contar nenhuma repetição completa. Confira se o corpo inteiro aparece no quadro e se você está de frente para a câmera.", [])}</div>
+                <div style={{ fontSize: 15, lineHeight: 1.5 }}>{def.vista === "lado" && !def.multivista ? trt("Não consegui contar nenhuma repetição completa. Confira se o corpo inteiro aparece no quadro e se você está de lado para a câmera.", []) : trt("Não consegui contar nenhuma repetição completa. Confira se o corpo inteiro aparece no quadro e se você está de frente para a câmera.", [])}</div>
               ) : (
                 <div>
                   <div style={{ fontSize: 40, fontWeight: 800, color: cor.lime }}>{tr(resumo.media)}<span style={{ fontSize: 18 }}>/100</span></div>
@@ -13320,14 +14082,54 @@ function AnaliseExecucaoModal({ tipo, nomeExercicio, dicaGuia, onFechar }) {
                 </div>
               )}
             </div>
+            {resumo.vista && (
+              <div style={{ background: cor.card, borderRadius: 12, padding: "10px 14px", marginBottom: 12, fontSize: 13.5, color: cor.suave, lineHeight: 1.45 }}>
+                👁 {trt("Ângulo da gravação: {0}.", [tr(AN_ROTULO_VISTA[resumo.vista] || resumo.vista)])}
+              </div>
+            )}
             {resumo.problemas.length > 0 && (
               <div style={{ background: cor.card, borderRadius: 12, padding: 14, marginBottom: 12 }}>
-                <div style={{ fontWeight: 700, marginBottom: 8 }}>{tr("O que ajustar")}</div>
+                <div style={{ fontWeight: 700, marginBottom: 10 }}>{tr("O que ajustar")}</div>
                 {resumo.problemas.map((p) => (
-                  <div key={p.texto} style={{ fontSize: 14.5, lineHeight: 1.45, marginBottom: 8 }}>
-                    • {tr(p.texto)} <span style={{ color: cor.suave }}>{resumo.tipo === "tempo" ? trt("({0}s)", [p.n]) : trt("({0}x)", [p.n])}</span>
+                  <div key={p.texto} style={{ marginBottom: 12, paddingLeft: 10, borderLeft: "3px solid " + ((p.peso || 0) >= 25 ? "#FF6B5E" : (p.peso || 0) >= 15 ? "#FFA640" : "#FFD84D") }}>
+                    <div style={{ fontSize: 14.5, lineHeight: 1.45 }}>
+                      {tr(p.texto)} <span style={{ color: cor.suave }}>{resumo.tipo === "tempo" ? trt("({0}s)", [p.n]) : trt("({0} de {1} reps)", [p.n, p.de])}</span>
+                    </div>
+                    {p.corrige && <div style={{ fontSize: 13.5, color: cor.lime, lineHeight: 1.45, marginTop: 3 }}>👉 {tr(p.corrige)}</div>}
                   </div>
                 ))}
+              </div>
+            )}
+            {resumo.metricas && resumo.metricas.length > 0 && (
+              <div style={{ background: cor.card, borderRadius: 12, padding: 14, marginBottom: 12 }}>
+                <div style={{ fontWeight: 700, marginBottom: 8 }}>{tr("Suas medidas")}</div>
+                {resumo.metricas.map((mt) => (
+                  <div key={mt.rotulo} style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 10, fontSize: 13.5, lineHeight: 1.4, marginBottom: 6 }}>
+                    <span style={{ minWidth: 0 }}>{mt.ok ? "✅" : "⚠️"} {tr(mt.rotulo)}</span>
+                    <span style={{ flexShrink: 0, textAlign: "right" }}><strong>{mt.valor}</strong> <span style={{ color: cor.suave }}>({tr(mt.ideal)})</span></span>
+                  </div>
+                ))}
+              </div>
+            )}
+            {resumo.naoAvaliado && resumo.naoAvaliado.length > 0 && (
+              <div style={{ background: cor.card, borderRadius: 12, padding: 14, marginBottom: 12, fontSize: 13.5, lineHeight: 1.5, color: cor.suave }}>
+                <div style={{ fontWeight: 700, marginBottom: 6, color: cor.texto }}>{tr("Não deu para avaliar neste ângulo")}</div>
+                {resumo.naoAvaliado.map((x) => (
+                  <div key={x.rotulo}>• {tr(x.rotulo)} {x.vistas && x.vistas.length > 0 && <span>({trt("grave {0}", [x.vistas.map((v) => String(tr(AN_GRAVAR_VISTA[v]))).join(" / ")])})</span>}</div>
+                ))}
+                <div style={{ marginTop: 6 }}>{tr("Para uma análise completa, grave uma série também em outro ângulo.")}</div>
+              </div>
+            )}
+            {resumo.tipo === "rep" && resumo.notas && resumo.notas.length > 1 && (
+              <div style={{ background: cor.card, borderRadius: 12, padding: 14, marginBottom: 12 }}>
+                <div style={{ fontWeight: 700, marginBottom: 8 }}>{tr("Repetição por repetição")}</div>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                  {resumo.notas.map((nt, i) => (
+                    <span key={i} style={{ padding: "4px 9px", borderRadius: 999, fontSize: 12.5, fontWeight: 700, background: nt >= 90 ? "rgba(154,205,50,0.2)" : nt >= 70 ? "rgba(255,199,0,0.2)" : "rgba(255,107,94,0.22)", color: nt >= 90 ? cor.lime : nt >= 70 ? cor.aviso : "#FF8A7A" }}>
+                      {i + 1}: {nt}
+                    </span>
+                  ))}
+                </div>
               </div>
             )}
             {resumo.problemas.length === 0 && ((resumo.tipo === "rep" && resumo.reps > 0) || (resumo.tipo === "tempo" && resumo.segundos > 0)) && (
