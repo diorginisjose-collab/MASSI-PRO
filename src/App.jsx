@@ -3901,6 +3901,12 @@ function makeDayEntryBase(dia, foco, nivel) {
     };
   }
 
+  if (GER_FOCO_TIPO[foco] && foco !== "Corpo inteiro") {
+    // foco criado pelo gerador, escolhido à mão em "Trocar foco do dia"
+    const ctxAvulso = { obj: "hipertrofia", nivelIdx: ger_nivelIdx(nivel), duracao: 60, local: "academia", restricoes: [], prioridade: "equilibrado", seed: "avulso|" + foco, usados: {}, idxDia: 0 };
+    const montado = ger_montarDia(GER_FOCO_TIPO[foco], ctxAvulso, 0);
+    return { dia, foco, cardio: null, exercicios: montado.itens.map(ger_itemParaExercicio) };
+  }
   const base = LIBRARY[foco] || [];
   return {
     dia,
@@ -3909,6 +3915,495 @@ function makeDayEntryBase(dia, foco, nivel) {
     exercicios: base.slice(0, 4).map(toExercicio),
   };
 }
+
+// ================================================================
+// GERADOR DE TREINO PERSONALIZADO
+// Monta a semana a partir de: objetivo, nível, dias por semana, duração,
+// prioridade muscular, local de treino e restrições físicas. Sexo só ajuda a
+// sugerir a prioridade inicial — nunca restringe exercícios, e a pessoa pode
+// escolher qualquer prioridade. Reaproveita a LIBRARY (mesmos exercícios,
+// vídeos e guias): só escolhe, ordena, dimensiona e distribui — não cria
+// exercícios novos nem um segundo sistema de treino.
+// ================================================================
+const GER_OBJETIVOS = [
+  { id: "hipertrofia", nome: "Hipertrofia", descricao: "Ganhar músculo." },
+  { id: "forca", nome: "Força", descricao: "Ficar mais forte nos exercícios principais." },
+  { id: "emagrecer", nome: "Emagrecer", descricao: "Perder gordura, com mais repetições e cardio." },
+  { id: "secar", nome: "Definição / Secar", descricao: "Manter músculo e reduzir gordura." },
+  { id: "condicionamento", nome: "Condicionamento", descricao: "Mais fôlego e resistência no dia a dia." },
+  { id: "saude", nome: "Saúde e bem-estar", descricao: "Treino leve e constante, sem exagero." },
+];
+
+const GER_PRIORIDADES = [
+  { id: "sugerida", nome: "Sugerida pra mim" },
+  { id: "equilibrado", nome: "Equilibrado" },
+  { id: "superiores", nome: "Superiores" },
+  { id: "inferiores", nome: "Pernas e glúteos" },
+  { id: "gluteos", nome: "Glúteos" },
+  { id: "peito_costas", nome: "Peito e costas" },
+  { id: "bracos_ombros", nome: "Ombros e braços" },
+];
+
+const GER_LABELS = {
+  PO: "Peito, ombros e tríceps",
+  CB: "Costas e bíceps",
+  PC: "Peito e costas",
+  OB: "Ombros e braços",
+  SUP: "Superiores completos",
+  INF: "Inferiores completos",
+  QG: "Quadríceps e glúteos",
+  GP: "Glúteos e posteriores",
+  GE: "Glúteos (ênfase)",
+  FB: "Corpo inteiro",
+};
+
+// Blocos de cada tipo de dia: g = grupo, n = quantidade base de exercícios, min = mínimo.
+const GER_DIAS = {
+  PO: [{ g: "peito", n: 3, min: 2 }, { g: "ombro", n: 2, min: 1 }, { g: "triceps", n: 2, min: 1 }],
+  CB: [{ g: "costas", n: 3, min: 2 }, { g: "ombro_post", n: 1, min: 1 }, { g: "biceps", n: 2, min: 1 }],
+  PC: [{ g: "peito", n: 3, min: 2 }, { g: "costas", n: 3, min: 2 }],
+  OB: [{ g: "ombro", n: 2, min: 2 }, { g: "ombro_post", n: 1, min: 0 }, { g: "biceps", n: 2, min: 1 }, { g: "triceps", n: 2, min: 1 }],
+  SUP: [{ g: "peito", n: 2, min: 1 }, { g: "costas", n: 2, min: 1 }, { g: "ombro", n: 1, min: 1 }, { g: "biceps", n: 1, min: 0 }, { g: "triceps", n: 1, min: 0 }],
+  INF: [{ g: "quad", n: 3, min: 2 }, { g: "post", n: 2, min: 1 }, { g: "gluteo", n: 1, min: 1 }, { g: "pant", n: 1, min: 0 }],
+  QG: [{ g: "quad", n: 3, min: 2 }, { g: "gluteo", n: 2, min: 1 }, { g: "pant", n: 1, min: 0 }],
+  GP: [{ g: "gluteo", n: 3, min: 2 }, { g: "post", n: 2, min: 1 }, { g: "pant", n: 1, min: 0 }],
+  GE: [{ g: "gluteo", n: 4, min: 2 }, { g: "post", n: 2, min: 1 }, { g: "quad", n: 1, min: 0 }],
+};
+// Corpo inteiro: três versões diferentes pra não repetir o mesmo treino nos 3 dias
+const GER_FB = [
+  [{ g: "quad", n: 1, min: 1 }, { g: "peito", n: 1, min: 1 }, { g: "costas", n: 1, min: 1 }, { g: "ombro", n: 1, min: 0 }, { g: "triceps", n: 1, min: 0 }, { g: "abd", n: 1, min: 0 }],
+  [{ g: "post", n: 1, min: 1 }, { g: "gluteo", n: 1, min: 1 }, { g: "costas", n: 1, min: 1 }, { g: "peito", n: 1, min: 1 }, { g: "biceps", n: 1, min: 0 }, { g: "abd", n: 1, min: 0 }],
+  [{ g: "quad", n: 1, min: 1 }, { g: "gluteo", n: 1, min: 0 }, { g: "costas", n: 1, min: 1 }, { g: "ombro", n: 1, min: 1 }, { g: "peito", n: 1, min: 1 }, { g: "pant", n: 1, min: 0 }],
+];
+
+const GER_PRIOR_GRUPOS = {
+  equilibrado: [],
+  superiores: ["peito", "costas", "ombro", "ombro_post", "biceps", "triceps"],
+  inferiores: ["quad", "post", "gluteo", "pant"],
+  gluteos: ["gluteo"],
+  peito_costas: ["peito", "costas"],
+  bracos_ombros: ["ombro", "ombro_post", "biceps", "triceps"],
+};
+
+// Divisão semanal por prioridade e quantidade de dias (sequência de tipos de dia)
+const GER_SPLITS = {
+  equilibrado: { 2: ["SUP", "INF"], 3: ["SUP", "INF", "FB"], 4: ["SUP", "INF", "SUP", "INF"], 5: ["PO", "INF", "CB", "GP", "OB"], 6: ["PO", "INF", "CB", "QG", "OB", "GP"] },
+  superiores: { 2: ["SUP", "INF"], 3: ["PO", "CB", "INF"], 4: ["PO", "CB", "INF", "OB"], 5: ["PO", "CB", "INF", "PC", "OB"], 6: ["PO", "CB", "INF", "PC", "OB", "QG"] },
+  inferiores: { 2: ["INF", "SUP"], 3: ["QG", "SUP", "GP"], 4: ["QG", "PO", "GP", "CB"], 5: ["QG", "CB", "GP", "PO", "INF"], 6: ["QG", "PO", "GP", "CB", "GE", "SUP"] },
+  gluteos: { 2: ["GE", "SUP"], 3: ["GE", "SUP", "QG"], 4: ["GE", "PO", "QG", "CB"], 5: ["GE", "CB", "QG", "PO", "GP"], 6: ["GE", "PO", "QG", "CB", "GP", "SUP"] },
+  peito_costas: { 2: ["PC", "INF"], 3: ["PC", "INF", "OB"], 4: ["PC", "INF", "OB", "PC"], 5: ["PC", "INF", "OB", "CB", "PO"], 6: ["PC", "INF", "OB", "PC", "GP", "OB"] },
+  bracos_ombros: { 2: ["OB", "INF"], 3: ["OB", "INF", "PC"], 4: ["OB", "INF", "PC", "OB"], 5: ["OB", "INF", "PC", "OB", "GP"], 6: ["OB", "INF", "PC", "OB", "GP", "CB"] },
+};
+// Força: superior/inferior (cada exercício-base 2x por semana), a menos que a pessoa tenha escolhido uma prioridade
+const GER_SPLIT_FORCA = { 2: ["SUP", "INF"], 3: ["SUP", "INF", "FB"], 4: ["SUP", "INF", "SUP", "INF"], 5: ["SUP", "INF", "FB", "SUP", "INF"], 6: ["PO", "CB", "INF", "PO", "CB", "INF"] };
+// índices dos dias da semana usados (0 = Segunda), pra deixar descanso entre os treinos
+const GER_DIAS_SEMANA_POR_QTD = { 2: [0, 3], 3: [0, 2, 4], 4: [0, 1, 3, 4], 5: [0, 1, 2, 3, 4], 6: [0, 1, 2, 3, 4, 5] };
+
+// Dose por objetivo: séries, repetições e descanso de compostos e isolamentos (por nível: 0,1,2)
+const GER_CFG = {
+  hipertrofia: { setsComp: [3, 3, 4], setsIso: [2, 3, 3], repsComp: "8-12", repsIso: "12-15", descComp: "2 min", descIso: "1:30 min", cardioDias: 1, cardioMin: 20, cardioInt: "Moderada", finalFracao: 0, finalMin: 0, finalInts: ["Leve"] },
+  forca: { setsComp: [3, 4, 5], setsIso: [2, 3, 3], repsComp: "4-6", repsIso: "8-10", descComp: "3 min", descIso: "2 min", cardioDias: 0, cardioMin: 0, cardioInt: "Leve", finalFracao: 0, finalMin: 0, finalInts: ["Leve"], maxIso: 1 },
+  emagrecer: { setsComp: [3, 3, 3], setsIso: [3, 3, 3], repsComp: "12-15", repsIso: "15-20", descComp: "1 min", descIso: "1 min", cardioDias: 2, cardioMin: 30, cardioInt: "Intensa", finalFracao: 1, finalMin: 15, finalInts: ["Leve", "Moderada"] },
+  secar: { setsComp: [3, 3, 3], setsIso: [3, 3, 3], repsComp: "10-12", repsIso: "12-15", descComp: "1:30 min", descIso: "1 min", cardioDias: 2, cardioMin: 25, cardioInt: "Intensa", finalFracao: 0.5, finalMin: 15, finalInts: ["Leve", "Moderada"] },
+  condicionamento: { setsComp: [3, 3, 3], setsIso: [2, 3, 3], repsComp: "12-15", repsIso: "15-20", descComp: "1 min", descIso: "1 min", cardioDias: 2, cardioMin: 25, cardioInt: "Moderada", finalFracao: 0.34, finalMin: 10, finalInts: ["Moderada"] },
+  saude: { setsComp: [2, 3, 3], setsIso: [2, 2, 3], repsComp: "10-12", repsIso: "12-15", descComp: "1:30 min", descIso: "1:30 min", cardioDias: 2, cardioMin: 20, cardioInt: "Leve", finalFracao: 0, finalMin: 0, finalInts: ["Leve"] },
+};
+
+// Exercícios compostos (vários músculos/articulações) — o resto é tratado como isolamento
+const GER_COMP = new Set([
+  "Supino reto", "Supino inclinado", "Supino declinado", "Paralelas (mergulho)", "Flexão de braço",
+  "Puxada frontal", "Puxada frontal triângulo", "Puxada supinada", "Remada baixa", "Remada curvada",
+  "Remada unilateral (serrote)", "Remada cavalinho", "Barra fixa", "Desenvolvimento",
+  "Leg press", "Agachamento", "Agachamento afundo (lunge)", "Agachamento búlgaro", "Agachamento sumô",
+  "Agachamento hack (hack squat)", "Agachamento articulado (hack invertido)", "Agachamento pêndulo",
+  "Stiff (levantamento terra romeno)", "Levantamento terra", "Elevação pélvica (hip thrust)",
+]);
+// Dificuldade técnica: 3 = só pra quem já tem base; 2 = exige técnica; o resto é 1
+const GER_DIF3 = new Set(["Levantamento terra", "Barra fixa", "Paralelas (mergulho)", "Agachamento búlgaro", "Remada cavalinho"]);
+const GER_DIF2 = new Set(["Agachamento", "Supino reto", "Supino declinado", "Remada curvada", "Stiff (levantamento terra romeno)", "Desenvolvimento", "Agachamento afundo (lunge)", "Remada alta", "Tríceps testa"]);
+// Pequeno ajuste de preferência: exercícios-base primeiro, variações menos úteis por último
+const GER_PREF = {
+  "Supino reto": 1.4, "Supino inclinado": 1.1, "Supino declinado": -1, "Desenvolvimento": 1.6, "Elevação lateral": 1.3,
+  "Elevação frontal": -2, "Remada alta": -1.8, "Puxada frontal": 1.2, "Remada baixa": 1, "Remada curvada": 1,
+  "Remada unilateral (serrote)": 0.6, "Remada cavalinho": -0.6, "Encolhimento (trapézio)": -1.5, "Agachamento": 1.1,
+  "Leg press": 1.2, "Cadeira extensora": 0.4, "Mesa/cadeira flexora": 1, "Stiff (levantamento terra romeno)": 1.2,
+  "Levantamento terra": -0.4, "Elevação pélvica (hip thrust)": 1.8, "Cadeira abdutora": 0.2, "Panturrilha em pé": 0.5,
+  "Agachamento pêndulo": -0.6, "Agachamento articulado (hack invertido)": -0.8, "Agachamento sumô": -0.2,
+};
+const GER_EXCLUIDOS = new Set(["Agachamento isométrico", "Rosca invertida (pegada pronada)", "Flexão de punho", "Cadeira adutora", "Pullover"]);
+
+function ger_hash(str) {
+  let h = 2166136261;
+  for (let i = 0; i < str.length; i++) {
+    h ^= str.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return h >>> 0;
+}
+function ger_rand(str) {
+  return (ger_hash(str) % 10000) / 10000;
+}
+
+function ger_pool(g) {
+  const L = LIBRARY;
+  const sem = (lista, extras) => lista.filter((e) => !GER_EXCLUIDOS.has(e.name)).concat(extras || []);
+  if (g === "peito") return sem(L.Peito);
+  if (g === "costas") return sem(L.Costas.filter((e) => e.regiao !== "posterior"));
+  if (g === "ombro") return sem(L.Ombro.filter((e) => e.regiao !== "posterior"));
+  if (g === "ombro_post") return sem(L.Ombro.filter((e) => e.regiao === "posterior"), L.Costas.filter((e) => e.name === "Face pull"));
+  if (g === "biceps") return sem(L["Braço"].filter((e) => e.regiao === "biceps"));
+  if (g === "triceps") return sem(L["Braço"].filter((e) => e.regiao === "triceps"));
+  if (g === "quad") return sem(L.Perna.filter((e) => e.regiao === "quadriceps"));
+  if (g === "post") return sem(L.Perna.filter((e) => e.regiao === "posterior"));
+  if (g === "gluteo") return sem(L.Perna.filter((e) => e.regiao === "gluteo" || e.regiao === "abdutor"));
+  if (g === "pant") return sem(L.Perna.filter((e) => e.regiao === "panturrilha"));
+  if (g === "abd") return sem(L["Abdômen"]);
+  return [];
+}
+
+const GER_NOME_GRUPO = { peito: "peito", costas: "costas", ombro: "ombros", ombro_post: "deltoide posterior", biceps: "bíceps", triceps: "tríceps", quad: "quadríceps", post: "posteriores de coxa", gluteo: "glúteos", pant: "panturrilhas", abd: "abdômen" };
+// Peso do grupo pra ordenar os exercícios do dia (grandes primeiro)
+const GER_PESO_GRUPO = { quad: 6, post: 5, gluteo: 5, peito: 5, costas: 5, ombro: 3, ombro_post: 2, triceps: 2, biceps: 2, pant: 1, abd: 0 };
+
+function ger_padrao(ex) {
+  const n = ex.name;
+  if (n === "Leg press") return "leg-press";
+  if (n === "Cadeira extensora") return "extensao";
+  if (n.startsWith("Agachamento")) return n.includes("afundo") || n.includes("búlgaro") ? "unilateral" : "agachamento";
+  if (n === "Mesa/cadeira flexora") return "flexao-joelho";
+  if (n.startsWith("Stiff") || n === "Levantamento terra") return "dobradica";
+  if (n.startsWith("Elevação pélvica")) return "hip-thrust";
+  if (n.startsWith("Glúteo no cabo") || n.startsWith("Coice")) return "coice";
+  if (n === "Cadeira abdutora") return "abducao";
+  if (n.startsWith("Rosca")) return "rosca-" + (n.includes("martelo") ? "martelo" : n.includes("Scott") || n.includes("concentrada") ? "isolada" : "reta");
+  if (n.startsWith("Tríceps")) return "triceps-" + (n.includes("corda") ? "polia" : n.includes("francês") || n.includes("testa") ? "extensao" : "outro");
+  if (n.startsWith("Supino")) return "supino-" + ex.regiao;
+  if (n.startsWith("Crossover") || n === "Crucifixo") return "crucifixo";
+  if (n.startsWith("Puxada") || n === "Barra fixa") return "puxada";
+  if (n.startsWith("Remada") && n !== "Remada alta") return "remada-" + n;
+  return n;
+}
+
+function ger_classeVar(v) {
+  const t = String(v).toLowerCase();
+  if (/cabo|polia|pulley|corda|crossover|pulldown/.test(t)) return "cabo";
+  if (/máquina|maquina|peck|leg press|hack|mesa|cadeira|graviton|smith|pêndulo|articulado/.test(t)) return "maquina";
+  if (/peso corporal|elástico/.test(t)) return "corpo";
+  return "livre"; // halteres, barra, banco...
+}
+function ger_varOk(v, local) {
+  if (local !== "limitado") return true;
+  const c = ger_classeVar(v);
+  return c === "livre" || c === "corpo";
+}
+
+function ger_nivelIdx(nivel) {
+  const i = (typeof NIVEIS !== "undefined" ? NIVEIS : ["Iniciante", "Intermediário", "Avançado"]).indexOf(nivel);
+  return i < 0 ? 0 : i;
+}
+
+function ger_prioridadeSugerida(sexo, objetivo) {
+  if (objetivo === "hipertrofia" || objetivo === "forca") {
+    if (sexo === "feminino") return "inferiores";
+    if (sexo === "masculino") return "superiores";
+  }
+  return "equilibrado";
+}
+
+// Candidatos válidos de um grupo, respeitando nível, local e restrições
+function ger_candidatos(g, ctx) {
+  const maxDif = ctx.obj === "saude" || ctx.nivelIdx === 0 ? 2 : 3;
+  return ger_pool(g).filter((ex) => {
+    if (GER_DIF3.has(ex.name) && maxDif < 3) return false;
+    if (ctx.restricoes && ctx.restricoes.length && exercicioTemRisco(ex.name, ctx.restricoes)) return false;
+    if (!ex.maquinas.some((v) => ger_varOk(v, ctx.local))) return false;
+    return true;
+  });
+}
+
+function ger_afinidade(ex, ctx) {
+  const classes = ex.maquinas.filter((v) => ger_varOk(v, ctx.local)).map(ger_classeVar);
+  const tem = (c) => classes.indexOf(c) !== -1;
+  let s = 0;
+  if (ctx.obj === "forca" && (tem("livre"))) s += 1.5;
+  if ((ctx.obj === "saude" || ctx.nivelIdx === 0) && (tem("maquina") || tem("cabo"))) s += 1;
+  if (ctx.obj === "hipertrofia" && !GER_COMP.has(ex.name) && (tem("cabo") || tem("maquina"))) s += 0.5;
+  if (GER_DIF2.has(ex.name) && ctx.nivelIdx === 0) s -= 1.2;
+  return s;
+}
+
+function ger_escolherBloco(g, n, ctx) {
+  const cand = ger_candidatos(g, ctx);
+  const picks = [];
+  for (let k = 0; k < n && picks.length < cand.length; k++) {
+    let melhor = null;
+    let melhorS = -1e9;
+    cand.forEach((ex) => {
+      if (picks.indexOf(ex) !== -1) return;
+      const comp = GER_COMP.has(ex.name);
+      let s = 0;
+      const pesoComp = { hipertrofia: k === 0 ? 5 : 2, forca: 5, emagrecer: 3, secar: 3, condicionamento: 4, saude: 2 }[ctx.obj] || 2;
+      s += comp ? pesoComp : ctx.obj === "forca" ? -2 : 0;
+      if (!comp && n >= 3 && picks.length >= 1 && picks.every((p) => GER_COMP.has(p.name))) s += 3.5;
+      if (picks.some((p) => ger_padrao(p) === ger_padrao(ex))) s -= 6;
+      if (picks.some((p) => p.regiao === ex.regiao)) s -= 2;
+      s -= (ctx.usados[ex.name] || 0) * 5;
+      s += GER_PREF[ex.name] || 0;
+      s += ger_afinidade(ex, ctx);
+      s += ger_rand(ctx.seed + "|" + ex.name + "|" + ctx.idxDia) * 0.9;
+      if (s > melhorS) {
+        melhorS = s;
+        melhor = ex;
+      }
+    });
+    if (!melhor) break;
+    picks.push(melhor);
+  }
+  return picks;
+}
+
+function ger_variante(ex, ctx, k) {
+  let vs = ex.maquinas.filter((v) => ger_varOk(v, ctx.local));
+  if (!vs.length) vs = ex.maquinas;
+  const guiado = ctx.obj === "saude" || ctx.nivelIdx === 0;
+  let prefs = ctx.obj === "forca" ? ["livre", "maquina", "cabo", "corpo"] : guiado ? ["maquina", "cabo", "livre", "corpo"] : ["livre", "maquina", "cabo", "corpo"];
+  if (ctx.obj !== "forca") {
+    // alterna o tipo de equipamento entre exercícios e dias (máquina / peso livre / cabo)
+    const r = (ctx.idxDia + k) % 3;
+    prefs = prefs.slice(r, 3).concat(prefs.slice(0, r), prefs.slice(3));
+  }
+  for (const c of prefs) {
+    const achado = vs.find((v) => ger_classeVar(v) === c);
+    if (achado) return achado;
+  }
+  return vs[0];
+}
+
+function ger_dose(ex, ctx, ehPrimeiro) {
+  const cfg = GER_CFG[ctx.obj];
+  const comp = GER_COMP.has(ex.name);
+  const ni = ctx.nivelIdx;
+  let sets = comp ? cfg.setsComp[ni] : cfg.setsIso[ni];
+  let reps = comp ? cfg.repsComp : cfg.repsIso;
+  let descanso = comp ? cfg.descComp : cfg.descIso;
+  const orig = String(ex.reps || "");
+  if (orig.indexOf("cada perna") !== -1) reps = reps + " cada perna";
+  else if (orig.indexOf("até a falha") !== -1) reps = ctx.obj === "forca" ? "6-8" : orig;
+  else if (ex.regiao === "panturrilha") reps = ctx.obj === "forca" ? "10-15" : "15-20";
+  if (ctx.obj === "forca" && !ehPrimeiro && comp) { sets = Math.max(3, sets - 1); reps = "6-8"; descanso = "2:30 min"; }
+  if (ex.regiao === "panturrilha" || ex.regiao === "abdutor") { descanso = "1 min"; }
+  return { sets, reps, descanso };
+}
+
+function ger_tempoEx(e) {
+  const m = String(e.descanso || "1:30 min").match(/(\d+)(?::(\d+))?/);
+  const rest = m ? Number(m[1]) + (m[2] ? Number(m[2]) / 60 : 0) : 1.5;
+  return e.sets * (0.9 + rest);
+}
+
+// Monta um dia a partir de um tipo (PO, CB, INF...) e devolve o dia + os detalhes (motivo de cada exercício)
+function ger_montarDia(tipo, ctx, variante) {
+  let blocos = tipo === "FB" ? GER_FB[variante % GER_FB.length] : GER_DIAS[tipo];
+  const prior = GER_PRIOR_GRUPOS[ctx.prioridade] || [];
+  const avisos = [];
+  let itens = [];
+  blocos.forEach((b, bi) => {
+    const ehPrior = prior.indexOf(b.g) !== -1;
+    let n = b.n + (ehPrior ? 1 : 0);
+    if (ctx.nivelIdx === 0 && n > 3) n = 3;
+    // não repete o mesmo padrão de movimento só pra encher o bloco (ex.: terra + stiff)
+    const padroes = {};
+    ger_candidatos(b.g, ctx).forEach((e) => { padroes[ger_padrao(e)] = 1; });
+    n = Math.min(n, Math.max(1, Object.keys(padroes).length));
+    const picks = ger_escolherBloco(b.g, n, ctx);
+    if (picks.length < Math.min(n, b.min) && b.min > 0) {
+      avisos.push({ tipo: "poucas", grupo: GER_NOME_GRUPO[b.g] });
+    }
+    picks.forEach((ex, k) => {
+      const dose = ger_dose(ex, ctx, k === 0);
+      const comp = GER_COMP.has(ex.name);
+      const papel = comp ? (k === 0 ? "Composto principal de {0}" : "Composto complementar de {0}") : "Isolamento de {0}";
+      itens.push({
+        ex, g: b.g, k, comp, ehPrior,
+        maquina: ger_variante(ex, ctx, k + itens.length),
+        sets: dose.sets, reps: dose.reps, descanso: dose.descanso,
+        papel, grupoNome: GER_NOME_GRUPO[b.g], min: b.min,
+        prio: (k < b.min ? 70 : 30) + (bi === 0 ? 25 : 0) + (ehPrior ? 20 : 0) + (comp ? 10 : 0) - (b.g === "abd" ? 40 : b.g === "pant" ? 25 : 0),
+      });
+    });
+  });
+  // Cabe no tempo e no limite de exercícios do nível: tira primeiro o menos importante
+  const limiteNivel = [6, 8, 10][ctx.nivelIdx];
+  const orcamento = Math.max(20, ctx.duracao - 8);
+  const totalTempo = () => itens.reduce((t, i) => t + ger_tempoEx({ sets: i.sets, descanso: i.descanso }), 0);
+  const maxIso = GER_CFG[ctx.obj].maxIso;
+  if (maxIso !== undefined) {
+    let isoVistos = 0;
+    itens = itens.filter((i) => (i.comp ? true : ++isoVistos <= maxIso));
+  }
+  // Antes de cortar exercício, enxuga as séries (isolamentos 3→2, compostos extras 5→4→3)
+  let guarda = 0;
+  while (totalTempo() > orcamento && guarda++ < 40) {
+    const iso = itens.find((i) => !i.comp && i.sets > 2 && !i.ehPrior);
+    if (iso) { iso.sets -= 1; continue; }
+    const comp = itens.find((i) => i.comp && i.k > 0 && i.sets > 3);
+    if (comp) { comp.sets -= 1; continue; }
+    break;
+  }
+  while (itens.length > 3 && (itens.length > limiteNivel || totalTempo() > orcamento)) {
+    const porGrupo = {};
+    itens.forEach((i) => { porGrupo[i.g] = (porGrupo[i.g] || 0) + 1; });
+    let pior = -1;
+    itens.forEach((i, idx) => {
+      if (i.min > 0 && porGrupo[i.g] <= 1) return; // mantém ao menos 1 de cada grupo obrigatório do dia
+      if (pior === -1 || i.prio < itens[pior].prio) pior = idx;
+    });
+    if (pior === -1) break;
+    itens.splice(pior, 1);
+  }
+  itens.forEach((i) => { ctx.usados[i.ex.name] = (ctx.usados[i.ex.name] || 0) + 1; });
+  // Ordem: prioridade do usuário primeiro, depois compostos grandes, isolamentos por último
+  itens.sort((a, b) => {
+    const sa = (a.comp ? 100 : 0) + (GER_PESO_GRUPO[a.g] || 0) * 4 + (a.ehPrior ? 30 : 0) - a.k * 2;
+    const sb = (b.comp ? 100 : 0) + (GER_PESO_GRUPO[b.g] || 0) * 4 + (b.ehPrior ? 30 : 0) - b.k * 2;
+    return sb - sa;
+  });
+  return { tipo, label: GER_LABELS[tipo], itens, avisos };
+}
+
+function ger_itemParaExercicio(it) {
+  const base = { ...it.ex, sets: it.sets, reps: it.reps };
+  const e = toExercicio(base);
+  return { ...e, maquina: it.maquina, descanso: it.descanso };
+}
+
+function ger_volumeSemanal(dias) {
+  const vol = {};
+  const freq = {};
+  dias.forEach((d) => {
+    const vistos = {};
+    (d.itens || []).forEach((i) => {
+      vol[i.g] = (vol[i.g] || 0) + i.sets;
+      vistos[i.g] = 1;
+    });
+    Object.keys(vistos).forEach((g) => { freq[g] = (freq[g] || 0) + 1; });
+  });
+  return { vol, freq };
+}
+
+// Entrada principal. params: { sexo, objetivo, nivel, dias, duracao, prioridade, local, restricoes }
+// Devolve { semana: [7 dias no formato da Rotina], dias: [detalhes], resumo, avisos }
+function gerarSemanaPersonalizada(params) {
+  const p = params || {};
+  const obj = GER_CFG[p.objetivo] ? p.objetivo : "hipertrofia";
+  const nivelIdx = ger_nivelIdx(p.nivel);
+  const dias = Math.min(6, Math.max(2, Number(p.dias) || 3));
+  const duracao = Number(p.duracao) || 60;
+  const local = p.local === "casa" || p.local === "limitado" ? p.local : "academia";
+  const sexo = p.sexo === "feminino" || p.sexo === "masculino" ? p.sexo : null;
+  let prioridade = p.prioridade && p.prioridade !== "sugerida" && GER_PRIOR_GRUPOS[p.prioridade] ? p.prioridade : ger_prioridadeSugerida(sexo, obj);
+  const restricoes = Array.isArray(p.restricoes) ? p.restricoes : [];
+  const cfg = GER_CFG[obj];
+  const avisos = [];
+
+  if (restricoes.length) {
+    avisos.push({ tipo: "restricao", lista: restricoes.slice() });
+  }
+  const idxs = GER_DIAS_SEMANA_POR_QTD[dias];
+  let sequencia;
+  const leve = obj === "emagrecer" || obj === "condicionamento" || obj === "saude";
+  if (local === "casa") {
+    const casa = { 2: ["S", "I"], 3: ["S", "I", "C"], 4: ["S", "I", "S", "I"], 5: ["S", "I", "C", "S", "I"], 6: ["S", "I", "C", "S", "I", "C"] }[dias];
+    sequencia = casa.map((c) => (c === "S" ? "Casa: Superior" : c === "I" ? "Casa: Inferior" : "Casa: Completo"));
+    avisos.push({ tipo: "casa" });
+  } else if (dias <= 3 && (nivelIdx === 0 || (leve && prioridade === "equilibrado"))) {
+    sequencia = Array(dias).fill("FB");
+  } else if (obj === "forca" && (!p.prioridade || p.prioridade === "sugerida" || p.prioridade === "equilibrado")) {
+    sequencia = GER_SPLIT_FORCA[dias];
+  } else {
+    sequencia = GER_SPLITS[prioridade][dias];
+  }
+
+  const seed = [obj, nivelIdx, dias, prioridade, local, duracao, p.variacao || 0].join("|");
+  const ctxBase = { obj, nivelIdx, duracao, local, restricoes, prioridade, seed, usados: {} };
+  const contagem = {};
+  const detalhes = [];
+  const semana = DIAS_SEMANA.map((dia) => makeDayEntry(dia, "Descanso", p.nivel));
+
+  sequencia.forEach((tipo, i) => {
+    const idxDia = idxs[i];
+    if (local === "casa") {
+      const entry = makeDayEntry(DIAS_SEMANA[idxDia], tipo, p.nivel);
+      entry.exercicios = entry.exercicios.map((ex) => {
+        const dose = ger_dose(ex, { ...ctxBase, idxDia }, false);
+        return { ...ex, reps: ex.reps === "até a falha" || String(ex.reps).indexOf("s") > 0 ? ex.reps : dose.reps, descanso: dose.descanso };
+      });
+      semana[idxDia] = entry;
+      detalhes.push({ dia: DIAS_SEMANA[idxDia], tipo, label: tipo, itens: entry.exercicios.map((e) => ({ ex: e, g: "casa", sets: e.sets, reps: e.reps, maquina: e.maquina, descanso: e.descanso, papel: "Treino com o peso do corpo", grupoNome: "" })), avisos: [] });
+      return;
+    }
+    const variante = contagem[tipo] || 0;
+    contagem[tipo] = variante + 1;
+    const ctx = { ...ctxBase, idxDia };
+    const dia = ger_montarDia(tipo, ctx, variante);
+    dia.avisos.forEach((a) => { if (!avisos.some((x) => JSON.stringify(x) === JSON.stringify(a))) avisos.push(a); });
+    const entry = makeDayEntry(DIAS_SEMANA[idxDia], "Descanso", p.nivel);
+    semana[idxDia] = { ...entry, foco: dia.label, periodo: "Manhã", cardio: null, exercicios: dia.itens.map(ger_itemParaExercicio) };
+    detalhes.push({ dia: DIAS_SEMANA[idxDia], tipo, label: dia.label, itens: dia.itens, avisos: dia.avisos });
+  });
+
+  // Cardio: nos dias livres (cardio inteiro) e no final de alguns treinos, conforme o objetivo
+  const livres = [0, 1, 2, 3, 4, 5, 6].filter((i) => idxs.indexOf(i) === -1);
+  const cardioLivres = livres.slice(0, Math.min(cfg.cardioDias, livres.length));
+  cardioLivres.forEach((i) => {
+    semana[i] = makeDayEntry(DIAS_SEMANA[i], "Cardio", p.nivel);
+    semana[i].cardio = { tipo: "Esteira", duracao: cfg.cardioMin, intensidade: cfg.cardioInt };
+  });
+  if (cfg.finalFracao > 0 && cfg.finalMin > 0) {
+    const qtd = Math.max(1, Math.round(idxs.length * cfg.finalFracao));
+    const passo = idxs.length / qtd;
+    for (let k = 0; k < qtd; k++) {
+      const i = idxs[Math.floor(k * passo)];
+      semana[i] = { ...semana[i], cardio: { tipo: "Esteira", duracao: cfg.finalMin, intensidade: cfg.finalInts[k % cfg.finalInts.length] } };
+    }
+  }
+
+  const vf = ger_volumeSemanal(detalhes);
+  return {
+    semana,
+    dias: detalhes,
+    avisos,
+    resumo: { objetivo: obj, prioridade, dias, duracao, local, nivelIdx, volume: vf.vol, frequencia: vf.freq, sequencia },
+  };
+}
+
+// Novos focos de dia criados pelo gerador: entram na lista de focos, no mapa muscular
+// e na lista de exercícios do dia (usada pra adicionar/trocar exercício na Rotina).
+const GER_FOCO_TIPO = {};
+(function registrarFocosGerador() {
+  const novos = [];
+  Object.keys(GER_LABELS).forEach((tipo) => {
+    const label = GER_LABELS[tipo];
+    GER_FOCO_TIPO[label] = tipo;
+    if (tipo === "FB") return; // "Corpo inteiro" já existe
+    const lista = [];
+    (GER_DIAS[tipo] || []).forEach((b) => ger_pool(b.g).forEach((e) => { if (lista.indexOf(e) === -1) lista.push(e); }));
+    LIBRARY[label] = lista;
+    if (FOCOS.indexOf(label) === -1) novos.push(label);
+  });
+  FOCOS.splice(FOCOS.indexOf("Superior") + 1, 0, ...novos);
+  Object.assign(FOCO_REGIOES, {
+    "Peito, ombros e tríceps": { peito: 1, ombro: 0.8, braco: 0.5 },
+    "Costas e bíceps": { costas: 1, braco: 0.5, ombro: 0.3 },
+    "Peito e costas": { peito: 1, costas: 1 },
+    "Ombros e braços": { ombro: 1, braco: 1 },
+    "Superiores completos": { peito: 0.7, costas: 0.5, ombro: 0.6, braco: 0.6 },
+    "Inferiores completos": { perna: 1 },
+    "Quadríceps e glúteos": { perna: 1 },
+    "Glúteos e posteriores": { perna: 1 },
+    "Glúteos (ênfase)": { perna: 1 },
+  });
+})();
 
 // ================================================================
 // ADMOB — estrutura pronta pra integração (sem IDs, sem alterar
@@ -4342,6 +4837,8 @@ Object.assign(TRAD_TEXTOS.en, {"{0}/{1} dias": "{0}/{1} days"});
 Object.assign(TRAD_TEXTOS.es, {"{0}/{1} dias": "{0}/{1} días"});
 Object.assign(TRAD_TEXTOS.en, {"{0}/{1} dias": "{0}/{1} days", "ex: 40": "e.g. 40", "ex: 60": "e.g. 60", "ex: 79,8": "e.g. 79.8", "ex: 178": "e.g. 178", "ex: 29": "e.g. 29", "ex: 25,7": "e.g. 25.7", "ex: 35,9": "e.g. 35.9", "ex: 8": "e.g. 8", "ex: 44": "e.g. 44", "ex: 72,5": "e.g. 72.5", "ex: 175": "e.g. 175", "ex: 84": "e.g. 84", "ex: 38": "e.g. 38", "ex: 98": "e.g. 98", "ex: 100": "e.g. 100", "ex: 35": "e.g. 35", "ex: 56": "e.g. 56", "ex: 40kg": "e.g. 40kg"});
 Object.assign(TRAD_TEXTOS.es, {"{0}/{1} dias": "{0}/{1} días", "ex: 40": "p. ej. 40", "ex: 60": "p. ej. 60", "ex: 79,8": "p. ej. 79,8", "ex: 178": "p. ej. 178", "ex: 29": "p. ej. 29", "ex: 25,7": "p. ej. 25,7", "ex: 35,9": "p. ej. 35,9", "ex: 8": "p. ej. 8", "ex: 44": "p. ej. 44", "ex: 72,5": "p. ej. 72,5", "ex: 175": "p. ej. 175", "ex: 84": "p. ej. 84", "ex: 38": "p. ej. 38", "ex: 98": "p. ej. 98", "ex: 100": "p. ej. 100", "ex: 35": "p. ej. 35", "ex: 56": "p. ej. 56", "ex: 40kg": "p. ej. 40kg"});
+Object.assign(TRAD_TEXTOS.en, {"✨ Montar um treino personalizado": "✨ Build a personalized workout", "Divisão, exercícios e volume feitos pro seu objetivo, nível, dias disponíveis e prioridades.": "Split, exercises and volume built around your goal, level, available days and priorities.", "Ou use um modelo pronto:": "Or use a ready-made template:", "TREINO PERSONALIZADO": "PERSONALIZED WORKOUT", "PRÉVIA DA SUA SEMANA": "PREVIEW OF YOUR WEEK", "Já preenchemos com o que sabemos de você. Ajuste o que quiser.": "We filled in what we know about you. Adjust anything you like.", "Alterar": "Change", "Lesões ou limitações": "Injuries or limitations", "Dias por semana": "Days per week", "Duração de cada treino": "Length of each workout", "{0} min": "{0} min", "Prioridade muscular": "Muscle priority", "Sugerida pra mim": "Suggested for me", "Equilibrado": "Balanced", "Superiores": "Upper body", "Glúteos": "Glutes", "Peito e costas": "Chest and back", "Ombros e braços": "Shoulders and arms", "Onde você treina": "Where you train", "Equipamentos limitados": "Limited equipment", "Em casa": "At home", "Sexo (só ajuda a sugerir a prioridade — você pode mudar)": "Sex (only helps suggest a priority — you can change it)", "Prefiro não informar": "Prefer not to say", "Saúde e bem-estar": "Health and well-being", "Gerar meu treino": "Generate my workout", "Aplicar na minha semana": "Apply to my week", "🔄 Outra versão": "🔄 Another version", "← Ajustar": "← Adjust", "Composto principal de {0}": "Main compound lift for {0}", "Composto complementar de {0}": "Supporting compound lift for {0}", "Isolamento de {0}": "Isolation for {0}", "ênfase da sua prioridade": "emphasis on your priority", "Treino com o peso do corpo": "Bodyweight workout", "Poucas opções de {0} com o seu equipamento ou restrições.": "Few options for {0} with your equipment or restrictions.", "Você informou restrição ({0}): evitamos os exercícios que costumam sobrecarregar essa região. Se sentir dor, pare e procure uma avaliação profissional.": "You reported a restriction ({0}): we avoided exercises that usually overload that area. If you feel pain, stop and seek a professional assessment.", "Em casa, usamos treinos só com o peso do corpo. Pra mais variedade, escolha \"Equipamentos limitados\" (halteres e barra).": "At home we use bodyweight-only workouts. For more variety, choose \"Limited equipment\" (dumbbells and barbell).", "Não consegui montar esse treino. Tente outras opções.": "I couldn't build that workout. Try other options.", "peito": "chest", "costas": "back", "ombros": "shoulders", "bíceps": "biceps", "tríceps": "triceps", "quadríceps": "quads", "posteriores de coxa": "hamstrings", "glúteos": "glutes", "panturrilhas": "calves", "abdômen": "abs", "Peito, ombros e tríceps": "Chest, shoulders and triceps", "Superiores completos": "Full upper body", "Inferiores completos": "Full lower body", "Quadríceps e glúteos": "Quads and glutes", "Glúteos e posteriores": "Glutes and hamstrings", "Glúteos (ênfase)": "Glutes (emphasis)"});
+Object.assign(TRAD_TEXTOS.es, {"✨ Montar um treino personalizado": "✨ Crear un entrenamiento personalizado", "Divisão, exercícios e volume feitos pro seu objetivo, nível, dias disponíveis e prioridades.": "División, ejercicios y volumen hechos para tu objetivo, nivel, días disponibles y prioridades.", "Ou use um modelo pronto:": "O usa una plantilla lista:", "TREINO PERSONALIZADO": "ENTRENAMIENTO PERSONALIZADO", "PRÉVIA DA SUA SEMANA": "VISTA PREVIA DE TU SEMANA", "Já preenchemos com o que sabemos de você. Ajuste o que quiser.": "Ya completamos lo que sabemos de ti. Ajusta lo que quieras.", "Alterar": "Cambiar", "Lesões ou limitações": "Lesiones o limitaciones", "Dias por semana": "Días por semana", "Duração de cada treino": "Duración de cada entrenamiento", "Prioridade muscular": "Prioridad muscular", "Sugerida pra mim": "Sugerida para mí", "Superiores": "Tren superior", "Peito e costas": "Pecho y espalda", "Ombros e braços": "Hombros y brazos", "Onde você treina": "Dónde entrenas", "Equipamentos limitados": "Equipo limitado", "Em casa": "En casa", "Sexo (só ajuda a sugerir a prioridade — você pode mudar)": "Sexo (solo ayuda a sugerir la prioridad; puedes cambiarla)", "Prefiro não informar": "Prefiero no decirlo", "Saúde e bem-estar": "Salud y bienestar", "Gerar meu treino": "Generar mi entrenamiento", "Aplicar na minha semana": "Aplicar a mi semana", "🔄 Outra versão": "🔄 Otra versión", "Composto principal de {0}": "Compuesto principal de {0}", "Composto complementar de {0}": "Compuesto complementario de {0}", "Isolamento de {0}": "Aislamiento de {0}", "ênfase da sua prioridade": "énfasis en tu prioridad", "Treino com o peso do corpo": "Entrenamiento con peso corporal", "Poucas opções de {0} com o seu equipamento ou restrições.": "Pocas opciones de {0} con tu equipo o restricciones.", "Você informou restrição ({0}): evitamos os exercícios que costumam sobrecarregar essa região. Se sentir dor, pare e procure uma avaliação profissional.": "Indicaste una restricción ({0}): evitamos los ejercicios que suelen sobrecargar esa zona. Si sientes dolor, detente y busca una evaluación profesional.", "Em casa, usamos treinos só com o peso do corpo. Pra mais variedade, escolha \"Equipamentos limitados\" (halteres e barra).": "En casa usamos entrenamientos solo con el peso corporal. Para más variedad, elige \"Equipo limitado\" (mancuernas y barra).", "Não consegui montar esse treino. Tente outras opções.": "No pude armar ese entrenamiento. Prueba otras opciones.", "peito": "pecho", "costas": "espalda", "ombros": "hombros", "quadríceps": "cuádriceps", "posteriores de coxa": "isquiotibiales", "panturrilhas": "gemelos", "abdômen": "abdomen", "Peito, ombros e tríceps": "Pecho, hombros y tríceps", "Superiores completos": "Tren superior completo", "Inferiores completos": "Tren inferior completo", "Quadríceps e glúteos": "Cuádriceps y glúteos", "Glúteos e posteriores": "Glúteos e isquiotibiales", "Glúteos (ênfase)": "Glúteos (énfasis)"});
 const TRAD_NORM = {};
 function trNormalizar(idioma) {
   if (TRAD_NORM[idioma]) return TRAD_NORM[idioma];
@@ -5351,6 +5848,19 @@ function AppMassiPro({ onSolicitarRemount }) {
     );
     setDiasSelecionados(DIAS_SEMANA.filter((dia, i) => (focos[i] || "Descanso") !== "Descanso"));
     setShowModelos(false);
+  };
+
+  // Aplica a semana montada pelo gerador personalizado (mesmo destino do aplicarModelo)
+  const aplicarPersonalizado = (plano, params) => {
+    if (!plano || !plano.semana) return;
+    setRotina(plano.semana);
+    setDiasSelecionados(DIAS_SEMANA.filter((dia, i) => plano.semana[i].foco !== "Descanso"));
+    setShowModelos(false);
+    try {
+      salvarComRetentativa("gerador-treino-params", JSON.stringify({ dias: params.dias, duracao: params.duracao, prioridade: params.prioridade, local: params.local, sexo: params.sexo === null ? "nd" : params.sexo }));
+    } catch (e) {
+      // só não guarda as escolhas pra próxima vez
+    }
   };
 
   const addExercicio = (dia, foco) => {
@@ -7344,7 +7854,7 @@ function AppMassiPro({ onSolicitarRemount }) {
             </div>
           </section>
 
-          {showModelos && <ModelosModal onEscolher={aplicarModelo} onClose={() => setShowModelos(false)} />}
+          {showModelos && <ModelosModal onEscolher={aplicarModelo} onAplicar={aplicarPersonalizado} inicial={{ objetivo: objetivoUsuario, nivel: nivelUsuario, restricoes: restricoesFisicas }} onClose={() => setShowModelos(false)} />}
 
           <div ref={tourCronoRapidoRef}>
             <CronometroRapidoRotina onIniciarDescanso={iniciarDescanso} />
@@ -11281,6 +11791,7 @@ const CHAVES_BACKUP = [
   "notificacoes-ativas",
   "dieta-indice",
   "agua-copos-hoje",
+  "gerador-treino-params",
 ];
 
 function ModoGuiadoOverlay({ entry, onFechar, onAbrirExercicio, onEditCarga, onEditCampo, onConcluirExercicio, onTreinoFinalizado, vozAtiva, onToggleVoz }) {
@@ -14456,8 +14967,174 @@ function CronometroDescanso({ cronometro, onPausarContinuar, onAjustar, onReinic
   );
 }
 
-function ModelosModal({ onEscolher, onClose }) {
+// Tela "Montar um treino personalizado": pergunta só o que falta (o resto vem do perfil),
+// mostra a prévia da semana com o motivo de cada exercício e aplica na Rotina.
+function GeradorTreinoWizard({ inicial, onAplicar, onVoltar }) {
+  const ini = inicial || {};
+  const objConhecido = GER_OBJETIVOS.some((o) => o.id === ini.objetivo);
+  const nivelConhecido = NIVEIS.indexOf(ini.nivel) !== -1;
+  const [obj, setObj] = useState(objConhecido ? ini.objetivo : "hipertrofia");
+  const [nivel, setNivel] = useState(nivelConhecido ? ini.nivel : "Iniciante");
+  const [restr, setRestr] = useState(Array.isArray(ini.restricoes) ? ini.restricoes : []);
+  const [editarPerfil, setEditarPerfil] = useState(!(objConhecido && nivelConhecido));
+  const [dias, setDias] = useState(4);
+  const [duracao, setDuracao] = useState(60);
+  const [prioridade, setPrioridade] = useState("sugerida");
+  const [local, setLocal] = useState("academia");
+  const [sexo, setSexo] = useState(null); // "masculino" | "feminino" | "nd"
+  const [sexoConhecido, setSexoConhecido] = useState(false);
+  const [variacao, setVariacao] = useState(0);
+  const [plano, setPlano] = useState(null);
+  const [erro, setErro] = useState(false);
+
+  useEffect(() => {
+    let cancelado = false;
+    (async () => {
+      try {
+        const r = await window.storage.get("gerador-treino-params");
+        if (r && r.value && !cancelado) {
+          const p = JSON.parse(r.value);
+          if (p && [2, 3, 4, 5, 6].indexOf(p.dias) !== -1) setDias(p.dias);
+          if (p && [30, 45, 60, 90].indexOf(p.duracao) !== -1) setDuracao(p.duracao);
+          if (p && GER_PRIORIDADES.some((x) => x.id === p.prioridade)) setPrioridade(p.prioridade);
+          if (p && (p.local === "academia" || p.local === "limitado" || p.local === "casa")) setLocal(p.local);
+          if (p && p.sexo === "nd") setSexo("nd");
+        }
+      } catch (e) {
+        // primeira vez: segue com os padrões
+      }
+      try {
+        const r = await window.storage.get("avaliacoes-evolucao");
+        const lista = r && r.value ? JSON.parse(r.value) : [];
+        const ultima = lista[lista.length - 1];
+        if (ultima && (ultima.sexo === "masculino" || ultima.sexo === "feminino") && !cancelado) {
+          setSexo(ultima.sexo);
+          setSexoConhecido(true);
+        }
+      } catch (e) {
+        // sem avaliação salva: pergunta o sexo
+      }
+    })();
+    return () => { cancelado = true; };
+  }, []);
+
+  const parametros = (v) => ({ sexo: sexo === "nd" ? null : sexo, objetivo: obj, nivel, dias, duracao, prioridade, local, restricoes: restr, variacao: v });
+  const gerar = (v) => {
+    try {
+      setPlano(gerarSemanaPersonalizada(parametros(v)));
+      setErro(false);
+    } catch (e) {
+      setPlano(null);
+      setErro(true);
+    }
+  };
+  const alternarRestricao = (id) => setRestr((prev) => (prev.indexOf(id) !== -1 ? prev.filter((x) => x !== id) : [...prev, id]));
+
+  const linha = { display: "flex", flexWrap: "wrap", gap: 8, margin: "6px 0 14px" };
+  const rotulo = { fontSize: 12, fontWeight: 700, letterSpacing: 0.4, margin: "4px 0 0", opacity: 0.8 };
+  const chip = (ativo, rotuloChip, aoClicar, chave) => (
+    <button key={chave} style={ativo ? { ...styles.chip, ...styles.chipActive } : styles.chip} onClick={aoClicar}>{rotuloChip}</button>
+  );
+  const nomeObjetivo = (GER_OBJETIVOS.find((o) => o.id === obj) || {}).nome || obj;
+
+  if (plano) {
+    return (
+      <div>
+        <button style={styles.voltarObjetivoBtn} onClick={() => setPlano(null)}>{tr("← Ajustar")}</button>
+        <div style={styles.eyebrow}>{tr("PRÉVIA DA SUA SEMANA")}</div>
+        {plano.avisos.map((a, i) => (
+          <p key={i} style={styles.modalDisclaimer}>
+            {a.tipo === "poucas" && trt("Poucas opções de {0} com o seu equipamento ou restrições.", [tr(a.grupo)])}
+            {a.tipo === "restricao" && trt("Você informou restrição ({0}): evitamos os exercícios que costumam sobrecarregar essa região. Se sentir dor, pare e procure uma avaliação profissional.", [a.lista.map((r) => tr((RESTRICOES_OPCOES.find((o) => o.id === r) || {}).label || r)).join(", ")])}
+            {a.tipo === "casa" && tr("Em casa, usamos treinos só com o peso do corpo. Pra mais variedade, escolha \"Equipamentos limitados\" (halteres e barra).")}
+          </p>
+        ))}
+        <div style={styles.planGrid}>
+          {plano.dias.map((d) => (
+            <div key={d.dia} style={styles.planCard}>
+              <div style={styles.planNome}>{tr(d.dia)} — {tr(d.label)}</div>
+              {d.itens.map((it, i) => (
+                <div key={i} style={{ margin: "7px 0" }}>
+                  <div style={{ fontSize: 13 }}>
+                    {tr(it.ex.name)} <span style={{ opacity: 0.7 }}>({tr(it.maquina)})</span> · {it.sets}×{tr(String(it.reps))}
+                  </div>
+                  {it.papel && it.grupoNome && (
+                    <div style={{ fontSize: 11, opacity: 0.65 }}>
+                      {trt(it.papel, [tr(it.grupoNome)])}{it.ehPrior ? " · " + tr("ênfase da sua prioridade") : ""}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+        <button style={styles.planBtn} onClick={() => onAplicar(plano, parametros(variacao))}>{tr("Aplicar na minha semana")}</button>
+        <button style={{ ...styles.voltarObjetivoBtn, marginTop: 10 }} onClick={() => { const v = variacao + 1; setVariacao(v); gerar(v); }}>{tr("🔄 Outra versão")}</button>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <button style={styles.voltarObjetivoBtn} onClick={onVoltar}>{tr("← Trocar objetivo")}</button>
+      <div style={styles.eyebrow}>{tr("TREINO PERSONALIZADO")}</div>
+      <p style={styles.modalSubtitle}>{tr("Já preenchemos com o que sabemos de você. Ajuste o que quiser.")}</p>
+
+      {!editarPerfil ? (
+        <div style={styles.planCard}>
+          <div style={styles.modeloDescricao}>
+            {tr("Objetivo")}: {tr(nomeObjetivo)} · {tr("Nível")}: {tr(nivel)}
+            {restr.length > 0 ? " · " + restr.map((r) => tr((RESTRICOES_OPCOES.find((o) => o.id === r) || {}).label || r)).join(", ") : ""}
+          </div>
+          <button style={styles.voltarObjetivoBtn} onClick={() => setEditarPerfil(true)}>{tr("Alterar")}</button>
+        </div>
+      ) : (
+        <>
+          <div style={rotulo}>{tr("Objetivo")}</div>
+          <div style={linha}>{GER_OBJETIVOS.map((o) => chip(obj === o.id, tr(o.nome), () => setObj(o.id), o.id))}</div>
+          <div style={rotulo}>{tr("Nível")}</div>
+          <div style={linha}>{NIVEIS.map((n) => chip(nivel === n, tr(n), () => setNivel(n), n))}</div>
+          <div style={rotulo}>{tr("Lesões ou limitações")}</div>
+          <div style={linha}>{RESTRICOES_OPCOES.map((r) => chip(restr.indexOf(r.id) !== -1, r.icone + " " + tr(r.label), () => alternarRestricao(r.id), r.id))}</div>
+        </>
+      )}
+
+      <div style={rotulo}>{tr("Dias por semana")}</div>
+      <div style={linha}>{[2, 3, 4, 5, 6].map((n) => chip(dias === n, String(n), () => setDias(n), "d" + n))}</div>
+
+      <div style={rotulo}>{tr("Duração de cada treino")}</div>
+      <div style={linha}>{[30, 45, 60, 90].map((n) => chip(duracao === n, trt("{0} min", [n]), () => setDuracao(n), "t" + n))}</div>
+
+      <div style={rotulo}>{tr("Prioridade muscular")}</div>
+      <div style={linha}>{GER_PRIORIDADES.map((p) => chip(prioridade === p.id, tr(p.nome), () => setPrioridade(p.id), p.id))}</div>
+
+      <div style={rotulo}>{tr("Onde você treina")}</div>
+      <div style={linha}>
+        {chip(local === "academia", tr("Academia completa"), () => setLocal("academia"), "l1")}
+        {chip(local === "limitado", tr("Equipamentos limitados"), () => setLocal("limitado"), "l2")}
+        {chip(local === "casa", tr("Em casa"), () => setLocal("casa"), "l3")}
+      </div>
+
+      {!sexoConhecido && (
+        <>
+          <div style={rotulo}>{tr("Sexo (só ajuda a sugerir a prioridade — você pode mudar)")}</div>
+          <div style={linha}>
+            {chip(sexo === "masculino", tr("Homem"), () => setSexo("masculino"), "s1")}
+            {chip(sexo === "feminino", tr("Mulher"), () => setSexo("feminino"), "s2")}
+            {chip(sexo === "nd", tr("Prefiro não informar"), () => setSexo("nd"), "s3")}
+          </div>
+        </>
+      )}
+
+      {erro && <p style={styles.modalDisclaimer}>{tr("Não consegui montar esse treino. Tente outras opções.")}</p>}
+      <button style={styles.planBtn} onClick={() => { setVariacao(0); gerar(0); }}>{tr("Gerar meu treino")}</button>
+    </div>
+  );
+}
+
+function ModelosModal({ onEscolher, onClose, onAplicar, inicial }) {
   const [objetivo, setObjetivo] = useState(null);
+  const [modo, setModo] = useState(null);
 
   return (
     <div style={styles.modalOverlay} onClick={onClose}>
@@ -14466,8 +15143,15 @@ function ModelosModal({ onEscolher, onClose }) {
         <div style={styles.eyebrow}>{tr("MODELOS PRONTOS")}</div>
         <h2 style={styles.modalTitle}>{tr("Trocar a semana")}</h2>
 
-        {!objetivo ? (
+        {modo === "wizard" ? (
+          <GeradorTreinoWizard inicial={inicial} onAplicar={onAplicar} onVoltar={() => setModo(null)} />
+        ) : !objetivo ? (
           <>
+            <button style={styles.objetivoCard} onClick={() => setModo("wizard")}>
+              <div style={styles.planNome}>{tr("✨ Montar um treino personalizado")}</div>
+              <div style={styles.modeloDescricao}>{tr("Divisão, exercícios e volume feitos pro seu objetivo, nível, dias disponíveis e prioridades.")}</div>
+            </button>
+            <p style={styles.modalSubtitle}>{tr("Ou use um modelo pronto:")}</p>
             <p style={styles.modalSubtitle}>{tr("Antes de tudo: qual é o seu objetivo agora?")}</p>
             <div style={styles.planGrid}>
               {OBJETIVOS.map((o) => (
