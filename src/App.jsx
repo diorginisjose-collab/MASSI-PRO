@@ -4338,6 +4338,10 @@ Object.assign(TRAD_TEXTOS.en, {"1 a 3 treinos por semana": "1 to 3 workouts per 
 Object.assign(TRAD_TEXTOS.es, {"1 a 3 treinos por semana": "1 a 3 entrenamientos por semana", "14 g a cada 1.000 kcal": "14 g por cada 1.000 kcal", "1RM": "1RM", "2 treinos por dia ou trabalho físico pesado": "2 entrenamientos al día o trabajo físico pesado", "3 a 5 treinos por semana": "3 a 5 entrenamientos por semana", "6 a 7 treinos por semana": "6 a 7 entrenamientos por semana", "A meta ficou abaixo da sua taxa metabólica basal. Déficits assim pedem acompanhamento profissional.": "La meta quedó por debajo de tu tasa metabólica basal. Déficits así requieren seguimiento profesional.", "Abaixo de {0} kcal por dia só com acompanhamento de médico ou nutricionista.": "Por debajo de {0} kcal al día solo con seguimiento de un médico o nutricionista.", "Abaixo do peso": "Bajo peso", "Abrir calculadora completa": "Abrir calculadora completa", "Acima de 12 repetições a estimativa perde precisão.": "Por encima de 12 repeticiones la estimación pierde precisión.", "Altura": "Altura", "Basal (TMB)": "Basal (TMB)", "Cafeína": "Cafeína", "Cafeína acima de {0} mg por dia passa do limite geral de segurança para adultos.": "Cafeína por encima de {0} mg al día supera el límite general de seguridad para adultos.", "Calculadora Massi": "Calculadora Massi", "Calorias vindas do gasto calórico.": "Calorías tomadas del gasto calórico.", "Cargas por porcentagem": "Cargas por porcentaje", "Compartilhar": "Compartir", "Copiar": "Copiar", "Creatina": "Creatina", "Creatina acima de 10 g por dia é mais do que o usual (3 a 5 g costumam bastar).": "Creatina por encima de 10 g al día es más de lo habitual (3 a 5 g suelen bastar).", "Digite seu peso e veja suas metas do dia: proteína, água, calorias e mais.": "Escribe tu peso y mira tus metas del día: proteína, agua, calorías y más.", "Editar multiplicador": "Editar multiplicador", "Emagrecer leve": "Adelgazar suave", "Estimativas gerais para adultos saudáveis. Não substituem a avaliação de um médico ou nutricionista. Se você tem histórico de transtorno alimentar, use com acompanhamento profissional.": "Estimaciones generales para adultos sanos. No sustituyen la evaluación de un médico o nutricionista. Si tienes antecedentes de trastorno alimentario, úsalo con seguimiento profesional.", "Estimativas gerais; não substituem nutricionista.": "Estimaciones generales; no sustituyen a un nutricionista.", "Faixa de peso saudável para sua altura": "Rango de peso saludable para tu altura", "Fibras": "Fibra", "Fórmula de Mifflin-St Jeor, uma das mais usadas para estimar o gasto energético em adultos.": "Fórmula de Mifflin-St Jeor, una de las más usadas para estimar el gasto energético en adultos.", "Ganhar leve": "Ganar suave", "Ganhar massa": "Ganar masa", "Gasto calórico": "Gasto calórico", "Gasto total (GET)": "Gasto total (GET)", "Idade": "Edad", "Informe a maior carga que você fez e quantas repetições conseguiu. Quanto menos repetições (até 12), mais preciso.": "Indica la mayor carga que usaste y cuántas repeticiones lograste. Cuantas menos repeticiones (hasta 12), más preciso.", "Informe altura e peso para calcular.": "Indica altura y peso para calcular.", "Informe carga e repetições (de 1 a 30).": "Indica carga y repeticiones (de 1 a 30).", "Informe o peso para calcular.": "Indica tu peso para calcular.", "Intenso": "Intenso", "Manter": "Mantener", "Manter o peso": "Mantener el peso", "Meta de calorias": "Meta de calorías", "Metas do dia": "Metas del día", "Moderado": "Moderado", "Muito intenso": "Muy intenso", "Multiplicador ({0})": "Multiplicador ({0})", "Não consegui copiar.": "No pude copiar.", "Nível de atividade": "Nivel de actividad", "O IMC não separa músculo de gordura: pessoas musculosas podem ter IMC alto sem excesso de gordura. Use junto com medidas e % de gordura (aba Avaliação).": "El IMC no separa músculo de grasa: las personas musculosas pueden tener IMC alto sin exceso de grasa. Úsalo junto con medidas y % de grasa (pestaña Evaluación).", "Obesidade grau I": "Obesidad grado I", "Obesidade grau II": "Obesidad grado II", "Obesidade grau III": "Obesidad grado III", "Peso normal": "Peso normal", "Preencha idade, altura e peso para calcular.": "Completa edad, altura y peso para calcular.", "Proteína": "Proteína", "Proteína acima de 2,5 g por kg é mais do que costuma ser necessário.": "Proteína por encima de 2,5 g por kg es más de lo que suele ser necesario.", "Proteína e carboidrato somam {0} kcal, acima da meta de {1} kcal. Reduza o multiplicador de um deles ou aumente as calorias.": "Proteína y carbohidratos suman {0} kcal, por encima de la meta de {1} kcal. Reduce el multiplicador de uno de ellos o aumenta las calorías.", "repetição": "repetición", "repetições": "repeticiones", "Restaurar padrão ({0})": "Restaurar valor predeterminado ({0})", "Resumo copiado!": "¡Resumen copiado!", "Salvar nas notas": "Guardar en notas", "Salvo nas notas!": "¡Guardado en notas!", "Seu IMC": "Tu IMC", "Seu objetivo": "Tu objetivo", "Seu peso": "Tu peso", "Sexo biológico": "Sexo biológico", "Sobram só {0} kcal (≈ {1} g) para gorduras. Gordura muito baixa por muito tempo prejudica hormônios e a absorção de vitaminas: ajuste o carboidrato ou as calorias (toque no ✎ do item).": "Solo sobran {0} kcal (≈ {1} g) para grasas. Muy poca grasa durante mucho tiempo perjudica las hormonas y la absorción de vitaminas: ajusta los carbohidratos o las calorías (toca el ✎ del elemento).", "Sua carga máxima estimada (1RM)": "Tu carga máxima estimada (1RM)", "Usar como meta de calorias nas Metas": "Usar como meta de calorías en Metas del día", "Você está dentro da faixa.": "Estás dentro del rango.", "Voltar ao multiplicador": "Volver al multiplicador", "copos": "vasos", "do gasto calórico": "del gasto calórico", "do gasto energético": "del gasto energético", "déficit de 10%": "déficit del 10%", "déficit de 20%": "déficit del 20%", "superávit de 10%": "superávit del 10%", "superávit de 15%": "superávit del 15%", "em relação ao gasto": "respecto al gasto", "o que sobra das calorias": "lo que sobra de las calorías", "o que sobra das calorias: {0} kcal": "lo que sobra de las calorías: {0} kcal", "pouco ou nenhum exercício": "poco o ningún ejercicio", "sem ajuste": "sin ajuste", "{0} kg abaixo do limite da faixa.": "{0} kg por debajo del límite del rango.", "{0} kg acima do limite da faixa.": "{0} kg por encima del límite del rango.", "Água": "Agua"});
 Object.assign(TRAD_TEXTOS.en, {"Calcanhares no chão": "Heels on the floor", "(os dois pés)": "(both feet)", "(pé esquerdo)": "(left foot)", "(pé direito)": "(right foot)", "Joelhos alinhados com os pés": "Knees aligned with feet", "Joelho em relação à ponta do pé": "Knee relative to toe", "Calcanhar da frente no chão": "Front heel on the floor", "Equilíbrio lateral": "Lateral balance", "Posição dos cotovelos": "Elbow position", "Simetria entre os braços": "Symmetry between arms", "Flexão dos joelhos": "Knee flexion", "Altura do braço": "Arm height", "Não balance o tronco: use só o braço.": "Don't swing your torso: use only your arm.", "Extensão de pernas": "Leg extension", "Flexão de pernas": "Leg curl", "Elevação pélvica": "Hip thrust", "Elevação de pernas": "Leg raise", "Rotação de tronco": "Torso rotation", "Mude o ângulo da câmera.": "Change the camera angle.", "Sled/trenó": "Sled", "Paçoca": "Paçoca (peanut candy)", "Baião de dois": "Baião de dois (rice and beans)", "Vatapá": "Vatapá (shrimp and bread stew)", "Acarajé": "Acarajé (black-eyed pea fritter)", "Cachaça": "Cachaça (sugarcane spirit)", "Tacacá": "Tacacá (tucupi and jambu soup)", "Maniçoba": "Maniçoba (cassava leaf stew)", "Medidor Massi": "Massi Gauge"});
 Object.assign(TRAD_TEXTOS.es, {"Calcanhares no chão": "Talones en el suelo", "(os dois pés)": "(los dos pies)", "(pé esquerdo)": "(pie izquierdo)", "(pé direito)": "(pie derecho)", "Joelhos alinhados com os pés": "Rodillas alineadas con los pies", "Joelho em relação à ponta do pé": "Rodilla respecto a la punta del pie", "Calcanhar da frente no chão": "Talón delantero en el suelo", "Equilíbrio lateral": "Equilibrio lateral", "Posição dos cotovelos": "Posición de los codos", "Simetria entre os braços": "Simetría entre los brazos", "Flexão dos joelhos": "Flexión de rodillas", "Altura do braço": "Altura del brazo", "Não balance o tronco: use só o braço.": "No balancees el torso: usa solo el brazo.", "Extensão de pernas": "Extensión de piernas", "Flexão de pernas": "Curl de piernas", "Elevação pélvica": "Elevación pélvica", "Elevação de pernas": "Elevación de piernas", "Rotação de tronco": "Rotación de tronco", "Mude o ângulo da câmera.": "Cambia el ángulo de la cámara.", "Sled/trenó": "Trineo (sled)", "Paçoca": "Paçoca (dulce de maní)", "Baião de dois": "Baião de dois (arroz con frijoles)", "Vatapá": "Vatapá (guiso de camarón y pan)", "Acarajé": "Acarajé (buñuelo de frijol caupí)", "Cachaça": "Cachaça (aguardiente de caña)", "Tacacá": "Tacacá (sopa de tucupí y jambú)", "Maniçoba": "Maniçoba (guiso de hojas de yuca)"});
+Object.assign(TRAD_TEXTOS.en, {"{0}/{1} dias": "{0}/{1} days"});
+Object.assign(TRAD_TEXTOS.es, {"{0}/{1} dias": "{0}/{1} días"});
+Object.assign(TRAD_TEXTOS.en, {"{0}/{1} dias": "{0}/{1} days", "ex: 40": "e.g. 40", "ex: 60": "e.g. 60", "ex: 79,8": "e.g. 79.8", "ex: 178": "e.g. 178", "ex: 29": "e.g. 29", "ex: 25,7": "e.g. 25.7", "ex: 35,9": "e.g. 35.9", "ex: 8": "e.g. 8", "ex: 44": "e.g. 44", "ex: 72,5": "e.g. 72.5", "ex: 175": "e.g. 175", "ex: 84": "e.g. 84", "ex: 38": "e.g. 38", "ex: 98": "e.g. 98", "ex: 100": "e.g. 100", "ex: 35": "e.g. 35", "ex: 56": "e.g. 56", "ex: 40kg": "e.g. 40kg"});
+Object.assign(TRAD_TEXTOS.es, {"{0}/{1} dias": "{0}/{1} días", "ex: 40": "p. ej. 40", "ex: 60": "p. ej. 60", "ex: 79,8": "p. ej. 79,8", "ex: 178": "p. ej. 178", "ex: 29": "p. ej. 29", "ex: 25,7": "p. ej. 25,7", "ex: 35,9": "p. ej. 35,9", "ex: 8": "p. ej. 8", "ex: 44": "p. ej. 44", "ex: 72,5": "p. ej. 72,5", "ex: 175": "p. ej. 175", "ex: 84": "p. ej. 84", "ex: 38": "p. ej. 38", "ex: 98": "p. ej. 98", "ex: 100": "p. ej. 100", "ex: 35": "p. ej. 35", "ex: 56": "p. ej. 56", "ex: 40kg": "p. ej. 40kg"});
 const TRAD_NORM = {};
 function trNormalizar(idioma) {
   if (TRAD_NORM[idioma]) return TRAD_NORM[idioma];
@@ -9531,13 +9535,13 @@ function RelatorioAvaliacao({ avaliacoesBase, onFechar, onImprimir }) {
 
   if (!carregado) {
     return (
-      <div style={{ position: "fixed", inset: 0, zIndex: 650, background: REL_COR.fundo, display: "flex", alignItems: "center", justifyContent: "center", color: REL_COR.texto }}>
+      <div style={{ position: "fixed", top: 0, right: 0, bottom: 0, left: 0, zIndex: 650, background: REL_COR.fundo, display: "flex", alignItems: "center", justifyContent: "center", color: REL_COR.texto }}>
         {tr("Carregando...")}</div>
     );
   }
 
   return (
-    <div ref={overlayRef} style={{ position: "fixed", inset: 0, zIndex: 650, background: REL_COR.fundo, overflowY: "auto", WebkitOverflowScrolling: "touch", color: REL_COR.texto, fontFamily: sansFont }}>
+    <div ref={overlayRef} style={{ position: "fixed", top: 0, right: 0, bottom: 0, left: 0, zIndex: 650, background: REL_COR.fundo, overflowY: "auto", WebkitOverflowScrolling: "touch", color: REL_COR.texto, fontFamily: sansFont }}>
       <div style={{ maxWidth: 560, margin: "0 auto", padding: "38px 12px 40px", boxSizing: "border-box" }}>
         <div style={{ display: "flex", flexWrap: "wrap", gap: 8, alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
           <button style={REL_BTN} onClick={onFechar}>{tr("← Voltar")}</button>
@@ -9854,7 +9858,7 @@ function RelatorioAvaliacao({ avaliacoesBase, onFechar, onImprimir }) {
       </div>
 
       {infoAberta && (
-        <div style={{ position: "fixed", inset: 0, zIndex: 665, background: "rgba(0,0,0,0.6)", display: "flex", alignItems: "center", justifyContent: "center", padding: 18 }} onClick={() => setInfoAberta(null)}>
+        <div style={{ position: "fixed", top: 0, right: 0, bottom: 0, left: 0, zIndex: 665, background: "rgba(0,0,0,0.6)", display: "flex", alignItems: "center", justifyContent: "center", padding: 18 }} onClick={() => setInfoAberta(null)}>
           <div style={{ background: "#1A2226", borderRadius: 14, padding: "20px 18px", maxWidth: 420, width: "100%", maxHeight: "82%", overflowY: "auto", color: REL_COR.texto, boxSizing: "border-box" }} onClick={(e) => e.stopPropagation()}>
             <div style={{ fontFamily: guiadoFont, fontSize: 19, fontWeight: 700, color: REL_COR.titulo, marginBottom: 8 }}>{tr(infoAberta.nome)}</div>
             <p style={{ fontSize: 14.5, lineHeight: 1.5, margin: "0 0 14px", whiteSpace: "pre-wrap", wordBreak: "break-word" }}>{tr(infoAberta.info)}</p>
@@ -9864,7 +9868,7 @@ function RelatorioAvaliacao({ avaliacoesBase, onFechar, onImprimir }) {
       )}
 
       {fotosAberto && sel && (
-        <div style={{ position: "fixed", inset: 0, zIndex: 665, background: "rgba(0,0,0,0.78)", overflowY: "auto", WebkitOverflowScrolling: "touch" }}>
+        <div style={{ position: "fixed", top: 0, right: 0, bottom: 0, left: 0, zIndex: 665, background: "rgba(0,0,0,0.78)", overflowY: "auto", WebkitOverflowScrolling: "touch" }}>
           <div style={{ maxWidth: 520, margin: "0 auto", padding: "38px 12px 40px", boxSizing: "border-box" }}>
             <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 10 }}>
               <button style={{ ...REL_BTN, background: "#EFA847", color: "#fff" }} onClick={() => { setErroFoto(""); setFotosAberto(false); }}>{tr("✕ Fechar")}</button>
@@ -9906,7 +9910,7 @@ function RelatorioAvaliacao({ avaliacoesBase, onFechar, onImprimir }) {
       )}
 
       {confirmExcluir && (
-        <div style={{ position: "fixed", inset: 0, zIndex: 665, background: "rgba(0,0,0,0.6)", display: "flex", alignItems: "center", justifyContent: "center", padding: 18 }}>
+        <div style={{ position: "fixed", top: 0, right: 0, bottom: 0, left: 0, zIndex: 665, background: "rgba(0,0,0,0.6)", display: "flex", alignItems: "center", justifyContent: "center", padding: 18 }}>
           <div style={{ background: "#1A2226", borderRadius: 14, padding: "20px 18px", maxWidth: 400, width: "100%", boxSizing: "border-box" }}>
             <div style={{ fontWeight: 700, fontSize: 17, marginBottom: 8 }}>{tr("Excluir esta avaliação?")}</div>
             <p style={{ fontSize: 14, color: REL_COR.suave, lineHeight: 1.45, margin: "0 0 14px" }}>{tr("O relatório e as fotos dessa avaliação serão apagados deste aparelho.")}</p>
@@ -9919,7 +9923,7 @@ function RelatorioAvaliacao({ avaliacoesBase, onFechar, onImprimir }) {
       )}
 
       {editandoProf && profForm && (
-        <div style={{ position: "fixed", inset: 0, zIndex: 665, background: "rgba(0,0,0,0.7)", overflowY: "auto", padding: 14 }}>
+        <div style={{ position: "fixed", top: 0, right: 0, bottom: 0, left: 0, zIndex: 665, background: "rgba(0,0,0,0.7)", overflowY: "auto", padding: 14 }}>
           <div style={{ background: "#1A2226", borderRadius: 14, padding: "18px 16px", maxWidth: 440, margin: "40px auto 20px", boxSizing: "border-box" }}>
             <div style={{ fontFamily: guiadoFont, fontSize: 19, fontWeight: 700, color: REL_COR.titulo, marginBottom: 12 }}>{tr("Contato do profissional")}</div>
             {[["nome", "Nome"], ["funcao", "Função (ex: Profissional de Educação Física)"], ["telefone", "Telefone"], ["email", "E-mail"], ["whatsapp", "WhatsApp (se for diferente do telefone)"], ["instagram", "Instagram (@usuario)"]].map(([k, rot]) => (
@@ -10634,10 +10638,12 @@ function EvolucaoTab({ onAplicarTreino, refsTour }) {
               {fotoA && fotoB && (
                 <>
                   <div style={styles.comparadorImgWrap}>
-                    <img src={fotoA.img} alt={tr("Antes")} style={styles.comparadorImgBase} />
-                    <div style={{ ...styles.comparadorImgOverlayWrap, clipPath: `inset(0 ${100 - sliderComparar}% 0 0)` }}>
-                      <img src={fotoB.img} alt={tr("Depois")} style={styles.comparadorImgBase} />
-                    </div>
+                    <img src={fotoB.img} alt={tr("Depois")} style={styles.comparadorImgBase} />
+                    {sliderComparar > 0 && (
+                      <div style={{ ...styles.comparadorImgOverlayWrap, width: `${sliderComparar}%` }}>
+                        <img src={fotoA.img} alt={tr("Antes")} style={{ ...styles.comparadorImgOverlayImg, width: `${10000 / sliderComparar}%` }} />
+                      </div>
+                    )}
                     <div style={{ ...styles.comparadorLinha, left: `${sliderComparar}%` }} />
                     <div style={styles.comparadorLabelEsq}>{tr(fotoA.data)}</div>
                     <div style={styles.comparadorLabelDir}>{tr(fotoB.data)}</div>
@@ -11257,6 +11263,24 @@ const CHAVES_BACKUP = [
   "cross-historico",
   "cross-recordes",
   "cross-desafios-progresso",
+  // dados que o backup antigo deixava de fora (cadastro, cargas, refeições, favoritos, preferências)
+  "onboarding-perfil",
+  "carga-historico",
+  "rir-historico",
+  "notas-exercicio",
+  "exercicio-desde",
+  "exercicios-favoritos",
+  "refeicoes-por-dia",
+  "inicio-treino-por-dia",
+  "rotina-data-inicio",
+  "rotina-assinatura-composicao",
+  "avisos-exercicio-parado",
+  "indice-massi-melhor",
+  "feedback-usuario",
+  "voz-treino-ativa",
+  "notificacoes-ativas",
+  "dieta-indice",
+  "agua-copos-hoje",
 ];
 
 function ModoGuiadoOverlay({ entry, onFechar, onAbrirExercicio, onEditCarga, onEditCampo, onConcluirExercicio, onTreinoFinalizado, vozAtiva, onToggleVoz }) {
@@ -11317,7 +11341,11 @@ function ModoGuiadoOverlay({ entry, onFechar, onAbrirExercicio, onEditCarga, onE
         setSerieAtual((s) => s + 1);
         setEstado("serie");
       } else if (indice < total - 1) {
-        setIndice((i) => i + 1); // reinicia série via effect acima
+        // estado e série voltam juntos com o índice, no mesmo lote: senão este efeito roda de novo
+        // com "descanso" velho e pula mais um exercício (e o treino acabava sem salvar no histórico)
+        setSerieAtual(1);
+        setEstado("serie");
+        setIndice((i) => i + 1);
       } else {
         setEstado("treinoConcluido");
       }
@@ -14049,7 +14077,7 @@ function AnaliseExecucaoModal({ tipo, nomeExercicio, dicaGuia, onFechar }) {
   const camAtiva = etapa === "carregando" || etapa === "pronto" || etapa === "contagem" || etapa === "analisando";
 
   return (
-    <div style={{ position: "fixed", inset: 0, zIndex: 720, background: cor.fundo, color: cor.texto, overflowY: "auto", WebkitOverflowScrolling: "touch", fontFamily: sansFont }}>
+    <div style={{ position: "fixed", top: 0, right: 0, bottom: 0, left: 0, zIndex: 720, background: cor.fundo, color: cor.texto, overflowY: "auto", WebkitOverflowScrolling: "touch", fontFamily: sansFont }}>
       <div style={{ maxWidth: 520, margin: "0 auto", padding: "38px 12px 32px", boxSizing: "border-box" }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8, marginBottom: 10 }}>
           <div style={{ fontWeight: 700, fontSize: 16, minWidth: 0, wordBreak: "break-word" }}>🎥 {tr(nomeExercicio)}</div>
@@ -14076,13 +14104,13 @@ function AnaliseExecucaoModal({ tipo, nomeExercicio, dicaGuia, onFechar }) {
         )}
 
         <div style={{ display: camAtiva ? "block" : "none" }}>
-          <div style={{ position: "relative", width: "100%", background: "#000", borderRadius: 12, overflow: "hidden", aspectRatio: "3 / 4", maxHeight: "68vh", margin: "0 auto" }}>
-            <div style={{ position: "absolute", inset: 0, transform: espelhar }}>
+          <div style={{ position: "relative", width: "100%", background: "#000", borderRadius: 12, overflow: "hidden", height: 0, paddingTop: "133.333%", margin: "0 auto" }}>
+            <div style={{ position: "absolute", top: 0, right: 0, bottom: 0, left: 0, transform: espelhar }}>
               <video ref={videoRef} playsInline muted style={{ width: "100%", height: "100%", objectFit: "contain", display: "block" }} />
-              <canvas ref={canvasRef} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "contain" }} />
+              <canvas ref={canvasRef} style={{ position: "absolute", top: 0, right: 0, bottom: 0, left: 0, width: "100%", height: "100%", objectFit: "contain" }} />
             </div>
             {etapa === "carregando" && (
-              <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(0,0,0,0.55)", textAlign: "center", padding: 20, fontWeight: 700 }}>
+              <div style={{ position: "absolute", top: 0, right: 0, bottom: 0, left: 0, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(0,0,0,0.55)", textAlign: "center", padding: 20, fontWeight: 700 }}>
                 {tr("Carregando câmera e detector...")}</div>
             )}
             {(etapa === "pronto" || etapa === "analisando") && hud.vista && (
@@ -14091,7 +14119,7 @@ function AnaliseExecucaoModal({ tipo, nomeExercicio, dicaGuia, onFechar }) {
               </div>
             )}
             {etapa === "contagem" && (
-              <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", background: "rgba(0,0,0,0.45)", textAlign: "center", padding: 20 }}>
+              <div style={{ position: "absolute", top: 0, right: 0, bottom: 0, left: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", background: "rgba(0,0,0,0.45)", textAlign: "center", padding: 20 }}>
                 <div style={{ fontSize: 88, fontWeight: 800, color: cor.lime, lineHeight: 1 }}>{tr(contagem)}</div>
                 <div style={{ marginTop: 10, fontWeight: 700 }}>{tr("Posicione-se. Vamos começar!")}</div>
               </div>
@@ -17580,7 +17608,7 @@ const styles = {
   },
   heroOverlay: {
     position: "absolute",
-    inset: 0,
+    top: 0, right: 0, bottom: 0, left: 0,
     backdropFilter: "blur(40px)",
     background: "rgba(18,21,26,0.28)",
   },
@@ -17836,7 +17864,7 @@ const styles = {
     fontSize: 13,
     padding: "7px 12px",
     borderRadius: 20,
-    border: `1px solid ${PENCIL}`,
+    borderWidth: 1, borderStyle: "solid", borderColor: PENCIL,
     background: "transparent",
     color: INK,
     cursor: "pointer",
@@ -17851,7 +17879,7 @@ const styles = {
     gap: 4,
     padding: "10px 4px",
     borderRadius: 12,
-    border: `1px solid ${PENCIL}`,
+    borderWidth: 1, borderStyle: "solid", borderColor: PENCIL,
     background: "transparent",
     cursor: "pointer",
   },
@@ -17981,7 +18009,7 @@ const styles = {
     marginTop: 14,
     padding: "10px 14px",
     borderRadius: 10,
-    border: "1px solid rgba(43,42,40,0.15)",
+    borderWidth: 1, borderStyle: "solid", borderColor: "rgba(43,42,40,0.15)",
     background: "transparent",
     color: INK,
     fontSize: 13,
@@ -18220,7 +18248,7 @@ const styles = {
     background: "rgba(20,24,27,0.12)",
     backdropFilter: "blur(6px)",
     WebkitBackdropFilter: "blur(6px)",
-    border: "1px solid rgba(255,255,255,0.08)",
+    borderWidth: 1, borderStyle: "solid", borderColor: "rgba(255,255,255,0.08)",
     boxShadow: "0 1px 2px rgba(18,21,26,0.04), 0 10px 24px -14px rgba(18,21,26,0.14)",
     overflow: "hidden",
   },
@@ -18370,7 +18398,7 @@ const styles = {
 
   cronoOverlay: {
     position: "fixed",
-    inset: 0,
+    top: 0, right: 0, bottom: 0, left: 0,
     background: GRAPHITE,
     display: "flex",
     flexDirection: "column",
@@ -18405,7 +18433,7 @@ const styles = {
   cronoSvg: { width: "100%", height: "100%" },
   cronoDigits: {
     position: "absolute",
-    inset: 0,
+    top: 0, right: 0, bottom: 0, left: 0,
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -18643,7 +18671,7 @@ const styles = {
   // ---------- Onboarding — tela inicial com foto (referência: mockup enviado) ----------
   onboardingOverlayNovo: {
     position: "fixed",
-    inset: 0,
+    top: 0, right: 0, bottom: 0, left: 0,
     // fica logo abaixo da splash (zIndex 500) de propósito: o onboarding já é
     // montado assim que sabemos que é necessário (perfilVerificado), então
     // durante o fade da splash o que aparece por trás é o próprio questionário,
@@ -18662,7 +18690,7 @@ const styles = {
   // ---------- "Bora começar" — tela de transição logo após o onboarding ----------
   boraComecarOverlay: {
     position: "fixed",
-    inset: 0,
+    top: 0, right: 0, bottom: 0, left: 0,
     zIndex: 1000,
     background: "#0E1316",
     display: "flex",
@@ -18706,7 +18734,7 @@ const styles = {
   },
   boraComecarAnel: {
     position: "absolute",
-    inset: 0,
+    top: 0, right: 0, bottom: 0, left: 0,
     borderRadius: "50%",
     border: "4px solid rgba(31,209,166,0.25)",
     borderTopColor: "#1FD1A6",
@@ -19133,7 +19161,7 @@ const styles = {
 
   modalOverlay: {
     position: "fixed",
-    inset: 0,
+    top: 0, right: 0, bottom: 0, left: 0,
     background: "rgba(31,30,28,0.55)",
     display: "flex",
     alignItems: "flex-end",
@@ -19179,7 +19207,7 @@ const styles = {
   modalSubtitle: { color: PENCIL, fontSize: 14, lineHeight: 1.45, margin: "0 0 14px", maxWidth: 420 },
   focoModalOverlay: {
     position: "fixed",
-    inset: 0,
+    top: 0, right: 0, bottom: 0, left: 0,
     background: "rgba(0,0,0,0.6)",
     display: "flex",
     alignItems: "flex-end",
@@ -19709,7 +19737,7 @@ const styles = {
   },
   tourBackdrop: {
     position: "fixed",
-    inset: 0,
+    top: 0, right: 0, bottom: 0, left: 0,
     background: "rgba(6,8,10,0.45)",
     zIndex: 550,
   },
@@ -19771,7 +19799,7 @@ const styles = {
   },
   guiadoOverlay: {
     position: "fixed",
-    inset: 0,
+    top: 0, right: 0, bottom: 0, left: 0,
     zIndex: 600,
     backgroundImage: `linear-gradient(rgba(10,12,14,0.62), rgba(10,12,14,0.8)), url(${GUIADO_BG_IMG})`,
     backgroundSize: "cover",
@@ -19937,7 +19965,7 @@ const styles = {
 
   toastOverlay: {
     position: "fixed",
-    inset: 0,
+    top: 0, right: 0, bottom: 0, left: 0,
     background: "rgba(19,26,29,0.55)",
     display: "flex",
     alignItems: "center",
@@ -20204,7 +20232,7 @@ const styles = {
     flex: 1,
     padding: "8px 10px",
     borderRadius: 20,
-    border: `1px solid rgba(43,42,40,0.2)`,
+    borderWidth: 1, borderStyle: "solid", borderColor: "rgba(43,42,40,0.2)",
     background: PAPER,
     color: PENCIL,
     fontSize: 12.5,
@@ -20250,9 +20278,10 @@ const styles = {
   comparadorSeletores: { display: "flex", alignItems: "center", gap: 8, marginBottom: 10 },
   comparadorSelect: { flex: 1, padding: "8px 10px", borderRadius: 8, border: "1px solid rgba(43,42,40,0.15)", fontSize: 12.5, color: INK, background: "#fff" },
   comparadorSeta: { fontSize: 14, color: PENCIL, flexShrink: 0 },
-  comparadorImgWrap: { position: "relative", width: "100%", aspectRatio: "3/4", borderRadius: 12, overflow: "hidden", background: "#000" },
-  comparadorImgOverlayWrap: { position: "absolute", top: 0, left: 0, width: "100%", height: "100%" },
-  comparadorImgBase: { width: "100%", height: "100%", objectFit: "cover", display: "block" },
+  comparadorImgWrap: { position: "relative", width: "100%", height: 0, paddingTop: "133.333%", borderRadius: 12, overflow: "hidden", background: "#000" },
+  comparadorImgOverlayWrap: { position: "absolute", top: 0, left: 0, height: "100%", overflow: "hidden" },
+  comparadorImgBase: { position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover", display: "block" },
+  comparadorImgOverlayImg: { position: "absolute", top: 0, left: 0, height: "100%", maxWidth: "none", objectFit: "cover", display: "block" },
   comparadorLinha: { position: "absolute", top: 0, bottom: 0, width: 3, background: "#fff", transform: "translateX(-50%)", boxShadow: "0 0 6px rgba(0,0,0,0.5)", pointerEvents: "none" },
   comparadorLabelEsq: { position: "absolute", top: 8, left: 8, fontSize: 10.5, fontWeight: 700, color: "#fff", background: "rgba(0,0,0,0.5)", padding: "3px 8px", borderRadius: 6 },
   comparadorLabelDir: { position: "absolute", top: 8, right: 8, fontSize: 10.5, fontWeight: 700, color: "#fff", background: "rgba(0,0,0,0.5)", padding: "3px 8px", borderRadius: 6 },
@@ -20260,7 +20289,7 @@ const styles = {
 
   splashOverlay: {
     position: "fixed",
-    inset: 0,
+    top: 0, right: 0, bottom: 0, left: 0,
     zIndex: 500,
     display: "flex",
     flexDirection: "column",
