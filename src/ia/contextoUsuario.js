@@ -1,5 +1,9 @@
 // Monta o "resumo do usuário" que o assistente recebe a cada pergunta (só se o usuário permitir).
+import { resumoParaIA } from "./rotinaInteligente.js";
+
 const corta = (t, n) => (String(t).length > n ? String(t).slice(0, n - 1) + "…" : String(t));
+const MAX_CONTEXTO = 6500;
+const MAX_ROTINA_INTELIGENTE = 3400;
 
 function idadeDe(nascimento) {
   if (!nascimento || !/^\d{4}-\d{2}-\d{2}/.test(nascimento)) return null;
@@ -52,11 +56,20 @@ export function montarContextoUsuario(d) {
   }
   if (d.indice) linhas.push("ÍNDICE MASSI: nível " + (d.indice.nivelIdx + 1) + " (" + d.indice.nomeNivel + "), " + d.indice.total + "/100 pontos, sequência " + (d.indice.streak || 0) + " dias");
 
-  // biblioteca (só dos focos que aparecem na rotina) para o assistente sugerir trocas válidas
+  // Rotina Inteligente (perfil confirmado, plano ativo, evolução). Entra ANTES da biblioteca, que é a parte longa
+  // e descartável, para que o resumo do perfil nunca seja cortado.
+  const ri = d.rotinaInteligente ? corta(resumoParaIA(d.rotinaInteligente), MAX_ROTINA_INTELIGENTE) : "";
+  if (ri) linhas.push(ri);
+
+  // biblioteca (só dos focos que aparecem na rotina) para o assistente sugerir trocas válidas; usa o espaço que sobrar
   if (d.biblioteca && dias.length) {
     const focos = Array.from(new Set(dias.map((x) => x.foco)));
     const bl = focos.map((f) => (d.biblioteca[f] ? f + ": " + d.biblioteca[f].map((e) => e.name).slice(0, 24).join(", ") : null)).filter(Boolean);
-    if (bl.length) linhas.push("BIBLIOTECA DE EXERCÍCIOS (para trocas):\n" + bl.join("\n"));
+    if (bl.length) {
+      const bloco = "BIBLIOTECA DE EXERCÍCIOS (para trocas):\n" + bl.join("\n");
+      const sobra = MAX_CONTEXTO - linhas.join("\n").length - 1;
+      if (sobra > 120) linhas.push(corta(bloco, sobra));
+    }
   }
-  return corta(linhas.join("\n"), 6500);
+  return corta(linhas.join("\n"), MAX_CONTEXTO);
 }

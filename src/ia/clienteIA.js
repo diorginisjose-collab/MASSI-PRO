@@ -1,4 +1,4 @@
-// Conversa com a função de servidor /api/ia (assistente em tempo real e foto de alimentos).
+// Conversa com a função de servidor /api/ia (assistente em tempo real, foto de alimentos e Rotina Inteligente).
 import { IA_CONFIG, urlApi } from "./config.js";
 
 export class ErroIA extends Error {
@@ -21,6 +21,7 @@ export const MENSAGENS_ERRO = {
   resposta_invalida: "Não consegui entender a resposta da IA. Tente outra foto ou descreva o prato.",
   cancelado: "Pedido cancelado.",
   origem: "Este endereço não tem permissão para usar a IA.",
+  demorou: "A IA demorou demais para responder. Tente de novo.",
 };
 export function mensagemDeErro(e) {
   const codigo = e && e.codigo ? e.codigo : "servidor";
@@ -59,9 +60,9 @@ async function erroDaResposta(resp) {
   return new ErroIA((j && j.erro) || (resp.status === 404 ? "nao_configurado" : "servidor"));
 }
 
-// Pergunta ao assistente. `onTexto(textoAteAgora)` é chamado a cada pedaço que chega (tempo real).
-export async function perguntarStream({ mensagens, contexto, idioma, onTexto, signal }) {
-  const resp = await postar({ tipo: "chat", idioma, contexto, mensagens }, signal);
+// Lê a resposta em tempo real (SSE) do servidor e devolve o texto completo.
+// Usada pelo assistente (chat) e pela Rotina Inteligente.
+async function lerRespostaStream(resp, onTexto) {
   if (!resp.ok) throw await erroDaResposta(resp);
   const tipoResp = resp.headers.get("content-type") || "";
   if (tipoResp.indexOf("application/json") >= 0) throw await erroDaResposta(resp);
@@ -92,6 +93,19 @@ export async function perguntarStream({ mensagens, contexto, idioma, onTexto, si
   }
   if (buf.trim()) total = interpretarEventos(buf, onTexto, total).texto;
   return total;
+}
+
+// Pergunta ao assistente. `onTexto(textoAteAgora)` é chamado a cada pedaço que chega (tempo real).
+export async function perguntarStream({ mensagens, contexto, idioma, onTexto, signal }) {
+  const resp = await postar({ tipo: "chat", idioma, contexto, mensagens }, signal);
+  return lerRespostaStream(resp, onTexto);
+}
+
+// Rotina Inteligente: pede uma parte do plano (parte = "treino" | "alimentar" | "reavaliacao").
+// Devolve o TEXTO bruto (um JSON); quem chama confere e higieniza antes de mostrar.
+export async function gerarParteRotina({ parte, contexto, idioma, onTexto, signal }) {
+  const resp = await postar({ tipo: "rotina", parte, idioma, contexto }, signal);
+  return lerRespostaStream(resp, onTexto);
 }
 
 function interpretarEventos(bloco, onTexto, totalAtual) {

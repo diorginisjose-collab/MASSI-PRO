@@ -7,6 +7,7 @@ export const IA_CONFIG = {
   // Ids dos recursos no controle de uso do plano (RECURSOS_IA / LIMITES_IA_MENSAL do App.jsx).
   recursoChat: "chat",
   recursoFoto: "foto",
+  recursoRotina: "treino", // Rotina Inteligente: cada plano gerado ou reavaliação com IA gasta 1 uso
 
   // Assistente
   maxCaracteresPergunta: 1000, // tamanho máximo de cada pergunta
@@ -14,6 +15,9 @@ export const IA_CONFIG = {
   mensagensSalvas: 30, // quantas ficam guardadas no aparelho
   chaveHistoricoChat: "assistente-ia-historico",
   chaveUsarDados: "assistente-ia-usar-dados",
+
+  // Rotina Inteligente
+  tempoMaxGeracaoMs: 110000, // se a IA demorar mais que isso, a geração é cancelada
 
   // Foto de alimentos
   fotoMaxLado: 1024, // a foto é reduzida antes de enviar (mais rápido e barato)
