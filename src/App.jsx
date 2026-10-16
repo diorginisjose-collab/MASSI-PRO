@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import { AssistenteIA, FotoAlimentos, DiarioAlimentar, montarContextoUsuario } from "./ia/index.js";
+import { AssistenteIA, FotoAlimentos, DiarioAlimentar, RotinaInteligente, CartaoRotinaInteligente, lerEstadoRI, montarContextoUsuario } from "./ia/index.js";
 import { CalculadoraMassiCard } from "./calculadora/index.js";
 import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from "recharts";
 
@@ -1357,7 +1357,7 @@ const PRECOS_ASSINATURA = {
 const RECURSOS_IA = {
   chat: { nome: "Assistente de IA (perguntas e comandos)", emBreve: false },
   foto: { nome: "Análise de refeição por foto", emBreve: false },
-  treino: { nome: "Geração e ajuste de treino por IA", emBreve: true },
+  treino: { nome: "Geração e ajuste de treino por IA", emBreve: false }, // usado pela Rotina Inteligente (plano e reavaliação)
   outras: { nome: "Outras funções de IA", emBreve: true },
 };
 
@@ -5020,7 +5020,8 @@ function AppMassiPro({ onSolicitarRemount }) {
   const [rotinaAssinaturaCarregada, setRotinaAssinaturaCarregada] = useState(undefined); // undefined = ainda carregando do storage; null = nunca salva antes
   const [trocaTreinoRespostaSemana, setTrocaTreinoRespostaSemana] = useState(null); // semana em que a pessoa já dispensou a sugestão de trocar de treino
   const [showPlanos, setShowPlanos] = useState(false);
-  const [iaTela, setIaTela] = useState(null); // telas de IA: "assistente" | "foto" | "diario" | null
+  const [iaTela, setIaTela] = useState(null); // telas de IA: "assistente" | "foto" | "diario" | "rotina" | null
+  const [riVersao, setRiVersao] = useState(0); // sobe quando a Rotina Inteligente muda (atualiza o cartão da aba Rotina)
   const [menuAberto, setMenuAberto] = useState(false);
   const [infoModal, setInfoModal] = useState(null); // { titulo, corpo }
   const [online, setOnline] = useState(typeof navigator === "undefined" ? true : navigator.onLine);
@@ -7030,6 +7031,12 @@ function AppMassiPro({ onSolicitarRemount }) {
   };
 
   // ---------- IA: ligações entre o app e as telas do módulo src/ia ----------
+  // Rotina Inteligente: coloca a semana do plano no editor da aba Rotina (a rotina salva só muda quando a pessoa toca em Salvar)
+  const aplicarSemanaRI = (semana) => {
+    if (!Array.isArray(semana) || semana.length !== 7) return;
+    setRotina(semana);
+    setDiasSelecionados(DIAS_SEMANA.filter((dia, i) => semana[i].foco !== "Descanso"));
+  };
   const iaNorm = (t) => String(t || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
   const iaGetContexto = async () => {
     let onb = null, aval = null;
@@ -7041,7 +7048,9 @@ function AppMassiPro({ onSolicitarRemount }) {
       const ind = calcularIndiceMassi(historico, rotina, diasSelecionados, st);
       indice = { total: ind.total, nivelIdx: ind.nivelIdx, nomeNivel: NIVEIS_MASSI[ind.nivelIdx].nome, streak: st };
     } catch (e) { /* sem índice */ }
-    return montarContextoUsuario({ nome: perfilAtivoNome, nascimento: onb && onb.nascimento, nivel: nivelUsuario, objetivo: objetivoUsuario, restricoes: restricoesFisicas, avaliacao: aval, rotina, diasSelecionados, historico, indice, biblioteca: LIBRARY });
+    let rotinaInteligente = null;
+    try { rotinaInteligente = await lerEstadoRI(); } catch (e) { /* sem Rotina Inteligente */ }
+    return montarContextoUsuario({ nome: perfilAtivoNome, nascimento: onb && onb.nascimento, nivel: nivelUsuario, objetivo: objetivoUsuario, restricoes: restricoesFisicas, avaliacao: aval, rotina, diasSelecionados, historico, indice, rotinaInteligente, biblioteca: LIBRARY });
   };
   const iaBuscaLocal = (texto) => {
     const q = iaNorm(texto);
@@ -7306,6 +7315,9 @@ function AppMassiPro({ onSolicitarRemount }) {
       )}
       {iaTela === "foto" && (
         <FotoAlimentos onFechar={() => setIaTela(null)} i18n={{ tr, trt }} idioma={idioma} quota={MassiIA} temIA={vigente.temIA} onVerPlanos={() => { setIaTela(null); setShowPlanos(true); }} onAbrirDiario={() => setIaTela("diario")} />
+      )}
+      {iaTela === "rotina" && (
+        <RotinaInteligente onFechar={() => { setIaTela(null); setRiVersao((v) => v + 1); }} i18n={{ tr, trt }} idioma={idioma} quota={MassiIA} temIA={vigente.temIA} onVerPlanos={() => { setIaTela(null); setShowPlanos(true); }} gerarSemana={gerarSemanaPersonalizada} aplicarSemana={aplicarSemanaRI} onAlterado={() => setRiVersao((v) => v + 1)} />
       )}
       {iaTela === "diario" && <DiarioAlimentar onFechar={() => setIaTela(null)} i18n={{ tr, trt }} idioma={idioma} onNovaFoto={() => setIaTela("foto")} />}
       {!iaTela && !menuAberto && !showPlanos && !infoModal && !onboardingPendente && (
@@ -7790,6 +7802,8 @@ function AppMassiPro({ onSolicitarRemount }) {
               {t("rotinaAvisoSemTreinarPre")} {tr(avisoSemTreinar)} {t("rotinaAvisoSemTreinarPos")}
             </div>
           )}
+
+          <CartaoRotinaInteligente onAbrir={() => setIaTela("rotina")} temIA={vigente.temIA} versao={riVersao} tr={tr} />
 
           <input
             type="text"
