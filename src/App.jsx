@@ -5099,6 +5099,7 @@ function AppMassiPro({ onSolicitarRemount }) {
   const tourAvalAlimentoRef = useRef(null);
   const tourAvalFotosRef = useRef(null);
   const tourNotasRef = useRef(null);
+  const tourRotinaIARef = useRef(null);
   const tourPremiumPlanosRef = useRef(null);
   const tourPremiumDietaRef = useRef(null);
   const [tourAtivo, setTourAtivo] = useState(null); // { aba: "rotina"|"inicio"|"cross", passo: 0 } ou null
@@ -5107,7 +5108,7 @@ function AppMassiPro({ onSolicitarRemount }) {
   const [toursVistos, setToursVistos] = useState({
     rotina: undefined, inicio: undefined, cross: undefined, novidades: undefined,
     historico: undefined, evolucao: undefined, notas: undefined, premium: undefined,
-    rotina2: undefined, inicio2: undefined, ia: undefined,
+    rotina2: undefined, inicio2: undefined, ia: undefined, rotinaIA: undefined,
   });
   const toursDef = {
     rotina: [
@@ -5163,6 +5164,10 @@ function AppMassiPro({ onSolicitarRemount }) {
       { ref: tourCardioRef, texto: "Cardio no final do treino: toque pra adicionar. Com ele ativo, escolha o tipo, a duração e a intensidade — ou remova se não quiser fazer hoje." },
       { ref: tourImagemRef, texto: "Exporte sua rotina como imagem (pra mandar no WhatsApp) ou como PDF, e o CSV serve pra abrir numa planilha." },
       { ref: tourConcluirRef, texto: "Terminou de treinar? Toque em \"Concluir treino de hoje\" pra salvar no histórico, contar na sua sequência e ver o mapa muscular do dia." },
+    ],
+    // Tutorial da Minha Rotina Inteligente (novidade). Aparece uma vez na aba Rotina.
+    rotinaIA: [
+      { ref: tourRotinaIARef, texto: "Novidade: a Minha Rotina Inteligente monta um treino e uma alimentação personalizados a partir das suas respostas, com check-ins para acompanhar sua evolução. Toque em \"Personalizar minha rotina\" pra começar." },
     ],
     historico: [
       { ref: tourHistPdfRef, texto: "Assinantes Premium podem baixar um PDF com o resumo completo de cada mês de treino." },
@@ -5222,7 +5227,7 @@ function AppMassiPro({ onSolicitarRemount }) {
   // (sem marcar como visto) em vez de deixá-lo "vazando" pra tela nova.
   useEffect(() => {
     if (!tourAtivo) return;
-    const abaEquivalente = (tourAtivo.aba === "novidades" || tourAtivo.aba === "rotina2" || tourAtivo.aba === "rotinaTudo") ? "rotina" : (tourAtivo.aba === "inicio2" || tourAtivo.aba === "ia") ? "inicio" : tourAtivo.aba;
+    const abaEquivalente = (tourAtivo.aba === "novidades" || tourAtivo.aba === "rotina2" || tourAtivo.aba === "rotinaTudo" || tourAtivo.aba === "rotinaIA") ? "rotina" : (tourAtivo.aba === "inicio2" || tourAtivo.aba === "ia") ? "inicio" : tourAtivo.aba;
     if (abaEquivalente !== activeTab) {
       setTourAtivo(null);
     }
@@ -5284,6 +5289,21 @@ function AppMassiPro({ onSolicitarRemount }) {
     const timeoutId = setTimeout(() => {
       if (!cancelado) setTourAtivo({ aba: "inicio2", passo: 0 });
     }, 900);
+    return () => {
+      cancelado = true;
+      clearTimeout(timeoutId);
+    };
+  }, [activeTab, loaded, toursVistos, onboardingPendente]);
+  // Tutorial da Rotina Inteligente: uma vez, na aba Rotina, sem atropelar outro tutorial aberto.
+  useEffect(() => {
+    if (onboardingPendente) return;
+    if (activeTab !== "rotina") return;
+    if (!loaded) return;
+    if (toursVistos.rotinaIA !== false) return;
+    let cancelado = false;
+    const timeoutId = setTimeout(() => {
+      if (!cancelado) setTourAtivo((atual) => atual || { aba: "rotinaIA", passo: 0 });
+    }, 1500);
     return () => {
       cancelado = true;
       clearTimeout(timeoutId);
@@ -5551,7 +5571,7 @@ function AppMassiPro({ onSolicitarRemount }) {
         // segue com os padrões
       }
       const vistosCarregados = {};
-      for (const aba of ["rotina", "inicio", "inicio2", "ia", "cross", "novidades", "rotina2", "historico", "evolucao", "notas", "premium"]) {
+      for (const aba of ["rotina", "inicio", "inicio2", "ia", "cross", "novidades", "rotina2", "rotinaIA", "historico", "evolucao", "notas", "premium"]) {
         try {
           const res = await window.storage.get(`tour-${aba}-visto`);
           vistosCarregados[aba] = !!(res && res.value === "1");
@@ -7710,9 +7730,7 @@ function AppMassiPro({ onSolicitarRemount }) {
             ref={(el) => (tabBtnRefs.current["rotina"] = el)}
             style={{ ...styles.tabBtn, ...(activeTab === "rotina" ? styles.tabBtnActive : {}) }}
             onClick={() => {
-              setActiveTab("rotina");
-              const primeiroDiaRotina = rotina.find((d) => diasSelecionados.includes(d.dia));
-              if (primeiroDiaRotina) setDiaParaFocar(primeiroDiaRotina.dia);
+              setActiveTab("rotina"); // a tela fica no topo; a rolagem para o dia só acontece ao vir do Início
             }}
           >
             <span style={styles.tabBtnIcone}>💪</span>
@@ -7803,7 +7821,9 @@ function AppMassiPro({ onSolicitarRemount }) {
             </div>
           )}
 
-          <CartaoRotinaInteligente onAbrir={() => setIaTela("rotina")} temIA={vigente.temIA} versao={riVersao} tr={tr} />
+          <div ref={tourRotinaIARef}>
+            <CartaoRotinaInteligente onAbrir={() => setIaTela("rotina")} temIA={vigente.temIA} versao={riVersao} tr={tr} />
+          </div>
 
           <input
             type="text"
