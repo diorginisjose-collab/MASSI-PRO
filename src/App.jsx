@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
+import GuiaSuplementos from "./suplementos/Suplementos.jsx";
 import { AssistenteIA, FotoAlimentos, DiarioAlimentar, RotinaInteligente, CartaoRotinaInteligente, lerEstadoRI, montarContextoUsuario } from "./ia/index.js";
 import { CalculadoraMassiCard } from "./calculadora/index.js";
 import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from "recharts";
@@ -16135,6 +16136,7 @@ function NotasTab({ refTour }) {
 
   return (
     <div>
+      <GuiaSuplementos estilos={{ card: styles.card, label: styles.cardLabel, input: styles.avalInput }} tr={tr} />
       <CalculadoraMassiCard cardStyle={styles.card} labelStyle={styles.cardLabel} i18n={{ tr, trt }} idioma={IDIOMA_ATUAL} onSalvarNota={salvarTextoComoNota} />
       <section style={styles.card} ref={refTour}>
         <div style={styles.cardLabel}>{tr("Nova anotação")}</div>
