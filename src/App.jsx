@@ -7795,6 +7795,7 @@ function AppMassiPro({ onSolicitarRemount }) {
 
       {activeTab === "inicio" && (
         <InicioTab
+          onAbrirFoto={() => setIaTela("foto")}
           perfilAtivoNome={perfilAtivoNome}
           rotina={rotina}
           diasSelecionados={diasSelecionados}
@@ -8598,7 +8599,7 @@ function AtalhosIlustradosCard({ onIrAba, refTour }) {
   );
 }
 
-function InicioTab({ perfilAtivoNome, rotina, diasSelecionados, historico, recordes, onIrTreino, onIrAba, t, idioma, refTreinoHojeTour, refMedidorTour, refMinisTour, refAtalhosTour }) {
+function InicioTab({ onAbrirFoto, perfilAtivoNome, rotina, diasSelecionados, historico, recordes, onIrTreino, onIrAba, t, idioma, refTreinoHojeTour, refMedidorTour, refMinisTour, refAtalhosTour }) {
   const [avaliacoes, setAvaliacoes] = useState([]);
   const [agora, setAgora] = useState(() => new Date());
 
@@ -8751,13 +8752,21 @@ function InicioTab({ perfilAtivoNome, rotina, diasSelecionados, historico, recor
   return (
     <div style={styles.crossDarkWrap}>
       <div style={styles.inicioHeader}>
-        <div style={styles.inicioAvatar}>{tr((perfilAtivoNome || "V").charAt(0).toUpperCase())}</div>
+        <div style={styles.inicioAvatar} aria-hidden="true">🏋️</div>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={styles.inicioSaudacao}>{t("inicioOla")}, {tr(perfilAtivoNome)} 👋</div>
           <div style={styles.inicioFrase}>{tr(getFraseDoDiaInicio(idioma))}</div>
         </div>
         <div style={styles.inicioSino} title={t("inicioNotificacoes")}>🔔</div>
       </div>
+
+      <button type="button" onClick={() => onAbrirFoto && onAbrirFoto()} style={styles.inicioFotoBtn} data-testid="btn-foto-inteligente">
+        <span style={{ fontSize: 22 }}>📷</span>
+        <span style={{ textAlign: "left" }}>
+          <span style={{ display: "block", fontWeight: 800, fontSize: 15 }}>{tr("Foto inteligente")}</span>
+          <span style={{ display: "block", fontSize: 12.5, opacity: 0.8 }}>{tr("Tire uma foto da refeição e veja calorias e macros")}</span>
+        </span>
+      </button>
 
       <div style={styles.resumoDiaFaixa}>
         <span style={styles.resumoDiaData}>{tr(dataHojeFormatada)}</span>
@@ -16136,8 +16145,8 @@ function NotasTab({ refTour }) {
 
   return (
     <div>
-      <GuiaSuplementos estilos={{ card: styles.card, label: styles.cardLabel, input: styles.avalInput }} tr={tr} />
-      <CalculadoraMassiCard cardStyle={styles.card} labelStyle={styles.cardLabel} i18n={{ tr, trt }} idioma={IDIOMA_ATUAL} onSalvarNota={salvarTextoComoNota} />
+      <GuiaSuplementos estilos={{ card: styles.card, label: styles.tituloDestaque, input: styles.avalInput }} tr={tr} />
+      <CalculadoraMassiCard cardStyle={styles.card} labelStyle={styles.tituloDestaque} i18n={{ tr, trt }} idioma={IDIOMA_ATUAL} onSalvarNota={salvarTextoComoNota} />
       <section style={styles.card} ref={refTour}>
         <div style={styles.cardLabel}>{tr("Nova anotação")}</div>
 
@@ -18561,6 +18570,7 @@ const styles = {
     marginBottom: 16,
   },
   cardLabel: { fontWeight: 600, fontSize: 14, marginBottom: 10, color: INK },
+  tituloDestaque: { fontWeight: 800, fontSize: 21, marginBottom: 10, color: "#A7FF00", letterSpacing: 0.2 },
   rapidoCardTitulo: { fontWeight: 700, fontSize: 14, color: "#fff", marginBottom: 4, textShadow: "0 1px 3px rgba(0,0,0,0.4)" },
   rapidoCardTexto: { fontSize: 12.5, color: "rgba(255,255,255,0.82)", lineHeight: 1.4, margin: 0, textShadow: "0 1px 3px rgba(0,0,0,0.4)" },
   rapidoCardRow: { display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10 },
@@ -21233,6 +21243,7 @@ const styles = {
   },
 
   // ---------- Início (painel principal) ----------
+  inicioFotoBtn: { width: "100%", display: "flex", alignItems: "center", gap: 12, background: "linear-gradient(135deg, #A7FF00, #7BC400)", color: "#15181B", border: "none", borderRadius: 14, padding: "14px 16px", marginBottom: 14, cursor: "pointer", fontFamily: "inherit", boxShadow: "0 4px 14px rgba(167,255,0,0.25)" },
   inicioHeader: { display: "flex", alignItems: "center", gap: 12, marginBottom: 16 },
   inicioAvatar: {
     width: 46,
