@@ -780,3 +780,78 @@ export function contextoGeracao(parte, perfil, nutri, semana, estado) {
   }
   return L.join("\n").slice(0, 8800);
 }
+
+// ---------- texto do plano (para WhatsApp e PDF) ----------
+// Gera o plano completo em texto simples. Não inventa dado: usa só o que está salvo no plano.
+export function textoDoPlano(treino, alimentar) {
+  const L = [];
+  const t = treino || {};
+  const ia = t.ia || {};
+  L.push("MEU PLANO — MASSI PRO (Rotina Inteligente)");
+  const gerado = dataCurta(((t.geradoEm || "")).slice(0, 10));
+  if (gerado) L.push("Gerado em " + gerado);
+  L.push("");
+  L.push("TREINO");
+  resumirSemana(t.semana || []).filter((d) => d.exercicios.length || d.cardio).forEach((d) => {
+    L.push(d.dia + " · " + d.foco);
+    d.exercicios.forEach((e) => L.push("  - " + e.nome + ": " + e.series + "x" + e.reps + (e.descanso ? " · descanso " + e.descanso : "")));
+    if (d.cardio) L.push("  - Cardio: " + d.cardio.tipo + " · " + d.cardio.duracao + " min · " + d.cardio.intensidade);
+  });
+  if (ia.justificativaDivisao) { L.push(""); L.push("Por que este plano: " + ia.justificativaDivisao); }
+  if (ia.progressao && ia.progressao.length) { L.push(""); L.push("Progressão:"); ia.progressao.forEach((x) => L.push("  - " + x)); }
+  if (ia.recuperacao && ia.recuperacao.length) { L.push(""); L.push("Recuperação:"); ia.recuperacao.forEach((x) => L.push("  - " + x)); }
+  if (ia.cardioAtividade) { L.push(""); L.push("Cardio e atividade: " + ia.cardioAtividade); }
+  if (ia.dicasExecucao && ia.dicasExecucao.length) { L.push(""); L.push("Dicas de execução:"); ia.dicasExecucao.forEach((d) => L.push("  - " + d.exercicio + ": " + d.dica)); }
+  if (ia.medirEvolucao && ia.medirEvolucao.length) { L.push(""); L.push("Como medir a evolução:"); ia.medirEvolucao.forEach((x) => L.push("  - " + x)); }
+
+  const a = alimentar || {};
+  const p = a.plano;
+  const n = a.nutri;
+  L.push("");
+  L.push("ALIMENTAÇÃO");
+  if (n && n.modo === "completo" && n.kcal) {
+    L.push("Meta estimada: ~" + n.kcal.alvo + " kcal/dia (faixa " + n.kcal.min + "–" + n.kcal.max + ")");
+    L.push("Proteína ~" + n.proteina.alvo + " g · Carboidratos ~" + n.carbo.alvo + " g · Gorduras ~" + n.gordura.alvo + " g");
+    L.push("(estimativa, não é prescrição)");
+  }
+  if (p) {
+    if (p.estrategia) L.push(p.estrategia);
+    (p.refeicoes || []).forEach((m) => {
+      L.push("");
+      L.push(m.nome + (m.horario ? " · " + m.horario : ""));
+      m.itens.forEach((i) => L.push("  - " + i.alimento + (i.quantidade ? " — " + i.quantidade : "")));
+      if (m.observacao) L.push("  Obs.: " + m.observacao);
+    });
+    if (p.preTreino) { L.push(""); L.push("Pré-treino: " + p.preTreino); }
+    if (p.posTreino) { L.push("Pós-treino: " + p.posTreino); }
+    if (p.ajustesDias) { L.push("Dias de treino e descanso: " + p.ajustesDias); }
+    if (p.substituicoes && p.substituicoes.length) { L.push(""); L.push("Substituições:"); p.substituicoes.forEach((s) => L.push("  - " + s.de + " → " + s.por.join(" ou "))); }
+    if (p.opcoesEconomicas && p.opcoesEconomicas.length) { L.push(""); L.push("Opções econômicas:"); p.opcoesEconomicas.forEach((x) => L.push("  - " + x)); }
+    if (p.acompanhamento && p.acompanhamento.length) { L.push(""); L.push("Acompanhamento:"); p.acompanhamento.forEach((x) => L.push("  - " + x)); }
+  }
+  const alertas = [].concat(ia.alertas || [], (p && p.alertas) || []);
+  if (alertas.length) { L.push(""); L.push("ATENÇÃO:"); alertas.forEach((x) => L.push("  - " + x)); }
+  L.push("");
+  L.push("Estimativas e sugestões geradas por IA. Não substituem profissional de saúde.");
+  return L.join("\n");
+}
+
+// ---------- evolução: série de peso e exportação dos check-ins ----------
+export function serieCheckinsPeso(checkins) {
+  return (checkins || [])
+    .filter((c) => c && c.data && c.peso !== undefined && !isNaN(paraNumero(c.peso)))
+    .map((c) => ({ data: c.data, peso: paraNumero(c.peso) }))
+    .sort((a, b) => (a.data < b.data ? -1 : a.data > b.data ? 1 : 0));
+}
+
+const escaparCsv = (v) => {
+  const t = String(v === undefined || v === null ? "" : v).replace(/"/g, '""');
+  return /[;"\n]/.test(t) ? '"' + t + '"' : t;
+};
+// CSV com separador ";" (padrão do Excel no Brasil). Campos vazios ficam em branco.
+export function csvCheckins(checkins) {
+  const cols = ["data", "peso", "cintura", "forca", "frequenciaReal", "dificuldadeAlimentar", "fome", "disposicao", "recuperacao", "mudouDisponibilidade", "observacao"];
+  const cab = ["Data", "Peso (kg)", "Cintura (cm)", "Força", "Dias treinados/semana", "Dificuldade com a alimentação", "Fome", "Disposição", "Recuperação", "Mudança de disponibilidade", "Observação"];
+  const linhas = (checkins || []).slice().sort((a, b) => (a.data < b.data ? -1 : 1)).map((c) => cols.map((k) => escaparCsv(c[k])).join(";"));
+  return [cab.map(escaparCsv).join(";")].concat(linhas).join("\r\n");
+}

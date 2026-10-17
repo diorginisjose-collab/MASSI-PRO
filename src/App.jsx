@@ -5101,6 +5101,7 @@ function AppMassiPro({ onSolicitarRemount }) {
   const tourAvalFotosRef = useRef(null);
   const tourNotasRef = useRef(null);
   const tourRotinaIARef = useRef(null);
+  const tourFotoIARef = useRef(null);
   const tourPremiumPlanosRef = useRef(null);
   const tourPremiumDietaRef = useRef(null);
   const [tourAtivo, setTourAtivo] = useState(null); // { aba: "rotina"|"inicio"|"cross", passo: 0 } ou null
@@ -5109,7 +5110,7 @@ function AppMassiPro({ onSolicitarRemount }) {
   const [toursVistos, setToursVistos] = useState({
     rotina: undefined, inicio: undefined, cross: undefined, novidades: undefined,
     historico: undefined, evolucao: undefined, notas: undefined, premium: undefined,
-    rotina2: undefined, inicio2: undefined, ia: undefined, rotinaIA: undefined,
+    rotina2: undefined, inicio2: undefined, ia: undefined, rotinaIA: undefined, fotoIA: undefined,
   });
   const toursDef = {
     rotina: [
@@ -5165,6 +5166,10 @@ function AppMassiPro({ onSolicitarRemount }) {
       { ref: tourCardioRef, texto: "Cardio no final do treino: toque pra adicionar. Com ele ativo, escolha o tipo, a duração e a intensidade — ou remova se não quiser fazer hoje." },
       { ref: tourImagemRef, texto: "Exporte sua rotina como imagem (pra mandar no WhatsApp) ou como PDF, e o CSV serve pra abrir numa planilha." },
       { ref: tourConcluirRef, texto: "Terminou de treinar? Toque em \"Concluir treino de hoje\" pra salvar no histórico, contar na sua sequência e ver o mapa muscular do dia." },
+    ],
+    // Tutorial da Foto inteligente (novidade). Aparece uma vez na tela inicial.
+    fotoIA: [
+      { ref: tourFotoIARef, texto: "Novidade: a Foto inteligente estima calorias e macros de uma refeição a partir de uma foto. As estimativas são aproximadas: confira os itens antes de usar." },
     ],
     // Tutorial da Minha Rotina Inteligente (novidade). Aparece uma vez na aba Rotina.
     rotinaIA: [
@@ -5228,7 +5233,7 @@ function AppMassiPro({ onSolicitarRemount }) {
   // (sem marcar como visto) em vez de deixá-lo "vazando" pra tela nova.
   useEffect(() => {
     if (!tourAtivo) return;
-    const abaEquivalente = (tourAtivo.aba === "novidades" || tourAtivo.aba === "rotina2" || tourAtivo.aba === "rotinaTudo" || tourAtivo.aba === "rotinaIA") ? "rotina" : (tourAtivo.aba === "inicio2" || tourAtivo.aba === "ia") ? "inicio" : tourAtivo.aba;
+    const abaEquivalente = (tourAtivo.aba === "novidades" || tourAtivo.aba === "rotina2" || tourAtivo.aba === "rotinaTudo" || tourAtivo.aba === "rotinaIA") ? "rotina" : (tourAtivo.aba === "fotoIA") ? "inicio" : (tourAtivo.aba === "inicio2" || tourAtivo.aba === "ia") ? "inicio" : tourAtivo.aba;
     if (abaEquivalente !== activeTab) {
       setTourAtivo(null);
     }
@@ -5290,6 +5295,21 @@ function AppMassiPro({ onSolicitarRemount }) {
     const timeoutId = setTimeout(() => {
       if (!cancelado) setTourAtivo({ aba: "inicio2", passo: 0 });
     }, 900);
+    return () => {
+      cancelado = true;
+      clearTimeout(timeoutId);
+    };
+  }, [activeTab, loaded, toursVistos, onboardingPendente]);
+  // Tutorial da Foto inteligente: uma vez, na tela inicial, sem atropelar outro tutorial aberto.
+  useEffect(() => {
+    if (onboardingPendente) return;
+    if (activeTab !== "inicio") return;
+    if (!loaded) return;
+    if (toursVistos.fotoIA !== false) return;
+    let cancelado = false;
+    const timeoutId = setTimeout(() => {
+      if (!cancelado) setTourAtivo((atual) => atual || { aba: "fotoIA", passo: 0 });
+    }, 1500);
     return () => {
       cancelado = true;
       clearTimeout(timeoutId);
@@ -5572,7 +5592,7 @@ function AppMassiPro({ onSolicitarRemount }) {
         // segue com os padrões
       }
       const vistosCarregados = {};
-      for (const aba of ["rotina", "inicio", "inicio2", "ia", "cross", "novidades", "rotina2", "rotinaIA", "historico", "evolucao", "notas", "premium"]) {
+      for (const aba of ["rotina", "inicio", "inicio2", "ia", "cross", "novidades", "rotina2", "rotinaIA", "fotoIA", "historico", "evolucao", "notas", "premium"]) {
         try {
           const res = await window.storage.get(`tour-${aba}-visto`);
           vistosCarregados[aba] = !!(res && res.value === "1");
@@ -7796,6 +7816,7 @@ function AppMassiPro({ onSolicitarRemount }) {
       {activeTab === "inicio" && (
         <InicioTab
           onAbrirFoto={() => setIaTela("foto")}
+          refFoto={tourFotoIARef}
           perfilAtivoNome={perfilAtivoNome}
           rotina={rotina}
           diasSelecionados={diasSelecionados}
@@ -8599,7 +8620,7 @@ function AtalhosIlustradosCard({ onIrAba, refTour }) {
   );
 }
 
-function InicioTab({ onAbrirFoto, perfilAtivoNome, rotina, diasSelecionados, historico, recordes, onIrTreino, onIrAba, t, idioma, refTreinoHojeTour, refMedidorTour, refMinisTour, refAtalhosTour }) {
+function InicioTab({ refFoto, onAbrirFoto, perfilAtivoNome, rotina, diasSelecionados, historico, recordes, onIrTreino, onIrAba, t, idioma, refTreinoHojeTour, refMedidorTour, refMinisTour, refAtalhosTour }) {
   const [avaliacoes, setAvaliacoes] = useState([]);
   const [agora, setAgora] = useState(() => new Date());
 
@@ -8760,7 +8781,7 @@ function InicioTab({ onAbrirFoto, perfilAtivoNome, rotina, diasSelecionados, his
         <div style={styles.inicioSino} title={t("inicioNotificacoes")}>🔔</div>
       </div>
 
-      <button type="button" onClick={() => onAbrirFoto && onAbrirFoto()} style={styles.inicioFotoBtn} data-testid="btn-foto-inteligente">
+      <button ref={refFoto} type="button" onClick={() => onAbrirFoto && onAbrirFoto()} style={styles.inicioFotoBtn} data-testid="btn-foto-inteligente">
         <span style={{ fontSize: 22 }}>📷</span>
         <span style={{ textAlign: "left" }}>
           <span style={{ display: "block", fontWeight: 800, fontSize: 15 }}>{tr("Foto inteligente")}</span>

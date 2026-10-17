@@ -16,6 +16,41 @@ const chipEstilo = (sel) => ({ background: sel ? COR.lime : COR.card2, color: se
 const inputEstilo = { width: "100%", boxSizing: "border-box", background: COR.card2, color: COR.texto, border: "1px solid " + COR.borda, borderRadius: 12, padding: "12px 13px", fontSize: 16, fontFamily: FONTE, outline: "none" };
 const erroEstilo = { color: "#FFB1A8", fontSize: 12.5, marginTop: 5 };
 const avisoEstilo = { background: "rgba(255,193,7,0.10)", border: "1px solid rgba(255,193,7,0.35)", color: COR.texto, borderRadius: 12, padding: "10px 12px", fontSize: 13, lineHeight: 1.45, marginBottom: 10 };
+function baixarCsv(nome, conteudo) {
+  const blob = new Blob(["\ufeff" + conteudo], { type: "text/csv;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = nome;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+// Gráfico simples do peso (SVG, sem bibliotecas externas)
+function GraficoPeso({ serie, tr }) {
+  if (!serie || serie.length < 2) return null;
+  const W = 320, H = 140, P = 18;
+  const pesos = serie.map((x) => x.peso);
+  const min = Math.min(...pesos), max = Math.max(...pesos);
+  const span = max - min || 1;
+  const pts = serie.map((x, i) => {
+    const px = P + (i * (W - 2 * P)) / (serie.length - 1);
+    const py = H - P - ((x.peso - min) / span) * (H - 2 * P);
+    return [px, py];
+  });
+  const ultimo = serie[serie.length - 1], primeiro = serie[0];
+  const dif = Math.round((ultimo.peso - primeiro.peso) * 10) / 10;
+  return (
+    <div style={cartao} data-testid="grafico-peso">
+      <div style={{ fontWeight: 800, marginBottom: 4 }}>{tr("Evolução do peso")}</div>
+      <div style={textoSuave}>{tr("De")} {RI.dataCurta(primeiro.data)} {tr("a")} {RI.dataCurta(ultimo.data)}: {primeiro.peso.toString().replace(".", ",")} kg → {ultimo.peso.toString().replace(".", ",")} kg ({dif > 0 ? "+" : ""}{dif.toString().replace(".", ",")} kg)</div>
+      <svg viewBox={`0 0 ${W} ${H}`} width="100%" role="img" aria-label={tr("Gráfico de evolução do peso")} style={{ marginTop: 8 }}>
+        <polyline fill="none" stroke={COR.lime} strokeWidth="2.5" points={pts.map((p) => p.join(",")).join(" ")} />
+        {pts.map((p, i) => <circle key={i} cx={p[0]} cy={p[1]} r="3.5" fill={COR.lime} />)}
+      </svg>
+    </div>
+  );
+}
+
 const milhar = (n) => (typeof n === "number" ? n.toLocaleString("pt-BR") : n);
 
 // ---------- campo genérico (numérico, escolha, múltipla escolha, texto, dias) ----------
@@ -519,6 +554,28 @@ export default function RotinaInteligente({ onFechar, i18n, idioma, quota, temIA
     );
   };
 
+  // Compartilhar e exportar o plano (texto gerado a partir do que está salvo; nada é inventado)
+  const compartilharPlanoWhats = () => {
+    const e = estado;
+    if (!e || !e.planoTreino) return;
+    let txt = RI.textoDoPlano(e.planoTreino, e.planoAlimentar);
+    const LIMITE = 3000;
+    if (txt.length > LIMITE) txt = txt.slice(0, LIMITE) + "\n\n" + tr("(Resumo. O plano completo está no PDF do Massi Pro.)");
+    window.open("https://wa.me/?text=" + encodeURIComponent(txt), "_blank", "noopener,noreferrer");
+  };
+  const exportarPlanoPDF = () => {
+    const e = estado;
+    if (!e || !e.planoTreino) return;
+    const texto = RI.textoDoPlano(e.planoTreino, e.planoAlimentar);
+    const w = window.open("", "_blank");
+    if (!w) { setAviso(tr("Permita pop-ups do Massi Pro para exportar o PDF.")); return; }
+    const escapar = (x) => String(x).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    w.document.write('<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>Meu plano - Massi Pro</title><style>body{font-family:system-ui,sans-serif;max-width:720px;margin:24px auto;padding:0 16px;color:#111;line-height:1.5;white-space:pre-wrap}@media print{body{margin:0}}</style></head><body>' + escapar(texto) + '</body></html>');
+    w.document.close();
+    w.focus();
+    setTimeout(() => { try { w.print(); } catch (err) { /* o usuário pode imprimir pelo menu */ } }, 300);
+  };
+
   const corpoPlano = () => {
     const e = estado;
     if (!e || !e.planoTreino) return null;
@@ -542,6 +599,16 @@ export default function RotinaInteligente({ onFechar, i18n, idioma, quota, temIA
             )}
           </div>
         )}
+        <GraficoPeso serie={RI.serieCheckinsPeso(e.checkins)} tr={tr} />
+        {e.checkins && e.checkins.length > 0 && (
+          <button type="button" style={{ ...botaoSec, width: "100%", marginBottom: 12 }} onClick={() => baixarCsv("checkins-massi.csv", RI.csvCheckins(e.checkins))} data-testid="exportar-checkins">
+            📊 {tr("Exportar check-ins (planilha)")}
+          </button>
+        )}
+        <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
+          <button type="button" style={{ ...botaoSec, flex: 1 }} onClick={compartilharPlanoWhats} data-testid="compartilhar-plano">💬 {tr("WhatsApp")}</button>
+          <button type="button" style={{ ...botaoSec, flex: 1 }} onClick={exportarPlanoPDF} data-testid="exportar-plano">📄 {tr("Exportar PDF")}</button>
+        </div>
         <VisaoPlano treino={e.planoTreino} alimentar={e.planoAlimentar} tr={tr} />
         <div style={{ display: "flex", gap: 8 }}>
           <button type="button" style={{ ...botaoSec, flex: 1 }} onClick={iniciarCheckin}>{tr("Fazer check-in")}</button>
