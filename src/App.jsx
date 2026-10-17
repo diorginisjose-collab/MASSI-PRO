@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import GuiaSuplementos from "./suplementos/Suplementos.jsx";
+import { empilhar, removerTopo, iniciarNavegacao } from "./navegacao.js";
 import { AssistenteIA, FotoAlimentos, DiarioAlimentar, RotinaInteligente, CartaoRotinaInteligente, lerEstadoRI, montarContextoUsuario } from "./ia/index.js";
 import { CalculadoraMassiCard } from "./calculadora/index.js";
 import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from "recharts";
@@ -5045,6 +5046,33 @@ function AppMassiPro({ onSolicitarRemount }) {
   const [showModelos, setShowModelos] = useState(false);
   const [modoImpressao, setModoImpressao] = useState(false);
   const [activeTab, setActiveTab] = useState("inicio");
+
+  // Botão Voltar do celular: desfaz a última ação (fecha tela ou volta à aba anterior)
+  useEffect(() => iniciarNavegacao(), []);
+  const abaAnteriorRef = useRef("inicio");
+  const restaurandoAbaRef = useRef(false);
+  useEffect(() => {
+    if (restaurandoAbaRef.current) { restaurandoAbaRef.current = false; abaAnteriorRef.current = activeTab; return; }
+    const anterior = abaAnteriorRef.current;
+    if (anterior !== activeTab) {
+      empilhar(() => { restaurandoAbaRef.current = true; setActiveTab(anterior); });
+      abaAnteriorRef.current = activeTab;
+    }
+  }, [activeTab]);
+  const iaAberta = !!iaTela;
+  const fechouIaPeloVoltar = useRef(false);
+  useEffect(() => {
+    if (!iaAberta) return undefined;
+    empilhar(() => { fechouIaPeloVoltar.current = true; setIaTela(null); });
+    return () => { if (!fechouIaPeloVoltar.current) removerTopo(); fechouIaPeloVoltar.current = false; };
+  }, [iaAberta]);
+  const planosAbertos = !!showPlanos;
+  const fechouPlanosPeloVoltar = useRef(false);
+  useEffect(() => {
+    if (!planosAbertos) return undefined;
+    empilhar(() => { fechouPlanosPeloVoltar.current = true; setShowPlanos(false); });
+    return () => { if (!fechouPlanosPeloVoltar.current) removerTopo(); fechouPlanosPeloVoltar.current = false; };
+  }, [planosAbertos]);
   const [onboardingPendente, setOnboardingPendente] = useState(false);
   const [mostrarBoraComecar, setMostrarBoraComecar] = useState(false);
   const tabRowRef = useRef(null);

@@ -1,10 +1,22 @@
 // Entrada da central de suplementos na aba Notas. A central completa fica em central/CentralSuplementos.jsx.
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { empilhar, removerTopo } from "../navegacao.js";
 import { createPortal } from "react-dom";
+import CentralErroBoundary from "./central/ErroBoundary.jsx";
 import CentralSuplementos from "./central/CentralSuplementos.jsx";
 
 export default function GuiaSuplementos({ estilos = {}, tr = (x) => x }) {
   const [aberta, setAberta] = useState(false);
+  const fechouPeloVoltar = useRef(false);
+  const estaAberta = aberta;
+  useEffect(() => {
+    if (!estaAberta) return undefined;
+    empilhar(() => { fechouPeloVoltar.current = true; setAberta(false); });
+    return () => {
+      if (!fechouPeloVoltar.current) removerTopo();
+      fechouPeloVoltar.current = false;
+    };
+  }, [estaAberta]);
   return (
     <section style={estilos.card}>
       <div style={estilos.label}>{tr("Suplementos: guia completo")}</div>
@@ -18,7 +30,12 @@ export default function GuiaSuplementos({ estilos = {}, tr = (x) => x }) {
       >
         {tr("Abrir central de suplementos")}
       </button>
-      {aberta && createPortal(<CentralSuplementos estilos={estilos} tr={tr} onFechar={() => setAberta(false)} />, document.body)}
+      {aberta && createPortal(
+        <CentralErroBoundary onFechar={() => setAberta(false)}>
+          <CentralSuplementos estilos={estilos} tr={tr} onFechar={() => setAberta(false)} />
+        </CentralErroBoundary>,
+        document.body
+      )}
     </section>
   );
 }

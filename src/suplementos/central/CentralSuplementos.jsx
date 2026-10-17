@@ -1,7 +1,33 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { SUPLEMENTOS, CATEGORIAS, AVISO_GERAL } from "../dados/dados.js";
 import * as C from "./calculos.js";
-const { sugerirSuplementos, completarAuto } = C;
+// Busca inteligente definida aqui (não depende de funções novas do calculos.js)
+function sugerirSuplementos(termo, lista, max) {
+  const t = C.semAcento(termo);
+  if (!t) return [];
+  const pontuar = (x) => {
+    const nome = C.semAcento(x.nome);
+    if (nome.startsWith(t)) return 0;
+    if (C.sinonimosDe(x.id).some((y) => C.semAcento(y).startsWith(t))) return 1;
+    if (nome.split(/[\s(),\/-]+/).some((p) => p.startsWith(t))) return 2;
+    if (C.semAcento(C.textoBusca(x)).includes(t)) return 3;
+    return -1;
+  };
+  return (lista || [])
+    .map((x) => ({ x, r: pontuar(x) }))
+    .filter((y) => y.r >= 0)
+    .sort((a, b) => a.r - b.r || a.x.nome.localeCompare(b.x.nome, "pt-BR"))
+    .slice(0, max || 6)
+    .map((y) => y.x);
+}
+function completarAuto(termo, lista) {
+  const digitado = String(termo || "");
+  if (digitado.trim().length < 1) return "";
+  const melhor = sugerirSuplementos(digitado, lista, 1)[0];
+  if (!melhor) return "";
+  if (C.semAcento(melhor.nome.slice(0, digitado.length)) !== C.semAcento(digitado)) return "";
+  return melhor.nome.slice(digitado.length);
+}
 import { MATRIZ, NIVEIS, OBJETIVOS, nivelDe } from "./evidencias.js";
 import { FONTES } from "./fontes.js";
 import { MITOS, CLASSIFICACOES } from "./mitos.js";

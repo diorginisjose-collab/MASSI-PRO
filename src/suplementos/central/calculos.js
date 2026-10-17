@@ -167,3 +167,40 @@ export function somarCafeina(itens) {
 
 // ---------- utilidades ----------
 export function arred(n, casas) { const f = Math.pow(10, casas || 0); return Math.round(n * f) / f; }
+
+// ---------- busca inteligente (sugestão automática, sem IA) ----------
+// Ranking: 0 = nome começa com o termo; 1 = sinônimo começa com o termo;
+// 2 = alguma palavra do nome começa com o termo; 3 = contém o termo em algum lugar.
+export function sugerirSuplementos(termo, lista, max) {
+  const t = semAcento(termo);
+  if (!t) return [];
+  const pontuar = (s) => {
+    const nome = semAcento(s.nome);
+    if (nome.startsWith(t)) return 0;
+    if (sinonimosDe(s.id).some((x) => semAcento(x).startsWith(t))) return 1;
+    if (nome.split(/[\s(),\/-]+/).some((p) => p.startsWith(t))) return 2;
+    if (semAcento(C_textoBusca(s)).includes(t)) return 3;
+    return -1;
+  };
+  return (lista || [])
+    .map((s) => ({ s, r: pontuar(s) }))
+    .filter((x) => x.r >= 0)
+    .sort((a, b) => a.r - b.r || a.s.nome.localeCompare(b.s.nome, "pt-BR"))
+    .slice(0, max || 6)
+    .map((x) => x.s);
+}
+
+// Completa automaticamente: devolve o trecho que falta do nome (com a grafia original)
+// quando o início do nome bate com o que foi digitado. Caso contrário, "".
+export function completarAuto(termo, lista) {
+  const digitado = String(termo || "");
+  if (digitado.trim().length < 1) return "";
+  const melhor = sugerirSuplementos(digitado, lista, 1)[0];
+  if (!melhor) return "";
+  const prefixo = melhor.nome.slice(0, digitado.length);
+  if (semAcento(prefixo) !== semAcento(digitado)) return "";
+  return melhor.nome.slice(digitado.length);
+}
+
+// textoBusca é declarada acima; alias evita dependência de ordem de definição
+const C_textoBusca = (s) => textoBusca(s);
