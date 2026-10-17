@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { SUPLEMENTOS, CATEGORIAS, AVISO_GERAL } from "../dados/dados.js";
 import * as C from "./calculos.js";
+const { sugerirSuplementos, completarAuto } = C;
 import { MATRIZ, NIVEIS, OBJETIVOS, nivelDe } from "./evidencias.js";
 import { FONTES } from "./fontes.js";
 import { MITOS, CLASSIFICACOES } from "./mitos.js";
@@ -55,6 +56,54 @@ const Campo = ({ rotulo, children }) => (
 );
 const entrada = { width: "100%", boxSizing: "border-box", padding: "10px 12px", borderRadius: 10, border: "1px solid rgba(128,128,128,0.4)", background: "transparent", color: "inherit", fontSize: 15 };
 const chip = (on) => ({ flexShrink: 0, borderRadius: 999, padding: "6px 12px", fontSize: 13, cursor: "pointer", border: "1px solid " + (on ? LIME : "rgba(128,128,128,0.4)"), background: on ? LIME : "transparent", color: on ? "#15181B" : "inherit", fontWeight: on ? 800 : 500 });
+
+// Campo de busca com sugestões automáticas e completar (Tab aceita; Enter escolhe a primeira sugestão).
+function CampoBuscaInteligente({ value, onChange, onEscolher, placeholder, ariaLabel, estilo }) {
+  const [aberto, setAberto] = useState(false);
+  const campoRef = React.useRef(null);
+  const aoFocar = () => {
+    setAberto(true);
+    setTimeout(() => { if (campoRef.current && campoRef.current.scrollIntoView) campoRef.current.scrollIntoView({ block: "start", behavior: "smooth" }); }, 300);
+  };
+  const sugestoes = useMemo(() => sugerirSuplementos(value, SUPLEMENTOS, 6), [value]);
+  const complemento = useMemo(() => completarAuto(value, SUPLEMENTOS), [value]);
+  const mostrarLista = aberto && String(value || "").trim().length > 0 && sugestoes.length > 0;
+  return (
+    <div style={{ position: "relative", marginBottom: estilo.marginBottom || 0 }}>
+      <div aria-hidden="true" style={{ ...estilo, marginBottom: 0, position: "absolute", left: 0, right: 0, top: 0, pointerEvents: "none", color: "transparent", background: "transparent", whiteSpace: "pre", overflow: "hidden" }}>
+        {value}<span style={{ color: "rgba(160,170,180,0.8)" }}>{complemento}</span>
+      </div>
+      <input
+        type="search"
+        value={value}
+        onChange={(e) => { onChange(e.target.value); setAberto(true); }}
+        onFocus={aoFocar}
+        ref={campoRef}
+        onBlur={() => setTimeout(() => setAberto(false), 150)}
+        onKeyDown={(e) => {
+          if (e.key === "Tab" && complemento && sugestoes[0]) { e.preventDefault(); onChange(sugestoes[0].nome); setAberto(false); }
+          else if (e.key === "Enter" && sugestoes[0]) { e.preventDefault(); onEscolher(sugestoes[0]); setAberto(false); }
+          else if (e.key === "Escape") { setAberto(false); }
+        }}
+        placeholder={placeholder}
+        aria-label={ariaLabel}
+        aria-autocomplete="list"
+        style={{ ...estilo, marginBottom: 0, position: "relative", background: "transparent" }}
+      />
+      {mostrarLista && (
+        <ul role="listbox" aria-label="Sugestões" style={{ position: "relative", left: 0, right: 0, listStyle: "none", margin: "6px 0 0", padding: 4, maxHeight: 260, overflowY: "auto", background: "#1B1F23", border: "1px solid rgba(128,128,128,0.4)", borderRadius: 10 }}>
+          {sugestoes.map((sg) => (
+            <li key={sg.id}>
+              <button type="button" onMouseDown={(e) => e.preventDefault()} onClick={() => { onEscolher(sg); setAberto(false); }} style={{ width: "100%", textAlign: "left", background: "transparent", border: "none", color: "inherit", padding: "9px 10px", cursor: "pointer", fontSize: 14, borderRadius: 8 }}>
+                {sg.nome} <span style={{ opacity: 0.6, fontSize: 12 }}>· {sg.categoria}</span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
 
 export default function CentralSuplementos({ estilos = {}, tr = (x) => x, onFechar }) {
   const [aba, setAba] = useState("inicio");
@@ -266,7 +315,14 @@ export default function CentralSuplementos({ estilos = {}, tr = (x) => x, onFech
   const telaCatalogo = (
     <div>
       {aviso}
-      <input type="text" value={busca} onChange={(e) => setBusca(e.target.value)} placeholder="Buscar por nome, sinônimo ou finalidade (ex.: creatina, BCAA, sono)" aria-label="Buscar suplemento" style={{ ...entrada, marginBottom: 10 }} />
+      <CampoBuscaInteligente
+        value={busca}
+        onChange={(v) => setBusca(v)}
+        onEscolher={(sg) => { setBusca(sg.nome); setAberto(sg.id); }}
+        placeholder="Buscar por nome, sinônimo ou finalidade (ex.: creatina, BCAA, sono)"
+        ariaLabel="Buscar suplemento"
+        estilo={{ ...entrada, marginBottom: 10 }}
+      />
 
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 8 }}>
         <Campo rotulo="Categoria">
@@ -564,13 +620,13 @@ export default function CentralSuplementos({ estilos = {}, tr = (x) => x, onFech
         </div>
       </div>
 
-      <input
-        type="search"
+      <CampoBuscaInteligente
         value={busca}
-        onChange={(e) => { setBusca(e.target.value); if (e.target.value) setAba("catalogo"); }}
+        onChange={(v) => setBusca(v)}
+        onEscolher={(sg) => { setBusca(sg.nome); setAba("catalogo"); }}
         placeholder={tr("Buscar suplemento, sinônimo ou finalidade")}
-        aria-label={tr("Buscar suplemento")}
-        style={{ ...entrada, fontSize: 16, padding: "13px 14px", marginBottom: 14 }}
+        ariaLabel={tr("Buscar suplemento")}
+        estilo={{ ...entrada, fontSize: 16, padding: "13px 14px", marginBottom: 14 }}
       />
 
       <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 8 }}>{tr("Explorar por categoria")}</div>
@@ -680,7 +736,7 @@ export default function CentralSuplementos({ estilos = {}, tr = (x) => x, onFech
   const conteudo = { inicio: telaInicio, diario: telaDiario, rotulos: telaRotulos, catalogo: telaCatalogo, comparar: telaComparar, calc: telaCalc, favoritos: telaFavs }[aba];
 
   return (
-    <div role="dialog" aria-label={tr("Central de suplementos")} style={{ position: "fixed", inset: 0, zIndex: 3000, background: "#101214", color: "#F2F4F6", display: "flex", flexDirection: "column" }}>
+    <div role="dialog" aria-label={tr("Central de suplementos")} style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, width: "100%", height: "100vh", maxHeight: "100vh", boxSizing: "border-box", zIndex: 3000, background: "#101214", color: "#F2F4F6", display: "flex", flexDirection: "column", margin: 0 }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 14px", borderBottom: "1px solid rgba(128,128,128,0.3)", flexShrink: 0 }}>
         <div style={{ fontWeight: 800, fontSize: 20, color: LIME }}>{tr("Central de suplementos")}</div>
         <button type="button" onClick={onFechar} style={{ background: "transparent", color: "inherit", border: "1px solid rgba(128,128,128,0.5)", borderRadius: 999, padding: "6px 12px", cursor: "pointer" }}>✕ {tr("Fechar")}</button>
@@ -690,7 +746,7 @@ export default function CentralSuplementos({ estilos = {}, tr = (x) => x, onFech
           <button key={k} type="button" role="tab" aria-selected={aba === k} onClick={() => setAba(k)} style={chip(aba === k)}>{tr(rotulo)}{k === "favoritos" && favs.length ? " (" + favs.length + ")" : ""}</button>
         ))}
       </div>
-      <div style={{ flex: 1, overflowY: "auto", padding: "0 14px 24px" }}>{conteudo}</div>
+      <div style={{ flex: 1, minHeight: 0, overflowY: "auto", WebkitOverflowScrolling: "touch", padding: "0 14px 24px" }}>{conteudo}</div>
     </div>
   );
 }
