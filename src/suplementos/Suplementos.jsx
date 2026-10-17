@@ -1,5 +1,6 @@
 // Entrada da central de suplementos na aba Notas. A central completa fica em central/CentralSuplementos.jsx.
 import React, { useState } from "react";
+import { createPortal } from "react-dom";
 import CentralSuplementos from "./central/CentralSuplementos.jsx";
 
 export default function GuiaSuplementos({ estilos = {}, tr = (x) => x }) {
@@ -17,7 +18,7 @@ export default function GuiaSuplementos({ estilos = {}, tr = (x) => x }) {
       >
         {tr("Abrir central de suplementos")}
       </button>
-      {aberta && <CentralSuplementos estilos={estilos} tr={tr} onFechar={() => setAberta(false)} />}
+      {aberta && createPortal(<CentralSuplementos estilos={estilos} tr={tr} onFechar={() => setAberta(false)} />, document.body)}
     </section>
   );
 }
