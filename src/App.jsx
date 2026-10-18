@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import GuiaSuplementos from "./suplementos/Suplementos.jsx";
 import { empilhar, removerTopo, iniciarNavegacao } from "./navegacao.js";
+import logoMImg from "./splash/logo-m.png";
+import halterImg from "./splash/halter.png";
 import { AssistenteIA, FotoAlimentos, DiarioAlimentar, RotinaInteligente, CartaoRotinaInteligente, lerEstadoRI, montarContextoUsuario } from "./ia/index.js";
 import { CalculadoraMassiCard } from "./calculadora/index.js";
 import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from "recharts";
@@ -5449,25 +5451,23 @@ function AppMassiPro({ onSolicitarRemount }) {
   const perfilAtivoFoto = (perfis.find((p) => p.id === perfilAtivoId) || {}).foto || null;
 
   useEffect(() => {
-    const t1 = setTimeout(() => setSplashSaindo(true), 1700);
-    // Não esconde a splash num tempo fixo — só quando o tempo mínimo (pra
-    // animação não parecer cortada) JÁ passou E a checagem de onboarding já
-    // terminou. Isso evita a Home aparecer por baixo antes do questionário
-    // decidir se deve aparecer, mesmo se a leitura de storage demorar mais
-    // que o normal.
-    const t2 = setTimeout(() => setTempoMinimoSplashPassado(true), 2100);
+    // Abertura: 4 segundos inteiros. A tela só sai quando o app estiver pronto,
+    // para nunca aparecer nenhuma tela em branco por baixo.
+    const t2 = setTimeout(() => setTempoMinimoSplashPassado(true), 4000);
     // Rede de segurança: se por algum motivo a checagem de onboarding nunca
     // resolver, não deixa a splash presa pra sempre.
     const t3 = setTimeout(() => setPerfilVerificado(true), 5000);
     return () => {
-      clearTimeout(t1);
       clearTimeout(t2);
       clearTimeout(t3);
     };
   }, []);
 
   useEffect(() => {
-    if (tempoMinimoSplashPassado && perfilVerificado) setSplashVisivel(false);
+    if (!(tempoMinimoSplashPassado && perfilVerificado)) return undefined;
+    setSplashSaindo(true);
+    const fim = setTimeout(() => setSplashVisivel(false), 250);
+    return () => clearTimeout(fim);
   }, [tempoMinimoSplashPassado, perfilVerificado]);
 
   useEffect(() => {
@@ -7209,6 +7209,8 @@ function AppMassiPro({ onSolicitarRemount }) {
         }
         @keyframes splashDraw { to { stroke-dashoffset: 0; } }
         @keyframes splashGlow { 0%,100% { filter: drop-shadow(0 0 0px #1FD1A6); } 50% { filter: drop-shadow(0 0 8px #1FD1A6); } }
+        .splashHalterGira { animation: splashGira 1.6s linear infinite; transform-origin: 50% 50%; }
+        @keyframes splashGira { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         .splashFadeUp { opacity: 0; animation: splashFadeUp .7s ease-out .9s forwards; }
         .splashFadeUp2 { opacity: 0; animation: splashFadeUp .7s ease-out 1.15s forwards; }
         @keyframes splashFadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
@@ -7278,7 +7280,7 @@ function AppMassiPro({ onSolicitarRemount }) {
         }
       `)}</style>
 
-      <LetreiroTopo />
+      {!splashVisivel && <LetreiroTopo />}
 
       <div className="print-rotina-area">
         <h1>{tr("Minha rotina — Massi Pro")}</h1>
@@ -7322,23 +7324,9 @@ function AppMassiPro({ onSolicitarRemount }) {
       </div>
 
       {splashVisivel && (
-        <div style={{ ...styles.splashOverlay, opacity: splashSaindo ? 0 : 1 }}>
-          <svg viewBox="0 0 180 90" style={styles.splashSvg}>
-            <path
-              className="splashPulsoPath"
-              d="M5,45 L55,45 L72,15 L90,70 L108,30 L125,45 L175,45"
-              stroke="url(#splashGrad)"
-            />
-            <defs>
-              <linearGradient id="splashGrad" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0%" stopColor="#1CA7E0" />
-                <stop offset="55%" stopColor="#1FD1A6" />
-                <stop offset="100%" stopColor="#8BDB4B" />
-              </linearGradient>
-            </defs>
-          </svg>
-          <div className="splashFadeUp" style={styles.splashWordmark}>{tr("MASSI PRO")}</div>
-          <div className="splashFadeUp2" style={styles.splashSubtitulo}>{tr("TREINO · EVOLUÇÃO · EXECUÇÃO")}</div>
+        <div style={{ ...styles.splashOverlay, opacity: splashSaindo ? 0 : 1 }} aria-hidden="true">
+          <img src={logoMImg} alt="" style={styles.splashLogoM} draggable={false} />
+          <img src={halterImg} alt="" className="splashHalterGira" style={styles.splashHalterImg} draggable={false} />
         </div>
       )}
 
@@ -21075,13 +21063,15 @@ const styles = {
     alignItems: "center",
     justifyContent: "center",
     gap: 22,
-    background:
-      "radial-gradient(120% 90% at 20% 10%, rgba(28,167,224,0.2) 0%, transparent 55%), " +
-      "radial-gradient(120% 90% at 85% 90%, rgba(139,219,75,0.2) 0%, transparent 55%), " +
-      `linear-gradient(160deg, ${GRAPHITE} 0%, #182226 100%)`,
-    transition: "opacity 0.4s ease",
+    background: "#101214",
+    transition: "opacity 0.25s ease",
   },
   splashSvg: { width: 190, height: 95 },
+  splashLogoM: {
+    position: "absolute", height: "72vh", maxWidth: "92vw", objectFit: "contain",
+    opacity: 0.32, userSelect: "none", pointerEvents: "none",
+  },
+  splashHalterImg: { width: 230, height: "auto", position: "relative", zIndex: 1, userSelect: "none", pointerEvents: "none" },
   splashWordmark: {
     fontFamily: monoFont,
     fontWeight: 800,
