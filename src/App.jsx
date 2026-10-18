@@ -3,6 +3,7 @@ import GuiaSuplementos from "./suplementos/Suplementos.jsx";
 import { empilhar, removerTopo, iniciarNavegacao } from "./navegacao.js";
 import logoMImg from "./splash/logo-m.png";
 import halterImg from "./splash/halter.png";
+import ContadorPassos, { compartilharResumo } from "./passos/ContadorPassos.jsx";
 import { AssistenteIA, FotoAlimentos, DiarioAlimentar, RotinaInteligente, CartaoRotinaInteligente, lerEstadoRI, montarContextoUsuario } from "./ia/index.js";
 import { CalculadoraMassiCard } from "./calculadora/index.js";
 import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from "recharts";
@@ -8824,6 +8825,8 @@ function InicioTab({ refFoto, onAbrirFoto, perfilAtivoNome, rotina, diasSelecion
         </div>
         <div style={styles.inicioSino} title={t("inicioNotificacoes")}>🔔</div>
       </div>
+
+      <ContadorPassos onCompartilhar={compartilharResumo} />
 
       <button ref={refFoto} type="button" onClick={() => onAbrirFoto && onAbrirFoto()} style={styles.inicioFotoBtn} data-testid="btn-foto-inteligente">
         <span style={{ fontSize: 22 }}>📷</span>
