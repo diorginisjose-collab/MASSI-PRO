@@ -55,24 +55,42 @@ export function textoResumo(r) {
 }
 
 // ---------- detecção de passos a partir do acelerômetro (com o app aberto) ----------
-// Recebe amostras { t (ms), x, y, z } e conta picos da magnitude acima do limiar.
+// Um passo só conta quando faz parte de um RITMO: pelo menos três passadas seguidas,
+// com intervalo entre 0,25 s e 1,3 s. Movimentos isolados (balanço, pegar o celular)
+// não entram, e o ritmo se desfaz quando a caminhada para.
 export function contarPassosAmostras(amostras, opcoes) {
-  const limiar = (opcoes && opcoes.limiar) || 11.5;   // m/s² acima da gravidade
-  const minIntervaloMs = (opcoes && opcoes.minIntervaloMs) || 260; // evita contar o mesmo passo duas vezes
-  let passos = 0, ultimo = -Infinity, anterior = null, anteriorMag = 0, subindo = false;
+  const limiar = (opcoes && opcoes.limiar) || 11.5;
+  const minIntervaloMs = 250;
+  const maxIntervaloMs = 1300;
+  let contagem = 0;
+  let ultimoPico = -Infinity;
+  let seqValidos = 0;      // quantos intervalos válidos seguidos já houve
+  let confirmado = false;  // ritmo já confirmado (3 passadas)
+  let anterior = null, anteriorMag = 0, subindo = false;
   for (const a of amostras || []) {
     const mag = Math.sqrt(a.x * a.x + a.y * a.y + a.z * a.z);
     if (anterior !== null) {
       const agora = mag > anteriorMag;
-      // pico: estava subindo e começou a descer, acima do limiar
-      if (subindo && !agora && anteriorMag >= limiar && a.t - ultimo >= minIntervaloMs) {
-        passos += 1; ultimo = a.t;
+      if (subindo && !agora && anteriorMag >= limiar) {
+        const intervalo = a.t - ultimoPico;
+        if (intervalo >= minIntervaloMs && intervalo <= maxIntervaloMs) {
+          seqValidos += 1;
+          if (!confirmado && seqValidos >= 2) {
+            contagem += 3; confirmado = true;       // as três primeiras passadas do ritmo
+          } else if (confirmado) {
+            contagem += 1;
+          }
+          ultimoPico = a.t;
+        } else {
+          // ritmo quebrado: este pico começa um novo candidato
+          seqValidos = 0; confirmado = false; ultimoPico = a.t;
+        }
       }
       subindo = agora;
     }
     anterior = a; anteriorMag = mag;
   }
-  return passos;
+  return contagem;
 }
 
 // Dia com passos: soma e mantém o histórico ordenado
