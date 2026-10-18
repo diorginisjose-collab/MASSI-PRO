@@ -45,6 +45,7 @@ export default function ContadorPassos({ onCompartilhar }) {
   const [editando, setEditando] = useState(false);
   const [form, setForm] = useState({ altura: "", sexo: "", peso: "" });
   const [erroForm, setErroForm] = useState([]);
+  const [confirmandoReinicio, setConfirmandoReinicio] = useState(false);
   const amostras = useRef([]);
   const sessaoRef = useRef(0);
   const baseRef = useRef(0);       // passos do dia que já estavam salvos ao ativar
@@ -116,6 +117,15 @@ export default function ContadorPassos({ onCompartilhar }) {
     if (onCompartilhar) onCompartilhar(P.resumoDia(dia, total, perfil));
   };
 
+  // Zera os passos de hoje. Se o contador estiver ligado, a contagem recomeça do zero.
+  const reiniciarHoje = async () => {
+    const dia = hojeISO();
+    amostras.current = []; sessaoRef.current = 0; setSessao(0); baseRef.current = 0;
+    const novo = { ...registrosRef.current, [dia]: 0 };
+    registrosRef.current = novo; setRegistros(novo); await gravar(CHAVE, novo);
+    setConfirmandoReinicio(false);
+  };
+
   const marcarCompartilhado = async (dia) => {
     const novo = compartilhados.includes(dia) ? compartilhados : compartilhados.concat([dia]);
     setCompartilhados(novo); await gravar(CHAVE_COMP, novo);
@@ -146,6 +156,21 @@ export default function ContadorPassos({ onCompartilhar }) {
           {ativo ? "Desativar e encerrar o dia" : "Ativar"}
         </button>
       </div>
+
+      {!confirmandoReinicio && totalHoje > 0 && (
+        <div style={{ textAlign: "right", marginBottom: 4 }}>
+          <button type="button" onClick={() => setConfirmandoReinicio(true)} data-testid="reiniciar-passos" style={{ border: "none", background: "transparent", color: "inherit", cursor: "pointer", fontSize: 12.5, textDecoration: "underline", padding: 0 }}>↺ Reiniciar hoje</button>
+        </div>
+      )}
+      {confirmandoReinicio && (
+        <div role="alertdialog" aria-label="Confirmar reinício" style={{ background: "rgba(0,0,0,0.25)", borderRadius: 10, padding: 10, marginBottom: 10, fontSize: 13 }}>
+          <div style={{ marginBottom: 8 }}>Zerar os passos de hoje? Essa ação não pode ser desfeita.</div>
+          <div style={{ display: "flex", gap: 8 }}>
+            <button type="button" onClick={reiniciarHoje} data-testid="confirmar-reiniciar" style={{ flex: 1, border: "none", borderRadius: 8, padding: 9, background: "#C53030", color: "#fff", fontWeight: 800, cursor: "pointer" }}>Zerar</button>
+            <button type="button" onClick={() => setConfirmandoReinicio(false)} style={{ flex: 1, border: "1px solid rgba(128,128,128,0.4)", borderRadius: 8, padding: 9, background: "transparent", color: "inherit", cursor: "pointer" }}>Cancelar</button>
+          </div>
+        </div>
+      )}
 
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, textAlign: "center" }}>
         <div><div style={{ fontSize: 20, fontWeight: 800 }}>{totalHoje.toLocaleString("pt-BR")}</div><div style={{ fontSize: 11.5, opacity: 0.75 }}>passos hoje</div></div>
