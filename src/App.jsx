@@ -5051,6 +5051,13 @@ function AppMassiPro({ onSolicitarRemount }) {
 
   // Botão Voltar do celular: desfaz a última ação (fecha tela ou volta à aba anterior)
   useEffect(() => iniciarNavegacao(), []);
+  // Fundo escuro desde o primeiro instante: evita qualquer tela branca entre as aberturas
+  useEffect(() => {
+    try {
+      document.body.style.background = "#101214";
+      document.documentElement.style.background = "#101214";
+    } catch (e) { /* segue */ }
+  }, []);
   const abaAnteriorRef = useRef("inicio");
   const restaurandoAbaRef = useRef(false);
   useEffect(() => {
@@ -5427,6 +5434,7 @@ function AppMassiPro({ onSolicitarRemount }) {
   const [splashVisivel, setSplashVisivel] = useState(true);
   const [splashSaindo, setSplashSaindo] = useState(false);
   const [tempoMinimoSplashPassado, setTempoMinimoSplashPassado] = useState(false);
+  const [fasePulso, setFasePulso] = useState(true); // true = batimento; false = M com halter
   const [perfilVerificado, setPerfilVerificado] = useState(false); // true assim que já sabemos se falta onboarding
   const [feedbackPendente, setFeedbackPendente] = useState(null);
   const [dores, setDores] = useState([]);
@@ -5453,11 +5461,13 @@ function AppMassiPro({ onSolicitarRemount }) {
   useEffect(() => {
     // Abertura: 4 segundos inteiros. A tela só sai quando o app estiver pronto,
     // para nunca aparecer nenhuma tela em branco por baixo.
+    const t1 = setTimeout(() => setFasePulso(false), 2000);
     const t2 = setTimeout(() => setTempoMinimoSplashPassado(true), 4000);
     // Rede de segurança: se por algum motivo a checagem de onboarding nunca
     // resolver, não deixa a splash presa pra sempre.
     const t3 = setTimeout(() => setPerfilVerificado(true), 5000);
     return () => {
+      clearTimeout(t1);
       clearTimeout(t2);
       clearTimeout(t3);
     };
@@ -7325,8 +7335,26 @@ function AppMassiPro({ onSolicitarRemount }) {
 
       {splashVisivel && (
         <div style={{ ...styles.splashOverlay, opacity: splashSaindo ? 0 : 1 }} aria-hidden="true">
-          <img src={logoMImg} alt="" style={styles.splashLogoM} draggable={false} />
-          <img src={halterImg} alt="" className="splashHalterGira" style={styles.splashHalterImg} draggable={false} />
+          <div style={{ ...styles.splashFase, opacity: fasePulso ? 1 : 0 }}>
+            <svg viewBox="0 0 180 90" style={styles.splashSvg}>
+              <path
+                className="splashPulsoPath"
+                d="M5,45 L55,45 L72,15 L90,70 L108,30 L125,45 L175,45"
+                stroke="url(#splashGrad)"
+              />
+              <defs>
+                <linearGradient id="splashGrad" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#1CA7E0" />
+                  <stop offset="55%" stopColor="#1FD1A6" />
+                  <stop offset="100%" stopColor="#8BDB4B" />
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+          <div style={{ ...styles.splashFase, opacity: fasePulso ? 0 : 1 }}>
+            <img src={logoMImg} alt="" style={styles.splashLogoM} draggable={false} />
+            <img src={halterImg} alt="" className="splashHalterGira" style={styles.splashHalterImg} draggable={false} />
+          </div>
         </div>
       )}
 
@@ -21067,6 +21095,11 @@ const styles = {
     transition: "opacity 0.25s ease",
   },
   splashSvg: { width: 190, height: 95 },
+  splashFase: {
+    position: "absolute", top: 0, right: 0, bottom: 0, left: 0,
+    display: "flex", alignItems: "center", justifyContent: "center",
+    transition: "opacity 0.35s ease",
+  },
   splashLogoM: {
     position: "absolute", height: "72vh", maxWidth: "92vw", objectFit: "contain",
     opacity: 0.32, userSelect: "none", pointerEvents: "none",
