@@ -56,41 +56,50 @@ export function textoResumo(r) {
 
 // ---------- detecção de passos a partir do acelerômetro (com o app aberto) ----------
 // Um passo só conta quando faz parte de um RITMO: pelo menos três passadas seguidas,
-// com intervalo entre 0,25 s e 1,3 s. Movimentos isolados (balanço, pegar o celular)
-// não entram, e o ritmo se desfaz quando a caminhada para.
-export function contarPassosAmostras(amostras, opcoes) {
+// com intervalo entre 0,25 s e 1,3 s. Movimentos isolados não entram, e o ritmo se
+// desfaz quando a caminhada para. O detector processa cada amostra UMA vez e acumula.
+export function criarDetectorPassos(opcoes) {
   const limiar = (opcoes && opcoes.limiar) || 11.5;
   const minIntervaloMs = 250;
   const maxIntervaloMs = 1300;
-  let contagem = 0;
+  let total = 0;
   let ultimoPico = -Infinity;
-  let seqValidos = 0;      // quantos intervalos válidos seguidos já houve
-  let confirmado = false;  // ritmo já confirmado (3 passadas)
+  let seqValidos = 0;
+  let confirmado = false;
   let anterior = null, anteriorMag = 0, subindo = false;
-  for (const a of amostras || []) {
-    const mag = Math.sqrt(a.x * a.x + a.y * a.y + a.z * a.z);
-    if (anterior !== null) {
-      const agora = mag > anteriorMag;
-      if (subindo && !agora && anteriorMag >= limiar) {
-        const intervalo = a.t - ultimoPico;
-        if (intervalo >= minIntervaloMs && intervalo <= maxIntervaloMs) {
-          seqValidos += 1;
-          if (!confirmado && seqValidos >= 2) {
-            contagem += 3; confirmado = true;       // as três primeiras passadas do ritmo
-          } else if (confirmado) {
-            contagem += 1;
+  return {
+    // Recebe uma amostra e devolve quantos passos novos foram confirmados por ela
+    alimentar(a) {
+      const mag = Math.sqrt(a.x * a.x + a.y * a.y + a.z * a.z);
+      let novos = 0;
+      if (anterior !== null) {
+        const agora = mag > anteriorMag;
+        if (subindo && !agora && anteriorMag >= limiar) {
+          const intervalo = a.t - ultimoPico;
+          if (intervalo >= minIntervaloMs && intervalo <= maxIntervaloMs) {
+            seqValidos += 1;
+            if (!confirmado && seqValidos >= 2) { novos = 3; confirmado = true; }
+            else if (confirmado) { novos = 1; }
+            ultimoPico = a.t;
+          } else {
+            seqValidos = 0; confirmado = false; ultimoPico = a.t;
           }
-          ultimoPico = a.t;
-        } else {
-          // ritmo quebrado: este pico começa um novo candidato
-          seqValidos = 0; confirmado = false; ultimoPico = a.t;
         }
+        subindo = agora;
       }
-      subindo = agora;
-    }
-    anterior = a; anteriorMag = mag;
-  }
-  return contagem;
+      anterior = a; anteriorMag = mag;
+      total += novos;
+      return novos;
+    },
+    total() { return total; },
+  };
+}
+
+// Versão em lote (usada nos testes): processa uma lista de amostras de uma vez
+export function contarPassosAmostras(amostras, opcoes) {
+  const d = criarDetectorPassos(opcoes);
+  for (const a of amostras || []) d.alimentar(a);
+  return d.total();
 }
 
 // Dia com passos: soma e mantém o histórico ordenado

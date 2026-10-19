@@ -46,7 +46,7 @@ export default function ContadorPassos({ onCompartilhar }) {
   const [form, setForm] = useState({ altura: "", sexo: "", peso: "" });
   const [erroForm, setErroForm] = useState([]);
   const [confirmandoReinicio, setConfirmandoReinicio] = useState(false);
-  const amostras = useRef([]);
+  const detector = useRef(P.criarDetectorPassos());
   const sessaoRef = useRef(0);
   const baseRef = useRef(0);       // passos do dia que já estavam salvos ao ativar
   const registrosRef = useRef({});
@@ -70,10 +70,11 @@ export default function ContadorPassos({ onCompartilhar }) {
     const aoMover = (e) => {
       const g = e.accelerationIncludingGravity;
       if (!g) return;
-      amostras.current.push({ t: Date.now(), x: g.x || 0, y: g.y || 0, z: g.z || 0 });
-      if (amostras.current.length > 200) amostras.current = amostras.current.slice(-200);
-      const novos = P.contarPassosAmostras(amostras.current);
-      if (novos > sessaoRef.current) { sessaoRef.current = novos; setSessao(novos); }
+      const incremento = detector.current.alimentar({ t: Date.now(), x: g.x || 0, y: g.y || 0, z: g.z || 0 });
+      if (incremento > 0) {
+        sessaoRef.current += incremento;
+        setSessao(sessaoRef.current);
+      }
     };
     window.addEventListener("devicemotion", aoMover);
     return () => window.removeEventListener("devicemotion", aoMover);
@@ -101,7 +102,7 @@ export default function ContadorPassos({ onCompartilhar }) {
       }
     } catch (e) { setAviso("Não foi possível acessar o sensor deste aparelho."); return; }
     baseRef.current = registros[hojeISO()] || 0;
-    sessaoRef.current = 0; setSessao(0); amostras.current = [];
+    sessaoRef.current = 0; setSessao(0); detector.current = P.criarDetectorPassos();
     setAtivo(true); await gravar(CHAVE_ATIVO, true); setAviso("");
   };
 
@@ -113,14 +114,14 @@ export default function ContadorPassos({ onCompartilhar }) {
     const novo = { ...registrosRef.current, [dia]: total };
     registrosRef.current = novo; setRegistros(novo); await gravar(CHAVE, novo);
     await gravar(CHAVE_ATIVO, false);
-    amostras.current = []; sessaoRef.current = 0; setSessao(0); baseRef.current = 0;
+    detector.current = P.criarDetectorPassos(); sessaoRef.current = 0; setSessao(0); baseRef.current = 0;
     if (onCompartilhar) onCompartilhar(P.resumoDia(dia, total, perfil));
   };
 
   // Zera os passos de hoje. Se o contador estiver ligado, a contagem recomeça do zero.
   const reiniciarHoje = async () => {
     const dia = hojeISO();
-    amostras.current = []; sessaoRef.current = 0; setSessao(0); baseRef.current = 0;
+    detector.current = P.criarDetectorPassos(); sessaoRef.current = 0; setSessao(0); baseRef.current = 0;
     const novo = { ...registrosRef.current, [dia]: 0 };
     registrosRef.current = novo; setRegistros(novo); await gravar(CHAVE, novo);
     setConfirmandoReinicio(false);

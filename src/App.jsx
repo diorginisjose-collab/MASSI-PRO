@@ -5140,6 +5140,7 @@ function AppMassiPro({ onSolicitarRemount }) {
   const tourNotasRef = useRef(null);
   const tourRotinaIARef = useRef(null);
   const tourFotoIARef = useRef(null);
+  const tourPassosRef = useRef(null);
   const tourPremiumPlanosRef = useRef(null);
   const tourPremiumDietaRef = useRef(null);
   const [tourAtivo, setTourAtivo] = useState(null); // { aba: "rotina"|"inicio"|"cross", passo: 0 } ou null
@@ -5148,7 +5149,7 @@ function AppMassiPro({ onSolicitarRemount }) {
   const [toursVistos, setToursVistos] = useState({
     rotina: undefined, inicio: undefined, cross: undefined, novidades: undefined,
     historico: undefined, evolucao: undefined, notas: undefined, premium: undefined,
-    rotina2: undefined, inicio2: undefined, ia: undefined, rotinaIA: undefined, fotoIA: undefined,
+    rotina2: undefined, inicio2: undefined, ia: undefined, rotinaIA: undefined, fotoIA: undefined, passos: undefined,
   });
   const toursDef = {
     rotina: [
@@ -5204,6 +5205,10 @@ function AppMassiPro({ onSolicitarRemount }) {
       { ref: tourCardioRef, texto: "Cardio no final do treino: toque pra adicionar. Com ele ativo, escolha o tipo, a duração e a intensidade — ou remova se não quiser fazer hoje." },
       { ref: tourImagemRef, texto: "Exporte sua rotina como imagem (pra mandar no WhatsApp) ou como PDF, e o CSV serve pra abrir numa planilha." },
       { ref: tourConcluirRef, texto: "Terminou de treinar? Toque em \"Concluir treino de hoje\" pra salvar no histórico, contar na sua sequência e ver o mapa muscular do dia." },
+    ],
+    // Tutorial do contador de passos (novidade). Aparece uma vez na tela inicial.
+    passos: [
+      { ref: tourPassosRef, texto: "Novidade: o contador de passos mostra passos, distância e calorias do dia. Informe altura, sexo e peso para ver km e kcal. Com o app aberto, a contagem usa o sensor do celular." },
     ],
     // Tutorial da Foto inteligente (novidade). Aparece uma vez na tela inicial.
     fotoIA: [
@@ -5271,7 +5276,7 @@ function AppMassiPro({ onSolicitarRemount }) {
   // (sem marcar como visto) em vez de deixá-lo "vazando" pra tela nova.
   useEffect(() => {
     if (!tourAtivo) return;
-    const abaEquivalente = (tourAtivo.aba === "novidades" || tourAtivo.aba === "rotina2" || tourAtivo.aba === "rotinaTudo" || tourAtivo.aba === "rotinaIA") ? "rotina" : (tourAtivo.aba === "fotoIA") ? "inicio" : (tourAtivo.aba === "inicio2" || tourAtivo.aba === "ia") ? "inicio" : tourAtivo.aba;
+    const abaEquivalente = (tourAtivo.aba === "novidades" || tourAtivo.aba === "rotina2" || tourAtivo.aba === "rotinaTudo" || tourAtivo.aba === "rotinaIA") ? "rotina" : (tourAtivo.aba === "fotoIA" || tourAtivo.aba === "passos") ? "inicio" : (tourAtivo.aba === "inicio2" || tourAtivo.aba === "ia") ? "inicio" : tourAtivo.aba;
     if (abaEquivalente !== activeTab) {
       setTourAtivo(null);
     }
@@ -5337,6 +5342,20 @@ function AppMassiPro({ onSolicitarRemount }) {
       cancelado = true;
       clearTimeout(timeoutId);
     };
+  }, [activeTab, loaded, toursVistos, onboardingPendente]);
+  // Tutorial do contador de passos: uma vez, na tela inicial (rola até o cartão, que fica embaixo)
+  useEffect(() => {
+    if (onboardingPendente) return;
+    if (activeTab !== "inicio") return;
+    if (!loaded) return;
+    if (toursVistos.passos !== false) return;
+    let cancelado = false;
+    const timeoutId = setTimeout(() => {
+      if (cancelado) return;
+      if (tourPassosRef.current && tourPassosRef.current.scrollIntoView) tourPassosRef.current.scrollIntoView({ block: "center" });
+      setTimeout(() => { if (!cancelado) setTourAtivo((atual) => atual || { aba: "passos", passo: 0 }); }, 400);
+    }, 1500);
+    return () => { cancelado = true; clearTimeout(timeoutId); };
   }, [activeTab, loaded, toursVistos, onboardingPendente]);
   // Tutorial da Foto inteligente: uma vez, na tela inicial, sem atropelar outro tutorial aberto.
   useEffect(() => {
@@ -5631,7 +5650,7 @@ function AppMassiPro({ onSolicitarRemount }) {
         // segue com os padrões
       }
       const vistosCarregados = {};
-      for (const aba of ["rotina", "inicio", "inicio2", "ia", "cross", "novidades", "rotina2", "rotinaIA", "fotoIA", "historico", "evolucao", "notas", "premium"]) {
+      for (const aba of ["rotina", "inicio", "inicio2", "ia", "cross", "novidades", "rotina2", "rotinaIA", "fotoIA", "passos", "historico", "evolucao", "notas", "premium"]) {
         try {
           const res = await window.storage.get(`tour-${aba}-visto`);
           vistosCarregados[aba] = !!(res && res.value === "1");
@@ -7862,6 +7881,7 @@ function AppMassiPro({ onSolicitarRemount }) {
         <InicioTab
           onAbrirFoto={() => setIaTela("foto")}
           refFoto={tourFotoIARef}
+          refPassos={tourPassosRef}
           perfilAtivoNome={perfilAtivoNome}
           rotina={rotina}
           diasSelecionados={diasSelecionados}
@@ -8665,7 +8685,7 @@ function AtalhosIlustradosCard({ onIrAba, refTour }) {
   );
 }
 
-function InicioTab({ refFoto, onAbrirFoto, perfilAtivoNome, rotina, diasSelecionados, historico, recordes, onIrTreino, onIrAba, t, idioma, refTreinoHojeTour, refMedidorTour, refMinisTour, refAtalhosTour }) {
+function InicioTab({ refPassos, refFoto, onAbrirFoto, perfilAtivoNome, rotina, diasSelecionados, historico, recordes, onIrTreino, onIrAba, t, idioma, refTreinoHojeTour, refMedidorTour, refMinisTour, refAtalhosTour }) {
   const [avaliacoes, setAvaliacoes] = useState([]);
   const [agora, setAgora] = useState(() => new Date());
 
@@ -8825,8 +8845,6 @@ function InicioTab({ refFoto, onAbrirFoto, perfilAtivoNome, rotina, diasSelecion
         </div>
         <div style={styles.inicioSino} title={t("inicioNotificacoes")}>🔔</div>
       </div>
-
-      <ContadorPassos onCompartilhar={compartilharResumo} />
 
       <button ref={refFoto} type="button" onClick={() => onAbrirFoto && onAbrirFoto()} style={styles.inicioFotoBtn} data-testid="btn-foto-inteligente">
         <span style={{ fontSize: 22 }}>📷</span>
@@ -9021,6 +9039,9 @@ function InicioTab({ refFoto, onAbrirFoto, perfilAtivoNome, rotina, diasSelecion
           </div>
         )}
       </section>
+      <div ref={refPassos}>
+        <ContadorPassos onCompartilhar={compartilharResumo} />
+      </div>
     </div>
   );
 }
@@ -12396,6 +12417,11 @@ function SobreTab({ t, onIniciarTour, notificacoesAtivas, onAtivarNotificacoes, 
     { titulo: "📏 Avaliação", texto: "Registre seu peso, medidas corporais e fotos de progresso ao longo do tempo. A calculadora de água te dá uma meta diária de hidratação." },
     { titulo: "⭐ Premium", texto: "Acesso a dietas prontas (trocáveis) organizadas por objetivo, e dicas gerais de alimentação disponíveis pra todo mundo." },
     { titulo: "🔥 Massi Cross", texto: "Treinos no estilo funcional: WOD do dia, gerador de treino rápido, biblioteca de exercícios com vídeo, cronômetro (AMRAP, EMOM, FORTIME, TABATA), desafios com progresso e acompanhamento de desempenho." },
+    { titulo: "🧠 Minha Rotina Inteligente", texto: "Monta um treino e uma alimentação a partir das suas respostas. Você responde um questionário em 5 etapas (perfil, objetivos, dias livres, limitações e alimentação). O app gera o treino com o gerador do aplicativo e pede à IA a explicação. Em Ver meu plano você pode compartilhar no WhatsApp ou exportar em PDF. Check-ins mostram sua evolução. Recurso Premium. Estimativas, não substitui profissional." },
+    { titulo: "📷 Foto inteligente", texto: "Tire ou escolha uma foto da refeição. A IA estima os alimentos, as porções e as calorias e macros. As estimativas são aproximadas: confira os itens antes de usar. Os resultados podem ser salvos no Diário alimentar." },
+    { titulo: "✨ Assistente de IA", texto: "Chat para tirar dúvidas sobre treino, execução e alimentação. Ele usa seu perfil e sua rotina quando você permite (opção no próprio chat). Respostas são geradas por IA e não substituem profissional de saúde." },
+    { titulo: "💊 Suplementos (central)", texto: "Na aba Notas, abra a central de suplementos: busca com sugestões, catálogo por categoria, favoritos, comparador de até 3 itens, calculadoras (porção de pó, custo de rótulos e cafeína somada) e a seção de rótulos. Conteúdo educativo, sem IA." },
+    { titulo: "👟 Contador de passos", texto: "Na tela Início, no fim da página. Ative para contar passos com o app aberto e a tela acesa. Informe altura, sexo e peso para ver distância (km) e calorias estimadas. Desativar encerra o dia e oferece o resumo para compartilhar. Reiniciar zera os passos de hoje. Contagem com o app fechado ainda não está disponível."},
   ];
 
   const exportarDados = async () => {
