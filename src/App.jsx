@@ -5049,7 +5049,11 @@ function AppMassiPro({ onSolicitarRemount }) {
   const [showModelos, setShowModelos] = useState(false);
   const [modoImpressao, setModoImpressao] = useState(false);
   const [activeTab, setActiveTab] = useState("inicio");
-
+  const [splashVisivel, setSplashVisivel] = useState(true);
+  const [splashSaindo, setSplashSaindo] = useState(false);
+  const [tempoMinimoSplashPassado, setTempoMinimoSplashPassado] = useState(false);
+  const [faseSplash, setFaseSplash] = useState("parado"); // parado -> batimento -> halter -> explosao
+  const faseExplosao = faseSplash === "explosao";
   // Botão Voltar do celular: desfaz a última ação (fecha tela ou volta à aba anterior)
   useEffect(() => iniciarNavegacao(), []);
   // Fundo escuro desde o primeiro instante: evita qualquer tela branca entre as aberturas
@@ -5208,7 +5212,7 @@ function AppMassiPro({ onSolicitarRemount }) {
     ],
     // Tutorial do contador de passos (novidade). Aparece uma vez na tela inicial.
     passos: [
-      { ref: tourPassosRef, texto: "Novidade: o contador de passos mostra passos, distância e calorias do dia. Informe altura, sexo e peso para ver km e kcal. Com o app aberto, a contagem usa o sensor do celular." },
+      { ref: tourPassosRef, texto: "Novidade: digite os passos do dia (copie do app de passos do celular). O app calcula distância e calorias estimadas. Informe altura, sexo e peso para ver km e kcal." },
     ],
     // Tutorial da Foto inteligente (novidade). Aparece uma vez na tela inicial.
     fotoIA: [
@@ -5345,7 +5349,7 @@ function AppMassiPro({ onSolicitarRemount }) {
   }, [activeTab, loaded, toursVistos, onboardingPendente]);
   // Tutorial do contador de passos: uma vez, na tela inicial (rola até o cartão, que fica embaixo)
   useEffect(() => {
-    if (onboardingPendente) return;
+    if (onboardingPendente || splashVisivel) return;
     if (activeTab !== "inicio") return;
     if (!loaded) return;
     if (toursVistos.passos !== false) return;
@@ -5356,10 +5360,10 @@ function AppMassiPro({ onSolicitarRemount }) {
       setTimeout(() => { if (!cancelado) setTourAtivo((atual) => atual || { aba: "passos", passo: 0 }); }, 400);
     }, 1500);
     return () => { cancelado = true; clearTimeout(timeoutId); };
-  }, [activeTab, loaded, toursVistos, onboardingPendente]);
+  }, [activeTab, loaded, toursVistos, onboardingPendente, splashVisivel]);
   // Tutorial da Foto inteligente: uma vez, na tela inicial, sem atropelar outro tutorial aberto.
   useEffect(() => {
-    if (onboardingPendente) return;
+    if (onboardingPendente || splashVisivel) return;
     if (activeTab !== "inicio") return;
     if (!loaded) return;
     if (toursVistos.fotoIA !== false) return;
@@ -5371,7 +5375,7 @@ function AppMassiPro({ onSolicitarRemount }) {
       cancelado = true;
       clearTimeout(timeoutId);
     };
-  }, [activeTab, loaded, toursVistos, onboardingPendente]);
+  }, [activeTab, loaded, toursVistos, onboardingPendente, splashVisivel]);
   // Tutorial da Rotina Inteligente: uma vez, na aba Rotina, sem atropelar outro tutorial aberto.
   useEffect(() => {
     if (onboardingPendente) return;
@@ -5451,10 +5455,6 @@ function AppMassiPro({ onSolicitarRemount }) {
   const [mensagemSucesso, setMensagemSucesso] = useState(null);
   const [ultimoTreinoConcluido, setUltimoTreinoConcluido] = useState(null);
   const [mostrarOpcoesCompartilhar, setMostrarOpcoesCompartilhar] = useState(false);
-  const [splashVisivel, setSplashVisivel] = useState(true);
-  const [splashSaindo, setSplashSaindo] = useState(false);
-  const [tempoMinimoSplashPassado, setTempoMinimoSplashPassado] = useState(false);
-  const [fasePulso, setFasePulso] = useState(true); // true = batimento; false = M com halter
   const [perfilVerificado, setPerfilVerificado] = useState(false); // true assim que já sabemos se falta onboarding
   const [feedbackPendente, setFeedbackPendente] = useState(null);
   const [dores, setDores] = useState([]);
@@ -5481,8 +5481,10 @@ function AppMassiPro({ onSolicitarRemount }) {
   useEffect(() => {
     // Abertura: 4 segundos inteiros. A tela só sai quando o app estiver pronto,
     // para nunca aparecer nenhuma tela em branco por baixo.
-    const t1 = setTimeout(() => setFasePulso(false), 2000);
-    const t2 = setTimeout(() => setTempoMinimoSplashPassado(true), 4000);
+    const t1 = setTimeout(() => setFaseSplash("batimento"), 1500);
+    const t4 = setTimeout(() => setFaseSplash("halter"), 3500);
+    const t5 = setTimeout(() => setFaseSplash("explosao"), 8500);
+    const t2 = setTimeout(() => setTempoMinimoSplashPassado(true), 9900);
     // Rede de segurança: se por algum motivo a checagem de onboarding nunca
     // resolver, não deixa a splash presa pra sempre.
     const t3 = setTimeout(() => setPerfilVerificado(true), 5000);
@@ -5490,6 +5492,8 @@ function AppMassiPro({ onSolicitarRemount }) {
       clearTimeout(t1);
       clearTimeout(t2);
       clearTimeout(t3);
+      clearTimeout(t4);
+      clearTimeout(t5);
     };
   }, []);
 
@@ -7240,6 +7244,21 @@ function AppMassiPro({ onSolicitarRemount }) {
         @keyframes splashDraw { to { stroke-dashoffset: 0; } }
         @keyframes splashGlow { 0%,100% { filter: drop-shadow(0 0 0px #1FD1A6); } 50% { filter: drop-shadow(0 0 8px #1FD1A6); } }
         .splashHalterGira { animation: splashGira 1.6s linear infinite; transform-origin: 50% 50%; }
+        .splashHalterExplode { animation: splashExplode 1.4s cubic-bezier(.4,0,.2,1) forwards; transform-origin: 50% 50%; }
+        @keyframes splashExplode {
+          0%   { transform: scale(1) rotate(0deg); opacity: 1; filter: none; }
+          55%  { transform: scale(2.6) rotate(140deg); opacity: 1; filter: brightness(1.5); }
+          100% { transform: scale(6) rotate(260deg); opacity: 0; filter: blur(8px) brightness(2.2); }
+        }
+        @keyframes splashOnda {
+          0%   { transform: scale(0.2); opacity: 0.9; }
+          100% { transform: scale(5); opacity: 0; }
+        }
+        @keyframes splashFlash {
+          0%   { opacity: 0; }
+          35%  { opacity: 0.5; }
+          100% { opacity: 0; }
+        }
         @keyframes splashGira { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         .splashFadeUp { opacity: 0; animation: splashFadeUp .7s ease-out .9s forwards; }
         .splashFadeUp2 { opacity: 0; animation: splashFadeUp .7s ease-out 1.15s forwards; }
@@ -7355,26 +7374,34 @@ function AppMassiPro({ onSolicitarRemount }) {
 
       {splashVisivel && (
         <div style={{ ...styles.splashOverlay, opacity: splashSaindo ? 0 : 1 }} aria-hidden="true">
-          <div style={{ ...styles.splashFase, opacity: fasePulso ? 1 : 0 }}>
-            <svg viewBox="0 0 180 90" style={styles.splashSvg}>
-              <path
-                className="splashPulsoPath"
-                d="M5,45 L55,45 L72,15 L90,70 L108,30 L125,45 L175,45"
-                stroke="url(#splashGrad)"
-              />
-              <defs>
-                <linearGradient id="splashGrad" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0%" stopColor="#1CA7E0" />
-                  <stop offset="55%" stopColor="#1FD1A6" />
-                  <stop offset="100%" stopColor="#8BDB4B" />
-                </linearGradient>
-              </defs>
-            </svg>
-          </div>
-          <div style={{ ...styles.splashFase, opacity: fasePulso ? 0 : 1 }}>
+          <div style={{ ...styles.splashFase, opacity: faseExplosao ? 0 : 1, transition: "opacity 0.6s ease" }}>
             <img src={logoMImg} alt="" style={styles.splashLogoM} draggable={false} />
-            <img src={halterImg} alt="" className="splashHalterGira" style={styles.splashHalterImg} draggable={false} />
           </div>
+          {faseSplash === "batimento" && (
+            <div style={{ ...styles.splashFase, zIndex: 1 }}>
+              <svg viewBox="0 0 180 90" style={styles.splashBatimento}>
+                <defs>
+                  <linearGradient id="splashGrad" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stopColor="#1CA7E0" />
+                    <stop offset="55%" stopColor="#1FD1A6" />
+                    <stop offset="100%" stopColor="#8BDB4B" />
+                  </linearGradient>
+                </defs>
+                <path className="splashPulsoPath" d="M5,45 L55,45 L72,15 L90,70 L108,30 L125,45 L175,45" stroke="url(#splashGrad)" />
+              </svg>
+            </div>
+          )}
+          {(faseSplash === "halter" || faseSplash === "explosao") && (
+            <img
+              src={halterImg}
+              alt=""
+              className={faseExplosao ? "splashHalterExplode" : "splashHalterGira"}
+              style={{ ...styles.splashHalterImg, zIndex: 2 }}
+              draggable={false}
+            />
+          )}
+          {faseExplosao && <div style={styles.splashOnda(true)} />}
+          {faseExplosao && <div style={styles.splashFlash(true)} />}
         </div>
       )}
 
@@ -12421,7 +12448,7 @@ function SobreTab({ t, onIniciarTour, notificacoesAtivas, onAtivarNotificacoes, 
     { titulo: "📷 Foto inteligente", texto: "Tire ou escolha uma foto da refeição. A IA estima os alimentos, as porções e as calorias e macros. As estimativas são aproximadas: confira os itens antes de usar. Os resultados podem ser salvos no Diário alimentar." },
     { titulo: "✨ Assistente de IA", texto: "Chat para tirar dúvidas sobre treino, execução e alimentação. Ele usa seu perfil e sua rotina quando você permite (opção no próprio chat). Respostas são geradas por IA e não substituem profissional de saúde." },
     { titulo: "💊 Suplementos (central)", texto: "Na aba Notas, abra a central de suplementos: busca com sugestões, catálogo por categoria, favoritos, comparador de até 3 itens, calculadoras (porção de pó, custo de rótulos e cafeína somada) e a seção de rótulos. Conteúdo educativo, sem IA." },
-    { titulo: "👟 Contador de passos", texto: "Na tela Início, no fim da página. Ative para contar passos com o app aberto e a tela acesa. Informe altura, sexo e peso para ver distância (km) e calorias estimadas. Desativar encerra o dia e oferece o resumo para compartilhar. Reiniciar zera os passos de hoje. Contagem com o app fechado ainda não está disponível."},
+    { titulo: "👟 Passos do dia", texto: "Na tela Início, no fim da página. Digite os passos que você deu hoje (copie do app de passos do celular) e toque em Salvar. O app calcula a distância (km) e as calorias estimadas, com altura, sexo e peso informados. Você pode compartilhar o resumo do dia e reiniciar a contagem do dia. A contagem automática pelo sensor ainda não está disponível."},
   ];
 
   const exportarDados = async () => {
@@ -21124,6 +21151,17 @@ const styles = {
     transition: "opacity 0.25s ease",
   },
   splashSvg: { width: 190, height: 95 },
+  splashOnda: (ativa) => ({
+    position: "absolute", width: 260, height: 260, borderRadius: "50%",
+    border: "3px solid rgba(167,255,0,0.85)", boxShadow: "0 0 40px rgba(167,255,0,0.5)",
+    opacity: 0, pointerEvents: "none",
+    animation: ativa ? "splashOnda 1.4s cubic-bezier(.2,.7,.2,1) forwards" : "none",
+  }),
+  splashFlash: (ativa) => ({
+    position: "absolute", top: 0, right: 0, bottom: 0, left: 0, background: "#ffffff",
+    opacity: 0, pointerEvents: "none",
+    animation: ativa ? "splashFlash 1.4s ease-out forwards" : "none",
+  }),
   splashFase: {
     position: "absolute", top: 0, right: 0, bottom: 0, left: 0,
     display: "flex", alignItems: "center", justifyContent: "center",
@@ -21133,6 +21171,7 @@ const styles = {
     position: "absolute", height: "72vh", maxWidth: "92vw", objectFit: "contain",
     opacity: 0.32, userSelect: "none", pointerEvents: "none",
   },
+  splashBatimento: { width: 300, height: 150, position: "relative", zIndex: 1, overflow: "visible" },
   splashHalterImg: { width: 230, height: "auto", position: "relative", zIndex: 1, userSelect: "none", pointerEvents: "none" },
   splashWordmark: {
     fontFamily: monoFont,

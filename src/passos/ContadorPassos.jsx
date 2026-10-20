@@ -1,10 +1,12 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import * as P from "./passos.js";
 
-const CHAVE = "passos-registros"; // { "AAAA-MM-DD": passos }
-const CHAVE_ATIVO = "passos-ativo";
-const CHAVE_COMP = "passos-compartilhados"; // lista de dias já compartilhados
-const CHAVE_PERFIL = "passos-perfil";       // altura, sexo e peso informados aqui
+// Passos informados pela pessoa (copiados do app de passos do celular).
+// Distância e calorias são calculadas a partir desse número.
+const CHAVE = "passos-registros";        // { "AAAA-MM-DD": passos }
+const CHAVE_PERFIL = "passos-perfil";    // altura, sexo e peso informados aqui
+const CHAVE_COMP = "passos-compartilhados";
+
 const hojeISO = () => { const d = new Date(); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); };
 const ontemISO = () => { const d = new Date(); d.setDate(d.getDate() - 1); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); };
 
@@ -16,7 +18,7 @@ async function gravar(chave, valor) {
   try { await window.storage.set(chave, JSON.stringify(valor)); } catch (e) { /* segue */ }
 }
 
-// Perfil para o cálculo: o que foi informado aqui tem prioridade; senão, usa a Avaliação do app
+// Perfil: o que foi informado aqui tem prioridade; senão, usa a Avaliação do app
 async function lerPerfil() {
   const aqui = await ler(CHAVE_PERFIL, null);
   if (aqui && aqui.altura) return aqui;
@@ -35,137 +37,111 @@ function validarPerfil(f) {
   return { erros, valores: { altura: alt, sexo: f.sexo === "nd" ? undefined : f.sexo, peso } };
 }
 
+const campo = { display: "block", width: "100%", boxSizing: "border-box", marginTop: 4, padding: 10, borderRadius: 8, border: "1px solid rgba(128,128,128,0.4)", background: "transparent", color: "inherit", fontSize: 15 };
+
 export default function ContadorPassos({ onCompartilhar }) {
-  const [ativo, setAtivo] = useState(false);
   const [registros, setRegistros] = useState({});
   const [perfil, setPerfil] = useState({});
-  const [sessao, setSessao] = useState(0);        // passos contados nesta sessão aberta
-  const [aviso, setAviso] = useState("");
   const [compartilhados, setCompartilhados] = useState([]);
-  const [editando, setEditando] = useState(false);
+  const [passosInformados, setPassosInformados] = useState("");
+  const [editandoDados, setEditandoDados] = useState(false);
   const [form, setForm] = useState({ altura: "", sexo: "", peso: "" });
   const [erroForm, setErroForm] = useState([]);
   const [confirmandoReinicio, setConfirmandoReinicio] = useState(false);
-  const detector = useRef(P.criarDetectorPassos());
-  const sessaoRef = useRef(0);
-  const baseRef = useRef(0);       // passos do dia que já estavam salvos ao ativar
-  const registrosRef = useRef({});
-  useEffect(() => { registrosRef.current = registros; }, [registros]);
+  const [aviso, setAviso] = useState("");
 
   useEffect(() => {
     let vivo = true;
     (async () => {
       const r = await ler(CHAVE, {});
-      const a = await ler(CHAVE_ATIVO, false);
       const p = await lerPerfil();
       const c = await ler(CHAVE_COMP, []);
-      if (vivo) { setRegistros(r); setAtivo(!!a); setPerfil(p); setCompartilhados(Array.isArray(c) ? c : []); }
+      if (vivo) { setRegistros(r); setPerfil(p); setCompartilhados(Array.isArray(c) ? c : []); }
     })();
     return () => { vivo = false; };
   }, []);
 
-  // Acelerômetro com o app aberto (estimativa). Em segundo plano, é preciso o código nativo.
-  useEffect(() => {
-    if (!ativo) return undefined;
-    const aoMover = (e) => {
-      const g = e.accelerationIncludingGravity;
-      if (!g) return;
-      const incremento = detector.current.alimentar({ t: Date.now(), x: g.x || 0, y: g.y || 0, z: g.z || 0 });
-      if (incremento > 0) {
-        sessaoRef.current += incremento;
-        setSessao(sessaoRef.current);
-      }
-    };
-    window.addEventListener("devicemotion", aoMover);
-    return () => window.removeEventListener("devicemotion", aoMover);
-  }, [ativo]);
+  const hoje = hojeISO();
+  const totalHoje = registros[hoje] || 0;
+  const resumo = P.resumoDia(hoje, totalHoje, perfil);
+  const perfilCompleto = !!(perfil.altura && perfil.sexo && perfil.peso);
+  const ontem = ontemISO();
+  const temOntem = (registros[ontem] || 0) > 0 && compartilhados.indexOf(ontem) < 0;
 
-  // Salva o total do dia sempre que a contagem muda (não se perde se o app fechar)
-  useEffect(() => {
-    if (!ativo) return;
-    const dia = hojeISO();
-    const novo = { ...registrosRef.current, [dia]: baseRef.current + sessao };
-    registrosRef.current = novo;
-    setRegistros(novo);
-    gravar(CHAVE, novo);
-  }, [sessao, ativo]);
-
-  // O total do dia já inclui a sessão atual (é salvo continuamente), então não soma de novo
-  const totalHoje = registros[hojeISO()] || 0;
-  const resumo = P.resumoDia(hojeISO(), totalHoje, perfil);
-
-  const ativar = async () => {
-    try {
-      if (typeof DeviceMotionEvent !== "undefined" && typeof DeviceMotionEvent.requestPermission === "function") {
-        const r = await DeviceMotionEvent.requestPermission();
-        if (r !== "granted") { setAviso("Permita o acesso ao movimento para contar os passos."); return; }
-      }
-    } catch (e) { setAviso("Não foi possível acessar o sensor deste aparelho."); return; }
-    baseRef.current = registros[hojeISO()] || 0;
-    sessaoRef.current = 0; setSessao(0); detector.current = P.criarDetectorPassos();
-    setAtivo(true); await gravar(CHAVE_ATIVO, true); setAviso("");
+  // Salva os passos informados para hoje
+  const salvarPassos = async () => {
+    const n = Number(String(passosInformados).replace(/\./g, "").replace(",", "."));
+    if (!(Number.isInteger(n) && n >= 0 && n <= 100000)) { setAviso("Digite um número de passos entre 0 e 100.000."); return; }
+    const novo = { ...registros, [hoje]: n };
+    setRegistros(novo); await gravar(CHAVE, novo);
+    setPassosInformados(""); setAviso("");
   };
 
-  // Desativar encerra o dia: salva os passos e oferece o resumo para compartilhar
-  const desativar = async () => {
-    const dia = hojeISO();
-    setAtivo(false);                       // para o salvamento automático antes de qualquer outra coisa
-    const total = baseRef.current + sessaoRef.current;
-    const novo = { ...registrosRef.current, [dia]: total };
-    registrosRef.current = novo; setRegistros(novo); await gravar(CHAVE, novo);
-    await gravar(CHAVE_ATIVO, false);
-    detector.current = P.criarDetectorPassos(); sessaoRef.current = 0; setSessao(0); baseRef.current = 0;
-    if (onCompartilhar) onCompartilhar(P.resumoDia(dia, total, perfil));
-  };
-
-  // Zera os passos de hoje. Se o contador estiver ligado, a contagem recomeça do zero.
   const reiniciarHoje = async () => {
-    const dia = hojeISO();
-    detector.current = P.criarDetectorPassos(); sessaoRef.current = 0; setSessao(0); baseRef.current = 0;
-    const novo = { ...registrosRef.current, [dia]: 0 };
-    registrosRef.current = novo; setRegistros(novo); await gravar(CHAVE, novo);
+    const novo = { ...registros, [hoje]: 0 };
+    setRegistros(novo); await gravar(CHAVE, novo);
     setConfirmandoReinicio(false);
   };
 
-  const marcarCompartilhado = async (dia) => {
-    const novo = compartilhados.includes(dia) ? compartilhados : compartilhados.concat([dia]);
+  // Encerra o dia: marca como compartilhado e abre o resumo para enviar
+  const encerrarDia = async () => {
+    if (onCompartilhar) onCompartilhar(P.resumoDia(hoje, totalHoje, perfil));
+    const novo = compartilhados.indexOf(hoje) < 0 ? compartilhados.concat([hoje]) : compartilhados;
     setCompartilhados(novo); await gravar(CHAVE_COMP, novo);
   };
 
-  const perfilCompleto = !!(perfil.altura && perfil.sexo && perfil.peso);
-  const abrirForm = () => {
+  const abrirDados = () => {
     setForm({ altura: perfil.altura || "", sexo: perfil.sexo || "", peso: perfil.peso || "" });
-    setErroForm([]); setEditando(true);
+    setErroForm([]); setEditandoDados(true);
   };
-  const salvarForm = async () => {
+  const salvarDados = async () => {
     const { erros, valores } = validarPerfil(form);
     setErroForm(erros);
     if (erros.length) return;
     const novo = { altura: valores.altura, sexo: valores.sexo || "nd", peso: valores.peso };
     setPerfil(novo); await gravar(CHAVE_PERFIL, novo);
-    setEditando(false);
+    setEditandoDados(false);
   };
-
-  const ontem = ontemISO();
-  const temOntem = (registros[ontem] || 0) > 0 && compartilhados.indexOf(ontem) < 0;
 
   return (
     <section style={{ background: "rgba(128,128,128,0.12)", borderRadius: 14, padding: 14, marginBottom: 14 }} data-testid="contador-passos">
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-        <div style={{ fontWeight: 800, fontSize: 16 }}>👟 Contador de passos</div>
-        <button type="button" onClick={ativo ? desativar : ativar} aria-pressed={ativo} style={{ border: "none", borderRadius: 999, padding: "7px 14px", fontWeight: 800, cursor: "pointer", background: ativo ? "#C53030" : "#A7FF00", color: ativo ? "#fff" : "#15181B" }}>
-          {ativo ? "Desativar e encerrar o dia" : "Ativar"}
-        </button>
+      <div style={{ fontWeight: 800, fontSize: 16, marginBottom: 8 }}>👟 Passos do dia</div>
+
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, textAlign: "center", marginBottom: 10 }}>
+        <div><div style={{ fontSize: 20, fontWeight: 800 }} data-testid="total-passos">{totalHoje.toLocaleString("pt-BR")}</div><div style={{ fontSize: 11.5, opacity: 0.75 }}>passos hoje</div></div>
+        <div><div style={{ fontSize: 20, fontWeight: 800 }} data-testid="total-km">{resumo.km === null ? "—" : String(resumo.km).replace(".", ",")}</div><div style={{ fontSize: 11.5, opacity: 0.75 }}>km</div></div>
+        <div><div style={{ fontSize: 20, fontWeight: 800 }} data-testid="total-kcal">{resumo.kcal === null ? "—" : Math.round(resumo.kcal)}</div><div style={{ fontSize: 11.5, opacity: 0.75 }}>kcal (estimado)</div></div>
       </div>
 
-      {!confirmandoReinicio && totalHoje > 0 && (
-        <div style={{ textAlign: "right", marginBottom: 4 }}>
-          <button type="button" onClick={() => setConfirmandoReinicio(true)} data-testid="reiniciar-passos" style={{ border: "none", background: "transparent", color: "inherit", cursor: "pointer", fontSize: 12.5, textDecoration: "underline", padding: 0 }}>↺ Reiniciar hoje</button>
+      <label style={{ display: "block", fontSize: 13, marginBottom: 6 }}>Quantos passos você deu hoje? (copie do app de passos do celular)
+        <div style={{ display: "flex", gap: 8, marginTop: 4 }}>
+          <input type="text" inputMode="numeric" value={passosInformados} onChange={(e) => setPassosInformados(e.target.value.replace(/[^0-9.]/g, "").slice(0, 7))} placeholder="ex.: 8432" aria-label="Passos de hoje" style={{ ...campo, marginTop: 0, flex: 1 }} data-testid="input-passos" />
+          <button type="button" onClick={salvarPassos} data-testid="salvar-passos" style={{ border: "none", borderRadius: 8, padding: "0 16px", background: "#A7FF00", color: "#15181B", fontWeight: 800, cursor: "pointer" }}>Salvar</button>
         </div>
-      )}
+      </label>
+      {aviso && <div role="alert" style={{ fontSize: 12.5, color: "#FFB1A8", marginBottom: 6 }}>{aviso}</div>}
+
+      <div style={{ fontSize: 12, opacity: 0.8, lineHeight: 1.45, marginBottom: 8 }}>
+        {!perfilCompleto
+          ? "Para calcular distância e calorias, informe altura, sexo e peso."
+          : "Distância e calorias são estimativas, calculadas a partir dos passos informados."}
+      </div>
+
+      <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 6 }}>
+        {!perfilCompleto && !editandoDados && (
+          <button type="button" onClick={abrirDados} data-testid="informar-dados-passos" style={{ flex: 1, border: "none", borderRadius: 10, padding: "10px", background: "#A7FF00", color: "#15181B", cursor: "pointer", fontWeight: 800 }}>Informar altura, sexo e peso</button>
+        )}
+        {perfilCompleto && !editandoDados && (
+          <button type="button" onClick={abrirDados} data-testid="editar-dados-passos" style={{ border: "none", background: "transparent", color: "inherit", cursor: "pointer", fontSize: 12.5, textDecoration: "underline", padding: 0 }}>Editar altura, sexo e peso</button>
+        )}
+        {totalHoje > 0 && !confirmandoReinicio && (
+          <button type="button" onClick={() => setConfirmandoReinicio(true)} data-testid="reiniciar-passos" style={{ border: "none", background: "transparent", color: "inherit", cursor: "pointer", fontSize: 12.5, textDecoration: "underline", padding: 0, marginLeft: "auto" }}>↺ Reiniciar hoje</button>
+        )}
+      </div>
+
       {confirmandoReinicio && (
         <div role="alertdialog" aria-label="Confirmar reinício" style={{ background: "rgba(0,0,0,0.25)", borderRadius: 10, padding: 10, marginBottom: 10, fontSize: 13 }}>
-          <div style={{ marginBottom: 8 }}>Zerar os passos de hoje? Essa ação não pode ser desfeita.</div>
+          <div style={{ marginBottom: 8 }}>Zerar os passos de hoje?</div>
           <div style={{ display: "flex", gap: 8 }}>
             <button type="button" onClick={reiniciarHoje} data-testid="confirmar-reiniciar" style={{ flex: 1, border: "none", borderRadius: 8, padding: 9, background: "#C53030", color: "#fff", fontWeight: 800, cursor: "pointer" }}>Zerar</button>
             <button type="button" onClick={() => setConfirmandoReinicio(false)} style={{ flex: 1, border: "1px solid rgba(128,128,128,0.4)", borderRadius: 8, padding: 9, background: "transparent", color: "inherit", cursor: "pointer" }}>Cancelar</button>
@@ -173,35 +149,14 @@ export default function ContadorPassos({ onCompartilhar }) {
         </div>
       )}
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, textAlign: "center" }}>
-        <div><div style={{ fontSize: 20, fontWeight: 800 }}>{totalHoje.toLocaleString("pt-BR")}</div><div style={{ fontSize: 11.5, opacity: 0.75 }}>passos hoje</div></div>
-        <div><div style={{ fontSize: 20, fontWeight: 800 }}>{resumo.km === null ? "—" : String(resumo.km).replace(".", ",")}</div><div style={{ fontSize: 11.5, opacity: 0.75 }}>km</div></div>
-        <div><div style={{ fontSize: 20, fontWeight: 800 }}>{resumo.kcal === null ? "—" : Math.round(resumo.kcal)}</div><div style={{ fontSize: 11.5, opacity: 0.75 }}>kcal (estimado)</div></div>
-      </div>
-
-      <div style={{ fontSize: 12, opacity: 0.8, marginTop: 10, lineHeight: 1.45 }}>
-        {!perfilCompleto
-          ? "Para calcular distância e calorias, informe altura, sexo e peso."
-          : "Distância e calorias são estimativas. Com o app aberto, a contagem usa o sensor do celular."}
-      </div>
-      {!perfilCompleto && !editando && (
-        <button type="button" onClick={abrirForm} style={{ marginTop: 10, width: "100%", border: "none", borderRadius: 10, padding: "10px", background: "#A7FF00", color: "#15181B", cursor: "pointer", fontWeight: 800 }} data-testid="informar-dados-passos">
-          Informar altura, sexo e peso
-        </button>
-      )}
-      {perfilCompleto && !editando && (
-        <button type="button" onClick={abrirForm} style={{ marginTop: 8, border: "none", background: "transparent", color: "inherit", cursor: "pointer", fontSize: 12.5, textDecoration: "underline", padding: 0 }} data-testid="editar-dados-passos">
-          Editar altura, sexo e peso
-        </button>
-      )}
-      {editando && (
-        <div style={{ marginTop: 10, background: "rgba(0,0,0,0.25)", borderRadius: 12, padding: 12 }} data-testid="form-dados-passos">
+      {editandoDados && (
+        <div style={{ marginTop: 6, background: "rgba(0,0,0,0.25)", borderRadius: 12, padding: 12 }} data-testid="form-dados-passos">
           <div style={{ fontWeight: 800, marginBottom: 8 }}>Seus dados</div>
           <label style={{ display: "block", fontSize: 13, marginBottom: 8 }}>Altura (cm)
-            <input type="text" inputMode="numeric" value={form.altura} onChange={(e) => setForm({ ...form, altura: e.target.value.replace(/[^0-9.,]/g, "").slice(0, 5) })} aria-label="Altura em cm" style={{ display: "block", width: "100%", boxSizing: "border-box", marginTop: 4, padding: 10, borderRadius: 8, border: "1px solid rgba(128,128,128,0.4)", background: "transparent", color: "inherit", fontSize: 15 }} />
+            <input type="text" inputMode="numeric" value={form.altura} onChange={(e) => setForm({ ...form, altura: e.target.value.replace(/[^0-9.,]/g, "").slice(0, 5) })} aria-label="Altura em cm" style={campo} />
           </label>
           <label style={{ display: "block", fontSize: 13, marginBottom: 8 }}>Peso (kg)
-            <input type="text" inputMode="decimal" value={form.peso} onChange={(e) => setForm({ ...form, peso: e.target.value.replace(/[^0-9.,]/g, "").slice(0, 6) })} aria-label="Peso em kg" style={{ display: "block", width: "100%", boxSizing: "border-box", marginTop: 4, padding: 10, borderRadius: 8, border: "1px solid rgba(128,128,128,0.4)", background: "transparent", color: "inherit", fontSize: 15 }} />
+            <input type="text" inputMode="decimal" value={form.peso} onChange={(e) => setForm({ ...form, peso: e.target.value.replace(/[^0-9.,]/g, "").slice(0, 6) })} aria-label="Peso em kg" style={campo} />
           </label>
           <div style={{ fontSize: 13, marginBottom: 4 }}>Sexo (para a distância)</div>
           <div style={{ display: "flex", gap: 6, marginBottom: 10 }}>
@@ -211,23 +166,27 @@ export default function ContadorPassos({ onCompartilhar }) {
           </div>
           {erroForm.map((er, i) => <div key={i} role="alert" style={{ fontSize: 12.5, color: "#FFB1A8", marginBottom: 4 }}>{er}</div>)}
           <div style={{ display: "flex", gap: 8 }}>
-            <button type="button" onClick={salvarForm} data-testid="salvar-dados-passos" style={{ flex: 1, border: "none", borderRadius: 10, padding: 10, background: "#A7FF00", color: "#15181B", fontWeight: 800, cursor: "pointer" }}>Salvar</button>
-            <button type="button" onClick={() => setEditando(false)} style={{ flex: 1, border: "1px solid rgba(128,128,128,0.4)", borderRadius: 10, padding: 10, background: "transparent", color: "inherit", cursor: "pointer" }}>Cancelar</button>
+            <button type="button" onClick={salvarDados} data-testid="salvar-dados-passos" style={{ flex: 1, border: "none", borderRadius: 10, padding: 10, background: "#A7FF00", color: "#15181B", fontWeight: 800, cursor: "pointer" }}>Salvar</button>
+            <button type="button" onClick={() => setEditandoDados(false)} style={{ flex: 1, border: "1px solid rgba(128,128,128,0.4)", borderRadius: 10, padding: 10, background: "transparent", color: "inherit", cursor: "pointer" }}>Cancelar</button>
           </div>
         </div>
       )}
-      {ativo && <div style={{ fontSize: 12, marginTop: 6, color: "#FFB1A8" }}>Com o app fechado, a contagem só funciona na versão para Android com o serviço de segundo plano.</div>}
-      {aviso && <div role="alert" style={{ fontSize: 12.5, marginTop: 6, color: "#FFB1A8" }}>{aviso}</div>}
-      {temOntem && !editando && (
-        <button type="button" onClick={() => { if (onCompartilhar) onCompartilhar(P.resumoDia(ontem, registros[ontem], perfil)); marcarCompartilhado(ontem); }} style={{ marginTop: 10, width: "100%", border: "1px solid rgba(128,128,128,0.4)", borderRadius: 10, padding: "9px", background: "transparent", color: "inherit", cursor: "pointer", fontWeight: 700 }}>
+
+      {temOntem && !editandoDados && (
+        <button type="button" onClick={() => { if (onCompartilhar) onCompartilhar(P.resumoDia(ontem, registros[ontem], perfil)); const n = compartilhados.concat([ontem]); setCompartilhados(n); gravar(CHAVE_COMP, n); }} style={{ marginTop: 10, width: "100%", border: "1px solid rgba(128,128,128,0.4)", borderRadius: 10, padding: "9px", background: "transparent", color: "inherit", cursor: "pointer", fontWeight: 700 }}>
           Compartilhar o resumo de ontem
+        </button>
+      )}
+      {totalHoje > 0 && (
+        <button type="button" onClick={encerrarDia} style={{ marginTop: 8, width: "100%", border: "1px solid rgba(128,128,128,0.4)", borderRadius: 10, padding: "9px", background: "transparent", color: "inherit", cursor: "pointer", fontWeight: 700 }}>
+          Compartilhar resumo de hoje
         </button>
       )}
     </section>
   );
 }
 
-// Abre o WhatsApp com o resumo do dia (ou usa o compartilhamento do celular)
+// Abre o WhatsApp com o resumo (ou usa o compartilhamento do celular)
 export function compartilharResumo(resumo) {
   const texto = P.textoResumo(resumo);
   if (typeof navigator !== "undefined" && navigator.share) {
