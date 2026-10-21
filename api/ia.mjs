@@ -23,6 +23,8 @@
 //   IA_MODO_TESTE=1          responde com textos de exemplo, sem chamar a Anthropic
 // ===================================================================
 
+import { createHash } from "node:crypto";
+
 const ANTHROPIC_URL = "https://api.anthropic.com/v1/messages";
 const ANTHROPIC_VERSAO = "2023-06-01";
 const IDIOMAS = { pt: "português do Brasil", en: "English", es: "español" };
@@ -110,7 +112,9 @@ async function dentroDoLimite(req, tipo, dispositivo) {
   const maxTipo = num(padrao, 1, 100000);
   const nDisp = await contar(`massi:${tipo}:${dia}:d:${limpar(dispositivo, 60)}`, 90000);
   if (nDisp > maxTipo) return false;
-  const nIp = await contar(`massi:all:${dia}:ip:${ip}`, 90000);
+  // O IP nunca é guardado em texto: só o hash, usado para limitar o uso.
+  const ipHash = createHash("sha256").update(String(ip)).digest("hex").slice(0, 32);
+  const nIp = await contar(`massi:all:${dia}:ip:${ipHash}`, 90000);
   return nIp <= maxTipo * 4;
 }
 
