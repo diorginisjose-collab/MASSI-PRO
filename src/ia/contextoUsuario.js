@@ -22,7 +22,6 @@ export function montarContextoUsuario(d) {
 
   // perfil
   const p = [];
-  if (d.nome) p.push("primeiro nome: " + String(d.nome).split(" ")[0]);
   const idade = idadeDe(d.nascimento);
   if (idade) p.push("idade: " + idade);
   if (d.nivel) p.push("nível: " + d.nivel);

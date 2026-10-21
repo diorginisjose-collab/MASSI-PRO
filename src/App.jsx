@@ -4,6 +4,7 @@ import { empilhar, removerTopo, iniciarNavegacao } from "./navegacao.js";
 import logoMImg from "./splash/logo-m.png";
 import halterImg from "./splash/halter.png";
 import ContadorPassos, { compartilharResumo } from "./passos/ContadorPassos.jsx";
+import ConsentimentoIA from "./ia/ConsentimentoIA.jsx";
 import { AssistenteIA, FotoAlimentos, DiarioAlimentar, RotinaInteligente, CartaoRotinaInteligente, lerEstadoRI, montarContextoUsuario } from "./ia/index.js";
 import { CalculadoraMassiCard } from "./calculadora/index.js";
 import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from "recharts";
@@ -58,6 +59,7 @@ if (typeof window !== "undefined" && !window.storage.__comPerfis) {
     "relatorio-fotos",
     "relatorio-profissional",
   ];
+
 
   let prontoPromise = null;
 
@@ -3238,6 +3240,9 @@ function MenuPrincipalModal({ onClose, onItem }) {
       titulo: "Privacidade e legal",
       itens: [
         { id: "privacidade", icone: "🔒", label: "Privacidade" },
+        { id: "apagar", icone: "🗑️", label: "Apagar meus dados" },
+        { id: "retirarConsentimento", icone: "✋", label: "Retirar consentimento de IA" },
+        { id: "perfilNoAssistente", icone: "🧩", label: "Perfil no Assistente (permitir ou não)" },
         { id: "politica", icone: "📄", label: "Política de Privacidade" },
         { id: "termos", icone: "📋", label: "Termos de Uso" },
       ],
@@ -5025,7 +5030,13 @@ function AppMassiPro({ onSolicitarRemount }) {
   const [rotinaAssinaturaCarregada, setRotinaAssinaturaCarregada] = useState(undefined); // undefined = ainda carregando do storage; null = nunca salva antes
   const [trocaTreinoRespostaSemana, setTrocaTreinoRespostaSemana] = useState(null); // semana em que a pessoa já dispensou a sugestão de trocar de treino
   const [showPlanos, setShowPlanos] = useState(false);
-  const [iaTela, setIaTela] = useState(null); // telas de IA: "assistente" | "foto" | "diario" | "rotina" | null
+  const [iaTela, setIaTela] = useState(null);
+  const [pendenteIA, setPendenteIA] = useState(null); // tela de IA aguardando consentimento
+  const abrirComConsentimento = async (tela) => {
+    let consentido = false;
+    try { const r = await window.storage.get("consentimento-ia"); consentido = !!(r && r.value); } catch (e) { consentido = false; }
+    if (consentido) setIaTela(tela); else setPendenteIA(tela);
+  }; // telas de IA: "assistente" | "foto" | "diario" | "rotina" | null
   const [riVersao, setRiVersao] = useState(0); // sobe quando a Rotina Inteligente muda (atualiza o cartão da aba Rotina)
   const [menuAberto, setMenuAberto] = useState(false);
   const [infoModal, setInfoModal] = useState(null); // { titulo, corpo }
@@ -5805,19 +5816,59 @@ function AppMassiPro({ onSolicitarRemount }) {
       case "privacidade":
         setInfoModal({
           titulo: "Privacidade",
-          corpo: "O Massi Pro não tem login nem servidor: seus dados (rotina, treinos, medidas, fotos e avaliações) ficam salvos só neste aparelho, e nada é enviado pra fora dele.",
+          corpo: "A maior parte dos seus dados (rotina, treinos, medidas, fotos e avaliações) fica salva neste aparelho. Quando você usa os recursos de IA (Assistente, Foto inteligente e Rotina Inteligente), os dados necessários para a resposta são enviados ao servidor do Massi Pro e encaminhados ao provedor de IA. Pesquisas de alimentos enviam os termos buscados ao Open Food Facts. A localização (GPS) só é usada se você ativar em atividades ao ar livre. Detalhes completos na Política de Privacidade.",
         });
         break;
+      case "retirarConsentimento": {
+        const ok = typeof window !== "undefined" && window.confirm("Retirar o consentimento para o uso de IA?\n\nDepois disso, o app vai pedir sua concordância de novo antes de usar qualquer recurso de IA.");
+        if (!ok) break;
+        try { await window.storage.delete("consentimento-ia"); } catch (e) { /* segue */ }
+        setInfoModal({ titulo: "Consentimento retirado", corpo: "Antes de usar um recurso de IA, o app vai pedir sua concordância novamente." });
+        break;
+      }
+      case "perfilNoAssistente": {
+        let atual = false;
+        try { const r = await window.storage.get("assistente-usar-perfil"); atual = !!(r && r.value === "sim"); } catch (e) { atual = false; }
+        const ok = typeof window !== "undefined" && window.confirm(atual
+          ? "Hoje o Assistente PODE usar seu perfil e sua rotina. Deseja impedir?"
+          : "Hoje o Assistente NÃO usa seu perfil nem sua rotina.\n\nDeseja permitir que ele use altura, peso, idade, restrições, rotina e histórico nas respostas?");
+        if (!ok) break;
+        const novo = atual ? "nao" : "sim";
+        try { await window.storage.set("assistente-usar-perfil", novo); } catch (e) { /* segue */ }
+        setInfoModal({ titulo: "Perfil no Assistente", corpo: novo === "sim" ? "O Assistente poderá usar seu perfil e sua rotina nas respostas. Você pode mudar isso aqui a qualquer momento." : "O Assistente não usará seu perfil nem sua rotina." });
+        break;
+      }
+      case "apagar": {
+        const ok = typeof window !== "undefined" && window.confirm(
+          "Apagar TODOS os dados do Massi Pro neste aparelho, de todos os perfis?\n\nSerão apagados: perfil, treinos, histórico, avaliações, fotos de progresso, notas, passos, Rotina Inteligente, diário de suplementos e preferências de IA.\n\nAntes, você pode exportar um backup em Exportar dados.\n\nA exclusão local não apaga dados que já foram enviados à IA ou ao provedor de terceiros. Essa ação não pode ser desfeita."
+        );
+        if (!ok) break;
+        for (const chave of [...CHAVES_BACKUP, ...CHAVES_EXTRAS_EXCLUSAO]) {
+          try { await window.storage.delete(chave); } catch (e) { /* chave inexistente */ }
+        }
+        // Varre o armazenamento do aparelho: dados de todos os perfis e chaves globais
+        try {
+          const apagar = [];
+          for (let i = 0; i < localStorage.length; i++) {
+            const k = localStorage.key(i);
+            if (!k) continue;
+            if (k.indexOf("::") >= 0 || k.indexOf("massi") === 0 || k.indexOf("aniversario-visto") === 0 || CHAVES_GLOBAIS_EXCLUSAO.indexOf(k) >= 0) apagar.push(k);
+          }
+          apagar.forEach((k) => localStorage.removeItem(k));
+        } catch (e) { /* sem acesso ao armazenamento: segue */ }
+        setInfoModal({ titulo: "Dados apagados", corpo: "Os dados deste aparelho foram apagados. Feche e abra o aplicativo para começar do zero." });
+        break;
+      }
       case "politica":
         setInfoModal({
           titulo: "Política de Privacidade",
-          corpo: "O Massi Pro não coleta, armazena em servidor, nem compartilha seus dados pessoais com terceiros. Todas as informações que você preenche no app ficam salvas localmente no seu aparelho.",
+          corpo: "A maior parte das informações que você preenche fica salva no seu aparelho. Para usar os recursos de IA, parte dos dados necessários é enviada ao servidor do Massi Pro, que os encaminha ao provedor de IA. Você pode desativar a personalização por IA e apagar os dados do aplicativo a qualquer momento, em Apagar meus dados. A versão completa está em privacidade.html.",
         });
         break;
       case "termos":
         setInfoModal({
           titulo: "Termos de Uso",
-          corpo: "O Massi Pro é uma ferramenta de apoio ao treino e não substitui orientação de um profissional de educação física ou de saúde. Use por sua conta e risco e respeite seus limites.",
+          corpo: "O Massi Pro é uma ferramenta de apoio ao treino, à alimentação e ao bem-estar. As estimativas (calorias, distância, metas e planos) são aproximadas e não substituem avaliação de médico, nutricionista ou profissional de educação física. Procure um profissional se tiver limitações físicas, doenças, gravidez ou dúvidas sobre sua saúde. Respeite seus limites.",
         });
         break;
       case "avaliar":
@@ -5843,10 +5894,10 @@ function AppMassiPro({ onSolicitarRemount }) {
         setInfoModal({ titulo: "Versão do aplicativo", corpo: `Massi Pro v${APP_VERSAO}` });
         break;
       case "ia_assistente":
-        setIaTela("assistente");
+        abrirComConsentimento("assistente");
         break;
       case "ia_foto":
-        setIaTela("foto");
+        abrirComConsentimento("foto");
         break;
       case "ia_diario":
         setIaTela("diario");
@@ -7142,6 +7193,8 @@ function AppMassiPro({ onSolicitarRemount }) {
   };
   const iaNorm = (t) => String(t || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
   const iaGetContexto = async () => {
+    let usarPerfilAssistente = false;
+    try { const pp = await window.storage.get("assistente-usar-perfil"); usarPerfilAssistente = !!(pp && pp.value === "sim"); } catch (e) { usarPerfilAssistente = false; }
     let onb = null, aval = null;
     try { const r = await window.storage.get("onboarding-perfil"); if (r && r.value) onb = JSON.parse(r.value); } catch (e) { /* sem onboarding */ }
     try { const r = await window.storage.get("avaliacoes-evolucao"); const l = r && r.value ? JSON.parse(r.value) : []; if (l.length) aval = l[l.length - 1]; } catch (e) { /* sem avaliação */ }
@@ -7152,8 +7205,11 @@ function AppMassiPro({ onSolicitarRemount }) {
       indice = { total: ind.total, nivelIdx: ind.nivelIdx, nomeNivel: NIVEIS_MASSI[ind.nivelIdx].nome, streak: st };
     } catch (e) { /* sem índice */ }
     let rotinaInteligente = null;
-    try { rotinaInteligente = await lerEstadoRI(); } catch (e) { /* sem Rotina Inteligente */ }
-    return montarContextoUsuario({ nome: perfilAtivoNome, nascimento: onb && onb.nascimento, nivel: nivelUsuario, objetivo: objetivoUsuario, restricoes: restricoesFisicas, avaliacao: aval, rotina, diasSelecionados, historico, indice, rotinaInteligente, biblioteca: LIBRARY });
+    try {
+      const pref = await window.storage.get("rotina-ia-usar-no-assistente");
+      if (pref && pref.value === "sim") rotinaInteligente = await lerEstadoRI();
+    } catch (e) { /* sem Rotina Inteligente: não envia */ }
+    return montarContextoUsuario({ nome: usarPerfilAssistente ? perfilAtivoNome : null, nascimento: onb && onb.nascimento, nivel: usarPerfilAssistente ? nivelUsuario : null, objetivo: usarPerfilAssistente ? objetivoUsuario : null, restricoes: usarPerfilAssistente ? restricoesFisicas : null, avaliacao: usarPerfilAssistente ? aval : null, rotina: usarPerfilAssistente ? rotina : null, diasSelecionados: usarPerfilAssistente ? diasSelecionados : null, historico: usarPerfilAssistente ? historico : null, indice: usarPerfilAssistente ? indice : null, rotinaInteligente, biblioteca: LIBRARY });
   };
   const iaBuscaLocal = (texto) => {
     const q = iaNorm(texto);
@@ -7165,7 +7221,7 @@ function AppMassiPro({ onSolicitarRemount }) {
   };
   const iaAcoes = {
     irAba: (aba) => { setIaTela(null); setActiveTab(aba); },
-    abrirFoto: () => setIaTela("foto"),
+    abrirFoto: () => abrirComConsentimento("foto"),
     abrirDiario: () => setIaTela("diario"),
     trocarExercicio: (dia, de, para) => {
       const d = rotina.find((x) => iaNorm(x.dia) === iaNorm(dia));
@@ -7329,6 +7385,17 @@ function AppMassiPro({ onSolicitarRemount }) {
         }
       `)}</style>
 
+      {pendenteIA && (
+        <ConsentimentoIA
+          onCancelar={() => setPendenteIA(null)}
+          onAceitar={async () => {
+            try { await window.storage.set("consentimento-ia", JSON.stringify({ versao: 1, data: new Date().toISOString() })); } catch (e) { /* segue */ }
+            const tela = pendenteIA;
+            setPendenteIA(null);
+            setIaTela(tela);
+          }}
+        />
+      )}
       {!splashVisivel && <LetreiroTopo />}
 
       <div className="print-rotina-area">
@@ -7451,9 +7518,9 @@ function AppMassiPro({ onSolicitarRemount }) {
       {iaTela === "rotina" && (
         <RotinaInteligente onFechar={() => { setIaTela(null); setRiVersao((v) => v + 1); }} i18n={{ tr, trt }} idioma={idioma} quota={MassiIA} temIA={vigente.temIA} onVerPlanos={() => { setIaTela(null); setShowPlanos(true); }} gerarSemana={gerarSemanaPersonalizada} aplicarSemana={aplicarSemanaRI} onAlterado={() => setRiVersao((v) => v + 1)} />
       )}
-      {iaTela === "diario" && <DiarioAlimentar onFechar={() => setIaTela(null)} i18n={{ tr, trt }} idioma={idioma} onNovaFoto={() => setIaTela("foto")} />}
+      {iaTela === "diario" && <DiarioAlimentar onFechar={() => setIaTela(null)} i18n={{ tr, trt }} idioma={idioma} onNovaFoto={() => abrirComConsentimento("foto")} />}
       {!iaTela && !menuAberto && !showPlanos && !infoModal && !onboardingPendente && (
-        <BotaoIAFlutuante onAbrir={() => setIaTela("assistente")} rotulo={tr("Assistente Massi")} btnRef={tourIaBtnRef} />
+        <BotaoIAFlutuante onAbrir={() => abrirComConsentimento("assistente")} rotulo={tr("Assistente Massi")} btnRef={tourIaBtnRef} />
       )}
       {exercicioAberto && (
         <ExercicioModal
@@ -7906,7 +7973,7 @@ function AppMassiPro({ onSolicitarRemount }) {
 
       {activeTab === "inicio" && (
         <InicioTab
-          onAbrirFoto={() => setIaTela("foto")}
+          onAbrirFoto={() => abrirComConsentimento("foto")}
           refFoto={tourFotoIARef}
           refPassos={tourPassosRef}
           perfilAtivoNome={perfilAtivoNome}
@@ -7937,7 +8004,7 @@ function AppMassiPro({ onSolicitarRemount }) {
           )}
 
           <div ref={tourRotinaIARef}>
-            <CartaoRotinaInteligente onAbrir={() => setIaTela("rotina")} temIA={vigente.temIA} versao={riVersao} tr={tr} />
+            <CartaoRotinaInteligente onAbrir={() => abrirComConsentimento("rotina")} temIA={vigente.temIA} versao={riVersao} tr={tr} />
           </div>
 
           <input
@@ -11954,6 +12021,21 @@ const CHAVES_BACKUP = [
   "gerador-treino-params",
 ];
 
+// Chaves globais do aparelho (valem para todos os perfis) que a exclusão total também remove
+const CHAVES_GLOBAIS_EXCLUSAO = ["perfis-lista", "perfil-ativo-id", "tema-app", "idioma-app", "assinatura-massipro", "uso-ia-massipro", "dietas-cache", "ia-botao-pos", "foto-compartilhamento", "deload-resposta-semana", "troca-treino-resposta-semana", "dieta-cliques-hoje"];
+
+// Chaves criadas depois do backup e que também precisam ser apagadas na exclusão de dados
+const CHAVES_EXTRAS_EXCLUSAO = [
+    "passos-registros", "passos-perfil", "passos-compartilhados",
+    "ri-rascunho", "ri-avaliacoes", "ri-perfil", "ri-proposta", "ri-plano-treino", "ri-plano-alimentar", "ri-planos-anteriores", "ri-checkins",
+    "central-favoritos", "central-historico", "central-diario",
+    "assistente-ia-historico", "assistente-ia-usar-dados", "consentimento-ia", "rotina-ia-usar-no-assistente", "assistente-usar-perfil", "foto-compartilhamento",
+];
+
+// Backup completo: lista original + chaves criadas depois (sem o consentimento, que é reconcedido pelo usuário)
+const CHAVES_BACKUP_COMPLETO = [...CHAVES_BACKUP, ...CHAVES_EXTRAS_EXCLUSAO.filter((k) => k !== "consentimento-ia")];
+
+
 function ModoGuiadoOverlay({ entry, onFechar, onAbrirExercicio, onEditCarga, onEditCampo, onConcluirExercicio, onTreinoFinalizado, vozAtiva, onToggleVoz }) {
   const [indice, setIndice] = useState(0);
   const [serieAtual, setSerieAtual] = useState(1);
@@ -12453,7 +12535,7 @@ function SobreTab({ t, onIniciarTour, notificacoesAtivas, onAtivarNotificacoes, 
 
   const exportarDados = async () => {
     const dados = {};
-    for (const chave of CHAVES_BACKUP) {
+    for (const chave of CHAVES_BACKUP_COMPLETO) {
       try {
         const res = await window.storage.get(chave);
         if (res && res.value) dados[chave] = res.value;
@@ -12478,7 +12560,7 @@ function SobreTab({ t, onIniciarTour, notificacoesAtivas, onAtivarNotificacoes, 
     try {
       const texto = await arquivo.text();
       const dados = JSON.parse(texto);
-      for (const chave of CHAVES_BACKUP) {
+      for (const chave of CHAVES_BACKUP_COMPLETO) {
         if (dados[chave] !== undefined) {
           await window.storage.set(chave, dados[chave]);
         }

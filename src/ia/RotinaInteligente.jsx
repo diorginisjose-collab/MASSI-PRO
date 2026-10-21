@@ -242,6 +242,16 @@ export default function RotinaInteligente({ onFechar, i18n, idioma, quota, temIA
   const [reavErro, setReavErro] = useState("");
   const [reavCarregando, setReavCarregando] = useState(false);
   const [confirmarAplicar, setConfirmarAplicar] = useState(false);
+  const [usarNoAssistente, setUsarNoAssistente] = useState(false);
+  useEffect(() => {
+    let vivo = true;
+    (async () => { try { const r = await window.storage.get("rotina-ia-usar-no-assistente"); if (vivo) setUsarNoAssistente(!!(r && r.value === "sim")); } catch (e) { /* padrão: não */ } })();
+    return () => { vivo = false; };
+  }, []);
+  const alternarUsarNoAssistente = async (valor) => {
+    setUsarNoAssistente(valor);
+    try { await window.storage.set("rotina-ia-usar-no-assistente", valor ? "sim" : "nao"); } catch (e) { /* segue */ }
+  };
   const [aviso, setAviso] = useState("");
   const [erroSalvar, setErroSalvar] = useState("");
   const [, setTick] = useState(0);
@@ -440,6 +450,10 @@ export default function RotinaInteligente({ onFechar, i18n, idioma, quota, temIA
           <div style={{ fontSize: 14.5, lineHeight: 1.55 }}>{tr(TEXTO_APRESENTACAO)}</div>
         </div>
         {aviso && <div style={avisoEstilo} role="status">{aviso}</div>}
+        <label style={{ ...cartao, display: "flex", gap: 10, alignItems: "flex-start", cursor: "pointer", fontSize: 13.5, lineHeight: 1.45 }}>
+          <input type="checkbox" checked={usarNoAssistente} onChange={(ev) => alternarUsarNoAssistente(ev.target.checked)} data-testid="usar-rotina-assistente" style={{ marginTop: 3, width: 18, height: 18 }} />
+          <span>{tr("Permitir que o Assistente use meu perfil e minha rotina nas respostas. Desmarcado por padrão. Você pode mudar quando quiser.")}</span>
+        </label>
         {e && e.proposta && (
           <div style={cartao}>
             <div style={{ fontWeight: 800 }}>{tr("Há um plano gerado esperando a sua confirmação")}</div>
