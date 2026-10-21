@@ -54,54 +54,6 @@ export function textoResumo(r) {
   return linhas.join("\n");
 }
 
-// ---------- detecção de passos a partir do acelerômetro (com o app aberto) ----------
-// Um passo só conta quando faz parte de um RITMO: pelo menos três passadas seguidas,
-// com intervalo entre 0,25 s e 1,3 s. Movimentos isolados não entram, e o ritmo se
-// desfaz quando a caminhada para. O detector processa cada amostra UMA vez e acumula.
-export function criarDetectorPassos(opcoes) {
-  const limiar = (opcoes && opcoes.limiar) || 11.5;
-  const minIntervaloMs = 250;
-  const maxIntervaloMs = 1300;
-  let total = 0;
-  let ultimoPico = -Infinity;
-  let seqValidos = 0;
-  let confirmado = false;
-  let anterior = null, anteriorMag = 0, subindo = false;
-  return {
-    // Recebe uma amostra e devolve quantos passos novos foram confirmados por ela
-    alimentar(a) {
-      const mag = Math.sqrt(a.x * a.x + a.y * a.y + a.z * a.z);
-      let novos = 0;
-      if (anterior !== null) {
-        const agora = mag > anteriorMag;
-        if (subindo && !agora && anteriorMag >= limiar) {
-          const intervalo = a.t - ultimoPico;
-          if (intervalo >= minIntervaloMs && intervalo <= maxIntervaloMs) {
-            seqValidos += 1;
-            if (!confirmado && seqValidos >= 2) { novos = 3; confirmado = true; }
-            else if (confirmado) { novos = 1; }
-            ultimoPico = a.t;
-          } else {
-            seqValidos = 0; confirmado = false; ultimoPico = a.t;
-          }
-        }
-        subindo = agora;
-      }
-      anterior = a; anteriorMag = mag;
-      total += novos;
-      return novos;
-    },
-    total() { return total; },
-  };
-}
-
-// Versão em lote (usada nos testes): processa uma lista de amostras de uma vez
-export function contarPassosAmostras(amostras, opcoes) {
-  const d = criarDetectorPassos(opcoes);
-  for (const a of amostras || []) d.alimentar(a);
-  return d.total();
-}
-
 // Dia com passos: soma e mantém o histórico ordenado
 export function somarRegistros(registros) {
   return (registros || []).reduce((s, r) => s + (Number(r.passos) || 0), 0);

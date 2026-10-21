@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from "react";
 import * as P from "./passos.js";
+import { tmbKcal, idadeDeNascimento } from "./tmb.js";
+import { nativoDisponivel, estadoPassosNativos, pedirPermissaoPassos, lerPassosHojeNativos } from "./ponte.js";
+
+const CHAVE_HIST = "passos-historico";  // { "AAAA-MM-DD": { passos, km, kcal, tmb, idade } }
 
 // Passos informados pela pessoa (copiados do app de passos do celular).
 // Distância e calorias são calculadas a partir desse número.
@@ -17,6 +21,8 @@ async function ler(chave, padrao) {
 async function gravar(chave, valor) {
   try { await window.storage.set(chave, JSON.stringify(valor)); } catch (e) { /* segue */ }
 }
+
+function pluginPassos_ok() { return !!(window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.MassiPassos); }
 
 // Perfil: o que foi informado aqui tem prioridade; senão, usa a Avaliação do app
 async function lerPerfil() {
@@ -41,6 +47,7 @@ const campo = { display: "block", width: "100%", boxSizing: "border-box", margin
 
 export default function ContadorPassos({ onCompartilhar }) {
   const [registros, setRegistros] = useState({});
+  const [idade, setIdade] = useState(null);
   const [perfil, setPerfil] = useState({});
   const [compartilhados, setCompartilhados] = useState([]);
   const [passosInformados, setPassosInformados] = useState("");
@@ -49,6 +56,24 @@ export default function ContadorPassos({ onCompartilhar }) {
   const [erroForm, setErroForm] = useState([]);
   const [confirmandoReinicio, setConfirmandoReinicio] = useState(false);
   const [aviso, setAviso] = useState("");
+  const [nativo, setNativo] = useState({ status: "indisponivel" });
+  useEffect(() => {
+    let vivo = true;
+    (async () => { if (nativoDisponivel()) { const e = await estadoPassosNativos(); if (vivo) setNativo(e); } })();
+    return () => { vivo = false; };
+  }, []);
+  // Só aparece quando o app é nativo e o plugin existe. Não grava nada sem a leitura real.
+  const sincronizarNativo = async () => {
+    if (nativo.status !== "ok") {
+      const r = await pedirPermissaoPassos();
+      setNativo(r);
+      if (r.status !== "ok") { setAviso("Permita o acesso aos passos do celular para sincronizar."); return; }
+    }
+    const n = await lerPassosHojeNativos();
+    if (n === null) { setAviso("Não foi possível ler os passos do celular agora."); return; }
+    setPassosInformados(String(n));
+    setAviso("Passos lidos do celular. Confira e toque em Salvar.");
+  };
 
   useEffect(() => {
     let vivo = true;
@@ -56,7 +81,8 @@ export default function ContadorPassos({ onCompartilhar }) {
       const r = await ler(CHAVE, {});
       const p = await lerPerfil();
       const c = await ler(CHAVE_COMP, []);
-      if (vivo) { setRegistros(r); setPerfil(p); setCompartilhados(Array.isArray(c) ? c : []); }
+      const cad = await ler("onboarding-perfil", null);
+      if (vivo) { setRegistros(r); setPerfil(p); setCompartilhados(Array.isArray(c) ? c : []); setIdade(idadeDeNascimento(cad && cad.nascimento)); }
     })();
     return () => { vivo = false; };
   }, []);
@@ -68,18 +94,31 @@ export default function ContadorPassos({ onCompartilhar }) {
   const ontem = ontemISO();
   const temOntem = (registros[ontem] || 0) > 0 && compartilhados.indexOf(ontem) < 0;
 
+  // Registra o dia no histórico: passos, km, kcal da caminhada e TMB (se houver dados)
+  const gravarHistorico = async (n) => {
+    const hist = await ler(CHAVE_HIST, {});
+    const r = P.resumoDia(hoje, n, perfil);
+    const tmb = tmbKcal({ sexo: perfil.sexo, peso: perfil.peso, altura: perfil.altura, idade });
+    hist[hoje] = { passos: n, km: r.km, kcal: r.kcal === null ? null : Math.round(r.kcal), tmb, idade };
+    await gravar(CHAVE_HIST, hist);
+  };
+
   // Salva os passos informados para hoje
   const salvarPassos = async () => {
     const n = Number(String(passosInformados).replace(/\./g, "").replace(",", "."));
     if (!(Number.isInteger(n) && n >= 0 && n <= 100000)) { setAviso("Digite um número de passos entre 0 e 100.000."); return; }
     const novo = { ...registros, [hoje]: n };
     setRegistros(novo); await gravar(CHAVE, novo);
+    await gravarHistorico(n);
     setPassosInformados(""); setAviso("");
   };
 
   const reiniciarHoje = async () => {
     const novo = { ...registros, [hoje]: 0 };
     setRegistros(novo); await gravar(CHAVE, novo);
+    const hist = await ler(CHAVE_HIST, {});
+    delete hist[hoje];
+    await gravar(CHAVE_HIST, hist);
     setConfirmandoReinicio(false);
   };
 
@@ -113,6 +152,9 @@ export default function ContadorPassos({ onCompartilhar }) {
         <div><div style={{ fontSize: 20, fontWeight: 800 }} data-testid="total-kcal">{resumo.kcal === null ? "—" : Math.round(resumo.kcal)}</div><div style={{ fontSize: 11.5, opacity: 0.75 }}>kcal (estimado)</div></div>
       </div>
 
+      {nativoDisponivel() && pluginPassos_ok() && (
+        <button type="button" onClick={sincronizarNativo} data-testid="sincronizar-passos" style={{ width: "100%", border: "none", borderRadius: 10, padding: "9px", background: "#A7FF00", color: "#15181B", fontWeight: 800, cursor: "pointer", marginBottom: 8 }}>Ler passos do celular</button>
+      )}
       <label style={{ display: "block", fontSize: 13, marginBottom: 6 }}>Quantos passos você deu hoje? (copie do app de passos do celular)
         <div style={{ display: "flex", gap: 8, marginTop: 4 }}>
           <input type="text" inputMode="numeric" value={passosInformados} onChange={(e) => setPassosInformados(e.target.value.replace(/[^0-9.]/g, "").slice(0, 7))} placeholder="ex.: 8432" aria-label="Passos de hoje" style={{ ...campo, marginTop: 0, flex: 1 }} data-testid="input-passos" />
@@ -121,6 +163,12 @@ export default function ContadorPassos({ onCompartilhar }) {
       </label>
       {aviso && <div role="alert" style={{ fontSize: 12.5, color: "#FFB1A8", marginBottom: 6 }}>{aviso}</div>}
 
+      <div style={{ fontSize: 12, opacity: 0.85, lineHeight: 1.45, marginBottom: 6 }}>
+        Os passos são copiados por você do app de passos do seu celular. O Massi não conta passos sozinho.
+      </div>
+      <div style={{ fontSize: 12.5, marginBottom: 8 }} data-testid="tmb-valor">
+        {(() => { const t = tmbKcal({ sexo: perfil.sexo, peso: perfil.peso, altura: perfil.altura, idade }); return t === null ? "TMB: informe sexo, altura, peso e data de nascimento para calcular." : "TMB estimada: " + t.toLocaleString("pt-BR") + " kcal/dia (Mifflin-St Jeor)."; })()}
+      </div>
       <div style={{ fontSize: 12, opacity: 0.8, lineHeight: 1.45, marginBottom: 8 }}>
         {!perfilCompleto
           ? "Para calcular distância e calorias, informe altura, sexo e peso."

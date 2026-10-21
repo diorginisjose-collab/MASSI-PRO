@@ -4,6 +4,7 @@ import { empilhar, removerTopo, iniciarNavegacao } from "./navegacao.js";
 import logoMImg from "./splash/logo-m.png";
 import halterImg from "./splash/halter.png";
 import ContadorPassos, { compartilharResumo } from "./passos/ContadorPassos.jsx";
+import ResumoPassosEvolucao from "./passos/ResumoPassosEvolucao.jsx";
 import ConsentimentoIA from "./ia/ConsentimentoIA.jsx";
 import { AssistenteIA, FotoAlimentos, DiarioAlimentar, RotinaInteligente, CartaoRotinaInteligente, lerEstadoRI, montarContextoUsuario } from "./ia/index.js";
 import { CalculadoraMassiCard } from "./calculadora/index.js";
@@ -5068,7 +5069,9 @@ function AppMassiPro({ onSolicitarRemount }) {
   const [showModelos, setShowModelos] = useState(false);
   const [modoImpressao, setModoImpressao] = useState(false);
   const [activeTab, setActiveTab] = useState("inicio");
-  const [splashVisivel, setSplashVisivel] = useState(true);
+  const [splashVisivel, setSplashVisivel] = useState(() => {
+    try { return !window.sessionStorage.getItem("massi-abertura-vista"); } catch (e) { return true; }
+  });
   const [splashSaindo, setSplashSaindo] = useState(false);
   const [tempoMinimoSplashPassado, setTempoMinimoSplashPassado] = useState(false);
   const [faseSplash, setFaseSplash] = useState("parado"); // parado -> batimento -> halter -> explosao
@@ -5174,6 +5177,10 @@ function AppMassiPro({ onSolicitarRemount }) {
     historico: undefined, evolucao: undefined, notas: undefined, premium: undefined,
     rotina2: undefined, inicio2: undefined, ia: undefined, rotinaIA: undefined, fotoIA: undefined, passos: undefined,
   });
+  // Fila única de tutoriais: só um balão por vez, na ordem em que foram pedidos. Não é gravada: a cada carregamento é refeita.
+  const [filaTours, setFilaTours] = useState([]);
+  const enfileirarTour = (aba) => setFilaTours((f) => (f.indexOf(aba) >= 0 ? f : f.concat([aba])));
+  const ultimoTourRef = useRef(null);
   const toursDef = {
     rotina: [
       { ref: tourMaquinaRef, texto: "Aqui você escolhe o equipamento do exercício — halteres, barra ou máquina." },
@@ -5316,12 +5323,12 @@ function AppMassiPro({ onSolicitarRemount }) {
       const primeiroDia = rotina.find((d) => diasSelecionados.includes(d.dia));
       if (primeiroDia && primeiroDia.exercicios && primeiroDia.exercicios.length > 0) {
         setTimeout(() => {
-          if (!cancelado) setTourAtivo({ aba: "rotina", passo: 0 });
+          if (!cancelado) enfileirarTour("rotina");
         }, 500);
       }
     } else if (activeTab === "inicio" || activeTab === "cross" || activeTab === "historico" || activeTab === "evolucao" || activeTab === "notas" || activeTab === "premium") {
       setTimeout(() => {
-        if (!cancelado) setTourAtivo({ aba: activeTab, passo: 0 });
+        if (!cancelado) enfileirarTour(activeTab);
       }, 500);
     }
     return () => {
@@ -5342,7 +5349,7 @@ function AppMassiPro({ onSolicitarRemount }) {
     if (!primeiroDia || !primeiroDia.exercicios || primeiroDia.exercicios.length === 0) return;
     let cancelado = false;
     const timeoutId = setTimeout(() => {
-      if (!cancelado) setTourAtivo({ aba: "novidades", passo: 0 });
+      if (!cancelado) enfileirarTour("novidades");
     }, 600);
     return () => {
       cancelado = true;
@@ -5359,13 +5366,35 @@ function AppMassiPro({ onSolicitarRemount }) {
     if (toursVistos.inicio2 !== false) return;
     let cancelado = false;
     const timeoutId = setTimeout(() => {
-      if (!cancelado) setTourAtivo({ aba: "inicio2", passo: 0 });
+      if (!cancelado) enfileirarTour("inicio2");
     }, 900);
     return () => {
       cancelado = true;
       clearTimeout(timeoutId);
     };
   }, [activeTab, loaded, toursVistos, onboardingPendente]);
+  // Sequenciador: inicia o próximo tutorial da fila quando nenhum está aberto
+  useEffect(() => {
+    if (tourAtivo || splashVisivel || onboardingPendente || !loaded || filaTours.length === 0) return;
+    const proximo = filaTours[0];
+    if (toursVistos[proximo] === true) { setFilaTours((f) => f.slice(1)); return; }
+    const timer = setTimeout(() => {
+      ultimoTourRef.current = proximo;
+      setTourAtivo((atual) => atual || { aba: proximo, passo: 0 });
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [tourAtivo, splashVisivel, onboardingPendente, loaded, filaTours, toursVistos]);
+
+  // Quando um balão termina, sai da fila
+  useEffect(() => {
+    if (tourAtivo) { ultimoTourRef.current = tourAtivo.aba; return; }
+    const terminou = ultimoTourRef.current;
+    if (terminou) {
+      ultimoTourRef.current = null;
+      setFilaTours((f) => f.filter((x) => x !== terminou));
+    }
+  }, [tourAtivo]);
+
   // Tutorial do contador de passos: uma vez, na tela inicial (rola até o cartão, que fica embaixo)
   useEffect(() => {
     if (onboardingPendente || splashVisivel) return;
@@ -5376,7 +5405,7 @@ function AppMassiPro({ onSolicitarRemount }) {
     const timeoutId = setTimeout(() => {
       if (cancelado) return;
       if (tourPassosRef.current && tourPassosRef.current.scrollIntoView) tourPassosRef.current.scrollIntoView({ block: "center" });
-      setTimeout(() => { if (!cancelado) setTourAtivo((atual) => atual || { aba: "passos", passo: 0 }); }, 400);
+      setTimeout(() => { if (!cancelado) enfileirarTour("passos"); }, 400);
     }, 1500);
     return () => { cancelado = true; clearTimeout(timeoutId); };
   }, [activeTab, loaded, toursVistos, onboardingPendente, splashVisivel]);
@@ -5388,7 +5417,7 @@ function AppMassiPro({ onSolicitarRemount }) {
     if (toursVistos.fotoIA !== false) return;
     let cancelado = false;
     const timeoutId = setTimeout(() => {
-      if (!cancelado) setTourAtivo((atual) => atual || { aba: "fotoIA", passo: 0 });
+      if (!cancelado) enfileirarTour("fotoIA");
     }, 1500);
     return () => {
       cancelado = true;
@@ -5403,7 +5432,7 @@ function AppMassiPro({ onSolicitarRemount }) {
     if (toursVistos.rotinaIA !== false) return;
     let cancelado = false;
     const timeoutId = setTimeout(() => {
-      if (!cancelado) setTourAtivo((atual) => atual || { aba: "rotinaIA", passo: 0 });
+      if (!cancelado) enfileirarTour("rotinaIA");
     }, 1500);
     return () => {
       cancelado = true;
@@ -5423,7 +5452,7 @@ function AppMassiPro({ onSolicitarRemount }) {
     if (toursVistos.ia !== false) return; // ainda não carregou, ou já visto
     let cancelado = false;
     const timeoutId = setTimeout(() => {
-      if (!cancelado) setTourAtivo({ aba: "ia", passo: 0 });
+      if (!cancelado) enfileirarTour("ia");
     }, 900);
     return () => {
       cancelado = true;
@@ -5444,7 +5473,7 @@ function AppMassiPro({ onSolicitarRemount }) {
     if (!primeiroDia || !primeiroDia.exercicios || primeiroDia.exercicios.length === 0) return;
     let cancelado = false;
     const timeoutId = setTimeout(() => {
-      if (!cancelado) setTourAtivo({ aba: "rotina2", passo: 0 });
+      if (!cancelado) enfileirarTour("rotina2");
     }, 700);
     return () => {
       cancelado = true;
@@ -5519,6 +5548,7 @@ function AppMassiPro({ onSolicitarRemount }) {
   useEffect(() => {
     if (!(tempoMinimoSplashPassado && perfilVerificado)) return undefined;
     setSplashSaindo(true);
+    try { window.sessionStorage.setItem("massi-abertura-vista", "1"); } catch (e) { /* segue */ }
     const fim = setTimeout(() => setSplashVisivel(false), 250);
     return () => clearTimeout(fim);
   }, [tempoMinimoSplashPassado, perfilVerificado]);
@@ -8186,6 +8216,8 @@ function AppMassiPro({ onSolicitarRemount }) {
       {activeTab === "notas" && <NotasTab refTour={tourNotasRef} />}
 
       {activeTab === "evolucao" && (
+        <>
+        <ResumoPassosEvolucao />
         <EvolucaoTab
           onAplicarTreino={(modeloId, objetivoId) => {
             aplicarModelo(modeloId, objetivoId);
@@ -8193,6 +8225,7 @@ function AppMassiPro({ onSolicitarRemount }) {
           }}
           refsTour={{ registrar: tourAvalRegistrarRef, gordura: tourAvalGorduraRef, biotipo: tourAvalBiotipoRef, alimento: tourAvalAlimentoRef, fotos: tourAvalFotosRef }}
         />
+        </>
       )}
 
       {activeTab === "premium" && (
