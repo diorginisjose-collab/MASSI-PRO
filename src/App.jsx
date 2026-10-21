@@ -5823,6 +5823,7 @@ function AppMassiPro({ onSolicitarRemount }) {
         const ok = typeof window !== "undefined" && window.confirm("Retirar o consentimento para o uso de IA?\n\nDepois disso, o app vai pedir sua concordância de novo antes de usar qualquer recurso de IA.");
         if (!ok) break;
         try { await window.storage.delete("consentimento-ia"); } catch (e) { /* segue */ }
+        try { await window.storage.delete("consentimento-rotina-perfil"); } catch (e) { /* segue */ }
         setInfoModal({ titulo: "Consentimento retirado", corpo: "Antes de usar um recurso de IA, o app vai pedir sua concordância novamente." });
         break;
       }
@@ -12029,11 +12030,11 @@ const CHAVES_EXTRAS_EXCLUSAO = [
     "passos-registros", "passos-perfil", "passos-compartilhados",
     "ri-rascunho", "ri-avaliacoes", "ri-perfil", "ri-proposta", "ri-plano-treino", "ri-plano-alimentar", "ri-planos-anteriores", "ri-checkins",
     "central-favoritos", "central-historico", "central-diario",
-    "assistente-ia-historico", "assistente-ia-usar-dados", "consentimento-ia", "rotina-ia-usar-no-assistente", "assistente-usar-perfil", "foto-compartilhamento",
+    "assistente-ia-historico", "assistente-ia-usar-dados", "consentimento-ia", "rotina-ia-usar-no-assistente", "assistente-usar-perfil", "foto-compartilhamento", "consentimento-rotina-perfil",
 ];
 
 // Backup completo: lista original + chaves criadas depois (sem o consentimento, que é reconcedido pelo usuário)
-const CHAVES_BACKUP_COMPLETO = [...CHAVES_BACKUP, ...CHAVES_EXTRAS_EXCLUSAO.filter((k) => k !== "consentimento-ia")];
+const CHAVES_BACKUP_COMPLETO = [...CHAVES_BACKUP, ...CHAVES_EXTRAS_EXCLUSAO.filter((k) => k !== "consentimento-ia" && k !== "consentimento-rotina-perfil")];
 
 
 function ModoGuiadoOverlay({ entry, onFechar, onAbrirExercicio, onEditCarga, onEditCampo, onConcluirExercicio, onTreinoFinalizado, vozAtiva, onToggleVoz }) {

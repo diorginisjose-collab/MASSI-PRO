@@ -243,6 +243,22 @@ export default function RotinaInteligente({ onFechar, i18n, idioma, quota, temIA
   const [reavCarregando, setReavCarregando] = useState(false);
   const [confirmarAplicar, setConfirmarAplicar] = useState(false);
   const [usarNoAssistente, setUsarNoAssistente] = useState(false);
+  const [concordaPerfil, setConcordaPerfil] = useState(false);
+  useEffect(() => {
+    let vivo = true;
+    (async () => { try { const r = await window.storage.get("consentimento-rotina-perfil"); if (vivo) setConcordaPerfil(!!(r && r.value === "sim")); } catch (e) { /* padrão: não */ } })();
+    return () => { vivo = false; };
+  }, []);
+  const marcarConcordaPerfil = async (valor) => {
+    setConcordaPerfil(valor);
+    try { await window.storage.set("consentimento-rotina-perfil", valor ? "sim" : "nao"); } catch (e) { /* segue */ }
+  };
+  // Concordância específica para enviar o perfil confirmado à IA (exigida antes de gerar ou reavaliar)
+  const exigirConcordanciaPerfil = () => {
+    if (concordaPerfil) return true;
+    setErroGeracao(tr("Marque a concordância abaixo para enviar seu perfil confirmado à IA."));
+    return false;
+  };
   useEffect(() => {
     let vivo = true;
     (async () => { try { const r = await window.storage.get("rotina-ia-usar-no-assistente"); if (vivo) setUsarNoAssistente(!!(r && r.value === "sim")); } catch (e) { /* padrão: não */ } })();
@@ -315,6 +331,7 @@ export default function RotinaInteligente({ onFechar, i18n, idioma, quota, temIA
     const e = RI.primeiraEtapaComErro(limpas);
     if (e >= 0) { setEtapa(e); setFase("perguntas"); setMostrarErros(true); return; }
     if (!quota || !temIA) { onVerPlanos && onVerPlanos(); return; }
+    if (!exigirConcordanciaPerfil()) return;
     ocupadoRef.current = true; setErroGeracao("");
     const uso = await quota.consumir(IA_CONFIG.recursoRotina);
     if (!uso.ok) {
@@ -402,6 +419,7 @@ export default function RotinaInteligente({ onFechar, i18n, idioma, quota, temIA
   };
   const pedirAnaliseIA = async () => {
     if (ocupadoRef.current || !estado || !estado.perfil) return;
+    if (!concordaPerfil) { setReavErro(tr("Autorize o envio do perfil na tela do plano antes de pedir a análise à IA.")); return; }
     ocupadoRef.current = true; setReavErro(""); setReavCarregando(true);
     const uso = await quota.consumir(IA_CONFIG.recursoRotina);
     if (!uso.ok) { ocupadoRef.current = false; setReavCarregando(false); setReavErro(uso.motivo === "limite_mensal" ? trt("Você usou os {0} usos de IA deste mês.", [uso.limite]) : tr("Seu plano atual não inclui esse recurso.")); return; }
@@ -531,6 +549,10 @@ export default function RotinaInteligente({ onFechar, i18n, idioma, quota, temIA
         {nutriPrevia && nutriPrevia.modo !== "completo" && nutriPrevia.textoLimite && <div style={avisoEstilo}>{nutriPrevia.textoLimite.map((x, i) => <div key={i}>{tr(x)}</div>)}</div>}
         {nutriPrevia && nutriPrevia.avisos.map((a, i) => <div key={i} style={avisoEstilo}>{tr(a)}</div>)}
         {erroGeracao && <div style={{ ...avisoEstilo, borderColor: "rgba(255,107,94,0.5)", background: "rgba(255,107,94,0.12)" }} role="alert">⚠️ {erroGeracao}</div>}
+        <label style={{ display: "flex", gap: 10, alignItems: "flex-start", fontSize: 13, lineHeight: 1.45, marginBottom: 10, cursor: "pointer" }}>
+          <input type="checkbox" checked={concordaPerfil} onChange={(ev) => marcarConcordaPerfil(ev.target.checked)} data-testid="concordar-perfil-plano" style={{ marginTop: 3, width: 18, height: 18 }} />
+          <span>{tr("Concordo em enviar meu perfil confirmado (idade, sexo, altura, peso, objetivos, limitações, restrições alimentares e sono) à IA para gerar este plano. Você pode retirar esta concordância a qualquer momento pelo menu.")}</span>
+        </label>
         <button type="button" style={botaoPrim} onClick={gerarPlano} data-testid="gerar-rotina">{tr("Gerar minha rotina")}</button>
         <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
           <button type="button" style={{ ...botaoSec, flex: 1 }} onClick={() => editarEtapa(0)}>{tr("Editar respostas")}</button>
