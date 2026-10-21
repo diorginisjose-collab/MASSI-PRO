@@ -5033,6 +5033,14 @@ function AppMassiPro({ onSolicitarRemount }) {
   const [iaTela, setIaTela] = useState(null);
   const [pendenteIA, setPendenteIA] = useState(null); // tela de IA aguardando consentimento
   const abrirComConsentimento = async (tela) => {
+    // Recursos de IA: só para maiores de 18 anos, com data de nascimento informada
+    let nascimentoPerfil = null;
+    try { const r = await window.storage.get("onboarding-perfil"); if (r && r.value) nascimentoPerfil = JSON.parse(r.value).nascimento; } catch (e) { nascimentoPerfil = null; }
+    const idadePerfil = idadeDeNascimentoISO(nascimentoPerfil);
+    if (idadePerfil === null || idadePerfil < 18) {
+      setInfoModal({ titulo: "Recurso de IA indisponível", corpo: idadePerfil === null ? "Para usar os recursos de IA, informe sua data de nascimento no perfil." : "Os recursos de IA são destinados a maiores de 18 anos." });
+      return;
+    }
     let consentido = false;
     try { const r = await window.storage.get("consentimento-ia"); consentido = !!(r && r.value); } catch (e) { consentido = false; }
     if (consentido) setIaTela(tela); else setPendenteIA(tela);
@@ -12023,6 +12031,17 @@ const CHAVES_BACKUP = [
 ];
 
 // Chaves globais do aparelho (valem para todos os perfis) que a exclusão total também remove
+// Idade em anos completos a partir de "AAAA-MM-DD"; devolve null se a data não estiver preenchida
+function idadeDeNascimentoISO(nascimento) {
+  if (!nascimento) return null;
+  const [a, m, d] = String(nascimento).split("-").map(Number);
+  if (!a || !m || !d) return null;
+  const h = new Date();
+  let idade = h.getFullYear() - a;
+  if (h.getMonth() + 1 < m || (h.getMonth() + 1 === m && h.getDate() < d)) idade -= 1;
+  return idade;
+}
+
 const CHAVES_GLOBAIS_EXCLUSAO = ["perfis-lista", "perfil-ativo-id", "tema-app", "idioma-app", "assinatura-massipro", "uso-ia-massipro", "dietas-cache", "ia-botao-pos", "foto-compartilhamento", "deload-resposta-semana", "troca-treino-resposta-semana", "dieta-cliques-hoje"];
 
 // Chaves criadas depois do backup e que também precisam ser apagadas na exclusão de dados

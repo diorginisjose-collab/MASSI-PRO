@@ -553,6 +553,7 @@ export default function RotinaInteligente({ onFechar, i18n, idioma, quota, temIA
           <input type="checkbox" checked={concordaPerfil} onChange={(ev) => marcarConcordaPerfil(ev.target.checked)} data-testid="concordar-perfil-plano" style={{ marginTop: 3, width: 18, height: 18 }} />
           <span>{tr("Concordo em enviar meu perfil confirmado (idade, sexo, altura, peso, objetivos, limitações, restrições alimentares e sono) à IA para gerar este plano. Você pode retirar esta concordância a qualquer momento pelo menu.")}</span>
         </label>
+        <div style={{ ...textoSuave, fontSize: 12, marginBottom: 8 }}>{tr("Sugestão educativa. Não substitui médico, nutricionista ou educador físico.")}</div>
         <button type="button" style={botaoPrim} onClick={gerarPlano} data-testid="gerar-rotina">{tr("Gerar minha rotina")}</button>
         <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
           <button type="button" style={{ ...botaoSec, flex: 1 }} onClick={() => editarEtapa(0)}>{tr("Editar respostas")}</button>
