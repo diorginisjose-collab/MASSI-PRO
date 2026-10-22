@@ -6153,7 +6153,9 @@ function AppMassiPro({ onSolicitarRemount }) {
     } catch (e) {
       // segue mesmo se falhar
     }
-    onSolicitarRemount();
+    // Recarrega a página: o armazenamento escolhe o perfil ativo só no início, então o perfil novo
+    // precisa de um carregamento completo para ler os próprios dados (e aparecer o questionário).
+    try { window.location.reload(); } catch (e) { onSolicitarRemount(); }
   };
 
   const criarPerfil = async (nome) => {
@@ -11518,6 +11520,7 @@ function OnboardingModal({ onConcluir }) {
   const [nivel, setNivel] = useState("Iniciante");
   const [restricoes, setRestricoes] = useState([]);
   const [erroNome, setErroNome] = useState(false);
+  const [erroNascimento, setErroNascimento] = useState("");
 
   const anoAtualOnboarding = new Date().getFullYear();
   const anosNascimento = Array.from({ length: 100 }, (_, i) => anoAtualOnboarding - i);
@@ -11538,7 +11541,23 @@ function OnboardingModal({ onConcluir }) {
       setErroNome(true);
       return;
     }
-    const nascimento = diaNasc && mesNasc && anoNasc ? `${anoNasc}-${mesNasc}-${diaNasc}` : "";
+    // Data de nascimento obrigatória: define a idade (IA só para maiores de 18) e a TMB
+    if (!diaNasc || !mesNasc || !anoNasc) {
+      setErroNascimento("Informe sua data de nascimento completa (dia, mês e ano).");
+      return;
+    }
+    const d = Number(diaNasc), m = Number(mesNasc), a = Number(anoNasc);
+    const hoje = new Date();
+    const dataNasc = new Date(a, m - 1, d);
+    const valida = dataNasc.getFullYear() === a && dataNasc.getMonth() === m - 1 && dataNasc.getDate() === d && dataNasc <= hoje;
+    let anos = hoje.getFullYear() - a;
+    if (hoje.getMonth() + 1 < m || (hoje.getMonth() + 1 === m && hoje.getDate() < d)) anos -= 1;
+    if (!valida || anos < 10 || anos > 110) {
+      setErroNascimento("Data de nascimento inválida. Confira o dia, o mês e o ano.");
+      return;
+    }
+    setErroNascimento("");
+    const nascimento = `${anoNasc}-${mesNasc}-${diaNasc}`;
     onConcluir({ nome: nome.trim(), idade, nascimento, horario, objetivo, nivel, restricoes });
   };
 
@@ -11565,6 +11584,7 @@ function OnboardingModal({ onConcluir }) {
             />
           </div>
           {erroNome && <span style={styles.avalErroMsg}>{tr("Digite seu nome pra continuar")}</span>}
+          {erroNascimento && <span style={styles.avalErroMsg}>{tr(erroNascimento)}</span>}
         </div>
 
         <div style={styles.onboardingCampoNovo}>
