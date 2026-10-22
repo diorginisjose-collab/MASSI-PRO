@@ -39,3 +39,16 @@ export async function lerPassosHojeNativos() {
   try { const r = await p.lerPassosHoje(); const n = Number(r && r.passos); return Number.isFinite(n) && n >= 0 ? Math.round(n) : null; }
   catch (e) { return null; }
 }
+
+// Contagem automática (quando o plugin nativo existir): iniciar e parar o serviço de passos.
+export async function iniciarContagemNativa() {
+  const p = pluginPassos();
+  if (!p) return { status: "indisponivel" };
+  try { await p.iniciar(); return { status: "ativo" }; } catch (e) { return { status: "erro" }; }
+}
+
+export async function pararContagemNativa() {
+  const p = pluginPassos();
+  if (!p) return { status: "indisponivel" };
+  try { await p.parar(); return { status: "inativo" }; } catch (e) { return { status: "erro" }; }
+}

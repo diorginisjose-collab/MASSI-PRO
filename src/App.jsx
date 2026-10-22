@@ -17629,6 +17629,7 @@ function BotaoIAFlutuante({ onAbrir, rotulo, btnRef }) {
 function TourOverlay({ alvoRef, texto, onProximo, onPular, ultimo }) {
   const [rect, setRect] = useState(null);
   const [semAlvo, setSemAlvo] = useState(false);
+  const [pronto, setPronto] = useState(false); // balão só aparece depois que a tela terminou de rolar
   const balaoRef = useRef(null);
 
   useEffect(() => {
@@ -17637,6 +17638,7 @@ function TourOverlay({ alvoRef, texto, onProximo, onPular, ultimo }) {
     const timers = [];
     setRect(null);
     setSemAlvo(false);
+    setPronto(false);
     function medir() {
       if (cancelado || !alvoRef || !alvoRef.current) return;
       setRect(alvoRef.current.getBoundingClientRect());
@@ -17646,6 +17648,7 @@ function TourOverlay({ alvoRef, texto, onProximo, onPular, ultimo }) {
       // 1) leva o item para a tela; 2) confere de novo depois que a página se ajusta
       tourRolarAte(el, false);
       timers.push(setTimeout(medir, 60));
+      timers.push(setTimeout(() => setPronto(true), 700));
       timers.push(setTimeout(() => {
         if (cancelado || !alvoRef.current) return;
         tourRolarAte(alvoRef.current, true);
@@ -17656,6 +17659,7 @@ function TourOverlay({ alvoRef, texto, onProximo, onPular, ultimo }) {
     } else {
       // Item não está na tela agora: mostra só o balão, sem travar o tutorial.
       setSemAlvo(true);
+      setPronto(true);
     }
     window.addEventListener("resize", medir, { passive: true });
     window.addEventListener("scroll", medir, { passive: true, capture: true });
@@ -17701,6 +17705,7 @@ function TourOverlay({ alvoRef, texto, onProximo, onPular, ultimo }) {
   const modo = alvoGrande ? "fixo" : cabeEmbaixo ? "embaixo" : cabeEmCima ? "emcima" : "fixo";
   const posBalao = modo === "fixo" ? { bottom: 16, top: "auto" } : { top: modo === "embaixo" ? topoEmbaixo : topoEmCima };
 
+  if (!pronto) return null;
   return (
     <>
       <div style={styles.tourBackdrop} onClick={onPular} />

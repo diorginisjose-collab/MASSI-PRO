@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import * as P from "./passos.js";
 import { tmbKcal, idadeDeNascimento } from "./tmb.js";
-import { nativoDisponivel, estadoPassosNativos, pedirPermissaoPassos, lerPassosHojeNativos } from "./ponte.js";
+import { nativoDisponivel, estadoPassosNativos, pedirPermissaoPassos, lerPassosHojeNativos, iniciarContagemNativa, pararContagemNativa } from "./ponte.js";
 
 const CHAVE_HIST = "passos-historico";  // { "AAAA-MM-DD": { passos, km, kcal, tmb, idade } }
 
@@ -63,6 +63,33 @@ export default function ContadorPassos({ onCompartilhar }) {
     return () => { vivo = false; };
   }, []);
   // Só aparece quando o app é nativo e o plugin existe. Não grava nada sem a leitura real.
+  // Com a contagem automática ativa, o total de hoje vem do celular ao abrir o cartão
+  useEffect(() => {
+    let vivo = true;
+    (async () => {
+      if (!(pluginPassos_ok() && nativo.status === "ok")) return;
+      const n = await lerPassosHojeNativos();
+      if (vivo && n !== null) {
+        const hojeAgora = hojeISO();
+        setRegistros((prev) => { const novo = { ...prev, [hojeAgora]: n }; gravar(CHAVE, novo); return novo; });
+        await gravarHistorico(n);
+      }
+    })();
+    return () => { vivo = false; };
+  }, [nativo.status]);
+
+  const ativarContagem = async () => {
+    const perm = nativo.status === "ok" ? { status: "ok" } : await pedirPermissaoPassos();
+    if (perm.status !== "ok") { setNativo(perm); setAviso("Permita o acesso aos passos do celular para ativar a contagem automática."); return; }
+    const r = await iniciarContagemNativa();
+    if (r.status === "ativo") { setNativo({ status: "ativo" }); setAviso(""); }
+    else setAviso("Não foi possível ativar a contagem automática agora.");
+  };
+  const desativarContagem = async () => {
+    await pararContagemNativa();
+    setNativo({ status: "ok" }); setAviso("Contagem automática desativada. Você pode continuar digitando os passos.");
+  };
+
   const sincronizarNativo = async () => {
     if (nativo.status !== "ok") {
       const r = await pedirPermissaoPassos();
@@ -152,6 +179,16 @@ export default function ContadorPassos({ onCompartilhar }) {
         <div><div style={{ fontSize: 20, fontWeight: 800 }} data-testid="total-kcal">{resumo.kcal === null ? "—" : Math.round(resumo.kcal)}</div><div style={{ fontSize: 11.5, opacity: 0.75 }}>kcal (estimado)</div></div>
       </div>
 
+      {nativoDisponivel() && pluginPassos_ok() && (
+        <div style={{ background: "rgba(0,0,0,0.2)", borderRadius: 10, padding: 10, marginBottom: 8, fontSize: 12.5 }} data-testid="bloco-contagem-automatica">
+          <div style={{ marginBottom: 6 }}>{nativo.status === "ativo" ? "Contagem automática ativa: os passos de hoje vêm do celular." : "Contagem automática: desligada."}</div>
+          {nativo.status === "ativo" ? (
+            <button type="button" onClick={desativarContagem} data-testid="desativar-contagem" style={{ width: "100%", border: "1px solid rgba(128,128,128,0.4)", borderRadius: 8, padding: 8, background: "transparent", color: "inherit", cursor: "pointer", fontWeight: 700 }}>Desativar</button>
+          ) : (
+            <button type="button" onClick={ativarContagem} data-testid="ativar-contagem" style={{ width: "100%", border: "none", borderRadius: 8, padding: 8, background: "#A7FF00", color: "#15181B", cursor: "pointer", fontWeight: 800 }}>Ativar</button>
+          )}
+        </div>
+      )}
       {nativoDisponivel() && pluginPassos_ok() && (
         <button type="button" onClick={sincronizarNativo} data-testid="sincronizar-passos" style={{ width: "100%", border: "none", borderRadius: 10, padding: "9px", background: "#A7FF00", color: "#15181B", fontWeight: 800, cursor: "pointer", marginBottom: 8 }}>Ler passos do celular</button>
       )}
