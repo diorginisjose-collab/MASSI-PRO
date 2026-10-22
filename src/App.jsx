@@ -5033,6 +5033,15 @@ function AppMassiPro({ onSolicitarRemount }) {
   const [showPlanos, setShowPlanos] = useState(false);
   const [iaTela, setIaTela] = useState(null);
   const [pendenteIA, setPendenteIA] = useState(null); // tela de IA aguardando consentimento
+  const [editandoQuestionario, setEditandoQuestionario] = useState(false);
+  const [dadosEdicao, setDadosEdicao] = useState(null);
+  const abrirEdicaoQuestionario = async () => {
+    let dados = {};
+    try { const r = await window.storage.get("onboarding-perfil"); if (r && r.value) dados = JSON.parse(r.value) || {}; } catch (e) { dados = {}; }
+    setDadosEdicao(dados);
+    setShowPerfis(false);
+    setEditandoQuestionario(true);
+  };
   const abrirComConsentimento = async (tela) => {
     // Recursos de IA: só para maiores de 18 anos, com data de nascimento informada
     let nascimentoPerfil = null;
@@ -5563,6 +5572,8 @@ function AppMassiPro({ onSolicitarRemount }) {
         if (!onboardingRes || !onboardingRes.value) setOnboardingPendente(true);
         else {
           const perfilSalvo = JSON.parse(onboardingRes.value);
+          // Cadastro antigo sem data de nascimento: pede a data no questionário, já preenchido
+          if (perfilSalvo && !perfilSalvo.nascimento) { setDadosEdicao(perfilSalvo); setOnboardingPendente(true); }
           if (perfilSalvo && perfilSalvo.nivel) setNivelUsuario(perfilSalvo.nivel);
           if (perfilSalvo && perfilSalvo.objetivo) setObjetivoUsuario(perfilSalvo.objetivo);
           if (perfilSalvo && perfilSalvo.restricoes) setRestricoesFisicas(perfilSalvo.restricoes);
@@ -7426,6 +7437,20 @@ function AppMassiPro({ onSolicitarRemount }) {
         }
       `)}</style>
 
+      {editandoQuestionario && dadosEdicao && (
+        <OnboardingModal
+          inicial={dadosEdicao}
+          onCancelar={() => setEditandoQuestionario(false)}
+          onConcluir={async (r) => {
+            setEditandoQuestionario(false);
+            if (r.nivel) setNivelUsuario(r.nivel);
+            if (r.objetivo) setObjetivoUsuario(r.objetivo);
+            if (r.restricoes) setRestricoesFisicas(r.restricoes);
+            try { await window.storage.set("onboarding-perfil", JSON.stringify(r)); } catch (e) { /* segue */ }
+            renomearPerfil(perfilAtivoId, r.nome);
+          }}
+        />
+      )}
       {pendenteIA && (
         <ConsentimentoIA
           onCancelar={() => setPendenteIA(null)}
@@ -7821,6 +7846,7 @@ function AppMassiPro({ onSolicitarRemount }) {
           onCriar={criarPerfil}
           onApagar={apagarPerfil}
           onRenomear={renomearPerfil}
+          onEditarQuestionario={abrirEdicaoQuestionario}
           onFechar={() => setShowPerfis(false)}
         />
       )}
@@ -7899,6 +7925,7 @@ function AppMassiPro({ onSolicitarRemount }) {
 
       {onboardingPendente && perfilVerificado && (
         <OnboardingModal
+          inicial={dadosEdicao || undefined}
           onConcluir={async (respostas) => {
             setOnboardingPendente(false);
             setMostrarBoraComecar(true);
@@ -11509,16 +11536,18 @@ function EvolucaoTab({ onAplicarTreino, refsTour }) {
 }
 
 
-function OnboardingModal({ onConcluir }) {
-  const [nome, setNome] = useState("");
-  const [idade, setIdade] = useState("");
-  const [diaNasc, setDiaNasc] = useState("");
-  const [mesNasc, setMesNasc] = useState("");
-  const [anoNasc, setAnoNasc] = useState("");
-  const [horario, setHorario] = useState("Manhã");
-  const [objetivo, setObjetivo] = useState("Hipertrofia");
-  const [nivel, setNivel] = useState("Iniciante");
-  const [restricoes, setRestricoes] = useState([]);
+function OnboardingModal({ onConcluir, inicial, onCancelar }) {
+  const ini = inicial || {};
+  const [anoI, mesI, diaI] = String(ini.nascimento || "").split("-");
+  const [nome, setNome] = useState(ini.nome || "");
+  const [idade, setIdade] = useState(ini.idade || "");
+  const [diaNasc, setDiaNasc] = useState(diaI || "");
+  const [mesNasc, setMesNasc] = useState(mesI || "");
+  const [anoNasc, setAnoNasc] = useState(anoI || "");
+  const [horario, setHorario] = useState(ini.horario || "Manhã");
+  const [objetivo, setObjetivo] = useState(ini.objetivo || "Hipertrofia");
+  const [nivel, setNivel] = useState(ini.nivel || "Iniciante");
+  const [restricoes, setRestricoes] = useState(Array.isArray(ini.restricoes) ? ini.restricoes : []);
   const [erroNome, setErroNome] = useState(false);
   const [erroNascimento, setErroNascimento] = useState("");
 
@@ -11676,6 +11705,9 @@ function OnboardingModal({ onConcluir }) {
           </div>
         </div>
 
+        {onCancelar && (
+          <button type="button" onClick={onCancelar} style={{ width: "100%", marginBottom: 8, border: "1px solid rgba(128,128,128,0.4)", borderRadius: 12, padding: 12, background: "transparent", color: "inherit", cursor: "pointer" }}>{tr("Cancelar")}</button>
+        )}
         <button style={styles.onboardingContinuarBtn} onClick={confirmar}>
           {tr("Continuar")}</button>
       </div>
@@ -11738,7 +11770,7 @@ function BuscaResultados({ termo, onAbrir }) {
   );
 }
 
-function PerfilModal({ perfis, perfilAtivoId, onTrocar, onCriar, onApagar, onRenomear, onFechar }) {
+function PerfilModal({ perfis, perfilAtivoId, onTrocar, onCriar, onApagar, onRenomear, onEditarQuestionario, onFechar }) {
   const [novoNome, setNovoNome] = useState("");
   const [editandoId, setEditandoId] = useState(null);
   const [nomeEditado, setNomeEditado] = useState("");
@@ -11759,6 +11791,9 @@ function PerfilModal({ perfis, perfilAtivoId, onTrocar, onCriar, onApagar, onRen
         <button style={styles.modalClose} onClick={onFechar} aria-label={tr("Fechar")}>×</button>
         <div style={styles.eyebrow}>{tr("PERFIS")}</div>
         <h2 style={styles.modalTitle}>{tr("Quem está treinando?")}</h2>
+        {onEditarQuestionario && (
+          <button type="button" onClick={onEditarQuestionario} data-testid="editar-dados-perfil" style={{ ...styles.saveButton, marginBottom: 12 }}>{tr("Editar meus dados (questionário)")}</button>
+        )}
         <p style={styles.modalSubtitle}>{tr("Cada perfil tem sua própria rotina, histórico e avaliações. Toque no lápis pra colocar seu nome.")}</p>
 
         <div style={styles.perfilLista}>
