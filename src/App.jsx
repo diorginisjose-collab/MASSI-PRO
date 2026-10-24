@@ -7,6 +7,7 @@ import ContadorPassos, { compartilharResumo } from "./passos/ContadorPassos.jsx"
 import ResumoPassosEvolucao from "./passos/ResumoPassosEvolucao.jsx";
 import ConsentimentoIA from "./ia/ConsentimentoIA.jsx";
 import IdentificarAparelho from "./ia/IdentificarAparelho.jsx";
+import IlustracaoAparelho from "./ia/IlustracaoAparelho.jsx";
 import { identificarAparelho } from "./ia/clienteIA.js";
 import { AssistenteIA, FotoAlimentos, DiarioAlimentar, RotinaInteligente, CartaoRotinaInteligente, lerEstadoRI, montarContextoUsuario } from "./ia/index.js";
 import { CalculadoraMassiCard } from "./calculadora/index.js";
@@ -5427,11 +5428,11 @@ function AppMassiPro({ onSolicitarRemount }) {
     return () => clearTimeout(timer);
   }, [tourAtivo, splashVisivel, onboardingPendente, loaded, filaTours, toursVistos]);
 
-  // Quem ganha o plano com IA recebe os balões de IA que ainda não apareceram
+  // Balão de identificar aparelho: aparece ao abrir a aba Rotina, uma vez e só para quem tem o plano com IA
   useEffect(() => {
-    if (!loaded || !vigente.temIA) return;
-    TOURS_IA.forEach((id) => { if (toursVistos[id] === false) enfileirarTour(id); });
-  }, [vigente.temIA, loaded]);
+    if (!loaded || splashVisivel || !vigente.temIA || activeTab !== "rotina") return;
+    if (toursVistos.aparelho === false) enfileirarTour("aparelho");
+  }, [activeTab, loaded, splashVisivel, vigente.temIA, toursVistos]);
 
   // Quando um balão termina, sai da fila
   useEffect(() => {
@@ -18393,22 +18394,10 @@ function DayCard({ entry, onFoco, onPeriodo, onAddExercicio, onRemoveExercicio, 
                     🔍
                   </button>
                 </div>
-                {(() => {
-                  const thumb = getThumbnailExercicio(ex);
-                  if (!thumb) return null;
-                  return (
-                    <div style={styles.exThumbGrandeWrap} onClick={() => onAbrirExercicio(ex)}>
-                      <img
-                        src={thumb}
-                        alt={trt("Capa do vídeo de {0}", [ex.name])}
-                        style={styles.exThumbGrande}
-                        loading="lazy"
-                        onError={(e) => { e.target.parentElement.style.display = "none"; }}
-                      />
-                      <div style={styles.exThumbGrandePlayBadge}>{tr("▶ Ver execução")}</div>
-                    </div>
-                  );
-                })()}
+                <div style={{ margin: "10px 0 6px", padding: "14px 10px 8px", borderRadius: 16, background: "radial-gradient(120% 90% at 50% 0%, rgba(167,255,0,0.10), transparent 60%), rgba(255,255,255,0.03)" }} onClick={() => onAbrirExercicio(ex)}>
+                  <IlustracaoAparelho nome={ex.maquina || (ex.maquinas && ex.maquinas[0])} altura={150} />
+                </div>
+                <button type="button" onClick={() => onAbrirExercicio(ex)} data-testid="ver-execucao-exercicio" style={{ width: "100%", border: "none", borderRadius: 12, padding: "11px", marginBottom: 10, background: "linear-gradient(160deg, #A7FF00, #6FCF00)", color: "#15181B", fontWeight: 800, fontSize: 14, cursor: "pointer", boxShadow: "0 6px 16px rgba(167,255,0,0.25)" }}>{tr("▶ Ver execução")}</button>
 
                 <div style={styles.novoCamposRow} ref={idx === 0 && refsTour ? refsTour.seriesReps : undefined}>
                   <div style={styles.novoCampoBloco}>
