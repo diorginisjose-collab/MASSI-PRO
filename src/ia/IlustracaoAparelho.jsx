@@ -70,20 +70,64 @@ function Barra() {
 }
 
 function Smith() {
+  // Vista em três quartos: coluna da frente, coluna de trás (mais escura) e barra com anilhas
+  const disco = (x, y, r, w) => (
+    <g key={x + "-" + y + "-" + r}>
+      <rect x={x} y={y - r} width={w} height={r * 2} rx={w / 2} fill="#0E1013" />
+      <rect x={x + w * 0.25} y={y - r + 2} width={w * 0.25} height={r * 2 - 4} rx={2} fill="#2A2F35" />
+      <ellipse cx={x + w} cy={y} rx={w * 0.25} ry={r} fill="#1B1F24" />
+    </g>
+  );
   return (
     <g>
-      <rect x="40" y="16" width="10" height="122" rx="3" fill="url(#metal)" />
-      <rect x="190" y="16" width="10" height="122" rx="3" fill="url(#metal)" />
-      <rect x="40" y="16" width="160" height="8" rx="3" fill="url(#metal)" />
-      <rect x="28" y="130" width="184" height="8" rx="3" fill="url(#metal)" />
-      {[[46, 46], [184, 46]].map(([x, y], i) => (
-        <rect key={i} x={x} y={y} width="16" height="6" rx="2" fill="url(#lime)" />
+      {/* base em L */}
+      <path d="M44 138 L120 138 L186 126 L186 134 L120 146 L44 146 Z" fill="url(#metal)" />
+      <rect x="40" y="140" width="32" height="8" rx="3" fill="#0E1013" />
+      <rect x="180" y="128" width="26" height="8" rx="3" fill="#0E1013" />
+      {/* coluna de trás (sombra) */}
+      <rect x="150" y="8" width="8" height="118" rx="2" fill="#5A6168" opacity="0.8" />
+      <rect x="110" y="8" width="8" height="10" fill="#5A6168" opacity="0.8" />
+      <path d="M156 126 Q168 122 178 128" fill="none" stroke="#5A6168" strokeWidth="3" />
+      {/* travessa superior de trás */}
+      <rect x="76" y="6" width="84" height="6" rx="2" fill="#5A6168" opacity="0.85" />
+      {/* coluna da frente */}
+      <rect x="62" y="16" width="10" height="122" rx="3" fill="url(#metal)" />
+      <rect x="63" y="20" width="2" height="112" fill="#fff" opacity="0.25" />
+      {[30, 40, 50, 60, 70, 80, 90, 100, 110].map((y) => (
+        <circle key={y} cx="67" cy={y} r="1.6" fill="#15181B" />
       ))}
-      <rect x="20" y="78" width="200" height="6" rx="3" fill="url(#metal)" />
-      {[[30, 60], [188, 60]].map(([x, y], i) => (
-        <rect key={i} x={x} y={y} width="12" height="36" rx="4" fill="url(#borracha)" />
+      {/* travessa superior da frente com alças */}
+      <rect x="62" y="16" width="100" height="7" rx="3" fill="url(#metal)" />
+      <path d="M92 16 Q100 6 112 14" fill="none" stroke="#C8CED4" strokeWidth="3" strokeLinecap="round" />
+      <path d="M124 16 Q132 6 144 14" fill="none" stroke="#C8CED4" strokeWidth="3" strokeLinecap="round" />
+      {/* coluna direita da frente */}
+      <rect x="150" y="14" width="10" height="122" rx="3" fill="url(#metal)" />
+      <rect x="151" y="18" width="2" height="112" fill="#fff" opacity="0.22" />
+      {[30, 40, 50, 60, 70, 80, 90, 100, 110].map((y) => (
+        <circle key={y} cx="155" cy={y} r="1.6" fill="#15181B" />
       ))}
-      <rect x="56" y="78" width="6" height="6" fill="url(#metal)" />
+      {/* trava de segurança (braços laterais) */}
+      <rect x="72" y="74" width="20" height="5" rx="2" fill="url(#metal)" />
+      <rect x="84" y="70" width="10" height="13" rx="2" fill="#0E1013" />
+      <rect x="140" y="74" width="18" height="5" rx="2" fill="url(#metal)" />
+      <rect x="136" y="70" width="10" height="13" rx="2" fill="#0E1013" />
+      {/* guias verticais da barra */}
+      <rect x="111" y="20" width="2.6" height="110" fill="#B9C0C7" />
+      <rect x="128" y="20" width="2.6" height="110" fill="#B9C0C7" />
+      {/* barra com anilhas */}
+      <rect x="22" y="58" width="196" height="3.5" rx="1.5" fill="#D6DCE2" />
+      <rect x="20" y="56" width="22" height="7" rx="2" fill="#B9C0C7" />
+      <rect x="194" y="56" width="22" height="7" rx="2" fill="#B9C0C7" />
+      <rect x="112" y="58" width="16" height="4" fill="#0E1013" />
+      {disco(44, 60, 22, 10)}
+      {disco(32, 60, 16, 8)}
+      {disco(190, 60, 22, 10)}
+      {disco(204, 60, 16, 8)}
+      {/* carrinho de travamento */}
+      <rect x="104" y="52" width="10" height="16" rx="2" fill="#0E1013" />
+      <rect x="140" y="52" width="10" height="16" rx="2" fill="#0E1013" />
+      {/* sombra no chão */}
+      <ellipse cx="120" cy="150" rx="88" ry="7" fill="url(#sombra)" />
     </g>
   );
 }
