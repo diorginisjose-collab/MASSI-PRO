@@ -108,7 +108,7 @@ async function contar(chave, ttlSeg) {
 async function dentroDoLimite(req, tipo, dispositivo) {
   const dia = new Date().toISOString().slice(0, 10);
   const ip = limpar((req.headers && (req.headers["x-forwarded-for"] || "")).toString().split(",")[0].trim(), 60) || "ip";
-  const padrao = tipo === "foto" ? process.env.LIMITE_FOTO_DIA || 40 : tipo === "rotina" ? process.env.LIMITE_ROTINA_DIA || 30 : process.env.LIMITE_CHAT_DIA || 150;
+  const padrao = (tipo === "foto" || tipo === "aparelho") ? process.env.LIMITE_FOTO_DIA || 40 : tipo === "rotina" ? process.env.LIMITE_ROTINA_DIA || 30 : process.env.LIMITE_CHAT_DIA || 150;
   const maxTipo = num(padrao, 1, 100000);
   const nDisp = await contar(`massi:${tipo}:${dia}:d:${limpar(dispositivo, 60)}`, 90000);
   if (nDisp > maxTipo) return false;
@@ -150,6 +150,32 @@ Tipos permitidos (JSON válido, no máximo 4 ações):
 - {"tipo":"abrir_foto"}  (abre o reconhecimento de alimentos por foto)
 - {"tipo":"abrir_diario"}  (abre o diário alimentar)
 Regras das ações: use SOMENTE dias que existem na ROTINA e nomes de exercícios que existem na rotina (campo "de"/"exercicio") ou na BIBLIOTECA (campo "para"), escritos exatamente como no contexto. O usuário sempre confirma antes de aplicar. Se trocar e ajustar o mesmo exercício, coloque primeiro a troca e depois o ajuste usando o NOVO nome (a troca volta séries e repetições ao padrão do novo exercício). Se não houver ação, NÃO escreva a tag.`;
+}
+
+function sistemaAparelho() {
+  return `Você identifica aparelhos de academia em fotos (máquinas, halteres, barras, cabos, bancos). Identifique o aparelho principal visível e diga qual grupo muscular ele trabalha. Se não for um aparelho de academia, diga isso.
+
+Responda APENAS com um JSON válido, sem texto antes ou depois, neste formato:
+{"identificado": true, "nome": "nome comum do aparelho em português", "grupo_muscular": "grupos musculares principais", "confianca": 0.0, "observacao": "uma frase curta sobre o aparelho ou sobre o que você vê"}
+
+Se não for possível identificar, use "identificado": false, "nome": "" e explique na observação.`;
+}
+
+function higienizarAparelho(texto) {
+  const ini = texto.indexOf("{"), fim = texto.lastIndexOf("}");
+  if (ini < 0 || fim <= ini) return null;
+  let j = null;
+  try { j = JSON.parse(texto.slice(ini, fim + 1)); } catch (e) { return null; }
+  if (!j || typeof j !== "object") return null;
+  const txt = (v, n) => (typeof v === "string" ? v.slice(0, n).trim() : "");
+  const conf = typeof j.confianca === "number" ? Math.max(0, Math.min(1, j.confianca)) : 0;
+  return {
+    identificado: j.identificado === true && txt(j.nome, 120) !== "",
+    nome: txt(j.nome, 120),
+    grupo_muscular: txt(j.grupo_muscular, 160),
+    confianca: conf,
+    observacao: txt(j.observacao, 300),
+  };
 }
 
 function sistemaFoto(idioma) {
@@ -376,12 +402,16 @@ export function higienizarRefeicao(bruto) {
 
 async function tratarFoto(req, res, corpo, idioma) {
   const img = corpo.imagem || {};
+  const modoAparelho = corpo.aparelho === true;
   const base64 = typeof img.base64 === "string" ? img.base64.replace(/^data:[^;]+;base64,/, "") : "";
   if (!base64 || TIPOS_IMAGEM.indexOf(img.mediaType) < 0) return responderJson(res, 400, { ok: false, erro: "imagem_invalida" });
   if (base64.length > LIMITES.imagemBase64) return responderJson(res, 413, { ok: false, erro: "imagem_grande" });
   if (!/^[A-Za-z0-9+/=\s]+$/.test(base64.slice(0, 2000))) return responderJson(res, 400, { ok: false, erro: "imagem_invalida" });
   const nota = limpar(corpo.nota, LIMITES.caracteresNota).trim();
 
+  if (process.env.IA_MODO_TESTE === "1" && modoAparelho) {
+    return responderJson(res, 200, { ok: true, identificado: true, nome: "Leg press 45°", grupo_muscular: "Quadríceps, glúteos e posterior da coxa", confianca: 0.8, observacao: "Modo de teste: valores de exemplo." });
+  }
   if (process.env.IA_MODO_TESTE === "1") {
     return responderJson(res, 200, { ok: true, comida: true, observacoes: "Modo de teste: valores de exemplo.", itens: [
       { nome: "Arroz branco", porcao_g: 150, calorias: 195, proteinas_g: 3.9, carboidratos_g: 42.6, gorduras_g: 0.4, confianca: 0.8 },
@@ -400,10 +430,10 @@ async function tratarFoto(req, res, corpo, idioma) {
         model: process.env.ANTHROPIC_MODEL_FOTO || "claude-sonnet-5-5",
         max_tokens: 1000,
         temperature: 0.2,
-        system: sistemaFoto(idioma),
+        system: modoAparelho ? sistemaAparelho() : sistemaFoto(idioma),
         messages: [{ role: "user", content: [
           { type: "image", source: { type: "base64", media_type: img.mediaType, data: base64 } },
-          { type: "text", text: "Analise esta refeição e responda só com o JSON." + (nota ? "\nDica do usuário sobre o prato: " + nota : "") },
+          { type: "text", text: modoAparelho ? "Identifique o aparelho de academia e responda só com o JSON." : "Analise esta refeição e responda só com o JSON." + (nota ? "\nDica do usuário sobre o prato: " + nota : "") },
         ] }],
       }),
     });
@@ -414,6 +444,11 @@ async function tratarFoto(req, res, corpo, idioma) {
   let dados = null;
   try { dados = await upstream.json(); } catch (e) { return responderJson(res, 502, { ok: false, erro: "servidor" }); }
   const texto = (dados.content || []).filter((b) => b.type === "text").map((b) => b.text).join("");
+  if (modoAparelho) {
+    const a = higienizarAparelho(texto);
+    if (!a) return responderJson(res, 502, { ok: false, erro: "resposta_invalida" });
+    return responderJson(res, 200, { ok: true, ...a });
+  }
   const r = higienizarRefeicao(texto);
   if (!r) return responderJson(res, 502, { ok: false, erro: "resposta_invalida" });
   return responderJson(res, 200, { ok: true, ...r });
@@ -429,7 +464,8 @@ export default async function handler(req, res) {
 
   const corpo = await lerCorpo(req);
   if (!corpo || typeof corpo !== "object") return responderJson(res, 400, { ok: false, erro: "pedido_invalido" });
-  const tipo = corpo.tipo === "foto" ? "foto" : corpo.tipo === "chat" ? "chat" : corpo.tipo === "rotina" ? "rotina" : null;
+  const aparelho = corpo.tipo === "aparelho";
+  const tipo = (corpo.tipo === "foto" || aparelho) ? "foto" : corpo.tipo === "chat" ? "chat" : corpo.tipo === "rotina" ? "rotina" : null;
   if (!tipo) return responderJson(res, 400, { ok: false, erro: "pedido_invalido" });
   const idioma = IDIOMAS[corpo.idioma] ? corpo.idioma : "pt";
   const dispositivo = limpar(corpo.dispositivo, 60) || "anon";
@@ -437,7 +473,7 @@ export default async function handler(req, res) {
   try {
     if (tipo === "chat") return await tratarChat(req, res, corpo, idioma);
     if (tipo === "rotina") return await tratarRotina(req, res, corpo, idioma);
-    return await tratarFoto(req, res, corpo, idioma);
+    return await tratarFoto(req, res, { ...corpo, aparelho }, idioma);
   } catch (e) {
     if (!res.headersSent) return responderJson(res, 500, { ok: false, erro: "servidor" });
     try { res.end(); } catch (e2) { /* já fechado */ }
