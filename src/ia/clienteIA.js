@@ -167,3 +167,19 @@ export async function prepararImagem(arquivo) {
   if (img.close) img.close();
   return { base64: grande.url.split(",")[1], mediaType: "image/jpeg", previa: grande.url, miniatura: mini.url, largura: grande.largura, altura: grande.altura };
 }
+
+// ---------- identificação de aparelho de academia ----------
+export async function identificarAparelho({ imagem, idioma, signal }) {
+  const resp = await postar({ tipo: "aparelho", idioma, imagem: { base64: imagem.base64, mediaType: imagem.mediaType } }, signal);
+  if (!resp.ok) throw await erroDaResposta(resp);
+  let j = null;
+  try { j = await resp.json(); } catch (e) { throw new ErroIA("resposta_invalida"); }
+  if (!j || !j.ok) throw new ErroIA((j && j.erro) || "servidor");
+  return {
+    identificado: !!j.identificado,
+    nome: j.nome || "",
+    grupo_muscular: j.grupo_muscular || "",
+    confianca: typeof j.confianca === "number" ? j.confianca : 0,
+    observacao: j.observacao || "",
+  };
+}
