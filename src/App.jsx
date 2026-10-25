@@ -5096,7 +5096,7 @@ function AppMassiPro({ onSolicitarRemount }) {
   const [pendenteIA, setPendenteIA] = useState(null); // tela de IA aguardando consentimento
   const [editandoQuestionario, setEditandoQuestionario] = useState(false);
   const [avisoPlanoIA, setAvisoPlanoIA] = useState(false);
-  const [quick, setQuick] = useState({ sexo: null, obj: "hipertrofia", nivel: "Iniciante", dias: 3, local: "academia" });
+  const [quick, setQuick] = useState({ sexo: null, obj: "hipertrofia", nivel: "Iniciante", dias: 4, local: "academia" });
   const montarPrimeiroTreino = () => {
     const params = { sexo: quick.sexo === "nd" ? null : quick.sexo, objetivo: quick.obj, nivel: quick.nivel, dias: quick.dias, duracao: 60, prioridade: "sugerida", local: quick.local, restricoes: [], variacao: 0 };
     try {
@@ -18509,10 +18509,22 @@ function DayCard({ entry, onFoco, onPeriodo, onAddExercicio, onRemoveExercicio, 
                     🔍
                   </button>
                 </div>
-                <div style={{ margin: "10px 0 6px", padding: "14px 10px 8px", borderRadius: 16, background: "radial-gradient(120% 90% at 50% 0%, rgba(167,255,0,0.10), transparent 60%), rgba(255,255,255,0.03)" }} onClick={() => onAbrirExercicio(ex)}>
-                  <IlustracaoAparelho nome={ex.maquina || (ex.maquinas && ex.maquinas[0])} altura={150} />
-                </div>
-                <button type="button" onClick={() => onAbrirExercicio(ex)} data-testid="ver-execucao-exercicio" style={{ width: "100%", border: "none", borderRadius: 12, padding: "11px", marginBottom: 10, background: "linear-gradient(160deg, #A7FF00, #6FCF00)", color: "#15181B", fontWeight: 800, fontSize: 14, cursor: "pointer", boxShadow: "0 6px 16px rgba(167,255,0,0.25)" }}>{tr("▶ Ver execução")}</button>
+                {(() => {
+                  const thumb = getThumbnailExercicio(ex);
+                  if (!thumb) return null;
+                  return (
+                    <div style={styles.exThumbGrandeWrap} onClick={() => onAbrirExercicio(ex)}>
+                      <img
+                        src={thumb}
+                        alt={trt("Capa do vídeo de {0}", [ex.name])}
+                        style={styles.exThumbGrande}
+                        loading="lazy"
+                        onError={(e) => { e.target.parentElement.style.display = "none"; }}
+                      />
+                      <div style={styles.exThumbGrandePlayBadge}>{tr("▶ Ver execução")}</div>
+                    </div>
+                  );
+                })()}
 
                 <div style={styles.novoCamposRow} ref={idx === 0 && refsTour ? refsTour.seriesReps : undefined}>
                   <div style={styles.novoCampoBloco}>
