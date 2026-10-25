@@ -1366,7 +1366,7 @@ const PERIODOS_ASSINATURA = [
 // (É AQUI que se muda preço. O Google Play / App Store precisam ter o mesmo valor.)
 const PRECOS_ASSINATURA = {
   pro: { mensal: 19.9, semestral: 99.9, anual: 159.9 },
-  ia: { mensal: 29.9, semestral: 149.9, anual: 239.9 },
+  ia: { mensal: 29.9, semestral: 149.9, anual: 249.9 },
 };
 
 // 🤖 FUNÇÕES DE IA e os limites de uso por mês.
