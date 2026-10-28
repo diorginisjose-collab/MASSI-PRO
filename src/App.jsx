@@ -5606,6 +5606,7 @@ function AppMassiPro({ onSolicitarRemount }) {
     }, 180);
     return () => clearTimeout(timer);
   }, [activeTab, diaParaFocar]);
+  useGuardaRolagem(activeTab === "rotina" && !tourAtivo && !diaParaFocar);
   const [exercicioAberto, setExercicioAberto] = useState(null);
   const [cronometro, setCronometro] = useState(null); // { totalSeg, restanteSeg, rodando, label }
   const [historico, setHistorico] = useState([]);
@@ -16127,14 +16128,8 @@ function CorpoSVG({ lado, volumePorRegiao, ativacao, piscando, largura = 140, al
   );
 }
 
-// volumePorRegiao: usado no Histórico (intensidade proporcional ao volume
-// acumulado). ativacao: usado no resumo pós-treino ({ regiao: "forte"|"suave" },
-// vindo de ativacaoMuscularExercicios) — tem prioridade sobre volumePorRegiao
-// quando os dois são passados.
-function MapaMuscularSVG({ volumePorRegiao, ativacao, piscando, mini }) {
-  const largura = mini ? 68 : 140;
-  const altura = mini ? 155 : 320;
-  // Figura segue automaticamente o sexo informado no questionário ou na avaliação
+// Figura do corpo (masculino/feminino) conforme o sexo informado no questionário ou na avaliação.
+function useFiguraCorpo() {
   const [figura, setFigura] = useState("masculino");
   useEffect(() => {
     let vivo = true;
@@ -16152,6 +16147,212 @@ function MapaMuscularSVG({ volumePorRegiao, ativacao, piscando, mini }) {
     })();
     return () => { vivo = false; };
   }, []);
+  return figura;
+}
+
+// Imagem-base + máscaras de um lado do corpo, conforme a figura.
+function corpoAssets(lado, figura) {
+  const fem = figura === "feminino" && CORPO_FEMININO_DISPONIVEL;
+  return {
+    img: fem ? (lado === "frente" ? IMG_CORPO_FEM_FRENTE : IMG_CORPO_FEM_COSTAS) : (lado === "frente" ? IMG_CORPO_FRENTE : IMG_CORPO_COSTAS),
+    regioes: fem ? (lado === "frente" ? REGIOES_FEM_FRENTE : REGIOES_FEM_COSTAS) : (lado === "frente" ? REGIOES_FRENTE : REGIOES_COSTAS),
+  };
+}
+
+// ---- Massi Cross: músculos trabalhados no WOD ----
+const CROSS_NOME_REGIAO = {
+  "peito": "Peito", "deltoide-frente": "Ombros", "deltoide-costas": "Ombros", "trapezio": "Trapézio",
+  "costas": "Costas", "biceps": "Bíceps", "triceps": "Tríceps", "antebraco-frente": "Antebraços",
+  "antebraco-costas": "Antebraços", "abdomen": "Abdômen e core", "quadriceps": "Quadríceps",
+  "posterior-coxa": "Posterior de coxa", "gluteo": "Glúteos", "panturrilha": "Panturrilhas",
+};
+function crossRegioesDoTermo(parte) {
+  const norm = normalizarTermoMuscular(parte);
+  const achou = new Set(regioesParaTermo(parte));
+  if (/\bperna/.test(norm)) { achou.add("quadriceps"); achou.add("posterior-coxa"); }
+  if (norm.includes("braco")) { achou.add("biceps"); achou.add("triceps"); }
+  if (norm.includes("corpo inteiro")) ["peito", "costas", "deltoide-frente", "quadriceps", "gluteo", "abdomen"].forEach((r) => achou.add(r));
+  return [...achou];
+}
+function crossAcharExercicio(nome) {
+  const alvo = normalizarTermoMuscular(nome).replace(/\s*\(.*\)\s*/g, "").trim();
+  return CROSS_EXERCICIOS.find((e) => normalizarTermoMuscular(e.nome).replace(/\s*\(.*\)\s*/g, "").trim() === alvo) || null;
+}
+// Devolve { regiao: "forte" | "suave" }. O 1º músculo citado de cada exercício é o principal;
+// músculo que aparece em 2 ou mais exercícios do WOD também vira "forte" (acúmulo de trabalho).
+function ativacaoMuscularCross(exercicios) {
+  const principal = {};
+  const contagem = {};
+  (exercicios || []).forEach((ex) => {
+    const info = crossAcharExercicio(ex.exercicio || ex.nome || "");
+    if (!info) return;
+    const jaContou = new Set();
+    String(info.musculos || "").split(/,| e /).map((p) => p.trim()).filter(Boolean).forEach((parte, i) => {
+      crossRegioesDoTermo(parte).forEach((r) => {
+        if (i === 0 && !normalizarTermoMuscular(parte).includes("corpo inteiro")) principal[r] = true;
+        if (!jaContou.has(r)) { jaContou.add(r); contagem[r] = (contagem[r] || 0) + 1; }
+      });
+    });
+  });
+  const ativacao = {};
+  Object.keys(contagem).forEach((r) => { ativacao[r] = principal[r] || contagem[r] >= 2 ? "forte" : "suave"; });
+  return ativacao;
+}
+function crossTopMusculos(ativacao) {
+  const nomes = [];
+  Object.keys(ativacao || {}).filter((r) => ativacao[r] === "forte").forEach((r) => {
+    const n = CROSS_NOME_REGIAO[r] || r;
+    if (nomes.indexOf(n) < 0) nomes.push(n);
+  });
+  return nomes;
+}
+function crossTextoCompartilhar(registro, top) {
+  const tempo = formatarTempoCross(registro.tempoSeg || 0);
+  const rounds = (registro.tipo === "rounds" || registro.tipo === "amrap" || registro.tipo === "tabata") && registro.rounds ? ` (${registro.rounds} rounds)` : "";
+  const mus = top && top.length ? ` Mais trabalhado: ${top.slice(0, 4).join(", ")}.` : "";
+  return `🏆 Terminei o WOD ${registro.wodNome} no Massi Cross em ${tempo}${rounds}!${mus} 💪 ${REL_APP_URL}`;
+}
+function crossCarregarImagem(src) {
+  return new Promise((resolve, reject) => {
+    const im = new Image();
+    im.onload = () => resolve(im);
+    im.onerror = () => reject(new Error("imagem"));
+    im.src = src;
+  });
+}
+// Monta uma imagem 1080x1350 com o resultado e o corpo (frente e costas) com os músculos em vermelho.
+async function crossGerarImagem(registro, ativacao, figura, top) {
+  const W = 1080, H = 1350;
+  const cv = document.createElement("canvas");
+  cv.width = W; cv.height = H;
+  const c = cv.getContext("2d");
+  const g = c.createLinearGradient(0, 0, 0, H);
+  g.addColorStop(0, "#0E1013"); g.addColorStop(1, "#1A1E24");
+  c.fillStyle = g; c.fillRect(0, 0, W, H);
+  c.fillStyle = CROSS_LIME; c.fillRect(0, 0, W, 10);
+  c.textAlign = "center";
+  c.fillStyle = CROSS_LIME; c.font = "800 34px sans-serif"; c.fillText("MASSI CROSS", W / 2, 84);
+  c.fillStyle = "#fff"; c.font = "800 58px sans-serif"; c.fillText(String(registro.wodNome || "WOD").slice(0, 26), W / 2, 164);
+  c.font = "800 96px monospace"; c.fillText(formatarTempoCross(registro.tempoSeg || 0), W / 2, 270);
+  const temRounds = (registro.tipo === "rounds" || registro.tipo === "amrap" || registro.tipo === "tabata") && registro.rounds;
+  c.fillStyle = "#9AA3AE"; c.font = "600 34px sans-serif";
+  c.fillText(temRounds ? `${registro.rounds} rounds` : String(registro.tipo || "").toUpperCase(), W / 2, 322);
+  const bh = 780, bw = Math.round(bh * 0.437);
+  const gap = 70, x0 = Math.round((W - (bw * 2 + gap)) / 2), y0 = 370;
+  const lados = ["frente", "costas"];
+  for (let i = 0; i < lados.length; i++) {
+    const { img, regioes } = corpoAssets(lados[i], figura);
+    const x = x0 + i * (bw + gap);
+    try {
+      const base = await crossCarregarImagem(img);
+      c.save();
+      c.beginPath();
+      if (c.roundRect) c.roundRect(x, y0, bw, bh, 24); else c.rect(x, y0, bw, bh);
+      c.clip();
+      c.drawImage(base, x, y0, bw, bh);
+      for (let k = 0; k < regioes.length; k++) {
+        const nivel = ativacao[regioes[k].regiao];
+        if (!nivel) continue;
+        const m = await crossCarregarImagem(regioes[k].mascara);
+        c.globalAlpha = OPACIDADE_ATIVACAO[nivel];
+        c.drawImage(m, x, y0, bw, bh);
+      }
+      c.restore();
+    } catch (e) { c.restore(); }
+    c.globalAlpha = 1;
+  }
+  c.fillStyle = "#fff"; c.font = "800 40px sans-serif";
+  c.fillText("Onde mais trabalhou", W / 2, y0 + bh + 66);
+  const linhaTop = top && top.length ? top.slice(0, 4).join(" • ") : "Corpo inteiro";
+  c.fillStyle = CROSS_LIME;
+  let tam = 36;
+  c.font = "700 " + tam + "px sans-serif";
+  while (tam > 22 && c.measureText(linhaTop).width > W - 100) { tam -= 2; c.font = "700 " + tam + "px sans-serif"; }
+  c.fillText(linhaTop, W / 2, y0 + bh + 116);
+  c.fillStyle = "#9AA3AE"; c.font = "600 28px sans-serif";
+  c.fillText("Massi Pro", W / 2, H - 36);
+  return await new Promise((resolve, reject) => cv.toBlob((b) => (b ? resolve(b) : reject(new Error("blob"))), "image/png"));
+}
+
+// Resultado do WOD (Massi Cross): tempo, comparação, músculos trabalhados e compartilhar.
+function CrossResultadoTela({ registro, comparacao, melhorou, onVoltar }) {
+  const figura = useFiguraCorpo();
+  const [aviso, setAviso] = useState("");
+  const [gerando, setGerando] = useState(false);
+  const ativacao = registro.ativacaoMusculos && Object.keys(registro.ativacaoMusculos).length
+    ? registro.ativacaoMusculos
+    : ativacaoMuscularCross(registro.exercicios || []);
+  const temMapa = Object.keys(ativacao).length > 0;
+  const top = crossTopMusculos(ativacao);
+  const compartilhar = async () => {
+    if (gerando) return;
+    setGerando(true);
+    setAviso("");
+    const texto = crossTextoCompartilhar(registro, top);
+    try {
+      if (temMapa && navigator.share && navigator.canShare) {
+        try {
+          const blob = await crossGerarImagem(registro, ativacao, figura, top);
+          const arquivo = new File([blob], "massi-cross.png", { type: "image/png" });
+          if (navigator.canShare({ files: [arquivo] })) {
+            await navigator.share({ files: [arquivo], text: texto });
+            setGerando(false);
+            return;
+          }
+        } catch (e) { if (e && e.name === "AbortError") { setGerando(false); return; } }
+      }
+      if (navigator.share) {
+        await navigator.share({ text: texto });
+      } else if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(texto);
+        setAviso(tr("Texto copiado! Cole onde quiser compartilhar."));
+      }
+    } catch (e) { /* cancelado pelo usuário */ }
+    setGerando(false);
+  };
+  return (
+    <div>
+      <div style={styles.crossResultadoEmoji}>{tr("🏆 WOD CONCLUÍDO!")}</div>
+      <div style={styles.crossResultadoTempo}>{tr(formatarTempoCross(registro.tempoSeg))}</div>
+      {(registro.tipo === "rounds" || registro.tipo === "amrap" || registro.tipo === "tabata") && (
+        <div style={styles.crossResultadoDetalhe}>{tr(registro.rounds)} {tr("ROUNDS")}</div>
+      )}
+      <div style={styles.crossResultadoDetalhe}>{tr(registro.wodNome)}</div>
+      {melhorou && !comparacao && (
+        <div style={styles.crossResultadoComparacao}>{tr("🏅 Novo recorde pessoal nesse WOD!")}</div>
+      )}
+      {comparacao && <div style={styles.crossResultadoComparacao}>{tr(comparacao)}</div>}
+      {temMapa && (
+        <section style={{ background: CROSS_CARD_DARK, borderRadius: 16, padding: "14px 12px 12px", margin: "6px 0 14px", border: "1px solid rgba(255,255,255,0.08)" }}>
+          <div style={{ fontWeight: 800, fontSize: 15, color: "#fff", textAlign: "center", marginBottom: 2 }}>{tr("🔥 Onde você mais trabalhou")}</div>
+          {top.length > 0 && (
+            <div style={{ fontSize: 12.5, color: CROSS_LIME, textAlign: "center", fontWeight: 700, marginBottom: 8 }}>{top.slice(0, 4).map((n) => tr(n)).join(" • ")}</div>
+          )}
+          <MapaMuscularSVG ativacao={ativacao} piscando />
+          <div style={{ display: "flex", justifyContent: "center", gap: 14, fontSize: 11.5, color: CROSS_TEXT_DIM, marginTop: 8 }}>
+            <span><span style={{ display: "inline-block", width: 10, height: 10, borderRadius: 3, background: "rgba(220,38,38,0.92)", marginRight: 5 }} />{tr("Mais trabalhado")}</span>
+            <span><span style={{ display: "inline-block", width: 10, height: 10, borderRadius: 3, background: "rgba(220,38,38,0.32)", marginRight: 5 }} />{tr("Apoio")}</span>
+          </div>
+        </section>
+      )}
+      <button style={{ ...styles.saveButton, marginBottom: 10 }} onClick={compartilhar} disabled={gerando} data-testid="cross-compartilhar">
+        {gerando ? tr("Gerando imagem…") : tr("📤 Compartilhar resultado")}
+      </button>
+      {aviso && <div style={{ fontSize: 12.5, textAlign: "center", color: CROSS_LIME, marginBottom: 10 }}>{aviso}</div>}
+      <button style={styles.trocaManterBtn} onClick={onVoltar}>{tr("Voltar pra Massi Cross")}</button>
+    </div>
+  );
+}
+
+// volumePorRegiao: usado no Histórico (intensidade proporcional ao volume
+// acumulado). ativacao: usado no resumo pós-treino ({ regiao: "forte"|"suave" },
+// vindo de ativacaoMuscularExercicios) — tem prioridade sobre volumePorRegiao
+// quando os dois são passados.
+function MapaMuscularSVG({ volumePorRegiao, ativacao, piscando, mini }) {
+  const largura = mini ? 68 : 140;
+  const altura = mini ? 155 : 320;
+  // Figura segue automaticamente o sexo informado no questionário ou na avaliação
+  const figura = useFiguraCorpo();
   return (
     <div style={styles.mapaMuscularWrap}>
       <div style={{ ...styles.mapaMuscularImgRow, gap: mini ? 8 : 16 }}>
@@ -17352,6 +17553,9 @@ function MassiCrossTab({ refWodTour, refCategorias, refGerador, refAtalhos }) {
       tempoSeg: resultado.tempoSeg,
       rounds: resultado.rounds,
       nivel: wod.nivel,
+      duracaoMin: Math.max(1, Math.round((resultado.tempoSeg || 0) / 60)),
+      exercicios: (wod.exercicios || []).map((e) => ({ exercicio: e.exercicio, qtd: e.qtd })),
+      ativacaoMusculos: ativacaoMuscularCross(wod.exercicios || []),
     };
     const novoHistorico = [...historico, registro];
     setHistorico(novoHistorico);
@@ -17466,21 +17670,7 @@ function MassiCrossTab({ refWodTour, refCategorias, refGerador, refAtalhos }) {
           : "Você repetiu exatamente o resultado anterior!";
       }
     }
-    return (
-      <div>
-        <div style={styles.crossResultadoEmoji}>{tr("🏆 WOD CONCLUÍDO!")}</div>
-        <div style={styles.crossResultadoTempo}>{tr(formatarTempoCross(registro.tempoSeg))}</div>
-        {(registro.tipo === "rounds" || registro.tipo === "amrap" || registro.tipo === "tabata") && (
-          <div style={styles.crossResultadoDetalhe}>{tr(registro.rounds)} {tr("ROUNDS")}</div>
-        )}
-        <div style={styles.crossResultadoDetalhe}>{tr(registro.wodNome)}</div>
-        {melhorou && !comparacao && (
-          <div style={styles.crossResultadoComparacao}>{tr("🏅 Novo recorde pessoal nesse WOD!")}</div>
-        )}
-        {comparacao && <div style={styles.crossResultadoComparacao}>{tr(comparacao)}</div>}
-        <button style={styles.saveButton} onClick={voltar}>{tr("Voltar pra Massi Cross")}</button>
-      </div>
-    );
+    return <CrossResultadoTela registro={registro} comparacao={comparacao} melhorou={melhorou} onVoltar={voltar} />;
   }
 
   // ---------- Biblioteca de exercícios ----------
@@ -17801,6 +17991,65 @@ function getUltimaDorRelacionada(nomeExercicio, dores) {
     })
     .sort((a, b) => (a.data < b.data ? 1 : -1))[0];
   return mesmoGrupo ? { ...mesmoGrupo, mesmoGrupo: true } : null;
+}
+
+// Guarda de rolagem: se a tela "pula" sozinha (sem o usuário tocar/rolar), volta pra onde estava.
+// Só vale quando nenhum tutorial está aberto e nenhuma navegação pediu a rolagem.
+function useGuardaRolagem(ativo) {
+  useEffect(() => {
+    if (!ativo || typeof window === "undefined") return undefined;
+    const pos = () => window.pageYOffset || document.documentElement.scrollTop || 0;
+    let ultima = pos();
+    let ultimaAtividade = Date.now();
+    let tocando = false;
+    let tipo = "toque"; // "toque" | "mouse"
+    const marcar = () => { ultimaAtividade = Date.now(); };
+    const aoTocar = () => { tocando = true; tipo = "toque"; marcar(); };
+    const aoSoltar = () => { tocando = false; marcar(); };
+    const aoMouse = () => { tipo = "mouse"; marcar(); };
+    // pointerdown diz se foi dedo ou mouse (o toque também gera "mousedown" de compatibilidade, que ignoramos)
+    const aoPonteiro = (e) => { tipo = e && e.pointerType === "mouse" ? "mouse" : "toque"; if (tipo === "toque") tocando = true; marcar(); };
+    const aoRolar = () => {
+      const atual = pos();
+      const salto = Math.abs(atual - ultima);
+      const recente = tocando || Date.now() - ultimaAtividade < 3000;
+      // Salto enorme num único evento, vindo de código (o dedo nunca anda tanto num quadro)
+      const pulouSozinho = tipo === "toque" && salto >= 400;
+      // Qualquer deslocamento com o usuário parado há tempo
+      const derivaSozinha = !recente && salto >= 80;
+      if (pulouSozinho || derivaSozinha) {
+        window.scrollTo({ top: ultima, behavior: "auto" });
+        return;
+      }
+      ultima = atual;
+    };
+    window.addEventListener("touchstart", aoTocar, { passive: true, capture: true });
+    window.addEventListener("touchend", aoSoltar, { passive: true, capture: true });
+    window.addEventListener("touchcancel", aoSoltar, { passive: true, capture: true });
+    window.addEventListener("pointerup", aoSoltar, { passive: true, capture: true });
+    window.addEventListener("pointercancel", aoSoltar, { passive: true, capture: true });
+    window.addEventListener("touchmove", marcar, { passive: true, capture: true });
+    window.addEventListener("pointerdown", aoPonteiro, { passive: true, capture: true });
+    window.addEventListener("wheel", aoMouse, { passive: true, capture: true });
+    window.addEventListener("keydown", aoMouse, { capture: true });
+    window.addEventListener("focusin", marcar, { capture: true });
+    window.addEventListener("resize", marcar, { passive: true });
+    window.addEventListener("scroll", aoRolar, { passive: true });
+    return () => {
+      window.removeEventListener("touchstart", aoTocar, { capture: true });
+      window.removeEventListener("touchend", aoSoltar, { capture: true });
+      window.removeEventListener("touchcancel", aoSoltar, { capture: true });
+      window.removeEventListener("pointerup", aoSoltar, { capture: true });
+      window.removeEventListener("pointercancel", aoSoltar, { capture: true });
+      window.removeEventListener("touchmove", marcar, { capture: true });
+      window.removeEventListener("pointerdown", aoPonteiro, { capture: true });
+      window.removeEventListener("wheel", aoMouse, { capture: true });
+      window.removeEventListener("keydown", aoMouse, { capture: true });
+      window.removeEventListener("focusin", marcar, { capture: true });
+      window.removeEventListener("resize", marcar);
+      window.removeEventListener("scroll", aoRolar);
+    };
+  }, [ativo]);
 }
 
 // Acha o contêiner que rola (a página inteira ou uma área interna).
