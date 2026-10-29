@@ -4911,6 +4911,9 @@ Object.assign(TRAD_TEXTOS.en, {"{0}/{1} dias": "{0}/{1} days", "ex: 40": "e.g. 4
 Object.assign(TRAD_TEXTOS.es, {"{0}/{1} dias": "{0}/{1} días", "ex: 40": "p. ej. 40", "ex: 60": "p. ej. 60", "ex: 79,8": "p. ej. 79,8", "ex: 178": "p. ej. 178", "ex: 29": "p. ej. 29", "ex: 25,7": "p. ej. 25,7", "ex: 35,9": "p. ej. 35,9", "ex: 8": "p. ej. 8", "ex: 44": "p. ej. 44", "ex: 72,5": "p. ej. 72,5", "ex: 175": "p. ej. 175", "ex: 84": "p. ej. 84", "ex: 38": "p. ej. 38", "ex: 98": "p. ej. 98", "ex: 100": "p. ej. 100", "ex: 35": "p. ej. 35", "ex: 56": "p. ej. 56", "ex: 40kg": "p. ej. 40kg"});
 Object.assign(TRAD_TEXTOS.en, {"✨ Montar um treino personalizado": "✨ Build a personalized workout", "Divisão, exercícios e volume feitos pro seu objetivo, nível, dias disponíveis e prioridades.": "Split, exercises and volume built around your goal, level, available days and priorities.", "Ou use um modelo pronto:": "Or use a ready-made template:", "TREINO PERSONALIZADO": "PERSONALIZED WORKOUT", "PRÉVIA DA SUA SEMANA": "PREVIEW OF YOUR WEEK", "Já preenchemos com o que sabemos de você. Ajuste o que quiser.": "We filled in what we know about you. Adjust anything you like.", "Alterar": "Change", "Lesões ou limitações": "Injuries or limitations", "Dias por semana": "Days per week", "Duração de cada treino": "Length of each workout", "{0} min": "{0} min", "Prioridade muscular": "Muscle priority", "Sugerida pra mim": "Suggested for me", "Equilibrado": "Balanced", "Superiores": "Upper body", "Glúteos": "Glutes", "Peito e costas": "Chest and back", "Ombros e braços": "Shoulders and arms", "Onde você treina": "Where you train", "Equipamentos limitados": "Limited equipment", "Em casa": "At home", "Sexo (só ajuda a sugerir a prioridade — você pode mudar)": "Sex (only helps suggest a priority — you can change it)", "Prefiro não informar": "Prefer not to say", "Saúde e bem-estar": "Health and well-being", "Gerar meu treino": "Generate my workout", "Aplicar na minha semana": "Apply to my week", "🔄 Outra versão": "🔄 Another version", "← Ajustar": "← Adjust", "Composto principal de {0}": "Main compound lift for {0}", "Composto complementar de {0}": "Supporting compound lift for {0}", "Isolamento de {0}": "Isolation for {0}", "ênfase da sua prioridade": "emphasis on your priority", "Treino com o peso do corpo": "Bodyweight workout", "Poucas opções de {0} com o seu equipamento ou restrições.": "Few options for {0} with your equipment or restrictions.", "Você informou restrição ({0}): evitamos os exercícios que costumam sobrecarregar essa região. Se sentir dor, pare e procure uma avaliação profissional.": "You reported a restriction ({0}): we avoided exercises that usually overload that area. If you feel pain, stop and seek a professional assessment.", "Em casa, usamos treinos só com o peso do corpo. Pra mais variedade, escolha \"Equipamentos limitados\" (halteres e barra).": "At home we use bodyweight-only workouts. For more variety, choose \"Limited equipment\" (dumbbells and barbell).", "Não consegui montar esse treino. Tente outras opções.": "I couldn't build that workout. Try other options.", "peito": "chest", "costas": "back", "ombros": "shoulders", "bíceps": "biceps", "tríceps": "triceps", "quadríceps": "quads", "posteriores de coxa": "hamstrings", "glúteos": "glutes", "panturrilhas": "calves", "abdômen": "abs", "Peito, ombros e tríceps": "Chest, shoulders and triceps", "Superiores completos": "Full upper body", "Inferiores completos": "Full lower body", "Quadríceps e glúteos": "Quads and glutes", "Glúteos e posteriores": "Glutes and hamstrings", "Glúteos (ênfase)": "Glutes (emphasis)"});
 Object.assign(TRAD_TEXTOS.es, {"✨ Montar um treino personalizado": "✨ Crear un entrenamiento personalizado", "Divisão, exercícios e volume feitos pro seu objetivo, nível, dias disponíveis e prioridades.": "División, ejercicios y volumen hechos para tu objetivo, nivel, días disponibles y prioridades.", "Ou use um modelo pronto:": "O usa una plantilla lista:", "TREINO PERSONALIZADO": "ENTRENAMIENTO PERSONALIZADO", "PRÉVIA DA SUA SEMANA": "VISTA PREVIA DE TU SEMANA", "Já preenchemos com o que sabemos de você. Ajuste o que quiser.": "Ya completamos lo que sabemos de ti. Ajusta lo que quieras.", "Alterar": "Cambiar", "Lesões ou limitações": "Lesiones o limitaciones", "Dias por semana": "Días por semana", "Duração de cada treino": "Duración de cada entrenamiento", "Prioridade muscular": "Prioridad muscular", "Sugerida pra mim": "Sugerida para mí", "Superiores": "Tren superior", "Peito e costas": "Pecho y espalda", "Ombros e braços": "Hombros y brazos", "Onde você treina": "Dónde entrenas", "Equipamentos limitados": "Equipo limitado", "Em casa": "En casa", "Sexo (só ajuda a sugerir a prioridade — você pode mudar)": "Sexo (solo ayuda a sugerir la prioridad; puedes cambiarla)", "Prefiro não informar": "Prefiero no decirlo", "Saúde e bem-estar": "Salud y bienestar", "Gerar meu treino": "Generar mi entrenamiento", "Aplicar na minha semana": "Aplicar a mi semana", "🔄 Outra versão": "🔄 Otra versión", "Composto principal de {0}": "Compuesto principal de {0}", "Composto complementar de {0}": "Compuesto complementario de {0}", "Isolamento de {0}": "Aislamiento de {0}", "ênfase da sua prioridade": "énfasis en tu prioridad", "Treino com o peso do corpo": "Entrenamiento con peso corporal", "Poucas opções de {0} com o seu equipamento ou restrições.": "Pocas opciones de {0} con tu equipo o restricciones.", "Você informou restrição ({0}): evitamos os exercícios que costumam sobrecarregar essa região. Se sentir dor, pare e procure uma avaliação profissional.": "Indicaste una restricción ({0}): evitamos los ejercicios que suelen sobrecargar esa zona. Si sientes dolor, detente y busca una evaluación profesional.", "Em casa, usamos treinos só com o peso do corpo. Pra mais variedade, escolha \"Equipamentos limitados\" (halteres e barra).": "En casa usamos entrenamientos solo con el peso corporal. Para más variedad, elige \"Equipo limitado\" (mancuernas y barra).", "Não consegui montar esse treino. Tente outras opções.": "No pude armar ese entrenamiento. Prueba otras opciones.", "peito": "pecho", "costas": "espalda", "ombros": "hombros", "quadríceps": "cuádriceps", "posteriores de coxa": "isquiotibiales", "panturrilhas": "gemelos", "abdômen": "abdomen", "Peito, ombros e tríceps": "Pecho, hombros y tríceps", "Superiores completos": "Tren superior completo", "Inferiores completos": "Tren inferior completo", "Quadríceps e glúteos": "Cuádriceps y glúteos", "Glúteos e posteriores": "Glúteos e isquiotibiales", "Glúteos (ênfase)": "Glúteos (énfasis)"});
+// ===== Traduções das funções novas (Cross, Premium, Histórico) =====
+Object.assign(TRAD_TEXTOS.en, {"A MAIS NO MASSI PRO IA": "EXTRA IN MASSI PRO AI", "NO MASSI PRO": "IN MASSI PRO", "Abrir Cross": "Open Cross", "Antebraços": "Forearms", "Apoio": "Support", "Aproveite tudo desbloqueado": "Enjoy everything unlocked", "Aqui ficam só os seus WODs. Os treinos da Rotina têm a sua própria visão, ao lado.": "Only your WODs live here. Routine workouts have their own view, right beside it.", "Assine": "Subscribe", "Assistente de IA": "AI assistant", "Barra": "Barbell", "Boa distribuição nos últimos 7 dias. 👏": "Well balanced over the last 7 days. 👏", "Bíceps": "Biceps", "Cada recurso explicado em uma frase.": "Each feature explained in one sentence.", "Combina com seu objetivo: {0}": "Matches your goal: {0}", "Começar teste grátis de {0} dias": "Start your {0}-day free trial", "Consistência no Cross": "Cross consistency", "Core": "Core", "Corpo no Cross (14 dias)": "Body in Cross (14 days)", "Crie quantas rotinas quiser e guarde todo o seu histórico de treinos, sem limite.": "Create as many routines as you want and keep your whole workout history, no limits.", "Cross": "Cross", "Dietas prontas, relatório mensal, progressão de carga e muito mais — explicado aqui, sem complicação.": "Ready-made diets, monthly report, load progression and much more — explained here, no hassle.", "Dietas, relatórios, progressão de carga e, no Pro IA, as funções de IA.": "Diets, reports, load progression and, with Pro AI, the AI features.", "Diferente do seu último WOD": "Different from your last WOD", "Dúvidas rápidas": "Quick questions", "Equilibra sua semana: reforça {0}": "Balances your week: strengthens {0}", "⚖️ Equilíbrio dos últimos 7 dias": "⚖️ Balance of the last 7 days", "Escolha o plano": "Choose your plan", "Escolha pelo seu objetivo e nível, veja as refeições com opções para trocar e use como guia do dia a dia.": "Pick by your goal and level, see the meals with swap options and use them as a daily guide.", "Escolhido para o seu nível, tempo e equipamento": "Chosen for your level, time and equipment", "Fazer upgrade para o Pro IA": "Upgrade to Pro AI", "Faça alguns WODs para ver o equilíbrio da sua semana.": "Do a few WODs to see your weekly balance.", "Foco em músculos descansados: {0}": "Focus on rested muscles: {0}", "Foto inteligente": "Smart photo", "Foto inteligente da refeição": "Smart meal photo", "Fotografe a refeição e veja a estimativa de calorias e macros.": "Photograph your meal and see the estimated calories and macros.", "Gerando imagem…": "Creating image…", "Glúteos": "Glutes", "Inferiores": "Lower body", "MASSI CROSS": "MASSI CROSS", "MASSI PRO PREMIUM": "MASSI PRO PREMIUM", "Mais funções de IA": "More AI features", "Mais trabalhado": "Most worked", "Mais trabalhado:": "Most worked:", "Mais um WOD e eu consigo analisar seu equilíbrio.": "One more WOD and I can analyze your balance.", "Massi Pro": "Massi Pro", "Minha Rotina Inteligente": "My Smart Routine", "Muito foco em {0} — o gerador vai dar um respiro.": "Heavy focus on {0} — the generator will give it a break.", "Nenhum WOD concluído ainda. Faça um treino na aba Cross e ele aparece aqui, com o mapa do corpo.": "No WODs completed yet. Do a workout in the Cross tab and it will show up here, with the body map.", "No momento não há teste grátis.": "There is no free trial at the moment.", "Novas ajudas de IA vão chegando no plano — quem assina já recebe.": "New AI helpers keep arriving in the plan — subscribers get them automatically.", "Novas funções de IA": "New AI features", "Não": "No", "Não. O Massi Pro já traz o app completo, dietas e relatórios. A IA é um extra para quem quer ajuda para montar treino, analisar refeições e tirar dúvidas.": "No. Massi Pro already includes the full app, diets and reports. AI is an extra for those who want help building workouts, analyzing meals and answering questions.", "Não. O conteúdo é educativo e as estimativas da IA são aproximadas. Para um plano individual, procure um profissional.": "No. The content is educational and AI estimates are approximate. For an individual plan, see a professional.", "O Pro já resolve treino e dieta. O Pro IA soma a inteligência artificial.": "Pro already covers training and diet. Pro AI adds artificial intelligence.", "O app substitui nutricionista ou personal?": "Does the app replace a nutritionist or personal trainer?", "O app sugere a hora de aumentar o peso, com base no que você já treinou.": "The app suggests when to increase the weight, based on what you've already trained.", "O que você ganha": "What you get", "Ombros": "Shoulders", "Onde mais trabalhou": "Where you worked most", "PLANO ATIVO": "ACTIVE PLAN", "Panturrilhas": "Calves", "Por que esse WOD?": "Why this WOD?", "Posso testar antes de pagar?": "Can I try before paying?", "Pouco trabalho em {0} nos últimos 7 dias — o gerador vai priorizar.": "Little work on {0} in the last 7 days — the generator will prioritize it.", "Poupa o que você treinou há pouco: {0}": "Spares what you trained recently: {0}", "Preciso do plano com IA?": "Do I need the AI plan?", "Pro para o app completo, Pro IA para ter a inteligência artificial também.": "Pro for the full app, Pro AI to get artificial intelligence too.", "Progressão de carga": "Load progression", "Qual plano é o seu?": "Which plan is yours?", "Quer a IA acompanhando sua evolução? Veja o Massi Pro IA mais abaixo.": "Want AI tracking your progress? See Massi Pro AI below.", "ROUNDS": "ROUNDS", "Rounds": "Rounds", "Remover este WOD?": "Remove this WOD?", "Responda algumas perguntas e receba treino e alimentação montados para você.": "Answer a few questions and get a workout and nutrition plan built for you.", "SEU PLANO": "YOUR PLAN", "Sim": "Yes", "Sim. Você tem {0} dias de teste grátis (um teste por pessoa).": "Yes. You get a {0}-day free trial (one trial per person).", "Sim. Você tem {0} dias de teste grátis.": "Yes. You get a {0}-day free trial.", "Teste grátis por {0} dias": "Free trial for {0} days", "Tempo": "Time", "Tipo": "Type", "Tire dúvidas de treino, execução e alimentação a qualquer hora.": "Ask about training, technique and nutrition anytime.", "Todas as áreas liberadas: Rotina, Cross, Avaliação, Suplementos e tudo que chegar depois.": "All areas unlocked: Routine, Cross, Assessment, Supplements and everything that comes next.", "Todos os recursos liberados, incluindo a IA. Bom treino!": "All features unlocked, including AI. Have a great workout!", "Treine com tudo desbloqueado": "Train with everything unlocked", "Três passos, sem burocracia.": "Three steps, no red tape.", "Tríceps": "Triceps", "Tudo do Massi Pro": "Everything in Massi Pro", "Um resumo do seu mês — treinos, evolução e medidas — para guardar ou mostrar ao seu treinador.": "A summary of your month — workouts, progress and measurements — to keep or show your trainer.", "Use tudo sem pressa e veja se combina com a sua rotina.": "Use everything at your own pace and see if it fits your routine.", "Ver histórico do Cross": "View Cross history", "Ver mais WODs": "See more WODs", "Ver planos e preços": "See plans and prices", "Você é": "You are", "WOD": "WOD", "WODs em 7 dias": "WODs in 7 days", "WODs no total": "WODs in total", "conversas por mês": "chats per month", "fotos por mês": "photos per month", "Último WOD:": "Last WOD:", "último WOD": "last WOD", "✓ concluído": "✓ completed", "✓ seu": "✓ yours", "🏅 Desafios do Cross": "🏅 Cross challenges", "🏆 Recordes do Cross": "🏆 Cross records", "📤 Compartilhar resultado": "📤 Share result", "🔄 Gerar outro": "🔄 Generate another", "🔒 no Pro IA": "🔒 in Pro AI", "🔥 Histórico do Massi Cross": "🔥 Massi Cross history", "🔥 Massi Cross": "🔥 Massi Cross", "🔥 Onde você mais trabalhou": "🔥 Where you worked most", "🗺️ Mapa muscular do Cross (últimos 14 dias)": "🗺️ Cross muscle map (last 14 days)", "🏆 Terminei o WOD {0} no Massi Cross em {1}!": "🏆 I finished the {0} WOD on Massi Cross in {1}!", "há {0} dias": "{0} days ago", "restam {0} dias": "{0} days left", "resta 1 dia": "1 day left", "membros superiores": "upper body", "membros inferiores": "lower body", "min treinados": "min trained", "Tire uma foto da refeição e veja calorias e macros": "Take a photo of your meal and see calories and macros"});
+Object.assign(TRAD_TEXTOS.es, {"A MAIS NO MASSI PRO IA": "EXTRA EN MASSI PRO IA", "NO MASSI PRO": "EN MASSI PRO", "Abrir Cross": "Abrir Cross", "Antebraços": "Antebrazos", "Apoio": "Apoyo", "Aproveite tudo desbloqueado": "Disfruta todo desbloqueado", "Aqui ficam só os seus WODs. Os treinos da Rotina têm a sua própria visão, ao lado.": "Aquí están solo tus WODs. Los entrenamientos de la Rutina tienen su propia vista, al lado.", "Assine": "Suscríbete", "Assistente de IA": "Asistente de IA", "Barra": "Barra", "Boa distribuição nos últimos 7 dias. 👏": "Buena distribución en los últimos 7 días. 👏", "Bíceps": "Bíceps", "Cada recurso explicado em uma frase.": "Cada función explicada en una frase.", "Combina com seu objetivo: {0}": "Encaja con tu objetivo: {0}", "Começar teste grátis de {0} dias": "Empieza tu prueba gratis de {0} días", "Consistência no Cross": "Constancia en Cross", "Core": "Core", "Corpo no Cross (14 dias)": "Cuerpo en Cross (14 días)", "Crie quantas rotinas quiser e guarde todo o seu histórico de treinos, sem limite.": "Crea todas las rutinas que quieras y guarda todo tu historial de entrenamientos, sin límite.", "Cross": "Cross", "Dietas prontas, relatório mensal, progressão de carga e muito mais — explicado aqui, sem complicação.": "Dietas listas, informe mensual, progresión de carga y mucho más — explicado aquí, sin complicaciones.", "Dietas, relatórios, progressão de carga e, no Pro IA, as funções de IA.": "Dietas, informes, progresión de carga y, en Pro IA, las funciones de IA.", "Diferente do seu último WOD": "Diferente de tu último WOD", "Dúvidas rápidas": "Dudas rápidas", "Equilibra sua semana: reforça {0}": "Equilibra tu semana: refuerza {0}", "⚖️ Equilíbrio dos últimos 7 dias": "⚖️ Equilibrio de los últimos 7 días", "Escolha o plano": "Elige tu plan", "Escolha pelo seu objetivo e nível, veja as refeições com opções para trocar e use como guia do dia a dia.": "Elige según tu objetivo y nivel, mira las comidas con opciones para cambiar y úsalas como guía del día a día.", "Escolhido para o seu nível, tempo e equipamento": "Elegido para tu nivel, tiempo y equipo", "Fazer upgrade para o Pro IA": "Pasar a Pro IA", "Faça alguns WODs para ver o equilíbrio da sua semana.": "Haz algunos WODs para ver el equilibrio de tu semana.", "Foco em músculos descansados: {0}": "Foco en músculos descansados: {0}", "Foto inteligente": "Foto inteligente", "Foto inteligente da refeição": "Foto inteligente de la comida", "Fotografe a refeição e veja a estimativa de calorias e macros.": "Fotografía tu comida y mira la estimación de calorías y macros.", "Gerando imagem…": "Creando imagen…", "Glúteos": "Glúteos", "Inferiores": "Inferiores", "MASSI CROSS": "MASSI CROSS", "MASSI PRO PREMIUM": "MASSI PRO PREMIUM", "Mais funções de IA": "Más funciones de IA", "Mais trabalhado": "Más trabajado", "Mais trabalhado:": "Más trabajado:", "Mais um WOD e eu consigo analisar seu equilíbrio.": "Un WOD más y puedo analizar tu equilibrio.", "Massi Pro": "Massi Pro", "Minha Rotina Inteligente": "Mi Rutina Inteligente", "Muito foco em {0} — o gerador vai dar um respiro.": "Mucho foco en {0} — el generador les dará un respiro.", "Nenhum WOD concluído ainda. Faça um treino na aba Cross e ele aparece aqui, com o mapa do corpo.": "Aún no has completado ningún WOD. Haz un entrenamiento en la pestaña Cross y aparecerá aquí, con el mapa del cuerpo.", "No momento não há teste grátis.": "Por ahora no hay prueba gratis.", "Novas ajudas de IA vão chegando no plano — quem assina já recebe.": "Van llegando nuevas ayudas de IA al plan — quien se suscribe ya las recibe.", "Novas funções de IA": "Nuevas funciones de IA", "Não": "No", "Não. O Massi Pro já traz o app completo, dietas e relatórios. A IA é um extra para quem quer ajuda para montar treino, analisar refeições e tirar dúvidas.": "No. Massi Pro ya trae la app completa, dietas e informes. La IA es un extra para quien quiere ayuda para armar entrenamientos, analizar comidas y resolver dudas.", "Não. O conteúdo é educativo e as estimativas da IA são aproximadas. Para um plano individual, procure um profissional.": "No. El contenido es educativo y las estimaciones de la IA son aproximadas. Para un plan individual, consulta a un profesional.", "O Pro já resolve treino e dieta. O Pro IA soma a inteligência artificial.": "Pro ya resuelve entrenamiento y dieta. Pro IA suma la inteligencia artificial.", "O app substitui nutricionista ou personal?": "¿La app sustituye a un nutricionista o entrenador personal?", "O app sugere a hora de aumentar o peso, com base no que você já treinou.": "La app sugiere cuándo subir el peso, según lo que ya has entrenado.", "O que você ganha": "Lo que ganas", "Ombros": "Hombros", "Onde mais trabalhou": "Dónde más trabajaste", "PLANO ATIVO": "PLAN ACTIVO", "Panturrilhas": "Gemelos", "Por que esse WOD?": "¿Por qué este WOD?", "Posso testar antes de pagar?": "¿Puedo probar antes de pagar?", "Pouco trabalho em {0} nos últimos 7 dias — o gerador vai priorizar.": "Poco trabajo en {0} en los últimos 7 días — el generador lo priorizará.", "Poupa o que você treinou há pouco: {0}": "Cuida lo que entrenaste hace poco: {0}", "Preciso do plano com IA?": "¿Necesito el plan con IA?", "Pro para o app completo, Pro IA para ter a inteligência artificial também.": "Pro para la app completa, Pro IA para tener también la inteligencia artificial.", "Progressão de carga": "Progresión de carga", "Qual plano é o seu?": "¿Cuál es tu plan?", "Quer a IA acompanhando sua evolução? Veja o Massi Pro IA mais abaixo.": "¿Quieres la IA acompañando tu evolución? Mira Massi Pro IA más abajo.", "ROUNDS": "ROUNDS", "Rounds": "Rounds", "Remover este WOD?": "¿Eliminar este WOD?", "Responda algumas perguntas e receba treino e alimentação montados para você.": "Responde unas preguntas y recibe entrenamiento y alimentación armados para ti.", "SEU PLANO": "TU PLAN", "Sim": "Sí", "Sim. Você tem {0} dias de teste grátis (um teste por pessoa).": "Sí. Tienes {0} días de prueba gratis (una prueba por persona).", "Sim. Você tem {0} dias de teste grátis.": "Sí. Tienes {0} días de prueba gratis.", "Teste grátis por {0} dias": "Prueba gratis por {0} días", "Tempo": "Tiempo", "Tipo": "Tipo", "Tire dúvidas de treino, execução e alimentação a qualquer hora.": "Resuelve dudas de entrenamiento, ejecución y alimentación a cualquier hora.", "Todas as áreas liberadas: Rotina, Cross, Avaliação, Suplementos e tudo que chegar depois.": "Todas las áreas desbloqueadas: Rutina, Cross, Evaluación, Suplementos y todo lo que venga después.", "Todos os recursos liberados, incluindo a IA. Bom treino!": "Todas las funciones desbloqueadas, incluida la IA. ¡Buen entrenamiento!", "Treine com tudo desbloqueado": "Entrena con todo desbloqueado", "Três passos, sem burocracia.": "Tres pasos, sin burocracia.", "Tríceps": "Tríceps", "Tudo do Massi Pro": "Todo lo de Massi Pro", "Um resumo do seu mês — treinos, evolução e medidas — para guardar ou mostrar ao seu treinador.": "Un resumen de tu mes — entrenamientos, evolución y medidas — para guardar o mostrar a tu entrenador.", "Use tudo sem pressa e veja se combina com a sua rotina.": "Úsalo todo sin prisa y mira si encaja con tu rutina.", "Ver histórico do Cross": "Ver historial de Cross", "Ver mais WODs": "Ver más WODs", "Ver planos e preços": "Ver planes y precios", "Você é": "Eres", "WOD": "WOD", "WODs em 7 dias": "WODs en 7 días", "WODs no total": "WODs en total", "conversas por mês": "conversaciones al mes", "fotos por mês": "fotos al mes", "Último WOD:": "Último WOD:", "último WOD": "último WOD", "✓ concluído": "✓ completado", "✓ seu": "✓ tuyo", "🏅 Desafios do Cross": "🏅 Desafíos de Cross", "🏆 Recordes do Cross": "🏆 Récords de Cross", "📤 Compartilhar resultado": "📤 Compartir resultado", "🔄 Gerar outro": "🔄 Generar otro", "🔒 no Pro IA": "🔒 en Pro IA", "🔥 Histórico do Massi Cross": "🔥 Historial de Massi Cross", "🔥 Massi Cross": "🔥 Massi Cross", "🔥 Onde você mais trabalhou": "🔥 Dónde más trabajaste", "🗺️ Mapa muscular do Cross (últimos 14 dias)": "🗺️ Mapa muscular de Cross (últimos 14 días)", "🏆 Terminei o WOD {0} no Massi Cross em {1}!": "🏆 ¡Terminé el WOD {0} en Massi Cross en {1}!", "há {0} dias": "hace {0} días", "restam {0} dias": "quedan {0} días", "resta 1 dia": "queda 1 día", "membros superiores": "tren superior", "membros inferiores": "tren inferior", "min treinados": "min entrenados", "Tire uma foto da refeição e veja calorias e macros": "Toma una foto de tu comida y mira calorías y macros"});
 const TRAD_NORM = {};
 function trNormalizar(idioma) {
   if (TRAD_NORM[idioma]) return TRAD_NORM[idioma];
@@ -7442,6 +7445,11 @@ function AppMassiPro({ onSolicitarRemount }) {
         html, body { margin: 0; padding: 0; width: 100%; overflow-x: hidden; background: var(--paper); -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
         #root { overflow-x: hidden; }
         * { box-sizing: border-box; }
+        /* Leitura reforçada (Avaliação e Premium): cartões escuros opacos, letras mais claras e firmes */
+        .legivel { --ink: #FFFFFF; --pencil: #E3E8EE; font-weight: 500; }
+        .legivel [style*="backdrop-filter"] { background: rgba(9,12,15,0.92) !important; border-color: rgba(255,255,255,0.2) !important; }
+        .legivel [style*="italic"] { font-style: normal !important; }
+        .legivel input::placeholder, .legivel textarea::placeholder { color: #B7C0CA; opacity: 1; }
         img, svg { max-width: 100%; }
         .chip { transition: background-color .15s ease, color .15s ease, border-color .15s ease; }
         .chip:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible {
@@ -8448,7 +8456,7 @@ function AppMassiPro({ onSolicitarRemount }) {
       {activeTab === "notas" && <NotasTab refTour={tourNotasRef} />}
 
       {activeTab === "evolucao" && (
-        <>
+        <div className="legivel">
         <ResumoPassosEvolucao />
         <EvolucaoTab
           onAplicarTreino={(modeloId, objetivoId) => {
@@ -8457,18 +8465,20 @@ function AppMassiPro({ onSolicitarRemount }) {
           }}
           refsTour={{ registrar: tourAvalRegistrarRef, gordura: tourAvalGorduraRef, biotipo: tourAvalBiotipoRef, alimento: tourAvalAlimentoRef, fotos: tourAvalFotosRef }}
         />
-        </>
+        </div>
       )}
 
       {activeTab === "premium" && (
-        <PremiumTab
-          isPremium={isPremium}
-          plano={vigente}
-          onVerPlanos={() => setShowPlanos(true)}
-          objetivoUsuario={objetivoUsuario}
-          nivelUsuario={nivelUsuario}
-          refsTour={{ dieta: tourPremiumDietaRef, planos: tourPremiumPlanosRef }}
-        />
+        <div className="legivel">
+          <PremiumTab
+            isPremium={isPremium}
+            plano={vigente}
+            onVerPlanos={() => setShowPlanos(true)}
+            objetivoUsuario={objetivoUsuario}
+            nivelUsuario={nivelUsuario}
+            refsTour={{ dieta: tourPremiumDietaRef, planos: tourPremiumPlanosRef }}
+          />
+        </div>
       )}
 
       {activeTab === "sobre" && (
@@ -9072,7 +9082,7 @@ function CrossCardInicio({ onIrAba }) {
   const ordenado = [...historico].sort((a, b) => (a.data < b.data ? 1 : a.data > b.data ? -1 : 0));
   const ultimo = ordenado[0];
   const dUlt = crossDiasDesde(ultimo.data);
-  const quando = dUlt === 0 ? tr("hoje") : dUlt === 1 ? tr("ontem") : dUlt !== null && dUlt > 1 ? tr("há") + " " + dUlt + " " + tr("dias") : "";
+  const quando = dUlt === 0 ? tr("hoje") : dUlt === 1 ? tr("ontem") : dUlt !== null && dUlt > 1 ? trt("há {0} dias", [dUlt]) : "";
   const sete = historico.filter((h) => { const d = crossDiasDesde(h.data); return d !== null && d >= 0 && d <= 6; }).length;
   const streak = calcularStreak(historico);
   const volume = crossVolumePorRegiao(historico, 14);
@@ -12764,7 +12774,7 @@ function PremiumVitrine({ plano, onVerPlanos }) {
     <div style={{ background: "linear-gradient(145deg, " + cor1 + ", " + cor2 + ")", borderRadius: 18, padding: 14, color: "#fff", marginBottom: 10, boxShadow: "0 6px 18px rgba(0,0,0,0.25)" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
         <div style={{ fontWeight: 900, fontSize: 18 }}>{NIVEIS_ASSINATURA[cod].nome}</div>
-        <span style={{ fontSize: 10, fontWeight: 800, background: "rgba(255,255,255,0.22)", borderRadius: 8, padding: "3px 8px" }}>{atual ? tr("SEU PLANO") : NIVEIS_ASSINATURA[cod].selo}</span>
+        <span style={{ fontSize: 10, fontWeight: 800, background: "rgba(255,255,255,0.22)", borderRadius: 8, padding: "3px 8px" }}>{atual ? tr("SEU PLANO") : tr(NIVEIS_ASSINATURA[cod].selo)}</span>
       </div>
       <div style={{ fontSize: 12.5, opacity: 0.92, margin: "2px 0 8px" }}>{tr(NIVEIS_ASSINATURA[cod].slogan)}</div>
       <div style={{ fontSize: 24, fontWeight: 900 }}>{formatarPreco(info.total)}<span style={{ fontSize: 13, fontWeight: 700, opacity: 0.9 }}> {tr("/mês")}</span></div>
@@ -12788,12 +12798,12 @@ function PremiumVitrine({ plano, onVerPlanos }) {
         </div>
         {ativo && plano.emTeste && (
           <div style={{ display: "inline-block", marginTop: 8, fontSize: 12, fontWeight: 800, background: "rgba(0,0,0,0.28)", borderRadius: 10, padding: "4px 10px" }}>
-            {tr("Teste grátis")} · {plano.diasRestantesTeste === 1 ? tr("resta 1 dia") : tr("restam") + " " + plano.diasRestantesTeste + " " + tr("dias")}
+            {tr("Teste grátis")} · {plano.diasRestantesTeste === 1 ? tr("resta 1 dia") : trt("restam {0} dias", [plano.diasRestantesTeste])}
           </div>
         )}
         {!ativo && (
           <button onClick={onVerPlanos} style={{ marginTop: 12, width: "100%", border: "none", borderRadius: 14, padding: "12px 14px", background: "#fff", color: "#3b2a8c", fontWeight: 900, fontSize: 15, cursor: "pointer" }}>
-            {diasTeste > 0 ? tr("Começar teste grátis de") + " " + diasTeste + " " + tr("dias") : tr("Ver planos")}
+            {diasTeste > 0 ? trt("Começar teste grátis de {0} dias", [diasTeste]) : tr("Ver planos")}
           </button>
         )}
       </section>
@@ -12811,7 +12821,7 @@ function PremiumVitrine({ plano, onVerPlanos }) {
           <div style={sub}>{tr("Três passos, sem burocracia.")}</div>
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             {[["1", "#FF8A3D", "Escolha o plano", "Pro para o app completo, Pro IA para ter a inteligência artificial também."],
-              ["2", "#4DA3FF", diasTeste > 0 ? "Teste grátis por " + diasTeste + " dias" : "Assine", "Use tudo sem pressa e veja se combina com a sua rotina."],
+              ["2", "#4DA3FF", diasTeste > 0 ? trt("Teste grátis por {0} dias", [diasTeste]) : tr("Assine"), "Use tudo sem pressa e veja se combina com a sua rotina."],
               ["3", "#3DDC97", "Aproveite tudo desbloqueado", "Dietas, relatórios, progressão de carga e, no Pro IA, as funções de IA."]].map(([n, cor, t, d]) => (
               <div key={n} style={{ ...card(cor), display: "flex", gap: 12, alignItems: "center" }}>
                 <div style={{ flex: "0 0 36px", height: 36, borderRadius: 18, background: cor, color: "#12151A", fontWeight: 900, display: "flex", alignItems: "center", justifyContent: "center" }}>{n}</div>
@@ -12839,7 +12849,7 @@ function PremiumVitrine({ plano, onVerPlanos }) {
 
       <div style={titulo}>{tr("Dúvidas rápidas")}</div>
       {[["Preciso do plano com IA?", "Não. O Massi Pro já traz o app completo, dietas e relatórios. A IA é um extra para quem quer ajuda para montar treino, analisar refeições e tirar dúvidas."],
-        ["Posso testar antes de pagar?", diasTeste > 0 ? "Sim. Você tem " + diasTeste + " dias de teste grátis" + (CONFIG_ASSINATURA.testeUnicoPorUsuario ? " (um teste por pessoa)." : ".") : "No momento não há teste grátis."],
+        ["Posso testar antes de pagar?", diasTeste > 0 ? trt(CONFIG_ASSINATURA.testeUnicoPorUsuario ? "Sim. Você tem {0} dias de teste grátis (um teste por pessoa)." : "Sim. Você tem {0} dias de teste grátis.", [diasTeste]) : "No momento não há teste grátis."],
         ["O app substitui nutricionista ou personal?", "Não. O conteúdo é educativo e as estimativas da IA são aproximadas. Para um plano individual, procure um profissional."]].map(([q, a]) => (
         <details key={q} style={{ ...card("#8C7BFF"), marginBottom: 8 }}>
           <summary style={{ fontWeight: 800, fontSize: 13.5, color: "#fff", cursor: "pointer" }}>{tr(q)}</summary>
@@ -16405,9 +16415,11 @@ function crossTopMusculos(ativacao) {
 }
 function crossTextoCompartilhar(registro, top) {
   const tempo = formatarTempoCross(registro.tempoSeg || 0);
-  const rounds = (registro.tipo === "rounds" || registro.tipo === "amrap" || registro.tipo === "tabata") && registro.rounds ? ` (${registro.rounds} rounds)` : "";
-  const mus = top && top.length ? ` Mais trabalhado: ${top.slice(0, 4).join(", ")}.` : "";
-  return `🏆 Terminei o WOD ${registro.wodNome} no Massi Cross em ${tempo}${rounds}!${mus} 💪 ${REL_APP_URL}`;
+  const temRounds = (registro.tipo === "rounds" || registro.tipo === "amrap" || registro.tipo === "tabata") && registro.rounds;
+  let t = trt("🏆 Terminei o WOD {0} no Massi Cross em {1}!", [registro.wodNome, tempo]);
+  if (temRounds) t += " (" + registro.rounds + " " + tr("rounds") + ")";
+  if (top && top.length) t += " " + tr("Mais trabalhado:") + " " + top.slice(0, 4).map((n) => tr(n)).join(", ") + ".";
+  return t + " 💪 " + REL_APP_URL;
 }
 function crossCarregarImagem(src) {
   return new Promise((resolve, reject) => {
@@ -16428,12 +16440,12 @@ async function crossGerarImagem(registro, ativacao, figura, top) {
   c.fillStyle = g; c.fillRect(0, 0, W, H);
   c.fillStyle = CROSS_LIME; c.fillRect(0, 0, W, 10);
   c.textAlign = "center";
-  c.fillStyle = CROSS_LIME; c.font = "800 34px sans-serif"; c.fillText("MASSI CROSS", W / 2, 84);
-  c.fillStyle = "#fff"; c.font = "800 58px sans-serif"; c.fillText(String(registro.wodNome || "WOD").slice(0, 26), W / 2, 164);
+  c.fillStyle = CROSS_LIME; c.font = "800 34px sans-serif"; c.fillText(tr("MASSI CROSS"), W / 2, 84);
+  c.fillStyle = "#fff"; c.font = "800 58px sans-serif"; c.fillText(tr(String(registro.wodNome || "WOD")).slice(0, 26), W / 2, 164);
   c.font = "800 96px monospace"; c.fillText(formatarTempoCross(registro.tempoSeg || 0), W / 2, 270);
   const temRounds = (registro.tipo === "rounds" || registro.tipo === "amrap" || registro.tipo === "tabata") && registro.rounds;
   c.fillStyle = "#9AA3AE"; c.font = "600 34px sans-serif";
-  c.fillText(temRounds ? `${registro.rounds} rounds` : String(registro.tipo || "").toUpperCase(), W / 2, 322);
+  c.fillText(temRounds ? `${registro.rounds} ${tr("rounds")}` : String(registro.tipo || "").toUpperCase(), W / 2, 322);
   const bh = 780, bw = Math.round(bh * 0.437);
   const gap = 70, x0 = Math.round((W - (bw * 2 + gap)) / 2), y0 = 370;
   const lados = ["frente", "costas"];
@@ -16459,8 +16471,8 @@ async function crossGerarImagem(registro, ativacao, figura, top) {
     c.globalAlpha = 1;
   }
   c.fillStyle = "#fff"; c.font = "800 40px sans-serif";
-  c.fillText("Onde mais trabalhou", W / 2, y0 + bh + 66);
-  const linhaTop = top && top.length ? top.slice(0, 4).join(" • ") : "Corpo inteiro";
+  c.fillText(tr("Onde mais trabalhou"), W / 2, y0 + bh + 66);
+  const linhaTop = top && top.length ? top.slice(0, 4).map((n) => tr(n)).join(" • ") : tr("Corpo inteiro");
   c.fillStyle = CROSS_LIME;
   let tam = 36;
   c.font = "700 " + tam + "px sans-serif";
@@ -16565,13 +16577,13 @@ function crossPontuarWod(w, an, ctx) {
     });
   }
   // motivos
-  if (bal) motivos.push("Equilibra sua semana: reforça " + CROSS_GRUPO_NOME[bal]);
-  if (frescos.length && an.total > 0) motivos.push("Foco em músculos descansados: " + crossNomesUnicos(frescos).slice(0, 3).join(", "));
+  if (bal) motivos.push(trt("Equilibra sua semana: reforça {0}", [CROSS_GRUPO_NOME[bal]]));
+  if (frescos.length && an.total > 0) motivos.push(trt("Foco em músculos descansados: {0}", [crossNomesUnicos(frescos).slice(0, 3).map((n) => tr(n)).join(", ")]));
   const cansados = Object.keys(an.fadiga).filter((r) => an.fadiga[r] >= 0.8 && fortes.indexOf(r) < 0 && !ativ[r]);
-  if (cansados.length) motivos.push("Poupa o que você treinou há pouco: " + crossNomesUnicos(cansados).slice(0, 3).join(", "));
-  if (casouObjetivo) motivos.push("Combina com seu objetivo: " + ctx.objetivo.toLowerCase());
-  if (an.ultimos[0] && pos !== 0) motivos.push("Diferente do seu último WOD");
-  if (!motivos.length) motivos.push("Escolhido para o seu nível, tempo e equipamento");
+  if (cansados.length) motivos.push(trt("Poupa o que você treinou há pouco: {0}", [crossNomesUnicos(cansados).slice(0, 3).map((n) => tr(n)).join(", ")]));
+  if (casouObjetivo) motivos.push(trt("Combina com seu objetivo: {0}", [ctx.objetivo.toLowerCase()]));
+  if (an.ultimos[0] && pos !== 0) motivos.push(tr("Diferente do seu último WOD"));
+  if (!motivos.length) motivos.push(tr("Escolhido para o seu nível, tempo e equipamento"));
   return { s, motivos: motivos.slice(0, 3) };
 }
 function crossTierEquip(eq) {
@@ -16618,8 +16630,8 @@ function CrossEquilibrioSemana({ historico }) {
     const nomes = { superior: "Superiores", inferior: "Inferiores", core: "Core" };
     const falta = ["superior", "inferior"].filter((g) => an.parte[g] < 0.18);
     const sobra = ["superior", "inferior"].filter((g) => an.parte[g] > 0.62);
-    if (falta.length) dica = "Pouco trabalho em " + CROSS_GRUPO_NOME[falta[0]] + " nos últimos 7 dias — o gerador vai priorizar.";
-    else if (sobra.length) dica = "Muito foco em " + CROSS_GRUPO_NOME[sobra[0]] + " — o gerador vai dar um respiro a eles.";
+    if (falta.length) dica = trt("Pouco trabalho em {0} nos últimos 7 dias — o gerador vai priorizar.", [CROSS_GRUPO_NOME[falta[0]]]);
+    else if (sobra.length) dica = trt("Muito foco em {0} — o gerador vai dar um respiro.", [CROSS_GRUPO_NOME[sobra[0]]]);
     else dica = "Boa distribuição nos últimos 7 dias. 👏";
     void nomes;
   } else if (an.wods7 === 1) dica = "Mais um WOD e eu consigo analisar seu equilíbrio.";
