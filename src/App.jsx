@@ -5600,6 +5600,7 @@ function AppMassiPro({ onSolicitarRemount }) {
     const timer = setTimeout(() => {
       const el = dayCardRefs.current[diaParaFocar];
       if (el && typeof el.scrollIntoView === "function") {
+        liberarRolagemPor(2200); // navegação pedida pelo app (ir ao dia de hoje): o guarda deixa passar
         el.scrollIntoView({ behavior: "smooth", block: "start" });
       }
       setDiaParaFocar(null);
@@ -8462,6 +8463,7 @@ function AppMassiPro({ onSolicitarRemount }) {
       {activeTab === "premium" && (
         <PremiumTab
           isPremium={isPremium}
+          plano={vigente}
           onVerPlanos={() => setShowPlanos(true)}
           objetivoUsuario={objetivoUsuario}
           nivelUsuario={nivelUsuario}
@@ -9053,6 +9055,67 @@ function AtalhosIlustradosCard({ onIrAba, refTour }) {
   );
 }
 
+// Card do Massi Cross na aba Início: só aparece quando já existe algum WOD concluído.
+function CrossCardInicio({ onIrAba }) {
+  const [historico, setHistorico] = useState([]);
+  useEffect(() => {
+    let vivo = true;
+    (async () => {
+      try {
+        const r = await window.storage.get("cross-historico");
+        if (vivo && r && r.value) setHistorico(JSON.parse(r.value) || []);
+      } catch (e) { /* sem WODs ainda */ }
+    })();
+    return () => { vivo = false; };
+  }, []);
+  if (!historico.length) return null;
+  const ordenado = [...historico].sort((a, b) => (a.data < b.data ? 1 : a.data > b.data ? -1 : 0));
+  const ultimo = ordenado[0];
+  const dUlt = crossDiasDesde(ultimo.data);
+  const quando = dUlt === 0 ? tr("hoje") : dUlt === 1 ? tr("ontem") : dUlt !== null && dUlt > 1 ? tr("há") + " " + dUlt + " " + tr("dias") : "";
+  const sete = historico.filter((h) => { const d = crossDiasDesde(h.data); return d !== null && d >= 0 && d <= 6; }).length;
+  const streak = calcularStreak(historico);
+  const volume = crossVolumePorRegiao(historico, 14);
+  const ativUlt = crossAtivacaoDoRegistro(ultimo);
+  const topUlt = crossTopMusculos(ativUlt);
+  const temRounds = (ultimo.tipo === "rounds" || ultimo.tipo === "amrap" || ultimo.tipo === "tabata") && ultimo.rounds;
+  const chip = { fontSize: 11, fontWeight: 800, background: "rgba(255,255,255,0.12)", color: "#fff", borderRadius: 7, padding: "2px 7px" };
+  const botao = (principal) => ({ flex: 1, border: principal ? "none" : "1px solid rgba(255,138,61,0.6)", background: principal ? HIST_COR_CROSS : "transparent", color: principal ? "#12151A" : HIST_COR_CROSS, borderRadius: 12, padding: "11px 8px", fontWeight: 900, fontSize: 13.5, cursor: "pointer" });
+  return (
+    <section style={{ background: "linear-gradient(135deg, #3a1d0a 0%, #14171C 70%)", border: "1px solid rgba(255,138,61,0.4)", borderRadius: 18, padding: 14, marginBottom: 14, color: "#fff" }} data-testid="inicio-cross">
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+        <div style={{ fontWeight: 900, fontSize: 15.5 }}>{tr("🔥 Massi Cross")}</div>
+        {quando && <span style={{ fontSize: 11.5, color: "#FFB27A", fontWeight: 700 }}>{tr("último WOD")} {quando}</span>}
+      </div>
+      <div style={{ fontWeight: 900, fontSize: 18, marginBottom: 6 }}>{tr(ultimo.wodNome)}</div>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 5, marginBottom: 10 }}>
+        <span style={{ ...chip, background: HIST_COR_CROSS, color: "#12151A" }}>{String(ultimo.tipo || "").toUpperCase()}</span>
+        <span style={chip}>⏱ {formatarTempoCross(ultimo.tempoSeg || 0)}</span>
+        {temRounds && <span style={chip}>{ultimo.rounds} {tr("rounds")}</span>}
+        {ultimo.nivel && <span style={chip}>{tr(ultimo.nivel)}</span>}
+      </div>
+      <div style={{ display: "flex", textAlign: "center", gap: 6, marginBottom: 12 }}>
+        <div style={{ flex: 1 }}><div style={{ fontSize: 21, fontWeight: 900, color: HIST_COR_CROSS }}>{sete}</div><div style={{ fontSize: 11, color: "#9AA3AE" }}>{tr("WODs em 7 dias")}</div></div>
+        <div style={{ flex: 1 }}><div style={{ fontSize: 21, fontWeight: 900, color: HIST_COR_CROSS }}>{streak}🔥</div><div style={{ fontSize: 11, color: "#9AA3AE" }}>{tr("dias seguidos")}</div></div>
+        <div style={{ flex: 1 }}><div style={{ fontSize: 21, fontWeight: 900, color: HIST_COR_CROSS }}>{historico.length}</div><div style={{ fontSize: 11, color: "#9AA3AE" }}>{tr("WODs no total")}</div></div>
+      </div>
+      {Object.keys(volume).length > 0 && (
+        <div style={{ display: "flex", gap: 12, alignItems: "center", marginBottom: 12 }}>
+          <div style={{ flex: "0 0 auto" }}><MapaMuscularSVG volumePorRegiao={volume} mini /></div>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontSize: 12, fontWeight: 800, color: "#fff", marginBottom: 3 }}>{tr("Corpo no Cross (14 dias)")}</div>
+            {topUlt.length > 0 && <div style={{ fontSize: 12, color: "#D4DAE2", lineHeight: 1.45 }}>{tr("Último WOD:")} <span style={{ color: HIST_COR_CROSS, fontWeight: 800 }}>{topUlt.slice(0, 3).map((n) => tr(n)).join(" • ")}</span></div>}
+          </div>
+        </div>
+      )}
+      <div style={{ display: "flex", gap: 8 }}>
+        <button style={botao(true)} onClick={() => onIrAba("cross")}>{tr("Abrir Cross")}</button>
+        <button style={botao(false)} onClick={() => { HISTORICO_MODO_PEDIDO = "cross"; onIrAba("historico"); }}>{tr("Ver histórico do Cross")}</button>
+      </div>
+    </section>
+  );
+}
+
 function InicioTab({ refPassos, refFoto, onAbrirFoto, perfilAtivoNome, rotina, diasSelecionados, historico, recordes, onIrTreino, onIrAba, t, idioma, refTreinoHojeTour, refMedidorTour, refMinisTour, refAtalhosTour }) {
   const [avaliacoes, setAvaliacoes] = useState([]);
   const [agora, setAgora] = useState(() => new Date());
@@ -9312,6 +9375,7 @@ function InicioTab({ refPassos, refFoto, onAbrirFoto, perfilAtivoNome, rotina, d
         );
       })()}
 
+      <CrossCardInicio onIrAba={onIrAba} />
 
       <div style={styles.inicioCardsGrid}>
         <div style={styles.inicioCard}>
@@ -12654,7 +12718,139 @@ const DICAS_DIETA = [
 // vez via fetch — assim não pesa o pacote JS do app, mesmo com muitas dietas).
 // Formato de cada dieta: título + 2 opções (hipertrofia/emagrecimento), cada uma com 4 refeições.
 
-function PremiumTab({ isPremium, onVerPlanos, objetivoUsuario, nivelUsuario, refsTour }) {
+// Vitrine da aba Premium: mostra de forma simples e colorida tudo que cada plano libera.
+const PREMIUM_VANTAGENS = [
+  { nivel: "pro", icone: "🍽️", cor: "#FF8A3D", titulo: "+1.200 dietas prontas", texto: "Escolha pelo seu objetivo e nível, veja as refeições com opções para trocar e use como guia do dia a dia." },
+  { nivel: "pro", icone: "🏋️", cor: "#3DDC97", titulo: "Rotinas e histórico ilimitados", texto: "Crie quantas rotinas quiser e guarde todo o seu histórico de treinos, sem limite." },
+  { nivel: "pro", icone: "📈", cor: "#4DA3FF", titulo: "Progressão de carga", texto: "O app sugere a hora de aumentar o peso, com base no que você já treinou." },
+  { nivel: "pro", icone: "📄", cor: "#B86BFF", titulo: "Relatório mensal em PDF", texto: "Um resumo do seu mês — treinos, evolução e medidas — para guardar ou mostrar ao seu treinador." },
+  { nivel: "pro", icone: "🔓", cor: "#FFD23D", titulo: "Acesso completo ao app", texto: "Todas as áreas liberadas: Rotina, Cross, Avaliação, Suplementos e tudo que chegar depois." },
+  { nivel: "ia", icone: "✨", cor: "#FF5FA2", titulo: "Assistente de IA", texto: "Tire dúvidas de treino, execução e alimentação a qualquer hora.", limite: "chat", unidade: "conversas por mês" },
+  { nivel: "ia", icone: "📷", cor: "#20D3E0", titulo: "Foto inteligente", texto: "Fotografe a refeição e veja a estimativa de calorias e macros.", limite: "foto", unidade: "fotos por mês" },
+  { nivel: "ia", icone: "🧠", cor: "#8C7BFF", titulo: "Minha Rotina Inteligente", texto: "Responda algumas perguntas e receba treino e alimentação montados para você.", limite: "treino", unidade: "por mês" },
+  { nivel: "ia", icone: "🚀", cor: "#FF7A59", titulo: "Mais funções de IA", texto: "Novas ajudas de IA vão chegando no plano — quem assina já recebe.", emBreve: true },
+];
+function PremiumVitrine({ plano, onVerPlanos }) {
+  const ativo = !!(plano && plano.ativa);
+  const temIA = ativo && plano.nivel === "ia";
+  const diasTeste = Math.max((CONFIG_ASSINATURA.diasTesteGratis || {}).pro || 0, (CONFIG_ASSINATURA.diasTesteGratis || {}).ia || 0);
+  const card = (cor) => ({ background: "linear-gradient(135deg, " + cor + "26, #12151A 62%)", border: "1px solid " + cor + "55", borderRadius: 16, padding: 12 });
+  const titulo = { fontSize: 17, fontWeight: 800, color: "inherit", margin: "18px 2px 4px" };
+  const sub = { fontSize: 12.5, opacity: 0.75, margin: "0 2px 10px", lineHeight: 1.4 };
+  const proInfo = infoPlano("pro", "mensal"), iaInfo = infoPlano("ia", "mensal");
+  const proAnual = infoPlano("pro", "anual"), iaAnual = infoPlano("ia", "anual");
+  const itensPro = PREMIUM_VANTAGENS.filter((v) => v.nivel === "pro");
+  const itensIA = PREMIUM_VANTAGENS.filter((v) => v.nivel === "ia");
+  const linha = (v) => {
+    const bloqueado = ativo && v.nivel === "ia" && !temIA;
+    const qtd = v.limite ? (LIMITES_IA_MENSAL.ia[v.limite] || 0) : 0;
+    return (
+      <div key={v.titulo} style={{ ...card(v.cor), display: "flex", gap: 12, alignItems: "flex-start", marginBottom: 8, opacity: bloqueado ? 0.82 : 1 }}>
+        <div style={{ flex: "0 0 46px", height: 46, borderRadius: 14, background: v.cor + "2e", border: "1px solid " + v.cor + "77", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24 }}>{v.icone}</div>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
+            <span style={{ fontWeight: 800, fontSize: 14.5, color: "#fff" }}>{tr(v.titulo)}</span>
+            {v.emBreve && <span style={{ fontSize: 10, fontWeight: 800, color: "#12151A", background: v.cor, borderRadius: 6, padding: "2px 6px" }}>{tr("EM BREVE")}</span>}
+            {ativo && !bloqueado && !v.emBreve && <span style={{ fontSize: 11, color: "#3DDC97", fontWeight: 800 }}>{tr("✓ seu")}</span>}
+            {bloqueado && <span style={{ fontSize: 10.5, color: v.cor, fontWeight: 800 }}>{tr("🔒 no Pro IA")}</span>}
+          </div>
+          <div style={{ fontSize: 12.5, color: "#D4DAE2", lineHeight: 1.45, marginTop: 2 }}>{tr(v.texto)}</div>
+          {qtd > 0 && <div style={{ fontSize: 11.5, fontWeight: 700, color: v.cor, marginTop: 4 }}>{qtd} {tr(v.unidade)}</div>}
+        </div>
+      </div>
+    );
+  };
+  const cartaoPlano = (cod, info, anual, cor1, cor2, incluso, atual) => (
+    <div style={{ background: "linear-gradient(145deg, " + cor1 + ", " + cor2 + ")", borderRadius: 18, padding: 14, color: "#fff", marginBottom: 10, boxShadow: "0 6px 18px rgba(0,0,0,0.25)" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
+        <div style={{ fontWeight: 900, fontSize: 18 }}>{NIVEIS_ASSINATURA[cod].nome}</div>
+        <span style={{ fontSize: 10, fontWeight: 800, background: "rgba(255,255,255,0.22)", borderRadius: 8, padding: "3px 8px" }}>{atual ? tr("SEU PLANO") : NIVEIS_ASSINATURA[cod].selo}</span>
+      </div>
+      <div style={{ fontSize: 12.5, opacity: 0.92, margin: "2px 0 8px" }}>{tr(NIVEIS_ASSINATURA[cod].slogan)}</div>
+      <div style={{ fontSize: 24, fontWeight: 900 }}>{formatarPreco(info.total)}<span style={{ fontSize: 13, fontWeight: 700, opacity: 0.9 }}> {tr("/mês")}</span></div>
+      <div style={{ fontSize: 11.5, opacity: 0.92, marginBottom: 8 }}>
+        {tr("ou")} {formatarPreco(anual.total)} {tr("por ano")}{anual.economiaPct > 0 ? " · " + tr("economize") + " " + anual.economiaPct + "%" : ""}
+      </div>
+      {incluso.map((t) => <div key={t} style={{ fontSize: 12.5, lineHeight: 1.6 }}>✓ {tr(t)}</div>)}
+    </div>
+  );
+  return (
+    <div style={{ marginBottom: 6 }}>
+      <section style={{ background: "linear-gradient(135deg, #FF5FA2 0%, #8C7BFF 48%, #20D3E0 100%)", borderRadius: 20, padding: "18px 16px", color: "#fff", marginBottom: 6, boxShadow: "0 8px 22px rgba(140,123,255,0.35)" }}>
+        <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: 1.2, opacity: 0.92 }}>{ativo ? tr("PLANO ATIVO") : tr("MASSI PRO PREMIUM")}</div>
+        <div style={{ fontSize: 23, fontWeight: 900, lineHeight: 1.2, margin: "4px 0 6px" }}>
+          {ativo ? "🎉 " + tr("Você é") + " " + (temIA ? NIVEIS_ASSINATURA.ia.nome : NIVEIS_ASSINATURA.pro.nome) : "⭐ " + tr("Treine com tudo desbloqueado")}
+        </div>
+        <div style={{ fontSize: 13.5, lineHeight: 1.45, opacity: 0.96 }}>
+          {ativo
+            ? (temIA ? tr("Todos os recursos liberados, incluindo a IA. Bom treino!") : tr("Quer a IA acompanhando sua evolução? Veja o Massi Pro IA mais abaixo."))
+            : tr("Dietas prontas, relatório mensal, progressão de carga e muito mais — explicado aqui, sem complicação.")}
+        </div>
+        {ativo && plano.emTeste && (
+          <div style={{ display: "inline-block", marginTop: 8, fontSize: 12, fontWeight: 800, background: "rgba(0,0,0,0.28)", borderRadius: 10, padding: "4px 10px" }}>
+            {tr("Teste grátis")} · {plano.diasRestantesTeste === 1 ? tr("resta 1 dia") : tr("restam") + " " + plano.diasRestantesTeste + " " + tr("dias")}
+          </div>
+        )}
+        {!ativo && (
+          <button onClick={onVerPlanos} style={{ marginTop: 12, width: "100%", border: "none", borderRadius: 14, padding: "12px 14px", background: "#fff", color: "#3b2a8c", fontWeight: 900, fontSize: 15, cursor: "pointer" }}>
+            {diasTeste > 0 ? tr("Começar teste grátis de") + " " + diasTeste + " " + tr("dias") : tr("Ver planos")}
+          </button>
+        )}
+      </section>
+
+      <div style={titulo}>{tr("O que você ganha")}</div>
+      <div style={sub}>{tr("Cada recurso explicado em uma frase.")}</div>
+      <div style={{ fontSize: 12, fontWeight: 900, letterSpacing: 0.8, color: "#3DDC97", margin: "4px 2px 6px" }}>{tr("NO MASSI PRO")}</div>
+      {itensPro.map(linha)}
+      <div style={{ fontSize: 12, fontWeight: 900, letterSpacing: 0.8, color: "#FF5FA2", margin: "12px 2px 6px" }}>{tr("A MAIS NO MASSI PRO IA")}</div>
+      {itensIA.map(linha)}
+
+      {!ativo && (
+        <>
+          <div style={titulo}>{tr("Como funciona")}</div>
+          <div style={sub}>{tr("Três passos, sem burocracia.")}</div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            {[["1", "#FF8A3D", "Escolha o plano", "Pro para o app completo, Pro IA para ter a inteligência artificial também."],
+              ["2", "#4DA3FF", diasTeste > 0 ? "Teste grátis por " + diasTeste + " dias" : "Assine", "Use tudo sem pressa e veja se combina com a sua rotina."],
+              ["3", "#3DDC97", "Aproveite tudo desbloqueado", "Dietas, relatórios, progressão de carga e, no Pro IA, as funções de IA."]].map(([n, cor, t, d]) => (
+              <div key={n} style={{ ...card(cor), display: "flex", gap: 12, alignItems: "center" }}>
+                <div style={{ flex: "0 0 36px", height: 36, borderRadius: 18, background: cor, color: "#12151A", fontWeight: 900, display: "flex", alignItems: "center", justifyContent: "center" }}>{n}</div>
+                <div>
+                  <div style={{ fontWeight: 800, fontSize: 14, color: "#fff" }}>{tr(t)}</div>
+                  <div style={{ fontSize: 12.5, color: "#D4DAE2", lineHeight: 1.4 }}>{tr(d)}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+
+      <div style={titulo}>{tr("Qual plano é o seu?")}</div>
+      <div style={sub}>{tr("O Pro já resolve treino e dieta. O Pro IA soma a inteligência artificial.")}</div>
+      {cartaoPlano("pro", proInfo, proAnual, "#1FB6A6", "#2B6CB0",
+        ["Acesso completo ao app", "+1.200 dietas prontas", "Rotinas e histórico ilimitados", "Progressão de carga", "Relatório mensal em PDF"], ativo && plano.nivel === "pro")}
+      {cartaoPlano("ia", iaInfo, iaAnual, "#8C3BFF", "#FF5FA2",
+        ["Tudo do Massi Pro", "Assistente de IA", "Foto inteligente da refeição", "Minha Rotina Inteligente", "Novas funções de IA"], temIA)}
+      {(!ativo || plano.nivel === "pro") && (
+        <button onClick={onVerPlanos} style={{ width: "100%", border: "none", borderRadius: 14, padding: "13px 14px", background: "linear-gradient(135deg, #8C3BFF, #FF5FA2)", color: "#fff", fontWeight: 900, fontSize: 15, cursor: "pointer", marginBottom: 6 }}>
+          {ativo ? tr("Fazer upgrade para o Pro IA") : tr("Ver planos e preços")}
+        </button>
+      )}
+
+      <div style={titulo}>{tr("Dúvidas rápidas")}</div>
+      {[["Preciso do plano com IA?", "Não. O Massi Pro já traz o app completo, dietas e relatórios. A IA é um extra para quem quer ajuda para montar treino, analisar refeições e tirar dúvidas."],
+        ["Posso testar antes de pagar?", diasTeste > 0 ? "Sim. Você tem " + diasTeste + " dias de teste grátis" + (CONFIG_ASSINATURA.testeUnicoPorUsuario ? " (um teste por pessoa)." : ".") : "No momento não há teste grátis."],
+        ["O app substitui nutricionista ou personal?", "Não. O conteúdo é educativo e as estimativas da IA são aproximadas. Para um plano individual, procure um profissional."]].map(([q, a]) => (
+        <details key={q} style={{ ...card("#8C7BFF"), marginBottom: 8 }}>
+          <summary style={{ fontWeight: 800, fontSize: 13.5, color: "#fff", cursor: "pointer" }}>{tr(q)}</summary>
+          <div style={{ fontSize: 12.5, color: "#D4DAE2", lineHeight: 1.5, marginTop: 6 }}>{tr(a)}</div>
+        </details>
+      ))}
+    </div>
+  );
+}
+
+function PremiumTab({ isPremium, plano, onVerPlanos, objetivoUsuario, nivelUsuario, refsTour }) {
   const objetivoPadrao = objetivoUsuario === "emagrecer" || objetivoUsuario === "secar" ? "emagrecer" : "hipertrofia";
   const perfilPadrao = nivelUsuario ? nivelUsuario.toLowerCase() : "iniciante";
 
@@ -12751,6 +12947,7 @@ function PremiumTab({ isPremium, onVerPlanos, objetivoUsuario, nivelUsuario, ref
 
   return (
     <div>
+      <PremiumVitrine plano={plano} onVerPlanos={onVerPlanos} />
       <section style={styles.card} ref={refsTour ? refsTour.dieta : undefined}>
         <div style={styles.cardLabel}>{tr("🍽 Sua dieta")}</div>
         {!isPremium ? (
@@ -16274,6 +16471,178 @@ async function crossGerarImagem(registro, ativacao, figura, top) {
   return await new Promise((resolve, reject) => cv.toBlob((b) => (b ? resolve(b) : reject(new Error("blob"))), "image/png"));
 }
 
+// ---- Massi Cross: gerador inteligente (histórico, músculos descansados, equilíbrio da semana) ----
+const CROSS_GRUPOS = {
+  superior: ["peito", "costas", "trapezio", "deltoide-frente", "deltoide-costas", "biceps", "triceps", "antebraco-frente", "antebraco-costas"],
+  inferior: ["quadriceps", "posterior-coxa", "gluteo", "panturrilha"],
+  core: ["abdomen"],
+};
+const CROSS_GRUPO_NOME = { superior: "membros superiores", inferior: "membros inferiores", core: "core" };
+const CROSS_NIVEL_ORDEM = { "Iniciante": 0, "Intermediário": 1, "Avançado": 2 };
+const CROSS_FADIGA_POR_DIA = [1, 0.9, 0.5, 0.25, 0.1, 0.05, 0.05];
+function crossDiasDesde(dataStr) {
+  if (!dataStr) return null;
+  const p = String(dataStr).split("-").map(Number);
+  if (p.length < 3 || p.some((n) => !n)) return null;
+  const h = new Date().toISOString().slice(0, 10).split("-").map(Number);
+  return Math.round((Date.UTC(h[0], h[1] - 1, h[2]) - Date.UTC(p[0], p[1] - 1, p[2])) / 86400000);
+}
+function crossAtivacaoDoRegistro(r) {
+  if (r && r.ativacaoMusculos && Object.keys(r.ativacaoMusculos).length) return r.ativacaoMusculos;
+  const exs = (r && r.exercicios) || ((CROSS_WODS.find((w) => w.id === (r && r.wodId)) || {}).exercicios) || [];
+  return ativacaoMuscularCross(exs);
+}
+function crossAnalisarHistorico(historico) {
+  const carga7 = {};
+  const fadiga = {};
+  const ultimoForte = {};
+  let wods7 = 0;
+  const ordenado = [...(historico || [])].sort((a, b) => (a.data < b.data ? 1 : -1));
+  ordenado.forEach((r) => {
+    const d = crossDiasDesde(r.data);
+    if (d === null || d < 0) return;
+    if (d <= 6) wods7 += 1;
+    const ativ = crossAtivacaoDoRegistro(r);
+    Object.keys(ativ).forEach((reg) => {
+      const peso = ativ[reg] === "forte" ? 1 : 0.4;
+      if (d <= 6) {
+        carga7[reg] = (carga7[reg] || 0) + peso;
+        fadiga[reg] = (fadiga[reg] || 0) + peso * (CROSS_FADIGA_POR_DIA[d] || 0);
+      }
+      if (ativ[reg] === "forte" && (ultimoForte[reg] === undefined || d < ultimoForte[reg])) ultimoForte[reg] = d;
+    });
+  });
+  const grupos = {};
+  let total = 0;
+  Object.keys(CROSS_GRUPOS).forEach((g) => {
+    grupos[g] = CROSS_GRUPOS[g].reduce((acc, reg) => acc + (carga7[reg] || 0), 0);
+    total += grupos[g];
+  });
+  const parte = {};
+  Object.keys(grupos).forEach((g) => { parte[g] = total > 0 ? grupos[g] / total : 0; });
+  return { carga7, fadiga, ultimoForte, wods7, parte, total, ultimos: ordenado };
+}
+function crossNomesUnicos(regs) {
+  const nomes = [];
+  regs.forEach((r) => { const n = CROSS_NOME_REGIAO[r] || r; if (nomes.indexOf(n) < 0) nomes.push(n); });
+  return nomes;
+}
+function crossPontuarWod(w, an, ctx) {
+  const ativ = ativacaoMuscularCross(w.exercicios);
+  const fortes = Object.keys(ativ).filter((r) => ativ[r] === "forte");
+  const motivos = [];
+  let s = 0;
+  // nível: nunca acima do seu
+  const nv = CROSS_NIVEL_ORDEM[w.nivel], nu = CROSS_NIVEL_ORDEM[ctx.nivel];
+  s += nv === nu ? 3 : 1.2;
+  // objetivo
+  let casouObjetivo = false;
+  if (ctx.objetivo === "Força") { if (w.categoria === "Força") { s += 4; casouObjetivo = true; } if (/Barra|Kettlebell/.test(w.equipamento)) s += 1; }
+  else if (ctx.objetivo === "Condicionamento") { if (w.categoria === "Metcon") { s += 2.5; casouObjetivo = true; } if (w.tipo === "amrap" || w.tipo === "emom") s += 0.5; }
+  else if (ctx.objetivo === "Resistência") { if (w.duracaoMin >= 15 && w.tipo !== "tabata") { s += 2; casouObjetivo = true; } if (w.tipo === "amrap" || w.tipo === "rounds") s += 1; }
+  else if (ctx.objetivo === "Emagrecimento") { if (["tabata", "amrap", "emom", "rounds"].indexOf(w.tipo) >= 0) { s += 2; casouObjetivo = true; } s += Math.min(2, Object.keys(ativ).length / 4); }
+  // duração
+  s += 3 - Math.min(3, Math.abs(w.duracaoMin - ctx.duracao) / 4);
+  // variedade
+  const ultimosIds = an.ultimos.map((r) => r.wodId);
+  const pos = ultimosIds.indexOf(w.id);
+  if (pos === 0) s -= 6; else if (pos > 0 && pos <= 2) s -= 3.5; else if (pos > 2 && pos <= 6) s -= 1.5;
+  if (an.ultimos[0] && an.ultimos[0].tipo === w.tipo) s -= 1.2;
+  // fadiga dos músculos treinados nos últimos dias
+  let fad = 0;
+  Object.keys(ativ).forEach((r) => { fad += (ativ[r] === "forte" ? 1 : 0.4) * (an.fadiga[r] || 0); });
+  s -= Math.min(6, fad * 2.4);
+  // músculos descansados
+  const frescos = fortes.filter((r) => an.ultimoForte[r] === undefined || an.ultimoForte[r] >= 3);
+  s += Math.min(3, frescos.length) * 0.9;
+  // equilíbrio da semana
+  let bal = null;
+  if (an.total >= 3 && an.wods7 >= 2 && fortes.length) {
+    Object.keys(CROSS_GRUPOS).forEach((g) => {
+      const fr = fortes.filter((r) => CROSS_GRUPOS[g].indexOf(r) >= 0).length / fortes.length;
+      if (g !== "core" && an.parte[g] < 0.18) { s += 2.2 * fr; if (fr >= 0.5) bal = g; }
+      if (g !== "core" && an.parte[g] > 0.62) s -= 1.5 * fr;
+    });
+  }
+  // motivos
+  if (bal) motivos.push("Equilibra sua semana: reforça " + CROSS_GRUPO_NOME[bal]);
+  if (frescos.length && an.total > 0) motivos.push("Foco em músculos descansados: " + crossNomesUnicos(frescos).slice(0, 3).join(", "));
+  const cansados = Object.keys(an.fadiga).filter((r) => an.fadiga[r] >= 0.8 && fortes.indexOf(r) < 0 && !ativ[r]);
+  if (cansados.length) motivos.push("Poupa o que você treinou há pouco: " + crossNomesUnicos(cansados).slice(0, 3).join(", "));
+  if (casouObjetivo) motivos.push("Combina com seu objetivo: " + ctx.objetivo.toLowerCase());
+  if (an.ultimos[0] && pos !== 0) motivos.push("Diferente do seu último WOD");
+  if (!motivos.length) motivos.push("Escolhido para o seu nível, tempo e equipamento");
+  return { s, motivos: motivos.slice(0, 3) };
+}
+function crossTierEquip(eq) {
+  if (eq === "Sem equipamento") return 0;
+  if (eq === "Barra" || eq === "Academia completa") return 2;
+  return 1; // básicos, kettlebell, corda, barra fixa...
+}
+function crossEscolherWod(ctx, historico, excluirId) {
+  const an = crossAnalisarHistorico(historico);
+  const tierUsuario = { "Sem equipamento": 0, "Equipamentos básicos": 1, "Academia completa": 2 }[ctx.equipamento];
+  const nu = CROSS_NIVEL_ORDEM[ctx.nivel];
+  let pool = CROSS_WODS.filter((w) => CROSS_NIVEL_ORDEM[w.nivel] <= nu && crossTierEquip(w.equipamento) <= (tierUsuario === undefined ? 2 : tierUsuario));
+  if (pool.length === 0) pool = CROSS_WODS.filter((w) => CROSS_NIVEL_ORDEM[w.nivel] <= nu);
+  if (pool.length === 0) pool = CROSS_WODS;
+  let pontuados = pool.map((w) => ({ w, ...crossPontuarWod(w, an, ctx) })).sort((a, b) => b.s - a.s);
+  if (excluirId && pontuados.length > 1) pontuados = pontuados.filter((p) => p.w.id !== excluirId);
+  const topo = pontuados.slice(0, 3);
+  const pesos = [0.6, 0.25, 0.15].slice(0, topo.length);
+  let sorteio = Math.random() * pesos.reduce((a, b) => a + b, 0);
+  let escolhido = topo[0];
+  for (let i = 0; i < topo.length; i++) { sorteio -= pesos[i]; if (sorteio <= 0) { escolhido = topo[i]; break; } }
+  const w = escolhido.w;
+  const ajustavel = w.tipo === "amrap" || w.tipo === "emom";
+  return { ...w, duracaoMin: ajustavel ? ctx.duracao : w.duracaoMin, objetivoGerado: ctx.objetivo, motivos: escolhido.motivos };
+}
+// Volume por região dos WODs do Cross nos últimos N dias (forte = 1, apoio = 0,4).
+function crossVolumePorRegiao(historico, dias) {
+  const vol = {};
+  (historico || []).forEach((r) => {
+    const d = crossDiasDesde(r.data);
+    if (d === null || d < 0 || d >= dias) return;
+    const ativ = crossAtivacaoDoRegistro(r);
+    Object.keys(ativ).forEach((reg) => { vol[reg] = (vol[reg] || 0) + (ativ[reg] === "forte" ? 1 : 0.4); });
+  });
+  return vol;
+}
+
+// Card "Equilíbrio dos últimos 7 dias": mapa do corpo + barras + recado do que o gerador vai priorizar.
+function CrossEquilibrioSemana({ historico }) {
+  const an = crossAnalisarHistorico(historico);
+  const pct = (g) => Math.round((an.parte[g] || 0) * 100);
+  let dica = "Faça alguns WODs para ver o equilíbrio da sua semana.";
+  if (an.wods7 >= 2 && an.total > 0) {
+    const nomes = { superior: "Superiores", inferior: "Inferiores", core: "Core" };
+    const falta = ["superior", "inferior"].filter((g) => an.parte[g] < 0.18);
+    const sobra = ["superior", "inferior"].filter((g) => an.parte[g] > 0.62);
+    if (falta.length) dica = "Pouco trabalho em " + CROSS_GRUPO_NOME[falta[0]] + " nos últimos 7 dias — o gerador vai priorizar.";
+    else if (sobra.length) dica = "Muito foco em " + CROSS_GRUPO_NOME[sobra[0]] + " — o gerador vai dar um respiro a eles.";
+    else dica = "Boa distribuição nos últimos 7 dias. 👏";
+    void nomes;
+  } else if (an.wods7 === 1) dica = "Mais um WOD e eu consigo analisar seu equilíbrio.";
+  const barras = [["superior", "Superiores", "#7ED957"], ["inferior", "Inferiores", "#FFB020"], ["core", "Core", "#4DB6FF"]];
+  return (
+    <section style={{ background: CROSS_CARD_DARK, borderRadius: 16, padding: 14, marginBottom: 14, border: "1px solid rgba(255,255,255,0.08)" }} data-testid="cross-equilibrio">
+      <div style={{ fontWeight: 800, fontSize: 15, color: "#fff", marginBottom: 10 }}>{tr("⚖️ Equilíbrio dos últimos 7 dias")}</div>
+      <div style={{ display: "flex", gap: 14, alignItems: "center" }}>
+        <div style={{ flex: "0 0 auto" }}><MapaMuscularSVG volumePorRegiao={an.carga7} mini /></div>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          {barras.map(([g, nome, cor]) => (
+            <div key={g} style={{ marginBottom: 8 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, color: CROSS_TEXT_DIM, marginBottom: 3 }}><span>{tr(nome)}</span><span>{pct(g)}%</span></div>
+              <div style={{ height: 7, borderRadius: 4, background: "rgba(255,255,255,0.08)" }}><div style={{ width: pct(g) + "%", height: 7, borderRadius: 4, background: cor }} /></div>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div style={{ fontSize: 12.5, color: CROSS_LIME, marginTop: 8, lineHeight: 1.4 }}>{tr(dica)}</div>
+    </section>
+  );
+}
+
 // Resultado do WOD (Massi Cross): tempo, comparação, músculos trabalhados e compartilhar.
 function CrossResultadoTela({ registro, comparacao, melhorou, onVoltar }) {
   const figura = useFiguraCorpo();
@@ -16597,7 +16966,237 @@ function PainelIndicadoresAvaliacao({ ultima, anterior }) {
   );
 }
 
-function HistoricoTab({ isPremium, onVerPlanos, refsTour }) {
+// ---------- Histórico: duas visões separadas (Rotina e Cross), pra não misturar as informações ----------
+const HIST_COR_ROTINA = "#7ED957";
+const HIST_COR_CROSS = "#FF8A3D";
+let HISTORICO_MODO_PEDIDO = null; // "cross" quando o atalho do Início pede a visão do Cross
+function HistoricoTab(props) {
+  const [modo, setModo] = useState(() => { const m = HISTORICO_MODO_PEDIDO; HISTORICO_MODO_PEDIDO = null; return m === "cross" ? "cross" : "rotina"; });
+  const [contagem, setContagem] = useState({ rotina: 0, cross: 0 });
+  useEffect(() => {
+    let vivo = true;
+    (async () => {
+      const ler = async (chave) => {
+        try { const r = await window.storage.get(chave); return r && r.value ? (JSON.parse(r.value) || []).length : 0; } catch (e) { return 0; }
+      };
+      const [a, b] = [await ler("historico-treinos"), await ler("cross-historico")];
+      if (vivo) setContagem({ rotina: a, cross: b });
+    })();
+    return () => { vivo = false; };
+  }, [modo]);
+  const opcoes = [["rotina", "💪", "Rotina", HIST_COR_ROTINA], ["cross", "🔥", "Cross", HIST_COR_CROSS]];
+  return (
+    <div>
+      <div role="tablist" style={{ display: "flex", gap: 6, padding: 5, borderRadius: 18, background: "rgba(0,0,0,0.42)", border: "1px solid rgba(255,255,255,0.1)", marginBottom: 12 }}>
+        {opcoes.map(([id, icone, nome, cor]) => {
+          const ativo = modo === id;
+          return (
+            <button
+              key={id}
+              role="tab"
+              aria-selected={ativo}
+              data-testid={"hist-modo-" + id}
+              onClick={() => setModo(id)}
+              style={{ flex: 1, border: "none", borderRadius: 14, padding: "11px 8px", cursor: "pointer", fontWeight: 900, fontSize: 14,
+                background: ativo ? cor : "transparent", color: ativo ? "#12151A" : "#D4DAE2", transition: "background 0.15s" }}
+            >
+              {icone} {tr(nome)} <span style={{ opacity: 0.8, fontWeight: 700 }}>({contagem[id]})</span>
+            </button>
+          );
+        })}
+      </div>
+      {modo === "cross" ? <HistoricoCrossView /> : <HistoricoRotinaView {...props} />}
+    </div>
+  );
+}
+
+function HistoricoCrossView() {
+  const figuraInfo = useFiguraCorpo(); // só pra garantir que o corpo segue o sexo informado
+  void figuraInfo;
+  const [historico, setHistorico] = useState([]);
+  const [recordes, setRecordes] = useState({});
+  const [desafios, setDesafios] = useState({});
+  const [carregado, setCarregado] = useState(false);
+  const [mostrar, setMostrar] = useState(15);
+  const [removerId, setRemoverId] = useState(null);
+  useEffect(() => {
+    (async () => {
+      try { const r = await window.storage.get("cross-historico"); if (r && r.value) setHistorico(JSON.parse(r.value)); } catch (e) { /* sem WODs ainda */ }
+      try { const r = await window.storage.get("cross-recordes"); if (r && r.value) setRecordes(JSON.parse(r.value)); } catch (e) { /* sem recordes */ }
+      try { const r = await window.storage.get("cross-desafios-progresso"); if (r && r.value) setDesafios(JSON.parse(r.value)); } catch (e) { /* sem desafios */ }
+      setCarregado(true);
+    })();
+  }, []);
+  const remover = async (id) => {
+    const nova = historico.filter((h) => h.id !== id);
+    setHistorico(nova);
+    setRemoverId(null);
+    try { await window.storage.set("cross-historico", JSON.stringify(nova)); } catch (e) { /* segue */ }
+  };
+  const exportarCSV = () => {
+    const linhas = [["Data", "WOD", "Tipo", "Nível", "Tempo", "Rounds", "Exercícios"]];
+    [...historico].sort((a, b) => (a.data < b.data ? -1 : 1)).forEach((h) => {
+      linhas.push([h.data || "", h.wodNome || "", h.tipo || "", h.nivel || "", formatarTempoCross(h.tempoSeg || 0), String(h.rounds || ""), (h.exercicios || []).map((e) => e.qtd + " " + e.exercicio).join(" | ")]);
+    });
+    const csv = linhas.map((l) => l.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(",")).join("\n");
+    const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = "meu-historico-massi-cross.csv";
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+  const total = historico.length;
+  const ultimos7 = historico.filter((h) => { const d = crossDiasDesde(h.data); return d !== null && d >= 0 && d <= 6; }).length;
+  const streak = calcularStreak(historico);
+  const tempoTotalMin = Math.round(historico.reduce((acc, h) => acc + (h.tempoSeg || 0), 0) / 60);
+  const volume = crossVolumePorRegiao(historico, 14);
+  const temMapa = Object.keys(volume).length > 0;
+  // ranking por nome de músculo (ombros/antebraços juntam os dois lados)
+  const rank = {};
+  Object.keys(volume).forEach((r) => { const n = CROSS_NOME_REGIAO[r] || r; rank[n] = Math.max(rank[n] || 0, volume[r]); });
+  const ranking = Object.entries(rank).sort((a, b) => b[1] - a[1]);
+  const maxRank = ranking.length ? ranking[0][1] : 1;
+  const recRank = Object.entries(recordes).sort((a, b) => ((a[1] && a[1].data) < (b[1] && b[1].data) ? 1 : -1));
+  const desafiosAtivos = CROSS_DESAFIOS.filter((d) => desafios[d.id] && (desafios[d.id].progresso > 0 || desafios[d.id].concluido));
+  const lista = [...historico].sort((a, b) => (a.data < b.data ? 1 : a.data > b.data ? -1 : 0));
+  const fmtData = (d) => { try { return new Date(d + "T00:00:00").toLocaleDateString(localeAtual(), { weekday: "short", day: "2-digit", month: "short" }); } catch (e) { return d; } };
+  const cartao = { background: "#14171C", border: "1px solid rgba(255,138,61,0.28)", borderRadius: 16, padding: 14, marginBottom: 12, color: "#fff" };
+  const rotulo = { fontWeight: 800, fontSize: 15, color: "#fff", marginBottom: 8 };
+  const numero = { fontSize: 22, fontWeight: 900, color: HIST_COR_CROSS };
+  const legenda = { fontSize: 11.5, color: "#9AA3AE" };
+  return (
+    <div data-testid="hist-cross">
+      <section style={{ background: "linear-gradient(135deg, #FF8A3D, #E5484D)", borderRadius: 18, padding: "14px 16px", color: "#fff", marginBottom: 12 }}>
+        <div style={{ fontSize: 17, fontWeight: 900 }}>{tr("🔥 Histórico do Massi Cross")}</div>
+        <div style={{ fontSize: 12.5, opacity: 0.95, marginTop: 2, lineHeight: 1.4 }}>{tr("Aqui ficam só os seus WODs. Os treinos da Rotina têm a sua própria visão, ao lado.")}</div>
+      </section>
+
+      {carregado && total === 0 ? (
+        <div style={{ ...cartao, textAlign: "center", color: "#D4DAE2", fontSize: 13.5, lineHeight: 1.5 }}>
+          {tr("Nenhum WOD concluído ainda. Faça um treino na aba Cross e ele aparece aqui, com o mapa do corpo.")}
+        </div>
+      ) : (
+        <>
+          <section style={cartao}>
+            <div style={{ display: "flex", justifyContent: "space-between", textAlign: "center", gap: 6 }}>
+              <div style={{ flex: 1 }}><div style={numero}>{total}</div><div style={legenda}>{tr("WODs no total")}</div></div>
+              <div style={{ flex: 1 }}><div style={numero}>{ultimos7}</div><div style={legenda}>{tr("nos últimos 7 dias")}</div></div>
+              <div style={{ flex: 1 }}><div style={numero}>{streak}🔥</div><div style={legenda}>{tr("dias seguidos")}</div></div>
+              <div style={{ flex: 1 }}><div style={numero}>{tempoTotalMin}</div><div style={legenda}>{tr("min treinados")}</div></div>
+            </div>
+          </section>
+
+          {temMapa && (
+            <section style={cartao}>
+              <div style={rotulo}>{tr("🗺️ Mapa muscular do Cross (últimos 14 dias)")}</div>
+              <MapaMuscularSVG volumePorRegiao={volume} />
+              <div style={{ marginTop: 10 }}>
+                {ranking.slice(0, 6).map(([nome, v]) => (
+                  <div key={nome} style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
+                    <div style={{ flex: "0 0 112px", fontSize: 12.5, color: "#D4DAE2" }}>{tr(nome)}</div>
+                    <div style={{ flex: 1, height: 7, borderRadius: 4, background: "rgba(255,255,255,0.08)" }}>
+                      <div style={{ width: Math.max(8, (v / maxRank) * 100) + "%", height: 7, borderRadius: 4, background: HIST_COR_CROSS }} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+
+          <section style={cartao}>
+            <div style={rotulo}>{tr("Consistência no Cross")}</div>
+            <ConsistenciaHeatmap historico={historico} />
+          </section>
+
+          {recRank.length > 0 && (
+            <section style={cartao}>
+              <div style={rotulo}>{tr("🏆 Recordes do Cross")}</div>
+              {recRank.map(([wodId, r]) => {
+                const info = CROSS_WODS.find((w) => w.id === wodId) || { nome: wodId };
+                return (
+                  <div key={wodId} style={{ display: "flex", justifyContent: "space-between", gap: 8, padding: "7px 0", borderBottom: "1px solid rgba(255,255,255,0.07)", fontSize: 13 }}>
+                    <span style={{ color: "#fff", fontWeight: 700 }}>{tr(info.nome)}</span>
+                    <span style={{ color: HIST_COR_CROSS, fontWeight: 800 }}>
+                      {formatarTempoCross(r.tempoSeg || 0)}{r.rounds ? " · " + r.rounds + " rounds" : ""}
+                      <span style={{ color: "#9AA3AE", fontWeight: 600 }}> {r.data ? fmtData(r.data) : ""}</span>
+                    </span>
+                  </div>
+                );
+              })}
+            </section>
+          )}
+
+          {desafiosAtivos.length > 0 && (
+            <section style={cartao}>
+              <div style={rotulo}>{tr("🏅 Desafios do Cross")}</div>
+              {desafiosAtivos.map((d) => {
+                const pr = desafios[d.id];
+                const pct = Math.min(100, Math.round(((pr.progresso || 0) / d.meta) * 100));
+                return (
+                  <div key={d.id} style={{ marginBottom: 8 }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12.5, color: "#D4DAE2", marginBottom: 3 }}>
+                      <span>{d.emoji} {tr(d.nome)}</span><span>{pr.concluido ? tr("✓ concluído") : pct + "%"}</span>
+                    </div>
+                    <div style={{ height: 7, borderRadius: 4, background: "rgba(255,255,255,0.08)" }}>
+                      <div style={{ width: pct + "%", height: 7, borderRadius: 4, background: pr.concluido ? "#3DDC97" : HIST_COR_CROSS }} />
+                    </div>
+                  </div>
+                );
+              })}
+            </section>
+          )}
+
+          <section style={cartao}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+              <div style={rotulo}>{tr("WODs concluídos")}</div>
+              <button onClick={exportarCSV} style={{ border: "1px solid rgba(255,138,61,0.5)", background: "transparent", color: HIST_COR_CROSS, borderRadius: 10, padding: "5px 10px", fontSize: 12, fontWeight: 800, cursor: "pointer" }}>{tr("Baixar CSV")}</button>
+            </div>
+            {lista.slice(0, mostrar).map((h) => {
+              const ativ = crossAtivacaoDoRegistro(h);
+              const top = crossTopMusculos(ativ);
+              const temRounds = (h.tipo === "rounds" || h.tipo === "amrap" || h.tipo === "tabata") && h.rounds;
+              return (
+                <div key={h.id} style={{ display: "flex", gap: 10, padding: "10px 0", borderTop: "1px solid rgba(255,255,255,0.08)" }} data-testid="hist-cross-item">
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontWeight: 900, fontSize: 14.5, color: "#fff" }}>{tr(h.wodNome)}</div>
+                    <div style={{ fontSize: 12, color: "#9AA3AE", marginBottom: 5 }}>{fmtData(h.data)}</div>
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: 5, marginBottom: 6 }}>
+                      <span style={{ fontSize: 11, fontWeight: 800, background: HIST_COR_CROSS, color: "#12151A", borderRadius: 7, padding: "2px 7px" }}>{String(h.tipo || "").toUpperCase()}</span>
+                      <span style={{ fontSize: 11, fontWeight: 800, background: "rgba(255,255,255,0.1)", color: "#fff", borderRadius: 7, padding: "2px 7px" }}>⏱ {formatarTempoCross(h.tempoSeg || 0)}</span>
+                      {temRounds && <span style={{ fontSize: 11, fontWeight: 800, background: "rgba(255,255,255,0.1)", color: "#fff", borderRadius: 7, padding: "2px 7px" }}>{h.rounds} {tr("rounds")}</span>}
+                      {h.nivel && <span style={{ fontSize: 11, fontWeight: 700, background: "rgba(255,255,255,0.06)", color: "#D4DAE2", borderRadius: 7, padding: "2px 7px" }}>{tr(h.nivel)}</span>}
+                    </div>
+                    {top.length > 0 && <div style={{ fontSize: 12, color: HIST_COR_CROSS, fontWeight: 700 }}>{top.slice(0, 3).map((n) => tr(n)).join(" • ")}</div>}
+                    {removerId === h.id ? (
+                      <div style={{ marginTop: 6, display: "flex", gap: 8, alignItems: "center", fontSize: 12 }}>
+                        <span style={{ color: "#D4DAE2" }}>{tr("Remover este WOD?")}</span>
+                        <button onClick={() => remover(h.id)} style={{ border: "none", background: "#E5484D", color: "#fff", borderRadius: 8, padding: "4px 10px", fontWeight: 800, cursor: "pointer" }}>{tr("Sim")}</button>
+                        <button onClick={() => setRemoverId(null)} style={{ border: "1px solid rgba(255,255,255,0.25)", background: "transparent", color: "#fff", borderRadius: 8, padding: "4px 10px", cursor: "pointer" }}>{tr("Não")}</button>
+                      </div>
+                    ) : (
+                      <button onClick={() => setRemoverId(h.id)} style={{ marginTop: 6, border: "none", background: "transparent", color: "#9AA3AE", fontSize: 12, textDecoration: "underline", padding: 0, cursor: "pointer" }}>{tr("Remover registro")}</button>
+                    )}
+                  </div>
+                  {Object.keys(ativ).length > 0 && (
+                    <div style={{ flex: "0 0 auto" }}><MapaMuscularSVG ativacao={ativ} mini /></div>
+                  )}
+                </div>
+              );
+            })}
+            {lista.length > mostrar && (
+              <button onClick={() => setMostrar(mostrar + 15)} style={{ width: "100%", marginTop: 8, border: "1px solid rgba(255,138,61,0.5)", background: "transparent", color: HIST_COR_CROSS, borderRadius: 12, padding: "10px", fontWeight: 800, cursor: "pointer" }}>
+                {tr("Ver mais WODs")}
+              </button>
+            )}
+          </section>
+        </>
+      )}
+    </div>
+  );
+}
+
+function HistoricoRotinaView({ isPremium, onVerPlanos, refsTour }) {
   const [modoImpressaoRelatorio, setModoImpressaoRelatorio] = useState(false);
   const [historico, setHistorico] = useState([]);
   const [carregado, setCarregado] = useState(false);
@@ -17612,15 +18211,11 @@ function MassiCrossTab({ refWodTour, refCategorias, refGerador, refAtalhos }) {
   };
 
   const gerarWod = () => {
-    const candidatos = CROSS_WODS.filter(
-      (w) =>
-        w.nivel === genNivel &&
-        Math.abs(w.duracaoMin - genDuracao) <= 10 &&
-        (genEquipamento === "Academia completa" || w.equipamento === genEquipamento || w.equipamento === "Sem equipamento")
-    );
-    const pool = candidatos.length > 0 ? candidatos : CROSS_WODS.filter((w) => w.nivel === genNivel);
-    const escolhido = pool.length > 0 ? pool[Math.floor(Math.random() * pool.length)] : CROSS_WODS[0];
-    setWodGerado({ ...escolhido, duracaoMin: genDuracao, objetivoGerado: genObjetivo });
+    setWodGerado(crossEscolherWod(
+      { objetivo: genObjetivo, nivel: genNivel, duracao: genDuracao, equipamento: genEquipamento },
+      historico,
+      wodGerado ? wodGerado.id : null
+    ));
   };
 
   const totalWodsConcluidos = historico.length;
@@ -17721,6 +18316,7 @@ function MassiCrossTab({ refWodTour, refCategorias, refGerador, refAtalhos }) {
     return (
       <div>
         <button style={styles.crossVoltarBtn} onClick={voltar}>{tr("← Voltar")}</button>
+        <CrossEquilibrioSemana historico={historico} />
         <section style={styles.card}>
           <div style={styles.cardLabel}>{tr("Gerar meu WOD")}</div>
           <div style={styles.crossGeradorForm}>
@@ -17765,7 +18361,16 @@ function MassiCrossTab({ refWodTour, refCategorias, refGerador, refAtalhos }) {
                 <div key={i} style={styles.crossWodDestaqueItem}>• {tr(ex.qtd)} {tr(ex.exercicio)}</div>
               ))}
             </div>
+            {wodGerado.motivos && wodGerado.motivos.length > 0 && (
+              <div style={{ margin: "10px 0 12px", padding: "10px 12px", borderRadius: 12, background: "rgba(198,255,77,0.08)", border: "1px solid rgba(198,255,77,0.25)" }} data-testid="cross-motivos">
+                <div style={{ fontSize: 12, fontWeight: 800, color: CROSS_LIME, marginBottom: 4 }}>{tr("Por que esse WOD?")}</div>
+                {wodGerado.motivos.map((m, i) => (
+                  <div key={i} style={{ fontSize: 12.5, color: "#E6EAEE", lineHeight: 1.45 }}>✔ {tr(m)}</div>
+                ))}
+              </div>
+            )}
             <button style={styles.crossBtnComecar} onClick={() => setWodAtivo(wodGerado)}>{tr("COMEÇAR WOD")}</button>
+            <button style={{ ...styles.trocaManterBtn, width: "100%", marginTop: 8 }} onClick={gerarWod}>{tr("🔄 Gerar outro")}</button>
           </section>
         )}
       </div>
@@ -17910,6 +18515,8 @@ function MassiCrossTab({ refWodTour, refCategorias, refGerador, refAtalhos }) {
           </section>
         )}
 
+        <CrossEquilibrioSemana historico={historico} />
+
         <section style={styles.card}>
           <div style={styles.cardLabel}>{tr("Consistência")}</div>
           <ConsistenciaHeatmap historico={historico} />
@@ -17993,60 +18600,46 @@ function getUltimaDorRelacionada(nomeExercicio, dores) {
   return mesmoGrupo ? { ...mesmoGrupo, mesmoGrupo: true } : null;
 }
 
-// Guarda de rolagem: se a tela "pula" sozinha (sem o usuário tocar/rolar), volta pra onde estava.
-// Só vale quando nenhum tutorial está aberto e nenhuma navegação pediu a rolagem.
+// Guarda de rolagem: a tela só pode rolar por ação do usuário (arrastar o dedo, roda do mouse,
+// teclas, foco num campo que ele tocou). Qualquer rolagem sozinha — inclusive a suave, em passos
+// pequenos, que começa logo depois de um simples toque na aba — volta para onde estava.
+// Só vale quando nenhum tutorial está aberto; navegações do app liberam a rolagem por um instante.
+let ROLAGEM_LIBERADA_ATE = 0;
+function liberarRolagemPor(ms) { ROLAGEM_LIBERADA_ATE = Date.now() + ms; }
 function useGuardaRolagem(ativo) {
   useEffect(() => {
     if (!ativo || typeof window === "undefined") return undefined;
     const pos = () => window.pageYOffset || document.documentElement.scrollTop || 0;
-    let ultima = pos();
-    let ultimaAtividade = Date.now();
-    let tocando = false;
-    let tipo = "toque"; // "toque" | "mouse"
-    const marcar = () => { ultimaAtividade = Date.now(); };
-    const aoTocar = () => { tocando = true; tipo = "toque"; marcar(); };
-    const aoSoltar = () => { tocando = false; marcar(); };
-    const aoMouse = () => { tipo = "mouse"; marcar(); };
-    // pointerdown diz se foi dedo ou mouse (o toque também gera "mousedown" de compatibilidade, que ignoramos)
-    const aoPonteiro = (e) => { tipo = e && e.pointerType === "mouse" ? "mouse" : "toque"; if (tipo === "toque") tocando = true; marcar(); };
+    const agora = () => Date.now();
+    let boa = pos();          // última posição aceita
+    let dedo = false;         // dedo na tela
+    let arrastou = false;     // o dedo andou (só um arrasto gera inércia; toque simples não)
+    let inerciaAte = 0;       // até quando a inércia de um arrasto ainda pode rolar
+    let liberadaAte = 0;      // roda do mouse, teclas, foco de campo tocado
+    let mouseApertado = false;
+    let ultimoToque = 0;
+    const aoTocar = () => { dedo = true; arrastou = false; ultimoToque = agora(); };
+    const aoMover = () => { arrastou = true; };
+    const aoSoltar = () => { dedo = false; if (arrastou) inerciaAte = agora() + 3500; arrastou = false; };
+    const aoPonteiro = (e) => { if (e && e.pointerType === "mouse") mouseApertado = true; };
+    const aoSoltarPonteiro = (e) => { if (e && e.pointerType === "mouse") { mouseApertado = false; liberadaAte = agora() + 400; } };
+    const aoMouseOuTecla = () => { liberadaAte = agora() + 1500; };
+    const aoFoco = () => { if (agora() - ultimoToque < 800) liberadaAte = agora() + 1500; };
+    const aoRedimensionar = () => { liberadaAte = agora() + 1200; };
     const aoRolar = () => {
       const atual = pos();
-      const salto = Math.abs(atual - ultima);
-      const recente = tocando || Date.now() - ultimaAtividade < 3000;
-      // Salto enorme num único evento, vindo de código (o dedo nunca anda tanto num quadro)
-      const pulouSozinho = tipo === "toque" && salto >= 400;
-      // Qualquer deslocamento com o usuário parado há tempo
-      const derivaSozinha = !recente && salto >= 80;
-      if (pulouSozinho || derivaSozinha) {
-        window.scrollTo({ top: ultima, behavior: "auto" });
-        return;
-      }
-      ultima = atual;
+      if (dedo || mouseApertado || agora() < inerciaAte || agora() < liberadaAte || agora() < ROLAGEM_LIBERADA_ATE) { boa = atual; return; }
+      if (Math.abs(atual - boa) >= 120) window.scrollTo({ top: boa, behavior: "instant" });
     };
-    window.addEventListener("touchstart", aoTocar, { passive: true, capture: true });
-    window.addEventListener("touchend", aoSoltar, { passive: true, capture: true });
-    window.addEventListener("touchcancel", aoSoltar, { passive: true, capture: true });
-    window.addEventListener("pointerup", aoSoltar, { passive: true, capture: true });
-    window.addEventListener("pointercancel", aoSoltar, { passive: true, capture: true });
-    window.addEventListener("touchmove", marcar, { passive: true, capture: true });
-    window.addEventListener("pointerdown", aoPonteiro, { passive: true, capture: true });
-    window.addEventListener("wheel", aoMouse, { passive: true, capture: true });
-    window.addEventListener("keydown", aoMouse, { capture: true });
-    window.addEventListener("focusin", marcar, { capture: true });
-    window.addEventListener("resize", marcar, { passive: true });
+    const ev = [
+      ["touchstart", aoTocar], ["touchmove", aoMover], ["touchend", aoSoltar], ["touchcancel", aoSoltar],
+      ["pointerdown", aoPonteiro], ["pointerup", aoSoltarPonteiro], ["pointercancel", aoSoltarPonteiro],
+      ["wheel", aoMouseOuTecla], ["keydown", aoMouseOuTecla], ["focusin", aoFoco], ["resize", aoRedimensionar],
+    ];
+    ev.forEach(([n, f]) => window.addEventListener(n, f, { passive: true, capture: true }));
     window.addEventListener("scroll", aoRolar, { passive: true });
     return () => {
-      window.removeEventListener("touchstart", aoTocar, { capture: true });
-      window.removeEventListener("touchend", aoSoltar, { capture: true });
-      window.removeEventListener("touchcancel", aoSoltar, { capture: true });
-      window.removeEventListener("pointerup", aoSoltar, { capture: true });
-      window.removeEventListener("pointercancel", aoSoltar, { capture: true });
-      window.removeEventListener("touchmove", marcar, { capture: true });
-      window.removeEventListener("pointerdown", aoPonteiro, { capture: true });
-      window.removeEventListener("wheel", aoMouse, { capture: true });
-      window.removeEventListener("keydown", aoMouse, { capture: true });
-      window.removeEventListener("focusin", marcar, { capture: true });
-      window.removeEventListener("resize", marcar);
+      ev.forEach(([n, f]) => window.removeEventListener(n, f, { capture: true }));
       window.removeEventListener("scroll", aoRolar);
     };
   }, [ativo]);
