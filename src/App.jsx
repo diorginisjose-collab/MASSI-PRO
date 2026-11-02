@@ -4917,8 +4917,8 @@ Object.assign(TRAD_TEXTOS.es, {"{0}/{1} dias": "{0}/{1} días", "ex: 40": "p. ej
 Object.assign(TRAD_TEXTOS.en, {"✨ Montar um treino personalizado": "✨ Build a personalized workout", "Divisão, exercícios e volume feitos pro seu objetivo, nível, dias disponíveis e prioridades.": "Split, exercises and volume built around your goal, level, available days and priorities.", "Ou use um modelo pronto:": "Or use a ready-made template:", "TREINO PERSONALIZADO": "PERSONALIZED WORKOUT", "PRÉVIA DA SUA SEMANA": "PREVIEW OF YOUR WEEK", "Já preenchemos com o que sabemos de você. Ajuste o que quiser.": "We filled in what we know about you. Adjust anything you like.", "Alterar": "Change", "Lesões ou limitações": "Injuries or limitations", "Dias por semana": "Days per week", "Duração de cada treino": "Length of each workout", "{0} min": "{0} min", "Prioridade muscular": "Muscle priority", "Sugerida pra mim": "Suggested for me", "Equilibrado": "Balanced", "Superiores": "Upper body", "Glúteos": "Glutes", "Peito e costas": "Chest and back", "Ombros e braços": "Shoulders and arms", "Onde você treina": "Where you train", "Equipamentos limitados": "Limited equipment", "Em casa": "At home", "Sexo (só ajuda a sugerir a prioridade — você pode mudar)": "Sex (only helps suggest a priority — you can change it)", "Prefiro não informar": "Prefer not to say", "Saúde e bem-estar": "Health and well-being", "Gerar meu treino": "Generate my workout", "Aplicar na minha semana": "Apply to my week", "🔄 Outra versão": "🔄 Another version", "← Ajustar": "← Adjust", "Composto principal de {0}": "Main compound lift for {0}", "Composto complementar de {0}": "Supporting compound lift for {0}", "Isolamento de {0}": "Isolation for {0}", "ênfase da sua prioridade": "emphasis on your priority", "Treino com o peso do corpo": "Bodyweight workout", "Poucas opções de {0} com o seu equipamento ou restrições.": "Few options for {0} with your equipment or restrictions.", "Você informou restrição ({0}): evitamos os exercícios que costumam sobrecarregar essa região. Se sentir dor, pare e procure uma avaliação profissional.": "You reported a restriction ({0}): we avoided exercises that usually overload that area. If you feel pain, stop and seek a professional assessment.", "Em casa, usamos treinos só com o peso do corpo. Pra mais variedade, escolha \"Equipamentos limitados\" (halteres e barra).": "At home we use bodyweight-only workouts. For more variety, choose \"Limited equipment\" (dumbbells and barbell).", "Não consegui montar esse treino. Tente outras opções.": "I couldn't build that workout. Try other options.", "peito": "chest", "costas": "back", "ombros": "shoulders", "bíceps": "biceps", "tríceps": "triceps", "quadríceps": "quads", "posteriores de coxa": "hamstrings", "glúteos": "glutes", "panturrilhas": "calves", "abdômen": "abs", "Peito, ombros e tríceps": "Chest, shoulders and triceps", "Superiores completos": "Full upper body", "Inferiores completos": "Full lower body", "Quadríceps e glúteos": "Quads and glutes", "Glúteos e posteriores": "Glutes and hamstrings", "Glúteos (ênfase)": "Glutes (emphasis)"});
 Object.assign(TRAD_TEXTOS.es, {"✨ Montar um treino personalizado": "✨ Crear un entrenamiento personalizado", "Divisão, exercícios e volume feitos pro seu objetivo, nível, dias disponíveis e prioridades.": "División, ejercicios y volumen hechos para tu objetivo, nivel, días disponibles y prioridades.", "Ou use um modelo pronto:": "O usa una plantilla lista:", "TREINO PERSONALIZADO": "ENTRENAMIENTO PERSONALIZADO", "PRÉVIA DA SUA SEMANA": "VISTA PREVIA DE TU SEMANA", "Já preenchemos com o que sabemos de você. Ajuste o que quiser.": "Ya completamos lo que sabemos de ti. Ajusta lo que quieras.", "Alterar": "Cambiar", "Lesões ou limitações": "Lesiones o limitaciones", "Dias por semana": "Días por semana", "Duração de cada treino": "Duración de cada entrenamiento", "Prioridade muscular": "Prioridad muscular", "Sugerida pra mim": "Sugerida para mí", "Superiores": "Tren superior", "Peito e costas": "Pecho y espalda", "Ombros e braços": "Hombros y brazos", "Onde você treina": "Dónde entrenas", "Equipamentos limitados": "Equipo limitado", "Em casa": "En casa", "Sexo (só ajuda a sugerir a prioridade — você pode mudar)": "Sexo (solo ayuda a sugerir la prioridad; puedes cambiarla)", "Prefiro não informar": "Prefiero no decirlo", "Saúde e bem-estar": "Salud y bienestar", "Gerar meu treino": "Generar mi entrenamiento", "Aplicar na minha semana": "Aplicar a mi semana", "🔄 Outra versão": "🔄 Otra versión", "Composto principal de {0}": "Compuesto principal de {0}", "Composto complementar de {0}": "Compuesto complementario de {0}", "Isolamento de {0}": "Aislamiento de {0}", "ênfase da sua prioridade": "énfasis en tu prioridad", "Treino com o peso do corpo": "Entrenamiento con peso corporal", "Poucas opções de {0} com o seu equipamento ou restrições.": "Pocas opciones de {0} con tu equipo o restricciones.", "Você informou restrição ({0}): evitamos os exercícios que costumam sobrecarregar essa região. Se sentir dor, pare e procure uma avaliação profissional.": "Indicaste una restricción ({0}): evitamos los ejercicios que suelen sobrecargar esa zona. Si sientes dolor, detente y busca una evaluación profesional.", "Em casa, usamos treinos só com o peso do corpo. Pra mais variedade, escolha \"Equipamentos limitados\" (halteres e barra).": "En casa usamos entrenamientos solo con el peso corporal. Para más variedad, elige \"Equipo limitado\" (mancuernas y barra).", "Não consegui montar esse treino. Tente outras opções.": "No pude armar ese entrenamiento. Prueba otras opciones.", "peito": "pecho", "costas": "espalda", "ombros": "hombros", "quadríceps": "cuádriceps", "posteriores de coxa": "isquiotibiales", "panturrilhas": "gemelos", "abdômen": "abdomen", "Peito, ombros e tríceps": "Pecho, hombros y tríceps", "Superiores completos": "Tren superior completo", "Inferiores completos": "Tren inferior completo", "Quadríceps e glúteos": "Cuádriceps y glúteos", "Glúteos e posteriores": "Glúteos e isquiotibiales", "Glúteos (ênfase)": "Glúteos (énfasis)"});
 // ===== Traduções das funções novas (Cross, Premium, Histórico) =====
-Object.assign(TRAD_TEXTOS.en, {"A MAIS NO MASSI PRO IA": "EXTRA IN MASSI PRO AI", "NO MASSI PRO": "IN MASSI PRO", "Abrir Cross": "Open Cross", "Antebraços": "Forearms", "Apoio": "Support", "Aproveite tudo desbloqueado": "Enjoy everything unlocked", "Aqui ficam só os seus WODs. Os treinos da Rotina têm a sua própria visão, ao lado.": "Only your WODs live here. Routine workouts have their own view, right beside it.", "Assine": "Subscribe", "Assistente de IA": "AI assistant", "Barra": "Barbell", "Boa distribuição nos últimos 7 dias. 👏": "Well balanced over the last 7 days. 👏", "Bíceps": "Biceps", "Cada recurso explicado em uma frase.": "Each feature explained in one sentence.", "Combina com seu objetivo: {0}": "Matches your goal: {0}", "Começar teste grátis de {0} dias": "Start your {0}-day free trial", "Consistência no Cross": "Cross consistency", "Core": "Core", "Corpo no Cross (14 dias)": "Body in Cross (14 days)", "Crie quantas rotinas quiser e guarde todo o seu histórico de treinos, sem limite.": "Create as many routines as you want and keep your whole workout history, no limits.", "Cross": "Cross", "Dietas prontas, relatório mensal, progressão de carga e muito mais — explicado aqui, sem complicação.": "Ready-made diets, monthly report, load progression and much more — explained here, no hassle.", "Dietas, relatórios, progressão de carga e, no Pro IA, as funções de IA.": "Diets, reports, load progression and, with Pro AI, the AI features.", "Diferente do seu último WOD": "Different from your last WOD", "Dúvidas rápidas": "Quick questions", "Equilibra sua semana: reforça {0}": "Balances your week: strengthens {0}", "⚖️ Equilíbrio dos últimos 7 dias": "⚖️ Balance of the last 7 days", "Escolha o plano": "Choose your plan", "Escolha pelo seu objetivo e nível, veja as refeições com opções para trocar e use como guia do dia a dia.": "Pick by your goal and level, see the meals with swap options and use them as a daily guide.", "Escolhido para o seu nível, tempo e equipamento": "Chosen for your level, time and equipment", "Fazer upgrade para o Pro IA": "Upgrade to Pro AI", "Faça alguns WODs para ver o equilíbrio da sua semana.": "Do a few WODs to see your weekly balance.", "Foco em músculos descansados: {0}": "Focus on rested muscles: {0}", "Foto inteligente": "Smart photo", "Foto inteligente da refeição": "Smart meal photo", "Fotografe a refeição e veja a estimativa de calorias e macros.": "Photograph your meal and see the estimated calories and macros.", "Gerando imagem…": "Creating image…", "Glúteos": "Glutes", "Inferiores": "Lower body", "MASSI CROSS": "MASSI CROSS", "MASSI PRO PREMIUM": "MASSI PRO PREMIUM", "Mais funções de IA": "More AI features", "Mais trabalhado": "Most worked", "Mais trabalhado:": "Most worked:", "Mais um WOD e eu consigo analisar seu equilíbrio.": "One more WOD and I can analyze your balance.", "Massi Pro": "Massi Pro", "Minha Rotina Inteligente": "My Smart Routine", "Muito foco em {0} — o gerador vai dar um respiro.": "Heavy focus on {0} — the generator will give it a break.", "Nenhum WOD concluído ainda. Faça um treino na aba Cross e ele aparece aqui, com o mapa do corpo.": "No WODs completed yet. Do a workout in the Cross tab and it will show up here, with the body map.", "No momento não há teste grátis.": "There is no free trial at the moment.", "Novas ajudas de IA vão chegando no plano — quem assina já recebe.": "New AI helpers keep arriving in the plan — subscribers get them automatically.", "Novas funções de IA": "New AI features", "Não": "No", "Não. O Massi Pro já traz o app completo, dietas e relatórios. A IA é um extra para quem quer ajuda para montar treino, analisar refeições e tirar dúvidas.": "No. Massi Pro already includes the full app, diets and reports. AI is an extra for those who want help building workouts, analyzing meals and answering questions.", "Não. O conteúdo é educativo e as estimativas da IA são aproximadas. Para um plano individual, procure um profissional.": "No. The content is educational and AI estimates are approximate. For an individual plan, see a professional.", "O Pro já resolve treino e dieta. O Pro IA soma a inteligência artificial.": "Pro already covers training and diet. Pro AI adds artificial intelligence.", "O app substitui nutricionista ou personal?": "Does the app replace a nutritionist or personal trainer?", "O app sugere a hora de aumentar o peso, com base no que você já treinou.": "The app suggests when to increase the weight, based on what you've already trained.", "O que você ganha": "What you get", "Ombros": "Shoulders", "Onde mais trabalhou": "Where you worked most", "PLANO ATIVO": "ACTIVE PLAN", "Panturrilhas": "Calves", "Por que esse WOD?": "Why this WOD?", "Posso testar antes de pagar?": "Can I try before paying?", "Pouco trabalho em {0} nos últimos 7 dias — o gerador vai priorizar.": "Little work on {0} in the last 7 days — the generator will prioritize it.", "Poupa o que você treinou há pouco: {0}": "Spares what you trained recently: {0}", "Preciso do plano com IA?": "Do I need the AI plan?", "Pro para o app completo, Pro IA para ter a inteligência artificial também.": "Pro for the full app, Pro AI to get artificial intelligence too.", "Progressão de carga": "Load progression", "Qual plano é o seu?": "Which plan is yours?", "Quer a IA acompanhando sua evolução? Veja o Massi Pro IA mais abaixo.": "Want AI tracking your progress? See Massi Pro AI below.", "Remover este WOD?": "Remove this WOD?", "Responda algumas perguntas e receba treino e alimentação montados para você.": "Answer a few questions and get a workout and nutrition plan built for you.", "SEU PLANO": "YOUR PLAN", "Sim": "Yes", "Sim. Você tem {0} dias de teste grátis (um teste por pessoa).": "Yes. You get a {0}-day free trial (one trial per person).", "Sim. Você tem {0} dias de teste grátis.": "Yes. You get a {0}-day free trial.", "Teste grátis por {0} dias": "Free trial for {0} days", "Tempo": "Time", "Tipo": "Type", "Tire dúvidas de treino, execução e alimentação a qualquer hora.": "Ask about training, technique and nutrition anytime.", "Todas as áreas liberadas: Rotina, Cross, Avaliação, Suplementos e tudo que chegar depois.": "All areas unlocked: Routine, Cross, Assessment, Supplements and everything that comes next.", "Todos os recursos liberados, incluindo a IA. Bom treino!": "All features unlocked, including AI. Have a great workout!", "Treine com tudo desbloqueado": "Train with everything unlocked", "Três passos, sem burocracia.": "Three steps, no red tape.", "Tríceps": "Triceps", "Tudo do Massi Pro": "Everything in Massi Pro", "Um resumo do seu mês — treinos, evolução e medidas — para guardar ou mostrar ao seu treinador.": "A summary of your month — workouts, progress and measurements — to keep or show your trainer.", "Use tudo sem pressa e veja se combina com a sua rotina.": "Use everything at your own pace and see if it fits your routine.", "Ver histórico do Cross": "View Cross history", "Ver mais WODs": "See more WODs", "Ver planos e preços": "See plans and prices", "Você é": "You are", "WOD": "WOD", "WODs em 7 dias": "WODs in 7 days", "WODs no total": "WODs in total", "conversas por mês": "chats per month", "fotos por mês": "photos per month", "Último WOD:": "Last WOD:", "último WOD": "last WOD", "✓ concluído": "✓ completed", "✓ seu": "✓ yours", "🏅 Desafios do Cross": "🏅 Cross challenges", "🏆 Recordes do Cross": "🏆 Cross records", "📤 Compartilhar resultado": "📤 Share result", "🔄 Gerar outro": "🔄 Generate another", "🔒 no Pro IA": "🔒 in Pro AI", "🔥 Histórico do Massi Cross": "🔥 Massi Cross history", "🔥 Massi Cross": "🔥 Massi Cross", "🔥 Onde você mais trabalhou": "🔥 Where you worked most", "🗺️ Mapa muscular do Cross (últimos 14 dias)": "🗺️ Cross muscle map (last 14 days)", "🏆 Terminei o WOD {0} no Massi Cross em {1}!": "🏆 I finished the {0} WOD on Massi Cross in {1}!", "há {0} dias": "{0} days ago", "restam {0} dias": "{0} days left", "resta 1 dia": "1 day left", "membros superiores": "upper body", "membros inferiores": "lower body", "min treinados": "min trained", "Tire uma foto da refeição e veja calorias e macros": "Take a photo of your meal and see calories and macros", "Academias perto de mim": "Gyms near me", "📍 Academias perto de mim": "📍 Gyms near me", "Ache as academias mais próximas pelo GPS e veja se o site delas cita TotalPass ou Wellhub.": "Find the nearest gyms by GPS and see whether their website mentions TotalPass or Wellhub.", "Veja as mais próximas pelo GPS e se o site de cada uma cita TotalPass ou Wellhub.": "See the nearest ones by GPS and whether each one's website mentions TotalPass or Wellhub.", "buscas por mês": "searches per month", "Permita o acesso à localização nas configurações do aparelho e tente de novo.": "Allow location access in your device settings and try again.", "Não consegui pegar a sua localização. Ligue o GPS e tente de novo.": "I couldn't get your location. Turn on GPS and try again.", "A busca de academias é um recurso do plano Massi Pro IA.": "Gym search is a Massi Pro AI plan feature.", "Você já usou todas as buscas de academia deste mês.": "You've used all your gym searches this month.", "Este recurso não está disponível no seu plano.": "This feature is not available on your plan.", "Não encontrei academias num raio de 5 km.": "I didn't find gyms within 5 km.", "Não consegui buscar agora. Seu crédito foi devolvido — tente de novo em instantes.": "I couldn't search right now. Your credit was refunded — try again in a moment.", "citado no site": "mentioned on the website", "verificar": "check", "não confirmado": "not confirmed", "Localizando você…": "Finding your location…", "Buscando academias…": "Searching for gyms…", "🔄 Buscar de novo": "🔄 Search again", "Buscar perto de mim": "Search near me", "buscas restantes neste mês": "searches left this month", "Recurso do plano Massi Pro IA": "Massi Pro AI plan feature", "Última busca:": "Last search:", "aberta agora": "open now", "fechada agora": "closed now", "Como chegar": "Directions", "Site": "Website", "Ligar": "Call", "O app lê o site de cada academia. “Não confirmado” não quer dizer que ela não aceita — confirme sempre no app do TotalPass ou do Wellhub, no seu plano, antes de ir.": "The app reads each gym's website. “Not confirmed” doesn't mean it doesn't accept — always confirm in the TotalPass or Wellhub app, on your plan, before going.", "de": "of", "Não consegui confirmar a sua assinatura. Abra o app de novo e tente outra vez.": "I couldn't confirm your subscription. Reopen the app and try again.", "Muitas buscas em pouco tempo. Tente de novo mais tarde.": "Too many searches in a short time. Try again later."});
-Object.assign(TRAD_TEXTOS.es, {"A MAIS NO MASSI PRO IA": "EXTRA EN MASSI PRO IA", "NO MASSI PRO": "EN MASSI PRO", "Abrir Cross": "Abrir Cross", "Antebraços": "Antebrazos", "Apoio": "Apoyo", "Aproveite tudo desbloqueado": "Disfruta todo desbloqueado", "Aqui ficam só os seus WODs. Os treinos da Rotina têm a sua própria visão, ao lado.": "Aquí están solo tus WODs. Los entrenamientos de la Rutina tienen su propia vista, al lado.", "Assine": "Suscríbete", "Assistente de IA": "Asistente de IA", "Barra": "Barra", "Boa distribuição nos últimos 7 dias. 👏": "Buena distribución en los últimos 7 días. 👏", "Bíceps": "Bíceps", "Cada recurso explicado em uma frase.": "Cada función explicada en una frase.", "Combina com seu objetivo: {0}": "Encaja con tu objetivo: {0}", "Começar teste grátis de {0} dias": "Empieza tu prueba gratis de {0} días", "Consistência no Cross": "Constancia en Cross", "Core": "Core", "Corpo no Cross (14 dias)": "Cuerpo en Cross (14 días)", "Crie quantas rotinas quiser e guarde todo o seu histórico de treinos, sem limite.": "Crea todas las rutinas que quieras y guarda todo tu historial de entrenamientos, sin límite.", "Cross": "Cross", "Dietas prontas, relatório mensal, progressão de carga e muito mais — explicado aqui, sem complicação.": "Dietas listas, informe mensual, progresión de carga y mucho más — explicado aquí, sin complicaciones.", "Dietas, relatórios, progressão de carga e, no Pro IA, as funções de IA.": "Dietas, informes, progresión de carga y, en Pro IA, las funciones de IA.", "Diferente do seu último WOD": "Diferente de tu último WOD", "Dúvidas rápidas": "Dudas rápidas", "Equilibra sua semana: reforça {0}": "Equilibra tu semana: refuerza {0}", "⚖️ Equilíbrio dos últimos 7 dias": "⚖️ Equilibrio de los últimos 7 días", "Escolha o plano": "Elige tu plan", "Escolha pelo seu objetivo e nível, veja as refeições com opções para trocar e use como guia do dia a dia.": "Elige según tu objetivo y nivel, mira las comidas con opciones para cambiar y úsalas como guía del día a día.", "Escolhido para o seu nível, tempo e equipamento": "Elegido para tu nivel, tiempo y equipo", "Fazer upgrade para o Pro IA": "Pasar a Pro IA", "Faça alguns WODs para ver o equilíbrio da sua semana.": "Haz algunos WODs para ver el equilibrio de tu semana.", "Foco em músculos descansados: {0}": "Foco en músculos descansados: {0}", "Foto inteligente": "Foto inteligente", "Foto inteligente da refeição": "Foto inteligente de la comida", "Fotografe a refeição e veja a estimativa de calorias e macros.": "Fotografía tu comida y mira la estimación de calorías y macros.", "Gerando imagem…": "Creando imagen…", "Glúteos": "Glúteos", "Inferiores": "Inferiores", "MASSI CROSS": "MASSI CROSS", "MASSI PRO PREMIUM": "MASSI PRO PREMIUM", "Mais funções de IA": "Más funciones de IA", "Mais trabalhado": "Más trabajado", "Mais trabalhado:": "Más trabajado:", "Mais um WOD e eu consigo analisar seu equilíbrio.": "Un WOD más y puedo analizar tu equilibrio.", "Massi Pro": "Massi Pro", "Minha Rotina Inteligente": "Mi Rutina Inteligente", "Muito foco em {0} — o gerador vai dar um respiro.": "Mucho foco en {0} — el generador les dará un respiro.", "Nenhum WOD concluído ainda. Faça um treino na aba Cross e ele aparece aqui, com o mapa do corpo.": "Aún no has completado ningún WOD. Haz un entrenamiento en la pestaña Cross y aparecerá aquí, con el mapa del cuerpo.", "No momento não há teste grátis.": "Por ahora no hay prueba gratis.", "Novas ajudas de IA vão chegando no plano — quem assina já recebe.": "Van llegando nuevas ayudas de IA al plan — quien se suscribe ya las recibe.", "Novas funções de IA": "Nuevas funciones de IA", "Não": "No", "Não. O Massi Pro já traz o app completo, dietas e relatórios. A IA é um extra para quem quer ajuda para montar treino, analisar refeições e tirar dúvidas.": "No. Massi Pro ya trae la app completa, dietas e informes. La IA es un extra para quien quiere ayuda para armar entrenamientos, analizar comidas y resolver dudas.", "Não. O conteúdo é educativo e as estimativas da IA são aproximadas. Para um plano individual, procure um profissional.": "No. El contenido es educativo y las estimaciones de la IA son aproximadas. Para un plan individual, consulta a un profesional.", "O Pro já resolve treino e dieta. O Pro IA soma a inteligência artificial.": "Pro ya resuelve entrenamiento y dieta. Pro IA suma la inteligencia artificial.", "O app substitui nutricionista ou personal?": "¿La app sustituye a un nutricionista o entrenador personal?", "O app sugere a hora de aumentar o peso, com base no que você já treinou.": "La app sugiere cuándo subir el peso, según lo que ya has entrenado.", "O que você ganha": "Lo que ganas", "Ombros": "Hombros", "Onde mais trabalhou": "Dónde más trabajaste", "PLANO ATIVO": "PLAN ACTIVO", "Panturrilhas": "Gemelos", "Por que esse WOD?": "¿Por qué este WOD?", "Posso testar antes de pagar?": "¿Puedo probar antes de pagar?", "Pouco trabalho em {0} nos últimos 7 dias — o gerador vai priorizar.": "Poco trabajo en {0} en los últimos 7 días — el generador lo priorizará.", "Poupa o que você treinou há pouco: {0}": "Cuida lo que entrenaste hace poco: {0}", "Preciso do plano com IA?": "¿Necesito el plan con IA?", "Pro para o app completo, Pro IA para ter a inteligência artificial também.": "Pro para la app completa, Pro IA para tener también la inteligencia artificial.", "Progressão de carga": "Progresión de carga", "Qual plano é o seu?": "¿Cuál es tu plan?", "Quer a IA acompanhando sua evolução? Veja o Massi Pro IA mais abaixo.": "¿Quieres la IA acompañando tu evolución? Mira Massi Pro IA más abajo.", "Remover este WOD?": "¿Eliminar este WOD?", "Responda algumas perguntas e receba treino e alimentação montados para você.": "Responde unas preguntas y recibe entrenamiento y alimentación armados para ti.", "SEU PLANO": "TU PLAN", "Sim": "Sí", "Sim. Você tem {0} dias de teste grátis (um teste por pessoa).": "Sí. Tienes {0} días de prueba gratis (una prueba por persona).", "Sim. Você tem {0} dias de teste grátis.": "Sí. Tienes {0} días de prueba gratis.", "Teste grátis por {0} dias": "Prueba gratis por {0} días", "Tempo": "Tiempo", "Tipo": "Tipo", "Tire dúvidas de treino, execução e alimentação a qualquer hora.": "Resuelve dudas de entrenamiento, ejecución y alimentación a cualquier hora.", "Todas as áreas liberadas: Rotina, Cross, Avaliação, Suplementos e tudo que chegar depois.": "Todas las áreas desbloqueadas: Rutina, Cross, Evaluación, Suplementos y todo lo que venga después.", "Todos os recursos liberados, incluindo a IA. Bom treino!": "Todas las funciones desbloqueadas, incluida la IA. ¡Buen entrenamiento!", "Treine com tudo desbloqueado": "Entrena con todo desbloqueado", "Três passos, sem burocracia.": "Tres pasos, sin burocracia.", "Tríceps": "Tríceps", "Tudo do Massi Pro": "Todo lo de Massi Pro", "Um resumo do seu mês — treinos, evolução e medidas — para guardar ou mostrar ao seu treinador.": "Un resumen de tu mes — entrenamientos, evolución y medidas — para guardar o mostrar a tu entrenador.", "Use tudo sem pressa e veja se combina com a sua rotina.": "Úsalo todo sin prisa y mira si encaja con tu rutina.", "Ver histórico do Cross": "Ver historial de Cross", "Ver mais WODs": "Ver más WODs", "Ver planos e preços": "Ver planes y precios", "Você é": "Eres", "WOD": "WOD", "WODs em 7 dias": "WODs en 7 días", "WODs no total": "WODs en total", "conversas por mês": "conversaciones al mes", "fotos por mês": "fotos al mes", "Último WOD:": "Último WOD:", "último WOD": "último WOD", "✓ concluído": "✓ completado", "✓ seu": "✓ tuyo", "🏅 Desafios do Cross": "🏅 Desafíos de Cross", "🏆 Recordes do Cross": "🏆 Récords de Cross", "📤 Compartilhar resultado": "📤 Compartir resultado", "🔄 Gerar outro": "🔄 Generar otro", "🔒 no Pro IA": "🔒 en Pro IA", "🔥 Histórico do Massi Cross": "🔥 Historial de Massi Cross", "🔥 Massi Cross": "🔥 Massi Cross", "🔥 Onde você mais trabalhou": "🔥 Dónde más trabajaste", "🗺️ Mapa muscular do Cross (últimos 14 dias)": "🗺️ Mapa muscular de Cross (últimos 14 días)", "🏆 Terminei o WOD {0} no Massi Cross em {1}!": "🏆 ¡Terminé el WOD {0} en Massi Cross en {1}!", "há {0} dias": "hace {0} días", "restam {0} dias": "quedan {0} días", "resta 1 dia": "queda 1 día", "membros superiores": "tren superior", "membros inferiores": "tren inferior", "min treinados": "min entrenados", "Tire uma foto da refeição e veja calorias e macros": "Toma una foto de tu comida y mira calorías y macros", "Academias perto de mim": "Gimnasios cerca de mí", "📍 Academias perto de mim": "📍 Gimnasios cerca de mí", "Ache as academias mais próximas pelo GPS e veja se o site delas cita TotalPass ou Wellhub.": "Encuentra los gimnasios más cercanos por GPS y mira si su sitio web menciona TotalPass o Wellhub.", "Veja as mais próximas pelo GPS e se o site de cada uma cita TotalPass ou Wellhub.": "Mira los más cercanos por GPS y si el sitio de cada uno menciona TotalPass o Wellhub.", "buscas por mês": "búsquedas al mes", "Permita o acesso à localização nas configurações do aparelho e tente de novo.": "Permite el acceso a la ubicación en los ajustes del dispositivo e inténtalo de nuevo.", "Não consegui pegar a sua localização. Ligue o GPS e tente de novo.": "No pude obtener tu ubicación. Activa el GPS e inténtalo de nuevo.", "A busca de academias é um recurso do plano Massi Pro IA.": "La búsqueda de gimnasios es una función del plan Massi Pro IA.", "Você já usou todas as buscas de academia deste mês.": "Ya usaste todas las búsquedas de gimnasio de este mes.", "Este recurso não está disponível no seu plano.": "Esta función no está disponible en tu plan.", "Não encontrei academias num raio de 5 km.": "No encontré gimnasios en un radio de 5 km.", "Não consegui buscar agora. Seu crédito foi devolvido — tente de novo em instantes.": "No pude buscar ahora. Tu crédito fue devuelto — inténtalo de nuevo en un momento.", "citado no site": "citado en el sitio", "verificar": "verificar", "não confirmado": "no confirmado", "Localizando você…": "Localizándote…", "Buscando academias…": "Buscando gimnasios…", "🔄 Buscar de novo": "🔄 Buscar de nuevo", "Buscar perto de mim": "Buscar cerca de mí", "buscas restantes neste mês": "búsquedas restantes este mes", "Recurso do plano Massi Pro IA": "Función del plan Massi Pro IA", "Última busca:": "Última búsqueda:", "aberta agora": "abierto ahora", "fechada agora": "cerrado ahora", "Como chegar": "Cómo llegar", "Site": "Sitio web", "Ligar": "Llamar", "O app lê o site de cada academia. “Não confirmado” não quer dizer que ela não aceita — confirme sempre no app do TotalPass ou do Wellhub, no seu plano, antes de ir.": "La app lee el sitio de cada gimnasio. “No confirmado” no significa que no lo acepte — confirma siempre en la app de TotalPass o Wellhub, en tu plan, antes de ir.", "de": "de", "Não consegui confirmar a sua assinatura. Abra o app de novo e tente outra vez.": "No pude confirmar tu suscripción. Vuelve a abrir la app e inténtalo de nuevo.", "Muitas buscas em pouco tempo. Tente de novo mais tarde.": "Demasiadas búsquedas en poco tiempo. Inténtalo de nuevo más tarde."});
+Object.assign(TRAD_TEXTOS.en, {"A MAIS NO MASSI PRO IA": "EXTRA IN MASSI PRO AI", "NO MASSI PRO": "IN MASSI PRO", "Abrir Cross": "Open Cross", "Antebraços": "Forearms", "Apoio": "Support", "Aproveite tudo desbloqueado": "Enjoy everything unlocked", "Aqui ficam só os seus WODs. Os treinos da Rotina têm a sua própria visão, ao lado.": "Only your WODs live here. Routine workouts have their own view, right beside it.", "Assine": "Subscribe", "Assistente de IA": "AI assistant", "Barra": "Barbell", "Boa distribuição nos últimos 7 dias. 👏": "Well balanced over the last 7 days. 👏", "Bíceps": "Biceps", "Cada recurso explicado em uma frase.": "Each feature explained in one sentence.", "Combina com seu objetivo: {0}": "Matches your goal: {0}", "Começar teste grátis de {0} dias": "Start your {0}-day free trial", "Consistência no Cross": "Cross consistency", "Core": "Core", "Corpo no Cross (14 dias)": "Body in Cross (14 days)", "Crie quantas rotinas quiser e guarde todo o seu histórico de treinos, sem limite.": "Create as many routines as you want and keep your whole workout history, no limits.", "Cross": "Cross", "Dietas prontas, relatório mensal, progressão de carga e muito mais — explicado aqui, sem complicação.": "Ready-made diets, monthly report, load progression and much more — explained here, no hassle.", "Dietas, relatórios, progressão de carga e, no Pro IA, as funções de IA.": "Diets, reports, load progression and, with Pro AI, the AI features.", "Diferente do seu último WOD": "Different from your last WOD", "Dúvidas rápidas": "Quick questions", "Equilibra sua semana: reforça {0}": "Balances your week: strengthens {0}", "⚖️ Equilíbrio dos últimos 7 dias": "⚖️ Balance of the last 7 days", "Escolha o plano": "Choose your plan", "Escolha pelo seu objetivo e nível, veja as refeições com opções para trocar e use como guia do dia a dia.": "Pick by your goal and level, see the meals with swap options and use them as a daily guide.", "Escolhido para o seu nível, tempo e equipamento": "Chosen for your level, time and equipment", "Fazer upgrade para o Pro IA": "Upgrade to Pro AI", "Faça alguns WODs para ver o equilíbrio da sua semana.": "Do a few WODs to see your weekly balance.", "Foco em músculos descansados: {0}": "Focus on rested muscles: {0}", "Foto inteligente": "Smart photo", "Foto inteligente da refeição": "Smart meal photo", "Fotografe a refeição e veja a estimativa de calorias e macros.": "Photograph your meal and see the estimated calories and macros.", "Gerando imagem…": "Creating image…", "Glúteos": "Glutes", "Inferiores": "Lower body", "MASSI CROSS": "MASSI CROSS", "MASSI PRO PREMIUM": "MASSI PRO PREMIUM", "Mais funções de IA": "More AI features", "Mais trabalhado": "Most worked", "Mais trabalhado:": "Most worked:", "Mais um WOD e eu consigo analisar seu equilíbrio.": "One more WOD and I can analyze your balance.", "Massi Pro": "Massi Pro", "Minha Rotina Inteligente": "My Smart Routine", "Muito foco em {0} — o gerador vai dar um respiro.": "Heavy focus on {0} — the generator will give it a break.", "Nenhum WOD concluído ainda. Faça um treino na aba Cross e ele aparece aqui, com o mapa do corpo.": "No WODs completed yet. Do a workout in the Cross tab and it will show up here, with the body map.", "No momento não há teste grátis.": "There is no free trial at the moment.", "Novas ajudas de IA vão chegando no plano — quem assina já recebe.": "New AI helpers keep arriving in the plan — subscribers get them automatically.", "Novas funções de IA": "New AI features", "Não": "No", "Não. O Massi Pro já traz o app completo, dietas e relatórios. A IA é um extra para quem quer ajuda para montar treino, analisar refeições e tirar dúvidas.": "No. Massi Pro already includes the full app, diets and reports. AI is an extra for those who want help building workouts, analyzing meals and answering questions.", "Não. O conteúdo é educativo e as estimativas da IA são aproximadas. Para um plano individual, procure um profissional.": "No. The content is educational and AI estimates are approximate. For an individual plan, see a professional.", "O Pro já resolve treino e dieta. O Pro IA soma a inteligência artificial.": "Pro already covers training and diet. Pro AI adds artificial intelligence.", "O app substitui nutricionista ou personal?": "Does the app replace a nutritionist or personal trainer?", "O app sugere a hora de aumentar o peso, com base no que você já treinou.": "The app suggests when to increase the weight, based on what you've already trained.", "O que você ganha": "What you get", "Ombros": "Shoulders", "Onde mais trabalhou": "Where you worked most", "PLANO ATIVO": "ACTIVE PLAN", "Panturrilhas": "Calves", "Por que esse WOD?": "Why this WOD?", "Posso testar antes de pagar?": "Can I try before paying?", "Pouco trabalho em {0} nos últimos 7 dias — o gerador vai priorizar.": "Little work on {0} in the last 7 days — the generator will prioritize it.", "Poupa o que você treinou há pouco: {0}": "Spares what you trained recently: {0}", "Preciso do plano com IA?": "Do I need the AI plan?", "Pro para o app completo, Pro IA para ter a inteligência artificial também.": "Pro for the full app, Pro AI to get artificial intelligence too.", "Progressão de carga": "Load progression", "Qual plano é o seu?": "Which plan is yours?", "Quer a IA acompanhando sua evolução? Veja o Massi Pro IA mais abaixo.": "Want AI tracking your progress? See Massi Pro AI below.", "Remover este WOD?": "Remove this WOD?", "Responda algumas perguntas e receba treino e alimentação montados para você.": "Answer a few questions and get a workout and nutrition plan built for you.", "SEU PLANO": "YOUR PLAN", "Sim": "Yes", "Sim. Você tem {0} dias de teste grátis (um teste por pessoa).": "Yes. You get a {0}-day free trial (one trial per person).", "Sim. Você tem {0} dias de teste grátis.": "Yes. You get a {0}-day free trial.", "Teste grátis por {0} dias": "Free trial for {0} days", "Tempo": "Time", "Tipo": "Type", "Tire dúvidas de treino, execução e alimentação a qualquer hora.": "Ask about training, technique and nutrition anytime.", "Todas as áreas liberadas: Rotina, Cross, Avaliação, Suplementos e tudo que chegar depois.": "All areas unlocked: Routine, Cross, Assessment, Supplements and everything that comes next.", "Todos os recursos liberados, incluindo a IA. Bom treino!": "All features unlocked, including AI. Have a great workout!", "Treine com tudo desbloqueado": "Train with everything unlocked", "Três passos, sem burocracia.": "Three steps, no red tape.", "Tríceps": "Triceps", "Tudo do Massi Pro": "Everything in Massi Pro", "Um resumo do seu mês — treinos, evolução e medidas — para guardar ou mostrar ao seu treinador.": "A summary of your month — workouts, progress and measurements — to keep or show your trainer.", "Use tudo sem pressa e veja se combina com a sua rotina.": "Use everything at your own pace and see if it fits your routine.", "Ver histórico do Cross": "View Cross history", "Ver mais WODs": "See more WODs", "Ver planos e preços": "See plans and prices", "Você é": "You are", "WOD": "WOD", "WODs em 7 dias": "WODs in 7 days", "WODs no total": "WODs in total", "conversas por mês": "chats per month", "fotos por mês": "photos per month", "Último WOD:": "Last WOD:", "último WOD": "last WOD", "✓ concluído": "✓ completed", "✓ seu": "✓ yours", "🏅 Desafios do Cross": "🏅 Cross challenges", "🏆 Recordes do Cross": "🏆 Cross records", "📤 Compartilhar resultado": "📤 Share result", "🔄 Gerar outro": "🔄 Generate another", "🔒 no Pro IA": "🔒 in Pro AI", "🔥 Histórico do Massi Cross": "🔥 Massi Cross history", "🔥 Massi Cross": "🔥 Massi Cross", "🔥 Onde você mais trabalhou": "🔥 Where you worked most", "🗺️ Mapa muscular do Cross (últimos 14 dias)": "🗺️ Cross muscle map (last 14 days)", "🏆 Terminei o WOD {0} no Massi Cross em {1}!": "🏆 I finished the {0} WOD on Massi Cross in {1}!", "há {0} dias": "{0} days ago", "restam {0} dias": "{0} days left", "resta 1 dia": "1 day left", "membros superiores": "upper body", "membros inferiores": "lower body", "min treinados": "min trained", "Tire uma foto da refeição e veja calorias e macros": "Take a photo of your meal and see calories and macros", "Academias perto de mim": "Gyms near me", "📍 Academias perto de mim": "📍 Gyms near me", "Ache as academias mais próximas pelo GPS e veja se o site delas cita TotalPass ou Wellhub.": "Find the nearest gyms by GPS and see whether their website mentions TotalPass or Wellhub.", "Veja as mais próximas pelo GPS e se o site de cada uma cita TotalPass ou Wellhub.": "See the nearest ones by GPS and whether each one's website mentions TotalPass or Wellhub.", "buscas por mês": "searches per month", "Permita o acesso à localização nas configurações do aparelho e tente de novo.": "Allow location access in your device settings and try again.", "Não consegui pegar a sua localização. Ligue o GPS e tente de novo.": "I couldn't get your location. Turn on GPS and try again.", "A busca de academias é um recurso do plano Massi Pro IA.": "Gym search is a Massi Pro AI plan feature.", "Você já usou todas as buscas de academia deste mês.": "You've used all your gym searches this month.", "Este recurso não está disponível no seu plano.": "This feature is not available on your plan.", "Não encontrei academias num raio de 5 km.": "I didn't find gyms within 5 km.", "Não consegui buscar agora. Seu crédito foi devolvido — tente de novo em instantes.": "I couldn't search right now. Your credit was refunded — try again in a moment.", "citado no site": "mentioned on the website", "verificar": "check", "não confirmado": "not confirmed", "Localizando você…": "Finding your location…", "Buscando academias…": "Searching for gyms…", "🔄 Buscar de novo": "🔄 Search again", "Buscar perto de mim": "Search near me", "buscas restantes neste mês": "searches left this month", "Recurso do plano Massi Pro IA": "Massi Pro AI plan feature", "Última busca:": "Last search:", "aberta agora": "open now", "fechada agora": "closed now", "Como chegar": "Directions", "Site": "Website", "Ligar": "Call", "O app lê o site de cada academia. “Não confirmado” não quer dizer que ela não aceita — confirme sempre no app do TotalPass ou do Wellhub, no seu plano, antes de ir.": "The app reads each gym's website. “Not confirmed” doesn't mean it doesn't accept — always confirm in the TotalPass or Wellhub app, on your plan, before going.", "de": "of", "Não consegui confirmar a sua assinatura. Abra o app de novo e tente outra vez.": "I couldn't confirm your subscription. Reopen the app and try again.", "Muitas buscas em pouco tempo. Tente de novo mais tarde.": "Too many searches in a short time. Try again later.", "Navegação principal": "Main navigation", "Início": "Home", "Treinos": "Workouts", "Progresso": "Progress", "Mais": "More", "Histórico": "History", "Notas": "Notes", "Suplementos": "Supplements", "Avaliação": "Assessment", "Premium": "Premium", "Sobre": "About", "Configurações": "Settings", "Academias": "Gyms", "Assistente IA": "AI assistant", "Passos": "Steps", "Toque pra registrar": "Tap to log", "VER EVOLUÇÃO": "VIEW PROGRESS", "Nível {0} de {1}": "Level {0} of {1}", "pontos": "points", "treinos": "workouts", "🏋️ Meus treinos": "🏋️ My workouts", "Último": "Last", "Próximo": "Next", "Na semana": "This week", "concluído": "completed", "concluídos": "completed", "hoje": "today", "ontem": "yesterday", "Nenhum treino registrado ainda. Conclua o primeiro na Rotina e ele aparece aqui.": "No workouts logged yet. Complete your first one in Routine and it will show up here.", "Ver treinos": "See workouts", "Mais detalhes ▼": "More details ▼", "Menos detalhes ▲": "Fewer details ▲", "No botão Mais ficam Histórico, Notas, Suplementos, Sobre (com o tutorial completo do app) e as configurações — dá uma olhada quando quiser.": "The More button holds History, Notes, Supplements, About (with the app's full tutorial) and settings — take a look whenever you like.", "👟 Contador de passos": "👟 Step counter", "💊 Central de suplementos": "💊 Supplements hub", "📈 Minha Evolução": "📈 My Progress", "Estatísticas": "Statistics", "Medalhas": "Medals", "Dias seguidos": "Days in a row", "📏 Peso e medidas": "📏 Weight and measurements", "📜 Histórico completo": "📜 Full history", "Foto de perfil": "Profile photo"});
+Object.assign(TRAD_TEXTOS.es, {"A MAIS NO MASSI PRO IA": "EXTRA EN MASSI PRO IA", "NO MASSI PRO": "EN MASSI PRO", "Abrir Cross": "Abrir Cross", "Antebraços": "Antebrazos", "Apoio": "Apoyo", "Aproveite tudo desbloqueado": "Disfruta todo desbloqueado", "Aqui ficam só os seus WODs. Os treinos da Rotina têm a sua própria visão, ao lado.": "Aquí están solo tus WODs. Los entrenamientos de la Rutina tienen su propia vista, al lado.", "Assine": "Suscríbete", "Assistente de IA": "Asistente de IA", "Barra": "Barra", "Boa distribuição nos últimos 7 dias. 👏": "Buena distribución en los últimos 7 días. 👏", "Bíceps": "Bíceps", "Cada recurso explicado em uma frase.": "Cada función explicada en una frase.", "Combina com seu objetivo: {0}": "Encaja con tu objetivo: {0}", "Começar teste grátis de {0} dias": "Empieza tu prueba gratis de {0} días", "Consistência no Cross": "Constancia en Cross", "Core": "Core", "Corpo no Cross (14 dias)": "Cuerpo en Cross (14 días)", "Crie quantas rotinas quiser e guarde todo o seu histórico de treinos, sem limite.": "Crea todas las rutinas que quieras y guarda todo tu historial de entrenamientos, sin límite.", "Cross": "Cross", "Dietas prontas, relatório mensal, progressão de carga e muito mais — explicado aqui, sem complicação.": "Dietas listas, informe mensual, progresión de carga y mucho más — explicado aquí, sin complicaciones.", "Dietas, relatórios, progressão de carga e, no Pro IA, as funções de IA.": "Dietas, informes, progresión de carga y, en Pro IA, las funciones de IA.", "Diferente do seu último WOD": "Diferente de tu último WOD", "Dúvidas rápidas": "Dudas rápidas", "Equilibra sua semana: reforça {0}": "Equilibra tu semana: refuerza {0}", "⚖️ Equilíbrio dos últimos 7 dias": "⚖️ Equilibrio de los últimos 7 días", "Escolha o plano": "Elige tu plan", "Escolha pelo seu objetivo e nível, veja as refeições com opções para trocar e use como guia do dia a dia.": "Elige según tu objetivo y nivel, mira las comidas con opciones para cambiar y úsalas como guía del día a día.", "Escolhido para o seu nível, tempo e equipamento": "Elegido para tu nivel, tiempo y equipo", "Fazer upgrade para o Pro IA": "Pasar a Pro IA", "Faça alguns WODs para ver o equilíbrio da sua semana.": "Haz algunos WODs para ver el equilibrio de tu semana.", "Foco em músculos descansados: {0}": "Foco en músculos descansados: {0}", "Foto inteligente": "Foto inteligente", "Foto inteligente da refeição": "Foto inteligente de la comida", "Fotografe a refeição e veja a estimativa de calorias e macros.": "Fotografía tu comida y mira la estimación de calorías y macros.", "Gerando imagem…": "Creando imagen…", "Glúteos": "Glúteos", "Inferiores": "Inferiores", "MASSI CROSS": "MASSI CROSS", "MASSI PRO PREMIUM": "MASSI PRO PREMIUM", "Mais funções de IA": "Más funciones de IA", "Mais trabalhado": "Más trabajado", "Mais trabalhado:": "Más trabajado:", "Mais um WOD e eu consigo analisar seu equilíbrio.": "Un WOD más y puedo analizar tu equilibrio.", "Massi Pro": "Massi Pro", "Minha Rotina Inteligente": "Mi Rutina Inteligente", "Muito foco em {0} — o gerador vai dar um respiro.": "Mucho foco en {0} — el generador les dará un respiro.", "Nenhum WOD concluído ainda. Faça um treino na aba Cross e ele aparece aqui, com o mapa do corpo.": "Aún no has completado ningún WOD. Haz un entrenamiento en la pestaña Cross y aparecerá aquí, con el mapa del cuerpo.", "No momento não há teste grátis.": "Por ahora no hay prueba gratis.", "Novas ajudas de IA vão chegando no plano — quem assina já recebe.": "Van llegando nuevas ayudas de IA al plan — quien se suscribe ya las recibe.", "Novas funções de IA": "Nuevas funciones de IA", "Não": "No", "Não. O Massi Pro já traz o app completo, dietas e relatórios. A IA é um extra para quem quer ajuda para montar treino, analisar refeições e tirar dúvidas.": "No. Massi Pro ya trae la app completa, dietas e informes. La IA es un extra para quien quiere ayuda para armar entrenamientos, analizar comidas y resolver dudas.", "Não. O conteúdo é educativo e as estimativas da IA são aproximadas. Para um plano individual, procure um profissional.": "No. El contenido es educativo y las estimaciones de la IA son aproximadas. Para un plan individual, consulta a un profesional.", "O Pro já resolve treino e dieta. O Pro IA soma a inteligência artificial.": "Pro ya resuelve entrenamiento y dieta. Pro IA suma la inteligencia artificial.", "O app substitui nutricionista ou personal?": "¿La app sustituye a un nutricionista o entrenador personal?", "O app sugere a hora de aumentar o peso, com base no que você já treinou.": "La app sugiere cuándo subir el peso, según lo que ya has entrenado.", "O que você ganha": "Lo que ganas", "Ombros": "Hombros", "Onde mais trabalhou": "Dónde más trabajaste", "PLANO ATIVO": "PLAN ACTIVO", "Panturrilhas": "Gemelos", "Por que esse WOD?": "¿Por qué este WOD?", "Posso testar antes de pagar?": "¿Puedo probar antes de pagar?", "Pouco trabalho em {0} nos últimos 7 dias — o gerador vai priorizar.": "Poco trabajo en {0} en los últimos 7 días — el generador lo priorizará.", "Poupa o que você treinou há pouco: {0}": "Cuida lo que entrenaste hace poco: {0}", "Preciso do plano com IA?": "¿Necesito el plan con IA?", "Pro para o app completo, Pro IA para ter a inteligência artificial também.": "Pro para la app completa, Pro IA para tener también la inteligencia artificial.", "Progressão de carga": "Progresión de carga", "Qual plano é o seu?": "¿Cuál es tu plan?", "Quer a IA acompanhando sua evolução? Veja o Massi Pro IA mais abaixo.": "¿Quieres la IA acompañando tu evolución? Mira Massi Pro IA más abajo.", "Remover este WOD?": "¿Eliminar este WOD?", "Responda algumas perguntas e receba treino e alimentação montados para você.": "Responde unas preguntas y recibe entrenamiento y alimentación armados para ti.", "SEU PLANO": "TU PLAN", "Sim": "Sí", "Sim. Você tem {0} dias de teste grátis (um teste por pessoa).": "Sí. Tienes {0} días de prueba gratis (una prueba por persona).", "Sim. Você tem {0} dias de teste grátis.": "Sí. Tienes {0} días de prueba gratis.", "Teste grátis por {0} dias": "Prueba gratis por {0} días", "Tempo": "Tiempo", "Tipo": "Tipo", "Tire dúvidas de treino, execução e alimentação a qualquer hora.": "Resuelve dudas de entrenamiento, ejecución y alimentación a cualquier hora.", "Todas as áreas liberadas: Rotina, Cross, Avaliação, Suplementos e tudo que chegar depois.": "Todas las áreas desbloqueadas: Rutina, Cross, Evaluación, Suplementos y todo lo que venga después.", "Todos os recursos liberados, incluindo a IA. Bom treino!": "Todas las funciones desbloqueadas, incluida la IA. ¡Buen entrenamiento!", "Treine com tudo desbloqueado": "Entrena con todo desbloqueado", "Três passos, sem burocracia.": "Tres pasos, sin burocracia.", "Tríceps": "Tríceps", "Tudo do Massi Pro": "Todo lo de Massi Pro", "Um resumo do seu mês — treinos, evolução e medidas — para guardar ou mostrar ao seu treinador.": "Un resumen de tu mes — entrenamientos, evolución y medidas — para guardar o mostrar a tu entrenador.", "Use tudo sem pressa e veja se combina com a sua rotina.": "Úsalo todo sin prisa y mira si encaja con tu rutina.", "Ver histórico do Cross": "Ver historial de Cross", "Ver mais WODs": "Ver más WODs", "Ver planos e preços": "Ver planes y precios", "Você é": "Eres", "WOD": "WOD", "WODs em 7 dias": "WODs en 7 días", "WODs no total": "WODs en total", "conversas por mês": "conversaciones al mes", "fotos por mês": "fotos al mes", "Último WOD:": "Último WOD:", "último WOD": "último WOD", "✓ concluído": "✓ completado", "✓ seu": "✓ tuyo", "🏅 Desafios do Cross": "🏅 Desafíos de Cross", "🏆 Recordes do Cross": "🏆 Récords de Cross", "📤 Compartilhar resultado": "📤 Compartir resultado", "🔄 Gerar outro": "🔄 Generar otro", "🔒 no Pro IA": "🔒 en Pro IA", "🔥 Histórico do Massi Cross": "🔥 Historial de Massi Cross", "🔥 Massi Cross": "🔥 Massi Cross", "🔥 Onde você mais trabalhou": "🔥 Dónde más trabajaste", "🗺️ Mapa muscular do Cross (últimos 14 dias)": "🗺️ Mapa muscular de Cross (últimos 14 días)", "🏆 Terminei o WOD {0} no Massi Cross em {1}!": "🏆 ¡Terminé el WOD {0} en Massi Cross en {1}!", "há {0} dias": "hace {0} días", "restam {0} dias": "quedan {0} días", "resta 1 dia": "queda 1 día", "membros superiores": "tren superior", "membros inferiores": "tren inferior", "min treinados": "min entrenados", "Tire uma foto da refeição e veja calorias e macros": "Toma una foto de tu comida y mira calorías y macros", "Academias perto de mim": "Gimnasios cerca de mí", "📍 Academias perto de mim": "📍 Gimnasios cerca de mí", "Ache as academias mais próximas pelo GPS e veja se o site delas cita TotalPass ou Wellhub.": "Encuentra los gimnasios más cercanos por GPS y mira si su sitio web menciona TotalPass o Wellhub.", "Veja as mais próximas pelo GPS e se o site de cada uma cita TotalPass ou Wellhub.": "Mira los más cercanos por GPS y si el sitio de cada uno menciona TotalPass o Wellhub.", "buscas por mês": "búsquedas al mes", "Permita o acesso à localização nas configurações do aparelho e tente de novo.": "Permite el acceso a la ubicación en los ajustes del dispositivo e inténtalo de nuevo.", "Não consegui pegar a sua localização. Ligue o GPS e tente de novo.": "No pude obtener tu ubicación. Activa el GPS e inténtalo de nuevo.", "A busca de academias é um recurso do plano Massi Pro IA.": "La búsqueda de gimnasios es una función del plan Massi Pro IA.", "Você já usou todas as buscas de academia deste mês.": "Ya usaste todas las búsquedas de gimnasio de este mes.", "Este recurso não está disponível no seu plano.": "Esta función no está disponible en tu plan.", "Não encontrei academias num raio de 5 km.": "No encontré gimnasios en un radio de 5 km.", "Não consegui buscar agora. Seu crédito foi devolvido — tente de novo em instantes.": "No pude buscar ahora. Tu crédito fue devuelto — inténtalo de nuevo en un momento.", "citado no site": "citado en el sitio", "verificar": "verificar", "não confirmado": "no confirmado", "Localizando você…": "Localizándote…", "Buscando academias…": "Buscando gimnasios…", "🔄 Buscar de novo": "🔄 Buscar de nuevo", "Buscar perto de mim": "Buscar cerca de mí", "buscas restantes neste mês": "búsquedas restantes este mes", "Recurso do plano Massi Pro IA": "Función del plan Massi Pro IA", "Última busca:": "Última búsqueda:", "aberta agora": "abierto ahora", "fechada agora": "cerrado ahora", "Como chegar": "Cómo llegar", "Site": "Sitio web", "Ligar": "Llamar", "O app lê o site de cada academia. “Não confirmado” não quer dizer que ela não aceita — confirme sempre no app do TotalPass ou do Wellhub, no seu plano, antes de ir.": "La app lee el sitio de cada gimnasio. “No confirmado” no significa que no lo acepte — confirma siempre en la app de TotalPass o Wellhub, en tu plan, antes de ir.", "de": "de", "Não consegui confirmar a sua assinatura. Abra o app de novo e tente outra vez.": "No pude confirmar tu suscripción. Vuelve a abrir la app e inténtalo de nuevo.", "Muitas buscas em pouco tempo. Tente de novo mais tarde.": "Demasiadas búsquedas en poco tiempo. Inténtalo de nuevo más tarde.", "Navegação principal": "Navegación principal", "Início": "Inicio", "Treinos": "Entrenamientos", "Progresso": "Progreso", "Mais": "Más", "Histórico": "Historial", "Notas": "Notas", "Suplementos": "Suplementos", "Avaliação": "Evaluación", "Premium": "Premium", "Sobre": "Acerca de", "Configurações": "Ajustes", "Academias": "Gimnasios", "Assistente IA": "Asistente IA", "Passos": "Pasos", "Toque pra registrar": "Toca para registrar", "VER EVOLUÇÃO": "VER EVOLUCIÓN", "Nível {0} de {1}": "Nivel {0} de {1}", "pontos": "puntos", "treinos": "entrenamientos", "🏋️ Meus treinos": "🏋️ Mis entrenamientos", "Último": "Último", "Próximo": "Siguiente", "Na semana": "En la semana", "concluído": "completado", "concluídos": "completados", "hoje": "hoy", "ontem": "ayer", "Nenhum treino registrado ainda. Conclua o primeiro na Rotina e ele aparece aqui.": "Aún no hay entrenamientos registrados. Completa el primero en Rutina y aparecerá aquí.", "Ver treinos": "Ver entrenamientos", "Mais detalhes ▼": "Más detalles ▼", "Menos detalhes ▲": "Menos detalles ▲", "No botão Mais ficam Histórico, Notas, Suplementos, Sobre (com o tutorial completo do app) e as configurações — dá uma olhada quando quiser.": "En el botón Más están Historial, Notas, Suplementos, Acerca de (con el tutorial completo de la app) y los ajustes — échale un vistazo cuando quieras.", "👟 Contador de passos": "👟 Contador de pasos", "💊 Central de suplementos": "💊 Centro de suplementos", "📈 Minha Evolução": "📈 Mi Evolución", "Estatísticas": "Estadísticas", "Medalhas": "Medallas", "Dias seguidos": "Días seguidos", "📏 Peso e medidas": "📏 Peso y medidas", "📜 Histórico completo": "📜 Historial completo", "Foto de perfil": "Foto de perfil"});
 const TRAD_NORM = {};
 function trNormalizar(idioma) {
   if (TRAD_NORM[idioma]) return TRAD_NORM[idioma];
@@ -5204,6 +5204,23 @@ function AppMassiPro({ onSolicitarRemount }) {
     empilhar(() => { fechouPlanosPeloVoltar.current = true; setShowPlanos(false); });
     return () => { if (!fechouPlanosPeloVoltar.current) removerTopo(); fechouPlanosPeloVoltar.current = false; };
   }, [planosAbertos]);
+  const [maisAberto, setMaisAberto] = useState(false);
+  const [painel, setPainel] = useState(null); // "passos" | "academias" | "suplementos"
+  const [versaoPassos, setVersaoPassos] = useState(0);
+  const maisSheetAberto = maisAberto;
+  const fechouMaisPeloVoltar = useRef(false);
+  useEffect(() => {
+    if (!maisSheetAberto) return undefined;
+    empilhar(() => { fechouMaisPeloVoltar.current = true; setMaisAberto(false); });
+    return () => { if (!fechouMaisPeloVoltar.current) removerTopo(); fechouMaisPeloVoltar.current = false; };
+  }, [maisSheetAberto]);
+  const painelAberto = !!painel;
+  const fechouPainelPeloVoltar = useRef(false);
+  useEffect(() => {
+    if (!painelAberto) { setVersaoPassos((v) => v + 1); return undefined; }
+    empilhar(() => { fechouPainelPeloVoltar.current = true; setPainel(null); });
+    return () => { if (!fechouPainelPeloVoltar.current) removerTopo(); fechouPainelPeloVoltar.current = false; };
+  }, [painelAberto]);
   const [onboardingPendente, setOnboardingPendente] = useState(false);
   const [mostrarBoraComecar, setMostrarBoraComecar] = useState(false);
   const tabRowRef = useRef(null);
@@ -5288,7 +5305,7 @@ function AppMassiPro({ onSolicitarRemount }) {
     ],
     inicio: [
       { ref: tourTreinoHojeRef, texto: "Esse card mostra o treino de hoje. Toque nele pra ir direto pro dia certo lá na Rotina." },
-      { ref: tourSobreBtnRef, texto: "Aqui na aba Sobre tem o tutorial completo do app e outras informações — dá uma olhada quando quiser." },
+      { ref: tourSobreBtnRef, texto: "No botão Mais ficam Histórico, Notas, Suplementos, Sobre (com o tutorial completo do app) e as configurações — dá uma olhada quando quiser." },
     ],
     // Tour 2 do Início: o medidor e os atalhos novos.
     inicio2: [
@@ -5605,6 +5622,11 @@ function AppMassiPro({ onSolicitarRemount }) {
   }, [activeTab, diaParaFocar]);
   useGuardaRolagem((activeTab === "rotina" || activeTab === "inicio") && !tourAtivo && !diaParaFocar);
   useEffect(() => { instalarEnvioDoTokenDeAssinatura(); }, []);
+  // Cada troca de aba (barra inferior, "Mais", atalhos da Home) abre a nova tela no topo, em vez de herdar a rolagem da anterior.
+  useEffect(() => {
+    liberarRolagemPor(900);
+    try { window.scrollTo({ top: 0, behavior: "instant" }); } catch (e) { window.scrollTo(0, 0); }
+  }, [activeTab]);
   const [exercicioAberto, setExercicioAberto] = useState(null);
   const [cronometro, setCronometro] = useState(null); // { totalSeg, restanteSeg, rodando, label }
   const [historico, setHistorico] = useState([]);
@@ -7682,31 +7704,26 @@ function AppMassiPro({ onSolicitarRemount }) {
         </div>
       )}
 
-      <header style={styles.hero}>
+      <header style={{ ...styles.hero, padding: "34px 14px 10px", marginBottom: 10 }} data-testid="cabecalho-compacto">
         <div style={styles.heroOverlay} />
-        <div style={styles.headerTop}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, position: "relative", zIndex: 1 }}>
           <button ref={tourMenuBtnRef} style={styles.menuAbrirBtn} onClick={() => setMenuAberto(true)} aria-label={tr("Abrir menu")} title={tr("Menu")}>
             <MassiLogoMark />
             <span style={styles.menuAbrirIcone}>⚙️</span>
           </button>
-          <div style={styles.headerBotoesDireita}>
-            <button ref={tourPlanosBadgeRef} style={isPremium ? styles.premiumBadge : styles.freeBadge} onClick={() => setShowPlanos(true)}>
-              {isPremium ? (vigente.nivel === "ia" ? "★ Pro IA" : "★ Pro") : t("freeVerPlanos")}
-            </button>
-          </div>
-        </div>
-        <div style={styles.saudacaoRow}>
-          <button style={styles.avatarPerfilBtn} onClick={() => setShowFotoEscolha(true)} aria-label={tr("Foto de perfil")} title={tr("Alterar foto")}>
+          <button style={{ ...styles.avatarPerfilBtn, width: 36, height: 36 }} onClick={() => setShowFotoEscolha(true)} aria-label={tr("Foto de perfil")} title={tr("Alterar foto")}>
             {perfilAtivoFoto ? (
               <img src={perfilAtivoFoto} alt="" style={styles.avatarPerfilImg} />
             ) : (
-              <span style={styles.avatarPerfilIniciais}>{tr((perfilAtivoNome || "V").charAt(0).toUpperCase())}</span>
+              <span style={{ ...styles.avatarPerfilIniciais, fontSize: 15 }}>{tr((perfilAtivoNome || "V").charAt(0).toUpperCase())}</span>
             )}
           </button>
-          <p style={styles.saudacaoNome}>{t("ola")}, {tr(perfilAtivoNome)}!</p>
+          <p style={{ ...styles.saudacaoNome, fontSize: 17, flex: 1, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{t("ola")}, {tr(perfilAtivoNome)}!</p>
+          <button ref={tourPlanosBadgeRef} style={{ ...(isPremium ? styles.premiumBadge : styles.freeBadge), padding: "5px 10px" }} onClick={() => setShowPlanos(true)}>
+            {isPremium ? (vigente.nivel === "ia" ? "★ Pro IA" : "★ Pro") : t("freeVerPlanos")}
+          </button>
         </div>
-        <h1 style={styles.title}>{tr("Massi Pro")}</h1>
-        <p style={styles.subtitle}>{t("subtituloApp")}</p>
+        <h1 style={{ position: "absolute", width: 1, height: 1, overflow: "hidden", clip: "rect(0 0 0 0)", whiteSpace: "nowrap", margin: 0 }}>{tr("Massi Pro")}</h1>
       </header>
 
       <div style={styles.content}>
@@ -7723,8 +7740,33 @@ function AppMassiPro({ onSolicitarRemount }) {
         <RotinaInteligente onFechar={() => { setIaTela(null); setRiVersao((v) => v + 1); }} i18n={{ tr, trt }} idioma={idioma} quota={MassiIA} temIA={vigente.temIA} onVerPlanos={() => { setIaTela(null); setShowPlanos(true); }} gerarSemana={gerarSemanaPersonalizada} aplicarSemana={aplicarSemanaRI} onAlterado={() => setRiVersao((v) => v + 1)} />
       )}
       {iaTela === "diario" && <DiarioAlimentar onFechar={() => setIaTela(null)} i18n={{ tr, trt }} idioma={idioma} onNovaFoto={() => abrirComConsentimento("foto")} />}
-      {!iaTela && !menuAberto && !showPlanos && !infoModal && !onboardingPendente && (
+      {!iaTela && !menuAberto && !showPlanos && !infoModal && !onboardingPendente && !maisAberto && !painel && (
         <BotaoIAFlutuante onAbrir={() => abrirComConsentimento("assistente")} rotulo={tr("Assistente Massi")} btnRef={tourIaBtnRef} />
+      )}
+      {maisAberto && (
+        <MaisSheet
+          onFechar={() => setMaisAberto(false)}
+          itens={[
+            { id: "historico", icone: "📜", nome: "Histórico", onClick: () => { setMaisAberto(false); setActiveTab("historico"); } },
+            { id: "notas", icone: "📝", nome: "Notas", onClick: () => { setMaisAberto(false); setActiveTab("notas"); } },
+            { id: "suplementos", icone: "💊", nome: "Suplementos", onClick: () => { setMaisAberto(false); setPainel("suplementos"); } },
+            { id: "avaliacao", icone: "📏", nome: "Avaliação", onClick: () => { setMaisAberto(false); setActiveTab("evolucao"); } },
+            { id: "diario", icone: "🍽️", nome: "Diário alimentar", onClick: () => { setMaisAberto(false); abrirItemMenu("ia_diario"); } },
+            { id: "premium", icone: "⭐", nome: "Premium", onClick: () => { setMaisAberto(false); setActiveTab("premium"); } },
+            { id: "sobre", icone: "ℹ️", nome: "Sobre", onClick: () => { setMaisAberto(false); setActiveTab("sobre"); } },
+            { id: "config", icone: "⚙️", nome: "Configurações", onClick: () => { setMaisAberto(false); setMenuAberto(true); } },
+          ]}
+        />
+      )}
+      {painel && (
+        <PainelFerramenta titulo={painel === "passos" ? "👟 Contador de passos" : painel === "academias" ? "📍 Academias perto de mim" : "💊 Central de suplementos"} onFechar={() => setPainel(null)}>
+          {painel === "passos" && <ContadorPassos onCompartilhar={compartilharResumo} />}
+          {painel === "academias" && <AcademiasPerto onVerPlanos={() => { setPainel(null); setActiveTab("premium"); }} />}
+          {painel === "suplementos" && <GuiaSuplementos estilos={{ card: styles.card, label: styles.tituloDestaque, input: styles.avalInput }} tr={tr} />}
+        </PainelFerramenta>
+      )}
+      {!onboardingPendente && !splashVisivel && (
+        <BarraInferior ativa={abaDaBarra(activeTab, maisAberto)} onIr={(aba) => { setMaisAberto(false); setActiveTab(aba); }} onMais={() => setMaisAberto(true)} refMais={tourSobreBtnRef} />
       )}
       {exercicioAberto && (
         <ExercicioModal
@@ -8095,7 +8137,7 @@ function AppMassiPro({ onSolicitarRemount }) {
         </div>
       )}
 
-      <div style={styles.tabRowWrapper}>
+      {false && (<div style={styles.tabRowWrapper}>
         <div
           ref={tabRowRef}
           style={styles.tabRow}
@@ -8175,10 +8217,13 @@ function AppMassiPro({ onSolicitarRemount }) {
             →
           </div>
         )}
-      </div>
+      </div>)}
 
       {activeTab === "inicio" && (
         <InicioTab
+          onAbrirAssistente={() => abrirComConsentimento("assistente")}
+          onAbrirPainel={(id) => setPainel(id)}
+          versaoPassos={versaoPassos}
           onAbrirFoto={() => abrirComConsentimento("foto")}
           refFoto={tourFotoIARef}
           refPassos={tourPassosRef}
@@ -8448,6 +8493,16 @@ function AppMassiPro({ onSolicitarRemount }) {
       )}
 
       {activeTab === "notas" && <NotasTab refTour={tourNotasRef} />}
+      {activeTab === "progresso" && (
+        <ProgressoTab
+          historico={historico}
+          rotina={rotina}
+          diasSelecionados={diasSelecionados}
+          refMedidorTour={tourMedidorRef}
+          refMinisTour={tourMinisRef}
+          onIrAba={(aba) => setActiveTab(aba)}
+        />
+      )}
 
       {activeTab === "evolucao" && (
         <div className="legivel">
@@ -9059,6 +9114,177 @@ function AtalhosIlustradosCard({ onIrAba, refTour }) {
   );
 }
 
+// ================================================================
+// HOME 2.0: barra inferior, "Mais", painéis das ferramentas e página de Evolução
+// (só layout/navegação: nenhuma regra de treino, Índice Massi, IA, passos ou academias muda aqui)
+// ================================================================
+const BARRA_ALTURA = 64; // px, sem a área segura do Android
+function areaSeguraInferiorPx() {
+  try {
+    const el = document.createElement("div");
+    el.style.cssText = "position:absolute;visibility:hidden;padding-bottom:env(safe-area-inset-bottom, 0px)";
+    document.body.appendChild(el);
+    const v = parseFloat(window.getComputedStyle(el).paddingBottom) || 0;
+    document.body.removeChild(el);
+    return v;
+  } catch (e) { return 0; }
+}
+// Qual item da barra fica aceso para cada tela.
+function abaDaBarra(activeTab, maisAberto) {
+  if (maisAberto) return "mais";
+  if (activeTab === "inicio" || activeTab === "rotina" || activeTab === "cross") return activeTab;
+  if (activeTab === "progresso" || activeTab === "evolucao") return "progresso";
+  return "mais";
+}
+function BarraInferior({ ativa, onIr, onMais, refMais }) {
+  const itens = [
+    { id: "inicio", icone: "🏠", nome: "Início" },
+    { id: "rotina", icone: "💪", nome: "Rotina" },
+    { id: "cross", icone: "🏋️", nome: "Treinos" },
+    { id: "progresso", icone: "📈", nome: "Progresso" },
+    { id: "mais", icone: "☰", nome: "Mais" },
+  ];
+  return (
+    <nav aria-label={tr("Navegação principal")} data-testid="barra-inferior" style={{ position: "fixed", left: 0, right: 0, bottom: 0, zIndex: 300, display: "flex", justifyContent: "center", pointerEvents: "none" }}>
+      <div style={{ width: "100%", maxWidth: 520, display: "flex", background: "rgba(14,16,19,0.97)", borderTop: "1px solid rgba(198,255,77,0.2)", paddingBottom: "env(safe-area-inset-bottom, 0px)", pointerEvents: "auto", boxShadow: "0 -6px 18px rgba(0,0,0,0.4)" }}>
+        {itens.map((it) => {
+          const ativo = ativa === it.id;
+          return (
+            <button
+              key={it.id}
+              ref={it.id === "mais" ? refMais : undefined}
+              data-testid={"nav-" + it.id}
+              aria-current={ativo ? "page" : undefined}
+              onClick={() => (it.id === "mais" ? onMais() : onIr(it.id))}
+              style={{ flex: 1, minWidth: 0, minHeight: BARRA_ALTURA, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 3, border: "none", background: "transparent", cursor: "pointer", color: ativo ? "#C6FF4D" : "#9AA3AE", fontFamily: "inherit", fontSize: 11, fontWeight: ativo ? 800 : 600, position: "relative", padding: "6px 2px", WebkitTapHighlightColor: "transparent" }}
+            >
+              {ativo && <span style={{ position: "absolute", top: 0, left: "28%", right: "28%", height: 3, borderRadius: "0 0 4px 4px", background: "#C6FF4D" }} />}
+              <span style={{ fontSize: 21, lineHeight: 1 }}>{it.icone}</span>
+              <span style={{ whiteSpace: "nowrap" }}>{tr(it.nome)}</span>
+            </button>
+          );
+        })}
+      </div>
+    </nav>
+  );
+}
+
+// Folha "Mais": reúne as telas secundárias (nada saiu do app, só mudou de lugar de acesso).
+function MaisSheet({ onFechar, itens }) {
+  return (
+    <div style={{ position: "fixed", top: 0, right: 0, bottom: 0, left: 0, zIndex: 650, background: "rgba(0,0,0,0.6)", display: "flex", alignItems: "flex-end", justifyContent: "center" }} onClick={onFechar} data-testid="mais-sheet">
+      <div style={{ width: "100%", maxWidth: 520, maxHeight: "82vh", overflowY: "auto", background: "#12161B", borderRadius: "20px 20px 0 0", borderTop: "1px solid rgba(198,255,77,0.3)", padding: "14px 14px calc(18px + env(safe-area-inset-bottom, 0px))", color: "#fff" }} onClick={(e) => e.stopPropagation()}>
+        <div style={{ width: 40, height: 4, borderRadius: 2, background: "rgba(255,255,255,0.25)", margin: "0 auto 12px" }} />
+        <div style={{ fontWeight: 900, fontSize: 16, marginBottom: 10 }}>{tr("Mais")}</div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 8 }}>
+          {itens.map((it) => (
+            <button key={it.id} data-testid={"mais-" + it.id} onClick={it.onClick}
+              style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 6, minHeight: 84, padding: "8px 2px", borderRadius: 14, border: "1px solid rgba(198,255,77,0.2)", background: "rgba(255,255,255,0.04)", color: "#fff", cursor: "pointer", fontFamily: "inherit" }}>
+              <span style={{ fontSize: 25, lineHeight: 1 }}>{it.icone}</span>
+              <span style={{ fontSize: 11.5, fontWeight: 700, textAlign: "center", lineHeight: 1.2 }}>{tr(it.nome)}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Painel que abre uma ferramenta já existente (contador de passos, academias, suplementos) sem sair da tela.
+function PainelFerramenta({ titulo, onFechar, children }) {
+  return (
+    <div style={{ position: "fixed", top: 0, right: 0, bottom: 0, left: 0, zIndex: 650, background: "rgba(0,0,0,0.6)", display: "flex", alignItems: "flex-end", justifyContent: "center" }} onClick={onFechar} data-testid="painel-ferramenta">
+      <div className="legivel" style={{ width: "100%", maxWidth: 520, height: "calc(100% - 28px)", overflowY: "auto", background: "#0F1317", borderRadius: "20px 20px 0 0", borderTop: "1px solid rgba(198,255,77,0.3)", padding: "10px 14px calc(18px + env(safe-area-inset-bottom, 0px))", color: "#fff" }} onClick={(e) => e.stopPropagation()}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8, position: "sticky", top: -10, background: "#0F1317", padding: "6px 0", zIndex: 2 }}>
+          <div style={{ fontWeight: 900, fontSize: 16 }}>{tr(titulo)}</div>
+          <button onClick={onFechar} aria-label={tr("Fechar")} data-testid="painel-fechar" style={{ width: 44, height: 44, borderRadius: 22, border: "1px solid rgba(255,255,255,0.2)", background: "rgba(255,255,255,0.06)", color: "#fff", fontSize: 22, cursor: "pointer" }}>×</button>
+        </div>
+        {children}
+      </div>
+    </div>
+  );
+}
+
+// Passos de hoje, lidos do que o próprio contador já salvou. Se não achar um número confiável, devolve null
+// (a Home mostra "Toque pra registrar" em vez de inventar valor).
+function passosDeHoje(valor) {
+  try {
+    const v = typeof valor === "string" ? JSON.parse(valor) : valor;
+    const hojeUtc = new Date().toISOString().slice(0, 10);
+    let hojeLocal = hojeUtc;
+    try { hojeLocal = new Date().toLocaleDateString("en-CA"); } catch (e) { /* usa UTC */ }
+    const chaves = [hojeLocal, hojeUtc];
+    const numero = (x) => (typeof x === "number" && isFinite(x) && x >= 0 ? x : null);
+    const doItem = (it) => {
+      if (numero(it) !== null) return it;
+      if (it && typeof it === "object") {
+        for (const k of ["passos", "steps", "total", "quantidade", "qtd", "valor"]) if (numero(it[k]) !== null) return it[k];
+      }
+      return null;
+    };
+    if (Array.isArray(v)) {
+      const it = v.find((x) => x && typeof x === "object" && chaves.indexOf(x.data || x.dia || x.date) >= 0);
+      return it ? doItem(it) : null;
+    }
+    if (v && typeof v === "object") {
+      for (const c of chaves) if (Object.prototype.hasOwnProperty.call(v, c)) return doItem(v[c]);
+    }
+  } catch (e) { /* formato desconhecido */ }
+  return null;
+}
+
+// Página "Evolução": Índice Massi completo (mesmo cartão e mesmos cálculos da Home antiga), medalhas e estatísticas.
+function ProgressoTab({ historico, rotina, diasSelecionados, refMedidorTour, refMinisTour, onIrAba }) {
+  const streak = calcularStreak(historico);
+  const indice = calcularIndiceMassi(historico, rotina, diasSelecionados, streak);
+  const totalTreinos = historico.length;
+  const volumeTotal = historico.reduce((acc, h) => acc + (h.volumeTotal || 0), 0);
+  const medalhas = CONQUISTAS.map((c) => ({ ...c, ok: c.tipo === "total" ? totalTreinos >= c.valor : c.tipo === "streak" ? streak >= c.valor : volumeTotal >= c.valor }));
+  const conquistadas = medalhas.filter((m) => m.ok).length;
+  const cartao = { background: "rgba(20,23,28,0.94)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 16, padding: 14, marginBottom: 12, color: "#fff" };
+  const stats = [
+    ["⭐", Math.round(indice.total), "Pontos"],
+    ["🏋️", indice.treinosTotal, "Treinos concluídos"],
+    ["📆", indice.semanasBoas, "Semanas boas"],
+    ["🗓️", indice.diasDeUso, "Dias de uso"],
+    ["🔥", streak, "Dias seguidos"],
+    ["🏅", conquistadas + "/" + CONQUISTAS.length, "Medalhas"],
+  ];
+  return (
+    <div style={{ color: "#fff" }} data-testid="tela-progresso">
+      <div style={{ fontWeight: 900, fontSize: 20, margin: "0 2px 10px" }}>{tr("📈 Minha Evolução")}</div>
+      <IndiceMassiCard indice={indice} refTour={refMedidorTour} refMinis={refMinisTour} />
+      <section style={cartao}>
+        <div style={{ fontWeight: 800, fontSize: 15, marginBottom: 10 }}>{tr("Estatísticas")}</div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
+          {stats.map(([icone, valor, nome]) => (
+            <div key={nome} style={{ background: "rgba(255,255,255,0.05)", borderRadius: 12, padding: "10px 6px", textAlign: "center" }}>
+              <div style={{ fontSize: 17 }}>{icone}</div>
+              <div style={{ fontSize: 19, fontWeight: 900, color: "#C6FF4D" }}>{valor}</div>
+              <div style={{ fontSize: 10.5, color: "#B7C0CA", lineHeight: 1.2 }}>{tr(nome)}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+      <section style={cartao}>
+        <div style={{ fontWeight: 800, fontSize: 15, marginBottom: 10 }}>{tr("Medalhas")}</div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 8 }}>
+          {medalhas.map((m) => (
+            <div key={m.id} title={tr(m.label)} style={{ textAlign: "center", opacity: m.ok ? 1 : 0.35, filter: m.ok ? "none" : "grayscale(1)" }}>
+              <div style={{ fontSize: 26 }}>{m.emoji}</div>
+              <div style={{ fontSize: 9.5, color: "#D4DAE2", lineHeight: 1.2 }}>{tr(m.label)}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+      <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
+        <button onClick={() => onIrAba("evolucao")} data-testid="progresso-avaliacao" style={{ flex: 1, minHeight: 48, borderRadius: 12, border: "1px solid rgba(198,255,77,0.5)", background: "transparent", color: "#C6FF4D", fontWeight: 800, fontSize: 13.5, cursor: "pointer", fontFamily: "inherit" }}>{tr("📏 Peso e medidas")}</button>
+        <button onClick={() => onIrAba("historico")} data-testid="progresso-historico" style={{ flex: 1, minHeight: 48, borderRadius: 12, border: "1px solid rgba(198,255,77,0.5)", background: "transparent", color: "#C6FF4D", fontWeight: 800, fontSize: 13.5, cursor: "pointer", fontFamily: "inherit" }}>{tr("📜 Histórico completo")}</button>
+      </div>
+    </div>
+  );
+}
+
 // Card do Massi Cross na aba Início: só aparece quando já existe algum WOD concluído.
 function CrossCardInicio({ onIrAba }) {
   const [historico, setHistorico] = useState([]);
@@ -9309,12 +9535,24 @@ function AcademiasPerto({ onVerPlanos }) {
   );
 }
 
-function InicioTab({ refPassos, refFoto, onAbrirFoto, perfilAtivoNome, rotina, diasSelecionados, historico, recordes, onIrTreino, onIrAba, t, idioma, refTreinoHojeTour, refMedidorTour, refMinisTour, refAtalhosTour }) {
+function InicioTab({ onAbrirAssistente, onAbrirPainel, versaoPassos, refPassos, refFoto, onAbrirFoto, perfilAtivoNome, rotina, diasSelecionados, historico, recordes, onIrTreino, onIrAba, t, idioma, refTreinoHojeTour, refMedidorTour, refMinisTour, refAtalhosTour }) {
   const [avaliacoes, setAvaliacoes] = useState([]);
   const [agora, setAgora] = useState(() => new Date());
+  const [detalhesAbertos, setDetalhesAbertos] = useState(false);
+  const [passosHoje, setPassosHoje] = useState(null);
+  useEffect(() => {
+    let vivo = true;
+    (async () => {
+      try {
+        const r = await window.storage.get("passos-registros");
+        if (vivo) setPassosHoje(r && r.value ? passosDeHoje(r.value) : null);
+      } catch (e) { if (vivo) setPassosHoje(null); }
+    })();
+    return () => { vivo = false; };
+  }, [versaoPassos]);
 
   useEffect(() => {
-    const id = setInterval(() => setAgora(new Date()), 1000);
+    const id = setInterval(() => setAgora(new Date()), 60000);
     return () => clearInterval(id);
   }, []);
 
@@ -9459,74 +9697,125 @@ function InicioTab({ refPassos, refFoto, onAbrirFoto, perfilAtivoNome, rotina, d
     second: "2-digit",
   });
 
+  // ----- Home 2.0: valores derivados (usam só dados e regras que já existem) -----
+  const cartaoHome = { background: "rgba(20,23,28,0.94)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 16, padding: "13px 14px", marginBottom: 12, color: "#fff" };
+  const miniStat = { background: "rgba(255,255,255,0.05)", borderRadius: 12, padding: "9px 6px", textAlign: "center", minWidth: 0 };
+  const miniStatRotulo = { fontSize: 10.5, fontWeight: 800, letterSpacing: 0.6, color: "#9AA3AE", textTransform: "uppercase" };
+  const miniStatValor = { fontSize: 14, fontWeight: 900, margin: "3px 0 1px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" };
+  const miniStatSub = { fontSize: 11, color: "#C6FF4D", fontWeight: 700, minHeight: 14 };
+  const dataHojeTxt = dataHojeFormatada.charAt(0).toUpperCase() + dataHojeFormatada.slice(1);
+  const nivelHome = NIVEIS_MASSI[indiceMassi.nivelIdx];
+  const proxNivelHome = indiceMassi.prox;
+  const pctNivelHome = proxNivelHome && proxNivelHome.pontos > nivelHome.pontos
+    ? Math.max(2, Math.min(100, ((indiceMassi.total - nivelHome.pontos) / (proxNivelHome.pontos - nivelHome.pontos)) * 100))
+    : 100;
+  const ultimoTreino = [...historico].sort((a, b) => (a.data < b.data ? 1 : a.data > b.data ? -1 : 0))[0] || null;
+  const dUltimo = ultimoTreino ? crossDiasDesde(ultimoTreino.data) : null;
+  const quandoUltimo = dUltimo === 0 ? tr("hoje") : dUltimo === 1 ? tr("ontem") : dUltimo !== null && dUltimo > 1 ? trt("há {0} dias", [dUltimo]) : "";
+  let proximoTreino = null;
+  for (let k = hojeEhDiaDeTreino && !treinoHojeConcluido ? 0 : 1; k <= 7 && !proximoTreino; k++) {
+    const nomeDia = DIAS_SEMANA[(diaSemanaIdx + k) % 7];
+    const dia = rotina.find((x) => x.dia === nomeDia);
+    if (dia && diasSelecionados.includes(nomeDia) && dia.foco && dia.foco !== "Descanso") proximoTreino = { dia: nomeDia, foco: dia.foco, hoje: k === 0 };
+  }
+  const ferramentas = [
+    { id: "foto", icone: "📷", nome: "Foto inteligente", testid: "btn-foto-inteligente", ref: refFoto, onClick: () => onAbrirFoto && onAbrirFoto() },
+    { id: "assistente", icone: "✨", nome: "Assistente IA", testid: "tool-assistente", onClick: () => onAbrirAssistente && onAbrirAssistente() },
+    { id: "passos", icone: "👟", nome: "Passos", testid: "tool-passos", ref: refPassos, sub: passosHoje !== null ? Number(passosHoje).toLocaleString(localeAtual()) : tr("Toque pra registrar"), onClick: () => onAbrirPainel && onAbrirPainel("passos") },
+    { id: "academias", icone: "📍", nome: "Academias", testid: "tool-academias", onClick: () => onAbrirPainel && onAbrirPainel("academias") },
+    { id: "suplementos", icone: "💊", nome: "Suplementos", testid: "tool-suplementos", onClick: () => onAbrirPainel && onAbrirPainel("suplementos") },
+  ];
+
   return (
     <div style={styles.crossDarkWrap}>
-      <div style={styles.inicioHeader}>
-        <div style={styles.inicioAvatar} aria-hidden="true">🏋️</div>
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={styles.inicioSaudacao}>{t("inicioOla")}, {tr(perfilAtivoNome)} 👋</div>
-          <div style={styles.inicioFrase}>{tr(getFraseDoDiaInicio(idioma))}</div>
+      {/* B. Resumo do dia */}
+      <section ref={refTreinoHojeTour} data-testid="home-resumo-dia" style={{ ...cartaoHome, background: "linear-gradient(135deg, rgba(198,255,77,0.14), rgba(20,23,28,0.96) 62%)", border: "1px solid rgba(198,255,77,0.3)" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
+          <div style={{ fontSize: 12, fontWeight: 800, letterSpacing: 0.3, color: "#C6FF4D" }}>{tr(dataHojeTxt)}</div>
+          {streak > 0 && <span style={{ fontSize: 12, fontWeight: 800, background: "rgba(255,255,255,0.1)", borderRadius: 999, padding: "3px 9px" }}>🔥 {tr(streak)}</span>}
         </div>
-        <div style={styles.inicioSino} title={t("inicioNotificacoes")}>🔔</div>
-      </div>
-
-      <button ref={refFoto} type="button" onClick={() => onAbrirFoto && onAbrirFoto()} style={styles.inicioFotoBtn} data-testid="btn-foto-inteligente">
-        <span style={{ fontSize: 22 }}>📷</span>
-        <span style={{ textAlign: "left" }}>
-          <span style={{ display: "block", fontWeight: 800, fontSize: 15 }}>{tr("Foto inteligente")}</span>
-          <span style={{ display: "block", fontSize: 12.5, opacity: 0.8 }}>{tr("Tire uma foto da refeição e veja calorias e macros")}</span>
-        </span>
-      </button>
-
-      <div style={styles.resumoDiaFaixa}>
-        <span style={styles.resumoDiaData}>{tr(dataHojeFormatada)}</span>
-        <span style={styles.resumoDiaSeparador}>•</span>
-        <span style={styles.resumoDiaRelogio}>🕒 {tr(horaBrasilia)}</span>
-        <span style={styles.resumoDiaSeparador}>•</span>
-        <span
-          style={{
-            ...styles.resumoDiaStatus,
-            ...(hojeEhDiaDeTreino ? { cursor: "pointer", textDecoration: "underline" } : {}),
-          }}
-          onClick={hojeEhDiaDeTreino ? () => onIrTreino(diaHoje) : undefined}
-          role={hojeEhDiaDeTreino ? "button" : undefined}
-        >
-          {treinoHojeConcluido
-            ? t("inicioTreinoConcluido")
-            : hojeEhDiaDeTreino
-            ? t("inicioAindaNaoTreinouComFoco", { foco: treinoHoje.foco })
-            : t("inicioDiaDescanso")}
-        </span>
-        {streak > 0 && <span style={styles.resumoDiaStreak}>🔥 {tr(streak)}</span>}
-      </div>
-
-      <section style={styles.inicioHeroCard} ref={refTreinoHojeTour}>
-        {hojeEhDiaDeTreino ? (
-          <>
-            <div style={styles.inicioHeroLabel}>{t("inicioSeuTreinoHoje")}</div>
-            <div style={styles.inicioHeroTitulo}>{tr(treinoHoje.foco)}</div>
-            <div style={styles.inicioHeroMeta}>
-              {treinoHoje.exercicios.length > 0
-                ? tr(`${treinoHoje.exercicios.length} ${t("inicioExercicios")}`)
-                : treinoHoje.cardio
-                ? tr(treinoHoje.cardio.tipo)
-                : tr("")}
+        <div style={{ fontSize: 20, fontWeight: 900, margin: "6px 0 2px" }}>
+          {treinoHojeConcluido ? t("inicioTreinoConcluido") : hojeEhDiaDeTreino ? tr(treinoHoje.foco) : t("inicioTituloDescanso")}
+        </div>
+        <div style={{ fontSize: 12.5, color: "#C9D1D9" }}>
+          {hojeEhDiaDeTreino ? (
+            <>
+              {treinoHoje.exercicios.length > 0 ? tr(`${treinoHoje.exercicios.length} ${t("inicioExercicios")}`) : treinoHoje.cardio ? tr(treinoHoje.cardio.tipo) : tr("")}
               {estimarDuracaoTreinoMin(treinoHoje) > 0 ? trt(" • ~{0} min", [estimarDuracaoTreinoMin(treinoHoje)]) : tr("")}
-            </div>
-            <button style={styles.inicioHeroBtn} onClick={() => onIrTreino(diaHoje)}>{t("inicioBtnComecar")}</button>
-          </>
-        ) : (
-          <>
-            <div style={styles.inicioHeroLabel}>{t("inicioHoje")}</div>
-            <div style={styles.inicioHeroTitulo}>{t("inicioTituloDescanso")}</div>
-            <div style={styles.inicioHeroMeta}>{t("inicioMetaDescanso")}</div>
-            <button style={styles.inicioHeroBtn} onClick={() => onIrTreino(diaHoje)}>{t("inicioBtnVerRotina")}</button>
-          </>
-        )}
+            </>
+          ) : t("inicioMetaDescanso")}
+        </div>
+        <div style={{ fontSize: 12, color: "#9AA3AE", fontStyle: "italic", margin: "8px 0 10px", lineHeight: 1.4 }}>{tr(getFraseDoDiaInicio(idioma))}</div>
+        <button onClick={() => onIrTreino(diaHoje)} data-testid="home-btn-rotina" style={{ width: "100%", minHeight: 46, border: "none", borderRadius: 12, background: "#C6FF4D", color: "#11160A", fontWeight: 900, fontSize: 14.5, cursor: "pointer", fontFamily: "inherit" }}>
+          {hojeEhDiaDeTreino && !treinoHojeConcluido ? t("inicioBtnComecar") : t("inicioBtnVerRotina")}
+        </button>
       </section>
 
-      <IndiceMassiCard indice={indiceMassi} refTour={refMedidorTour} refMinis={refMinisTour} />
+      {/* C. Ferramentas de acesso rápido */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 8, marginBottom: 12 }} data-testid="home-ferramentas">
+        {ferramentas.map((f, i) => (
+          <button key={f.id} ref={f.ref} type="button" onClick={f.onClick} data-testid={f.testid} aria-label={tr(f.nome)}
+            style={{ gridColumn: i < 3 ? "span 2" : "span 3", minHeight: 78, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 3, padding: "8px 4px", borderRadius: 14, border: "1px solid rgba(198,255,77,0.28)", background: "rgba(18,22,27,0.95)", color: "#fff", cursor: "pointer", fontFamily: "inherit", WebkitTapHighlightColor: "transparent" }}>
+            <span style={{ fontSize: 24, lineHeight: 1 }}>{f.icone}</span>
+            <span style={{ fontSize: 12.5, fontWeight: 800 }}>{tr(f.nome)}</span>
+            {f.sub && <span style={{ fontSize: 11, fontWeight: 700, color: "#C6FF4D" }}>{f.sub}</span>}
+          </button>
+        ))}
+      </div>
 
+      {/* D. Minha Evolução (resumo) */}
+      <section ref={refMedidorTour} data-testid="home-evolucao" style={cartaoHome}>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <div style={{ flex: "0 0 auto", textAlign: "center", minWidth: 74 }}>
+            <div style={{ fontSize: 34, fontWeight: 900, lineHeight: 1, color: nivelHome.cor }}>{Math.round(indiceMassi.total)}<span style={{ fontSize: 12, color: "#9AA3AE", fontWeight: 700 }}>/100</span></div>
+            <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: 1.2, color: "#9AA3AE", marginTop: 2 }}>{String(tr("ÍNDICE MASSI")).toUpperCase()}</div>
+          </div>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontWeight: 900, fontSize: 15 }}>{nivelHome.emoji} {tr(nivelHome.nome)}</div>
+            <div style={{ fontSize: 12, color: "#B7C0CA", margin: "2px 0 6px" }}>
+              {trt("Nível {0} de {1}", [indiceMassi.nivelIdx + 1, NIVEIS_MASSI.length])} · ⭐ {Math.round(indiceMassi.total)} {tr("pontos")} · 💪 {indiceMassi.treinosTotal} {tr("treinos")}
+            </div>
+            <div style={{ height: 7, borderRadius: 999, background: "rgba(255,255,255,0.1)", overflow: "hidden" }}>
+              <div style={{ width: pctNivelHome + "%", height: "100%", background: nivelHome.cor, borderRadius: 999 }} />
+            </div>
+          </div>
+        </div>
+        <button onClick={() => onIrAba("progresso")} data-testid="home-ver-evolucao" style={{ width: "100%", marginTop: 12, minHeight: 44, borderRadius: 12, border: "1px solid rgba(198,255,77,0.55)", background: "transparent", color: "#C6FF4D", fontWeight: 900, fontSize: 13.5, letterSpacing: 0.6, cursor: "pointer", fontFamily: "inherit" }}>{tr("VER EVOLUÇÃO")}</button>
+      </section>
+
+      {/* E. Resumo dos treinos */}
+      <section data-testid="home-treinos" style={cartaoHome}>
+        <div style={{ fontWeight: 800, fontSize: 14, marginBottom: 8 }}>{tr("🏋️ Meus treinos")}</div>
+        {ultimoTreino || proximoTreino ? (
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
+            <div style={miniStat}>
+              <div style={miniStatRotulo}>{tr("Último")}</div>
+              <div style={miniStatValor}>{ultimoTreino ? tr(ultimoTreino.foco || "Treino") : tr("—")}</div>
+              <div style={miniStatSub}>{quandoUltimo}</div>
+            </div>
+            <div style={miniStat}>
+              <div style={miniStatRotulo}>{tr("Próximo")}</div>
+              <div style={miniStatValor}>{proximoTreino ? tr(proximoTreino.foco) : tr("—")}</div>
+              <div style={miniStatSub}>{proximoTreino ? (proximoTreino.hoje ? tr("hoje") : tr(proximoTreino.dia)) : ""}</div>
+            </div>
+            <div style={miniStat}>
+              <div style={miniStatRotulo}>{tr("Na semana")}</div>
+              <div style={miniStatValor}>{tr(historicoSemana.length)}</div>
+              <div style={miniStatSub}>{historicoSemana.length === 1 ? tr("concluído") : tr("concluídos")}</div>
+            </div>
+          </div>
+        ) : (
+          <div style={{ fontSize: 12.5, color: "#B7C0CA", lineHeight: 1.45 }}>{tr("Nenhum treino registrado ainda. Conclua o primeiro na Rotina e ele aparece aqui.")}</div>
+        )}
+        <button onClick={() => onIrAba("rotina")} data-testid="home-ver-treinos" style={{ width: "100%", marginTop: 10, minHeight: 42, borderRadius: 12, border: "1px solid rgba(255,255,255,0.18)", background: "rgba(255,255,255,0.05)", color: "#fff", fontWeight: 800, fontSize: 13, cursor: "pointer", fontFamily: "inherit" }}>{tr("Ver treinos")}</button>
+      </section>
+
+      {/* F. Informações complementares (nada foi removido: histórico, mapa muscular, Cross, resumos e gráficos) */}
+      <button onClick={() => setDetalhesAbertos(!detalhesAbertos)} aria-expanded={detalhesAbertos} data-testid="home-mais-detalhes" style={{ width: "100%", minHeight: 46, marginBottom: 12, borderRadius: 12, border: "1px solid rgba(255,255,255,0.15)", background: "rgba(255,255,255,0.05)", color: "#fff", fontWeight: 800, fontSize: 13.5, cursor: "pointer", fontFamily: "inherit" }}>
+        {detalhesAbertos ? tr("Menos detalhes ▲") : tr("Mais detalhes ▼")}
+      </button>
+      {detalhesAbertos && (
+        <div data-testid="home-detalhes">
       {mostrarAvisoQuaseLa && (
         <div style={styles.inicioQuaseLaBanner}>
           {tr("🚀 Só mais 1 treino essa semana pra igualar seu recorde de ")}{tr(recordeSemanalAnterior)} {tr("treinos numa semana!")}</div>
@@ -9664,10 +9953,8 @@ function InicioTab({ refPassos, refFoto, onAbrirFoto, perfilAtivoNome, rotina, d
           </div>
         )}
       </section>
-      <AcademiasPerto onVerPlanos={() => onIrAba("premium")} />
-      <div ref={refPassos}>
-        <ContadorPassos onCompartilhar={compartilharResumo} />
-      </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -17951,6 +18238,7 @@ const FUNDO_POR_ABA = {
   premium: PREMIUM_BG_IMG,
   sobre: GYM_BG_IMG,
   cross: CROSS_BG_IMG,
+  progresso: HERO_TREINO_IMG,
 };
 // Escurecimento do fundo por aba — mais forte (mais "transparente"/apagado) em
 // todas, menos na Avaliação, que já veio pronta do jeito certo.
@@ -17963,6 +18251,7 @@ const OVERLAY_POR_ABA = {
   premium: "linear-gradient(rgba(10,12,14,0.45), rgba(10,12,14,0.6))",
   sobre: "linear-gradient(rgba(10,12,14,0.82), rgba(10,12,14,0.9))",
   cross: "linear-gradient(rgba(10,12,14,0.45), rgba(10,12,14,0.6))",
+  progresso: "linear-gradient(rgba(10,12,14,0.82), rgba(10,12,14,0.9))",
 };
 const CROSS_CARD_DARK = "#1A1E24";
 const CROSS_TEXT_DIM = "#9AA3AE";
@@ -18881,8 +19170,9 @@ function BotaoIAFlutuante({ onAbrir, rotulo, btnRef }) {
   const dragRef = useRef({ ativo: false, moveu: false, offX: 0, offY: 0, startX: 0, startY: 0 });
 
   const limitar = (x, y) => {
+    const reserva = BARRA_ALTURA + 8 + areaSeguraInferiorPx(); // não deixa o botão ficar por cima da barra inferior
     const maxX = Math.max(IA_BTN_MARGEM, window.innerWidth - IA_BTN_TAM - IA_BTN_MARGEM);
-    const maxY = Math.max(IA_BTN_MARGEM, window.innerHeight - IA_BTN_TAM - IA_BTN_MARGEM);
+    const maxY = Math.max(IA_BTN_MARGEM, window.innerHeight - IA_BTN_TAM - IA_BTN_MARGEM - reserva);
     return {
       x: Math.min(Math.max(IA_BTN_MARGEM, x), maxX),
       y: Math.min(Math.max(IA_BTN_MARGEM, y), maxY),
@@ -19011,7 +19301,7 @@ function BotaoIAFlutuante({ onAbrir, rotulo, btnRef }) {
 
   const posEstilo = pos
     ? { left: pos.x, top: pos.y }
-    : { right: 16, bottom: "calc(18px + env(safe-area-inset-bottom, 0px))" };
+    : { right: 16, bottom: "calc(" + (BARRA_ALTURA + 14) + "px + env(safe-area-inset-bottom, 0px))" };
 
   return (
     <button
@@ -20020,7 +20310,7 @@ const styles = {
     fontFamily: sansFont,
     maxWidth: 520,
     margin: "0 auto",
-    paddingBottom: 60,
+    paddingBottom: "calc(" + (64 + 28) + "px + env(safe-area-inset-bottom, 0px))",
   },
   pageComFoto: {
     backgroundImage: `linear-gradient(rgba(10,12,14,0.82), rgba(10,12,14,0.9)), url(${GYM_BG_IMG})`,
