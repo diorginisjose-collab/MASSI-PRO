@@ -1,0 +1,3 @@
+<!-- Acrescente DENTRO de <manifest>, antes de <application>, em android/app/src/main/AndroidManifest.xml -->
+<uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
+<uses-feature android:name="android.hardware.sensor.stepcounter" android:required="false" />
