@@ -1,0 +1,63 @@
+name: Gerar APK Android
+
+# Roda só quando você pedir: aba Actions › "Gerar APK Android" › Run workflow.
+# Gera o app Android na nuvem (Node 22 e JDK 21 do próprio GitHub), então o seu computador
+# não precisa ter Node, Android Studio nem nada instalado.
+on:
+  workflow_dispatch:
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Instalar dependências
+        run: |
+          npm install
+          npm install @capacitor/core @capacitor/android
+          npm install -D @capacitor/cli
+
+      - name: Gerar o site (dist)
+        run: npm run build
+
+      - name: Criar o projeto Android
+        run: npx cap add android
+
+      - name: Plugin de passos, permissão e chave de assinatura
+        run: |
+          set -e
+          PASTA=android/app/src/main/java/com/massipro/app
+          test -d "$PASTA"
+          cp android-app/MassiPassosPlugin.java "$PASTA/MassiPassosPlugin.java"
+          cp android-app/MainActivity.java "$PASTA/MainActivity.java"
+          MANIFEST=android/app/src/main/AndroidManifest.xml
+          sed -i 's#<application#<uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />\n    <uses-feature android:name="android.hardware.sensor.stepcounter" android:required="false" />\n    <application#' "$MANIFEST"
+          grep -q ACTIVITY_RECOGNITION "$MANIFEST"
+          mkdir -p ~/.android
+          cp android-app/debug.keystore ~/.android/debug.keystore
+
+      - name: Sincronizar e compilar
+        run: |
+          npx cap sync android
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleDebug
+
+      - name: Guardar o APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: massi-pro-apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+        with:
+          name: massi-pro-apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
