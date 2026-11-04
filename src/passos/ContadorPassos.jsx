@@ -1,17 +1,20 @@
 import React, { useEffect, useState } from "react";
 import * as P from "./passos.js";
 import { tmbKcal, idadeDeNascimento } from "./tmb.js";
-import { nativoDisponivel, estadoPassosNativos, pedirPermissaoPassos, lerPassosHojeNativos, iniciarContagemNativa, pararContagemNativa } from "./ponte.js";
+import { nativoDisponivel, pluginPassos, estadoPassosNativos } from "./ponte.js";
+import {
+  hojeISO, lerPerfilPassos, gravarDiaNoHistorico, contagemAutomaticaLigada,
+  ativarContagemAutomatica, desativarContagemAutomatica, sincronizarPassos, reiniciarHojeAutomatico,
+} from "./sincronia.js";
 
-const CHAVE_HIST = "passos-historico";  // { "AAAA-MM-DD": { passos, km, kcal, tmb, idade } }
-
-// Passos informados pela pessoa (copiados do app de passos do celular).
+// Passos de hoje: vêm do sensor de passos do celular (app Android, contagem automática ligada)
+// ou são informados pela pessoa. As duas formas nunca ficam ativas ao mesmo tempo.
 // Distância e calorias são calculadas a partir desse número.
 const CHAVE = "passos-registros";        // { "AAAA-MM-DD": passos }
+const CHAVE_HIST = "passos-historico";   // { "AAAA-MM-DD": { passos, km, kcal, tmb, idade } }
 const CHAVE_PERFIL = "passos-perfil";    // altura, sexo e peso informados aqui
 const CHAVE_COMP = "passos-compartilhados";
 
-const hojeISO = () => { const d = new Date(); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); };
 const ontemISO = () => { const d = new Date(); d.setDate(d.getDate() - 1); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); };
 
 async function ler(chave, padrao) {
@@ -20,17 +23,6 @@ async function ler(chave, padrao) {
 }
 async function gravar(chave, valor) {
   try { await window.storage.set(chave, JSON.stringify(valor)); } catch (e) { /* segue */ }
-}
-
-function pluginPassos_ok() { return !!(window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.MassiPassos); }
-
-// Perfil: o que foi informado aqui tem prioridade; senão, usa a Avaliação do app
-async function lerPerfil() {
-  const aqui = await ler(CHAVE_PERFIL, null);
-  if (aqui && aqui.altura) return aqui;
-  const avs = await ler("avaliacoes-evolucao", []);
-  const ult = Array.isArray(avs) && avs.length ? avs[avs.length - 1] : {};
-  return { altura: ult.altura, sexo: ult.sexo, peso: ult.peso };
 }
 
 function validarPerfil(f) {
@@ -44,6 +36,10 @@ function validarPerfil(f) {
 }
 
 const campo = { display: "block", width: "100%", boxSizing: "border-box", marginTop: 4, padding: 10, borderRadius: 8, border: "1px solid rgba(128,128,128,0.4)", background: "transparent", color: "inherit", fontSize: 15 };
+const botaoVerde = { width: "100%", border: "none", borderRadius: 8, padding: 8, background: "#A7FF00", color: "#15181B", cursor: "pointer", fontWeight: 800 };
+const botaoContorno = { width: "100%", border: "1px solid rgba(128,128,128,0.4)", borderRadius: 8, padding: 8, background: "transparent", color: "inherit", cursor: "pointer", fontWeight: 700 };
+
+const AJUDA_PERMISSAO = "Sem a permissão de atividade física o Android não deixa o Massi ler os passos. Para liberar: Configurações do Android › Apps › Massi Pro › Permissões › Atividade física.";
 
 export default function ContadorPassos({ onCompartilhar }) {
   const [registros, setRegistros] = useState({});
@@ -56,60 +52,70 @@ export default function ContadorPassos({ onCompartilhar }) {
   const [erroForm, setErroForm] = useState([]);
   const [confirmandoReinicio, setConfirmandoReinicio] = useState(false);
   const [aviso, setAviso] = useState("");
-  const [nativo, setNativo] = useState({ status: "indisponivel" });
+  // "carregando" | "indisponivel" | "sem_sensor" | "desligado" | "ligado" | "sem_permissao" | "erro"
+  const [auto, setAuto] = useState({ status: "carregando" });
+
+  // Atualiza a contagem automática ao abrir o cartão e sempre que o app volta para a tela.
+  // O celular conta os passos sozinho, mesmo com a tela apagada; aqui só lemos o total.
   useEffect(() => {
     let vivo = true;
-    (async () => { if (nativoDisponivel()) { const e = await estadoPassosNativos(); if (vivo) setNativo(e); } })();
-    return () => { vivo = false; };
-  }, []);
-  // Só aparece quando o app é nativo e o plugin existe. Não grava nada sem a leitura real.
-  // Com a contagem automática ativa, o total de hoje vem do celular ao abrir o cartão
-  useEffect(() => {
-    let vivo = true;
-    (async () => {
-      if (!(pluginPassos_ok() && nativo.status === "ok")) return;
-      const n = await lerPassosHojeNativos();
-      if (vivo && n !== null) {
-        const hojeAgora = hojeISO();
-        setRegistros((prev) => { const novo = { ...prev, [hojeAgora]: n }; gravar(CHAVE, novo); return novo; });
-        await gravarHistorico(n);
+    const atualizarInterno = async () => {
+      if (!(nativoDisponivel() && pluginPassos())) { if (vivo) setAuto({ status: "indisponivel" }); return; }
+      if (!contagemAutomaticaLigada()) {
+        const e = await estadoPassosNativos();
+        if (vivo) setAuto({ status: e.status === "sem_sensor" ? "sem_sensor" : "desligado" });
+        return;
       }
-    })();
-    return () => { vivo = false; };
-  }, [nativo.status]);
+      const r = await sincronizarPassos();
+      if (!vivo) return;
+      if (r.status === "ok") {
+        setRegistros(r.registros);
+        setAuto({ status: "ligado", estimado: !!r.estimado });
+      } else setAuto({ status: r.status === "sem_permissao" ? "sem_permissao" : "erro" });
+    };
+    // Se algo falhar, o estado vira "erro" e o campo manual aparece (a tela nunca fica sem opção).
+    const atualizar = async () => { try { await atualizarInterno(); } catch (e) { if (vivo) setAuto({ status: "erro" }); } };
+    atualizar();
+    const aoVoltar = () => { if (document.visibilityState === "visible") atualizar(); };
+    document.addEventListener("visibilitychange", aoVoltar);
+    return () => { vivo = false; document.removeEventListener("visibilitychange", aoVoltar); };
+  }, []);
 
   const ativarContagem = async () => {
-    const perm = nativo.status === "ok" ? { status: "ok" } : await pedirPermissaoPassos();
-    if (perm.status !== "ok") { setNativo(perm); setAviso("Permita o acesso aos passos do celular para ativar a contagem automática."); return; }
-    const r = await iniciarContagemNativa();
-    if (r.status === "ativo") { setNativo({ status: "ativo" }); setAviso(""); }
-    else setAviso("Não foi possível ativar a contagem automática agora.");
+    setAviso("");
+    const r = await ativarContagemAutomatica();
+    if (r.status === "ok") {
+      const s = await sincronizarPassos();
+      if (s.status === "ok") setRegistros(s.registros);
+      setAuto({ status: "ligado", estimado: false });
+    } else if (r.status === "sem_permissao") { setAuto({ status: "sem_permissao" }); setAviso(AJUDA_PERMISSAO); }
+    else if (r.status === "sem_sensor") setAuto({ status: "sem_sensor" });
+    else { setAuto({ status: "erro" }); setAviso("Não foi possível ativar a contagem automática agora."); }
   };
-  const desativarContagem = async () => {
-    await pararContagemNativa();
-    setNativo({ status: "ok" }); setAviso("Contagem automática desativada. Você pode continuar digitando os passos.");
+  const desativarContagem = () => {
+    desativarContagemAutomatica();
+    setAuto({ status: "desligado" });
+    setAviso("Contagem automática desativada. Você pode digitar os passos.");
   };
-
-  const sincronizarNativo = async () => {
-    if (nativo.status !== "ok") {
-      const r = await pedirPermissaoPassos();
-      setNativo(r);
-      if (r.status !== "ok") { setAviso("Permita o acesso aos passos do celular para sincronizar."); return; }
-    }
-    const n = await lerPassosHojeNativos();
-    if (n === null) { setAviso("Não foi possível ler os passos do celular agora."); return; }
-    setPassosInformados(String(n));
-    setAviso("Passos lidos do celular. Confira e toque em Salvar.");
+  const atualizarAgora = async () => {
+    setAviso("");
+    const r = await sincronizarPassos();
+    if (r.status === "ok") { setRegistros(r.registros); setAuto({ status: "ligado", estimado: !!r.estimado }); }
+    else { setAuto({ status: r.status === "sem_permissao" ? "sem_permissao" : "erro" }); setAviso(r.status === "sem_permissao" ? AJUDA_PERMISSAO : "Não foi possível ler os passos do celular agora."); }
   };
 
   useEffect(() => {
     let vivo = true;
     (async () => {
       const r = await ler(CHAVE, {});
-      const p = await lerPerfil();
+      const p = await lerPerfilPassos();
       const c = await ler(CHAVE_COMP, []);
       const cad = await ler("onboarding-perfil", null);
-      if (vivo) { setRegistros(r); setPerfil(p); setCompartilhados(Array.isArray(c) ? c : []); setIdade(idadeDeNascimento(cad && cad.nascimento)); }
+      if (vivo) {
+        // não sobrescreve a leitura do sensor, se ela já chegou primeiro
+        setRegistros((atual) => (Object.keys(atual).length ? { ...r, ...atual } : r));
+        setPerfil(p); setCompartilhados(Array.isArray(c) ? c : []); setIdade(idadeDeNascimento(cad && cad.nascimento));
+      }
     })();
     return () => { vivo = false; };
   }, []);
@@ -120,27 +126,26 @@ export default function ContadorPassos({ onCompartilhar }) {
   const perfilCompleto = !!(perfil.altura && perfil.sexo && perfil.peso);
   const ontem = ontemISO();
   const temOntem = (registros[ontem] || 0) > 0 && compartilhados.indexOf(ontem) < 0;
+  const automatico = auto.status === "ligado";
 
-  // Registra o dia no histórico: passos, km, kcal da caminhada e TMB (se houver dados)
-  const gravarHistorico = async (n) => {
-    const hist = await ler(CHAVE_HIST, {});
-    const r = P.resumoDia(hoje, n, perfil);
-    const tmb = tmbKcal({ sexo: perfil.sexo, peso: perfil.peso, altura: perfil.altura, idade });
-    hist[hoje] = { passos: n, km: r.km, kcal: r.kcal === null ? null : Math.round(r.kcal), tmb, idade };
-    await gravar(CHAVE_HIST, hist);
-  };
-
-  // Salva os passos informados para hoje
+  // Salva os passos informados para hoje (só quando a contagem automática está desligada)
   const salvarPassos = async () => {
     const n = Number(String(passosInformados).replace(/\./g, "").replace(",", "."));
     if (!(Number.isInteger(n) && n >= 0 && n <= 100000)) { setAviso("Digite um número de passos entre 0 e 100.000."); return; }
     const novo = { ...registros, [hoje]: n };
     setRegistros(novo); await gravar(CHAVE, novo);
-    await gravarHistorico(n);
+    await gravarDiaNoHistorico(hoje, n);
     setPassosInformados(""); setAviso("");
   };
 
   const reiniciarHoje = async () => {
+    if (automatico) {
+      const r = await reiniciarHojeAutomatico();
+      if (r.status === "ok") setRegistros(r.registros);
+      else setAviso("Não foi possível zerar agora: o celular não respondeu.");
+      setConfirmandoReinicio(false);
+      return;
+    }
     const novo = { ...registros, [hoje]: 0 };
     setRegistros(novo); await gravar(CHAVE, novo);
     const hist = await ler(CHAVE_HIST, {});
@@ -169,6 +174,8 @@ export default function ContadorPassos({ onCompartilhar }) {
     setEditandoDados(false);
   };
 
+  const t = tmbKcal({ sexo: perfil.sexo, peso: perfil.peso, altura: perfil.altura, idade });
+
   return (
     <section style={{ background: "rgba(128,128,128,0.12)", borderRadius: 14, padding: 14, marginBottom: 14 }} data-testid="contador-passos">
       <div style={{ fontWeight: 800, fontSize: 16, marginBottom: 8 }}>👟 Passos do dia</div>
@@ -179,37 +186,58 @@ export default function ContadorPassos({ onCompartilhar }) {
         <div><div style={{ fontSize: 20, fontWeight: 800 }} data-testid="total-kcal">{resumo.kcal === null ? "—" : Math.round(resumo.kcal)}</div><div style={{ fontSize: 11.5, opacity: 0.75 }}>kcal (estimado)</div></div>
       </div>
 
-      {nativoDisponivel() && pluginPassos_ok() && (
+      {auto.status === "indisponivel" && (
+        <div style={{ fontSize: 12, opacity: 0.8, lineHeight: 1.45, marginBottom: 8 }} data-testid="aviso-sem-nativo">
+          A contagem automática depende do aplicativo Android do Massi. No navegador, digite os passos abaixo.
+        </div>
+      )}
+      {auto.status === "sem_sensor" && (
+        <div style={{ fontSize: 12, opacity: 0.8, lineHeight: 1.45, marginBottom: 8 }} data-testid="aviso-sem-sensor">
+          Este celular não tem sensor de passos, então a contagem automática não está disponível. Digite os passos abaixo.
+        </div>
+      )}
+      {(auto.status === "desligado" || auto.status === "sem_permissao" || auto.status === "erro") && (
         <div style={{ background: "rgba(0,0,0,0.2)", borderRadius: 10, padding: 10, marginBottom: 8, fontSize: 12.5 }} data-testid="bloco-contagem-automatica">
-          <div style={{ marginBottom: 6 }}>{nativo.status === "ativo" ? "Contagem automática ativa: os passos de hoje vêm do celular." : "Contagem automática: desligada."}</div>
-          {nativo.status === "ativo" ? (
-            <button type="button" onClick={desativarContagem} data-testid="desativar-contagem" style={{ width: "100%", border: "1px solid rgba(128,128,128,0.4)", borderRadius: 8, padding: 8, background: "transparent", color: "inherit", cursor: "pointer", fontWeight: 700 }}>Desativar</button>
-          ) : (
-            <button type="button" onClick={ativarContagem} data-testid="ativar-contagem" style={{ width: "100%", border: "none", borderRadius: 8, padding: 8, background: "#A7FF00", color: "#15181B", cursor: "pointer", fontWeight: 800 }}>Ativar</button>
-          )}
+          <div style={{ marginBottom: 6, lineHeight: 1.45 }}>Contagem automática: desligada.</div>
+          <div style={{ marginBottom: 8, opacity: 0.85, lineHeight: 1.45 }}>
+            Para contar seus passos o Android pede a permissão de atividade física. O Massi usa só o contador de passos do próprio celular, que continua contando com a tela apagada. Nada é enviado para fora do aparelho.
+          </div>
+          <button type="button" onClick={ativarContagem} data-testid="ativar-contagem" style={botaoVerde}>{auto.status === "desligado" ? "Ativar" : "Tentar de novo"}</button>
         </div>
       )}
-      {nativoDisponivel() && pluginPassos_ok() && (
-        <button type="button" onClick={sincronizarNativo} data-testid="sincronizar-passos" style={{ width: "100%", border: "none", borderRadius: 10, padding: "9px", background: "#A7FF00", color: "#15181B", fontWeight: 800, cursor: "pointer", marginBottom: 8 }}>Ler passos do celular</button>
-      )}
-      <label style={{ display: "block", fontSize: 13, marginBottom: 6 }}>Quantos passos você deu hoje? (copie do app de passos do celular)
-        <div style={{ display: "flex", gap: 8, marginTop: 4 }}>
-          <input type="text" inputMode="numeric" value={passosInformados} onChange={(e) => setPassosInformados(e.target.value.replace(/[^0-9.]/g, "").slice(0, 7))} placeholder="ex.: 8432" aria-label="Passos de hoje" style={{ ...campo, marginTop: 0, flex: 1 }} data-testid="input-passos" />
-          <button type="button" onClick={salvarPassos} data-testid="salvar-passos" style={{ border: "none", borderRadius: 8, padding: "0 16px", background: "#A7FF00", color: "#15181B", fontWeight: 800, cursor: "pointer" }}>Salvar</button>
+      {automatico && (
+        <div style={{ background: "rgba(0,0,0,0.2)", borderRadius: 10, padding: 10, marginBottom: 8, fontSize: 12.5 }} data-testid="bloco-contagem-automatica">
+          <div style={{ marginBottom: 8, lineHeight: 1.45 }}>Contagem automática ativa: os passos de hoje vêm do sensor do celular.</div>
+          {auto.estimado && <div style={{ marginBottom: 8, color: "#FFD27A", lineHeight: 1.45 }} data-testid="aviso-estimado">O app ficou fechado na virada do dia, então parte dos passos de ontem foi estimada.</div>}
+          <div style={{ display: "flex", gap: 8 }}>
+            <button type="button" onClick={atualizarAgora} data-testid="sincronizar-passos" style={{ ...botaoVerde, flex: 1 }}>Atualizar agora</button>
+            <button type="button" onClick={desativarContagem} data-testid="desativar-contagem" style={{ ...botaoContorno, flex: 1 }}>Desativar</button>
+          </div>
         </div>
-      </label>
-      {aviso && <div role="alert" style={{ fontSize: 12.5, color: "#FFB1A8", marginBottom: 6 }}>{aviso}</div>}
+      )}
+
+      {!automatico && auto.status !== "carregando" && (
+        <label style={{ display: "block", fontSize: 13, marginBottom: 6 }}>Quantos passos você deu hoje? (copie do app de passos do celular)
+          <div style={{ display: "flex", gap: 8, marginTop: 4 }}>
+            <input type="text" inputMode="numeric" value={passosInformados} onChange={(e) => setPassosInformados(e.target.value.replace(/[^0-9.]/g, "").slice(0, 7))} placeholder="ex.: 8432" aria-label="Passos de hoje" style={{ ...campo, marginTop: 0, flex: 1 }} data-testid="input-passos" />
+            <button type="button" onClick={salvarPassos} data-testid="salvar-passos" style={{ border: "none", borderRadius: 8, padding: "0 16px", background: "#A7FF00", color: "#15181B", fontWeight: 800, cursor: "pointer" }}>Salvar</button>
+          </div>
+        </label>
+      )}
+      {aviso && <div role="alert" style={{ fontSize: 12.5, color: "#FFB1A8", marginBottom: 6, lineHeight: 1.45 }}>{aviso}</div>}
 
       <div style={{ fontSize: 12, opacity: 0.85, lineHeight: 1.45, marginBottom: 6 }}>
-        Os passos são copiados por você do app de passos do seu celular. O Massi não conta passos sozinho.
+        {automatico
+          ? "Os passos vêm do sensor de passos do celular, que conta sozinho. Abra o Massi de vez em quando durante o dia para manter o total em dia."
+          : "Os passos são copiados por você do app de passos do seu celular. Sem a contagem automática, o Massi não conta passos sozinho."}
       </div>
       <div style={{ fontSize: 12.5, marginBottom: 8 }} data-testid="tmb-valor">
-        {(() => { const t = tmbKcal({ sexo: perfil.sexo, peso: perfil.peso, altura: perfil.altura, idade }); return t === null ? "TMB: informe sexo, altura, peso e data de nascimento para calcular." : "TMB estimada: " + t.toLocaleString("pt-BR") + " kcal/dia (Mifflin-St Jeor)."; })()}
+        {t === null ? "TMB: informe sexo, altura, peso e data de nascimento para calcular." : "TMB estimada: " + t.toLocaleString("pt-BR") + " kcal/dia (Mifflin-St Jeor)."}
       </div>
       <div style={{ fontSize: 12, opacity: 0.8, lineHeight: 1.45, marginBottom: 8 }}>
         {!perfilCompleto
           ? "Para calcular distância e calorias, informe altura, sexo e peso."
-          : "Distância e calorias são estimativas, calculadas a partir dos passos informados."}
+          : "Distância e calorias são estimativas, calculadas a partir dos passos."}
       </div>
 
       <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 6 }}>
