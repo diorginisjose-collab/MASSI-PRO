@@ -299,6 +299,7 @@ async function transmitirAnthropic(res, enviar, { sistema, mensagens, modelo, ma
     return res.end();
   }
   if (!upstream.ok || !upstream.body) {
+        try { console.error("[ia] Anthropic respondeu", upstream.status, (await upstream.text()).slice(0, 400)); } catch (e) { console.error("[ia] Anthropic respondeu", upstream.status); }
     enviar({ t: "erro", codigo: upstream.status === 429 || upstream.status === 529 ? "ocupado" : "servidor" });
     return res.end();
   }
