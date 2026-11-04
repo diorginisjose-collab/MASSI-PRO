@@ -292,7 +292,7 @@ async function transmitirAnthropic(res, enviar, { sistema, mensagens, modelo, ma
       method: "POST",
       headers: cabecalhos(),
       signal: ctrl.signal,
-      body: JSON.stringify({ model: modelo, max_tokens: maxTokens, temperature: temperatura, stream: true, system: sistema, messages: mensagens }),
+      body: JSON.stringify({ model: modelo, max_tokens: maxTokens, stream: true, system: sistema, messages: mensagens }),
     });
   } catch (e) {
     enviar({ t: "erro", codigo: "servidor" });
@@ -430,7 +430,7 @@ async function tratarFoto(req, res, corpo, idioma) {
       body: JSON.stringify({
         model: process.env.ANTHROPIC_MODEL_FOTO || "claude-sonnet-5-5",
         max_tokens: 1000,
-        temperature: 0.2,
+      
         system: modoAparelho ? sistemaAparelho() : sistemaFoto(idioma),
         messages: [{ role: "user", content: [
           { type: "image", source: { type: "base64", media_type: img.mediaType, data: base64 } },
