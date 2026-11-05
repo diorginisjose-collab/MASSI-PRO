@@ -316,6 +316,7 @@ async function transmitirAnthropic(res, enviar, { sistema, mensagens, modelo, ma
         if (!linhaDados) continue;
         let ev = null;
         try { ev = JSON.parse(linhaDados.slice(5).trim()); } catch (e) { continue; }
+           if (ev && ev.type === "message_delta" && ev.delta && ev.delta.stop_reason && ev.delta.stop_reason !== "end_turn") console.error("[ia] resposta parou por:", ev.delta.stop_reason);
         if (ev.type === "content_block_delta" && ev.delta && ev.delta.type === "text_delta" && ev.delta.text) enviar({ t: "delta", x: ev.delta.text });
         else if (ev.type === "error") { enviar({ t: "erro", codigo: "servidor" }); return res.end(); }
         else if (ev.type === "message_stop") { enviar({ t: "fim" }); return res.end(); }
@@ -372,7 +373,7 @@ async function tratarRotina(req, res, corpo, idioma) {
   const mensagens = [{ role: "user", content: "=== CONTEXTO (dados informados pela pessoa) ===\n" + contexto + "\n=== FIM DO CONTEXTO ===\nResponda só com o JSON pedido." }];
   return transmitirAnthropic(res, enviar, {
     sistema, mensagens, modelo: process.env.ANTHROPIC_MODEL_ROTINA || "claude-sonnet-5-5",
-    maxTokens: parte === "alimentar" ? 3800 : parte === "treino" ? 2200 : 1400, temperatura: 0.4,
+    maxTokens: parte === "alimentar" ? 8000 : parte === "treino" ? 4000 : 2500, temperatura: 0.4,
   });
 }
 
