@@ -9140,7 +9140,7 @@ function BarraInferior({ ativa, onIr, onMais, refMais }) {
   const itens = [
     { id: "inicio", icone: "🏠", nome: "Início" },
     { id: "rotina", icone: "💪", nome: "Rotina" },
-    { id: "cross", icone: "🏋️", nome: "Treinos" },
+    { id: "cross", icone: "🏋️", nome: "Cross" },
     { id: "progresso", icone: "📈", nome: "Progresso" },
     { id: "mais", icone: "☰", nome: "Mais" },
   ];
@@ -9929,7 +9929,7 @@ function InicioTab({ onAbrirAssistente, onAbrirPainel, versaoPassos, refPassos, 
         <div style={styles.inicioCardLabel}>📅 {t("inicioResumoSemanal")}</div>
         <div style={{ fontSize: 11.5, color: CROSS_TEXT_DIM, lineHeight: 1.45, margin: "-2px 0 8px" }}>{tr("Cada ✓ marca um dia em que você concluiu o treino.")}</div>
         <div style={styles.inicioSemanaRow}>
-          {diasDaSemana.map((d) => (
+          {diasDaSemana.filter((d) => !diasSelecionados || diasSelecionados.length === 0 || diasSelecionados.includes(d.nomeDia) || d.concluido).map((d) => (
             <div key={d.nomeDia} style={styles.inicioSemanaDia}>
               <div style={styles.inicioSemanaLabel}>{tr(d.nomeDia.slice(0, 3))}</div>
               <div style={{ ...styles.inicioSemanaCheck, ...(d.concluido ? styles.inicioSemanaCheckOk : {}) }}>
