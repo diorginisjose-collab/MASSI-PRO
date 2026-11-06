@@ -6183,7 +6183,10 @@ function AppMassiPro({ onSolicitarRemount }) {
   const aplicarPersonalizado = (plano, params) => {
     if (!plano || !plano.semana) return;
     setRotina(plano.semana);
-    setDiasSelecionados(DIAS_SEMANA.filter((dia, i) => plano.semana[i].foco !== "Descanso"));
+    {
+      const qtdDias = Math.min(6, Math.max(2, Number(params && params.dias) || 3));
+      setDiasSelecionados(GER_DIAS_SEMANA_POR_QTD[qtdDias].map((i) => DIAS_SEMANA[i]).filter((dia) => { const e = plano.semana[DIAS_SEMANA.indexOf(dia)]; return e && e.foco !== "Descanso"; }));
+    }
     setShowModelos(false);
     try {
       salvarComRetentativa("gerador-treino-params", JSON.stringify({ dias: params.dias, duracao: params.duracao, prioridade: params.prioridade, local: params.local, sexo: params.sexo === null ? "nd" : params.sexo }));
@@ -8281,7 +8284,7 @@ function AppMassiPro({ onSolicitarRemount }) {
             <div style={{ fontSize: 12, fontWeight: 700, opacity: 0.8, margin: "10px 0 6px" }}>{tr("Dias por semana")}</div>
             <div style={styles.chipRow}>
               {[2, 3, 4, 5, 6].map((n) => (
-                <button key={n} type="button" onClick={() => setQuick({ ...quick, dias: n })} style={{ ...styles.chip, ...(quick.dias === n ? styles.chipActive : {}) }}>{String(n)}</button>
+                <button key={n} type="button" onClick={() => { setQuick({ ...quick, dias: n }); setDiasSelecionados(GER_DIAS_SEMANA_POR_QTD[n].map((i) => DIAS_SEMANA[i])); }} style={{ ...styles.chip, ...(quick.dias === n ? styles.chipActive : {}) }}>{String(n)}</button>
               ))}
             </div>
             <div style={{ fontSize: 12, fontWeight: 700, opacity: 0.8, margin: "10px 0 6px" }}>{tr("Onde você treina")}</div>
