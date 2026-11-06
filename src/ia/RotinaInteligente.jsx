@@ -222,11 +222,12 @@ export function CartaoRotinaInteligente({ onAbrir, temIA, versao, tr }) {
 }
 
 // ---------- tela principal ----------
-export default function RotinaInteligente({ onFechar, i18n, idioma, quota, temIA, onVerPlanos, gerarSemana, aplicarSemana, onAlterado }) {
+// onPronto (opcional): chamado quando o plano termina de ser gerado e aplicado; o App fecha esta tela e abre a aba Rotina.
+export default function RotinaInteligente({ onFechar, i18n, idioma, quota, temIA, onVerPlanos, gerarSemana, aplicarSemana, onAlterado, onPronto }) {
   const tr = (i18n && i18n.tr) || ((x) => x);
   const trt = (i18n && i18n.trt) || ((k, a) => (a || []).reduce((t, v, i) => t.split("{" + i + "}").join(v), k));
   const [estado, setEstado] = useState(null);
-  const [fase, setFase] = useState("inicio"); // inicio | perguntas | resumo | gerando | proposta | plano | checkin | analise
+  const [fase, setFase] = useState("inicio"); // inicio | perguntas | resumo | gerando | pronto | proposta | plano | checkin | analise
   const [respostas, setRespostas] = useState({});
   const [tipoAval, setTipoAval] = useState("inicial");
   const [etapa, setEtapa] = useState(0);
@@ -234,6 +235,7 @@ export default function RotinaInteligente({ onFechar, i18n, idioma, quota, temIA
   const [salvoEm, setSalvoEm] = useState(null);
   const [proposta, setProposta] = useState(null);
   const [passo, setPasso] = useState(0);
+  const [pct, setPct] = useState(0); // progresso da geração, de 0 a 100
   const [erroGeracao, setErroGeracao] = useState("");
   const [checkin, setCheckin] = useState({});
   const [errosCk, setErrosCk] = useState({});
@@ -280,6 +282,14 @@ export default function RotinaInteligente({ onFechar, i18n, idioma, quota, temIA
   useEffect(() => (quota && quota.inscrever ? quota.inscrever(() => setTick((n) => n + 1)) : undefined), [quota]);
   const rolarTopo = () => { if (topoRef.current && topoRef.current.scrollTo) topoRef.current.scrollTo({ top: 0 }); };
 
+  // Enquanto espera os primeiros pedaços da IA, a porcentagem anda devagar (o progresso real vem do texto que chega)
+  useEffect(() => {
+    if (fase !== "gerando") return undefined;
+    const teto = passo === 0 ? 8 : 50;
+    const id = setInterval(() => setPct((p) => (p < teto ? Math.min(teto, p + 0.4) : p)), 800);
+    return () => clearInterval(id);
+  }, [fase, passo]);
+
   const recarregar = useCallback(async () => { const e = await RI.lerEstadoRI(); if (vivoRef.current) setEstado(e); return e; }, []);
   useEffect(() => { recarregar().catch(() => setEstado({ perfil: null, planoTreino: null, planoAlimentar: null, checkins: [], rascunho: null, proposta: null, avaliacoes: [] })); }, [recarregar]);
 
@@ -325,6 +335,27 @@ export default function RotinaInteligente({ onFechar, i18n, idioma, quota, temIA
   const salvarESair = async () => { try { await RI.salvarRascunho({ respostas, etapa, tipo: tipoAval }); } catch (e) { /* segue */ } await recarregar(); if (onAlterado) onAlterado(); setFase("inicio"); };
 
   // ---------- gerar plano ----------
+  // Quando o plano termina: aparece o aviso "pronto", o plano é ativado, o treino vai para o editor da aba Rotina
+  // e o App abre a aba Rotina. Se algo falhar nessa parte, cai nas telas de sempre (proposta / plano).
+  const concluirGeracao = async (nova) => {
+    setProposta(nova); setPct(100); setFase("pronto"); rolarTopo();
+    let ok = false;
+    try {
+      await RI.ativarProposta(nova);
+      if (aplicarSemana) {
+        aplicarSemana(nova.treino.semana);
+        try { await RI.marcarTreinoAplicado(); } catch (e) { /* segue */ }
+      }
+      ok = true;
+    } catch (e) { ok = false; }
+    await new Promise((r) => setTimeout(r, 2800)); // tempo para ler o aviso
+    if (!vivoRef.current) return;
+    if (ok) { setProposta(null); if (onAlterado) onAlterado(); }
+    if (ok && onPronto) { onPronto(); return; }
+    await recarregar();
+    setFase(ok ? "plano" : "proposta"); rolarTopo();
+  };
+
   const gerarPlano = async () => {
     if (ocupadoRef.current) return;
     const limpas = RI.limparRespostas(respostas);
@@ -339,10 +370,11 @@ export default function RotinaInteligente({ onFechar, i18n, idioma, quota, temIA
       setErroGeracao(uso.motivo === "limite_mensal" ? trt("Você usou os {0} planos e ajustes de IA deste mês. O limite renova no começo do próximo mês.", [uso.limite]) : tr("Seu plano atual não inclui a geração de rotina por IA."));
       setFase("resumo"); return;
     }
-    setFase("gerando"); setPasso(0);
+    setFase("gerando"); setPasso(0); setPct(0);
     const ctrl = new AbortController(); ctrlRef.current = ctrl;
     let estourou = false;
     const relogio = setTimeout(() => { estourou = true; ctrl.abort(); }, IA_CONFIG.tempoMaxGeracaoMs);
+    let novaGerada = null;
     try {
       // 1) confirma as respostas (só agora viram perfil); não duplica o registro se nada mudou
       let atual = estado || (await recarregar());
@@ -357,31 +389,49 @@ export default function RotinaInteligente({ onFechar, i18n, idioma, quota, temIA
       const gerado = gerarSemana(params);
       const semana = RI.ajustarSemanaAosDias(gerado.semana, perfil);
       const nutri = RI.calcularNutricao(perfil);
-      const brutoT = await gerarParteRotina({ parte: "treino", contexto: RI.contextoGeracao("treino", perfil, nutri, semana, atual), idioma, signal: ctrl.signal });
-      const treinoIA = RI.higienizarTreinoIA(brutoT, semana);
-      if (!treinoIA) throw new ErroIA("resposta_invalida");
+
+      // Pede uma parte à IA. A porcentagem acompanha o texto que vai chegando (tempo real).
+      // Se a resposta vier incompleta, tenta mais uma vez antes de desistir (o uso do mês só é cobrado se der certo).
+      const pedirParte = async (parte, base, faixa, esperado, higienizar) => {
+        const subir = (txt) => setPct((p) => Math.max(p, Math.min(base + faixa * Math.min(String(txt).length / esperado, 0.97), 99)));
+        for (let tentativa = 0; tentativa < 2; tentativa++) {
+          const bruto = await gerarParteRotina({ parte, contexto: RI.contextoGeracao(parte, perfil, nutri, semana, atual), idioma, onTexto: subir, signal: ctrl.signal });
+          const pronto = higienizar(bruto);
+          if (pronto) return pronto;
+          if (!vivoRef.current) throw new ErroIA("cancelado");
+        }
+        throw new ErroIA("resposta_invalida");
+      };
+
+      const treinoIA = await pedirParte("treino", 3, 42, 3200, (b) => RI.higienizarTreinoIA(b, semana));
       if (!vivoRef.current) throw new ErroIA("cancelado");
-      setPasso(1);
+      setPct((p) => Math.max(p, 45)); setPasso(1);
       // 3) alimentação: metas calculadas aqui; a IA monta o cardápio dentro delas e o app confere
-      const brutoA = await gerarParteRotina({ parte: "alimentar", contexto: RI.contextoGeracao("alimentar", perfil, nutri, semana, atual), idioma, signal: ctrl.signal });
-      const alim = RI.higienizarAlimentarIA(brutoA, nutri);
-      if (!alim) throw new ErroIA("resposta_invalida");
-      const nova = {
+      const alim = await pedirParte("alimentar", 45, 50, 7000, (b) => RI.higienizarAlimentarIA(b, nutri));
+      setPct((p) => Math.max(p, 96));
+      novaGerada = {
         avaliacaoId: perfil.avaliacaoId, criadaEm: new Date().toISOString(),
         treino: { semana, ia: treinoIA, params, diasPlanejados: RI.diasDeTreino(semana), diasDisponiveis: (perfil.diasDisponiveis || []).length, resumoGerador: gerado.resumo ? (gerado.resumo.dias + " dias de treino · " + (gerado.resumo.sequencia || []).join(" / ")) : "" },
         alimentar: { plano: alim.plano, totais: alim.totais, avisos: alim.avisos, nutri },
       };
-      await RI.salvarProposta(nova);
+      await RI.salvarProposta(novaGerada);
       if (!vivoRef.current) return;
-      setProposta(nova); setFase("proposta"); rolarTopo();
     } catch (err) {
       await quota.devolver(IA_CONFIG.recursoRotina); // falhou: não gasta o seu uso
       const cancelado = err instanceof ErroIA && err.codigo === "cancelado" && !estourou;
       if (vivoRef.current) {
         if (cancelado) setFase("resumo");
-        else { setErroGeracao(tr(mensagemDeErro(estourou ? new ErroIA("demorou") : err instanceof ErroIA ? err : new ErroIA("servidor")))); setFase("resumo"); }
+        else {
+          const incompleta = !estourou && err instanceof ErroIA && err.codigo === "resposta_invalida";
+          setErroGeracao(incompleta
+            ? tr("A IA devolveu o plano incompleto. Seu uso foi devolvido. Tente de novo em instantes.")
+            : tr(mensagemDeErro(estourou ? new ErroIA("demorou") : err instanceof ErroIA ? err : new ErroIA("servidor"))));
+          setFase("resumo");
+        }
       }
+      novaGerada = null;
     } finally { clearTimeout(relogio); ctrlRef.current = null; ocupadoRef.current = false; }
+    if (novaGerada && vivoRef.current) await concluirGeracao(novaGerada);
   };
   const cancelarGeracao = () => { if (ctrlRef.current) ctrlRef.current.abort(); };
 
@@ -440,7 +490,7 @@ export default function RotinaInteligente({ onFechar, i18n, idioma, quota, temIA
   // ---------- derivados ----------
   const nutriPrevia = useMemo(() => (fase === "resumo" ? RI.calcularNutricao(RI.limparRespostas(respostas)) : null), [fase, respostas]);
   const diasDesde = estado ? RI.diasDesdeUltimaAtualizacao(estado) : null;
-  const titulos = { inicio: "Minha Rotina Inteligente", perguntas: RI.ETAPAS[Math.min(etapa, RI.ETAPAS.length - 1)].titulo, resumo: "Revise suas respostas", gerando: "Montando seu plano", proposta: "Seu plano está pronto", plano: "Meu plano", checkin: "Check-in", analise: "Como você está indo" };
+  const titulos = { inicio: "Minha Rotina Inteligente", perguntas: RI.ETAPAS[Math.min(etapa, RI.ETAPAS.length - 1)].titulo, resumo: "Revise suas respostas", gerando: "Montando seu plano", pronto: "Seu plano está pronto", proposta: "Seu plano está pronto", plano: "Meu plano", checkin: "Check-in", analise: "Como você está indo" };
 
   // ---------- telas ----------
   const corpoInicio = () => {
@@ -564,13 +614,28 @@ export default function RotinaInteligente({ onFechar, i18n, idioma, quota, temIA
     );
   };
 
+  const pctInteiro = Math.max(0, Math.min(100, Math.round(pct)));
   const corpoGerando = () => (
     <div style={{ ...cartao, textAlign: "center" }} role="status" aria-live="polite">
       <div style={{ fontSize: 34 }}>⚙️</div>
       <div style={{ fontWeight: 800, fontSize: 16, margin: "6px 0" }}>{passo === 0 ? tr("Montando seu treino…") : tr("Montando sua alimentação…")}</div>
+      <div style={{ fontSize: 44, fontWeight: 900, color: COR.lime, lineHeight: 1.1, margin: "6px 0 2px" }} data-testid="porcentagem-rotina">{pctInteiro}%</div>
+      <div style={{ ...textoSuave, marginBottom: 12 }}>{trt("Etapa {0} de {1}", [passo + 1, 2])}</div>
       <div style={{ ...textoSuave, marginBottom: 14 }}>{tr("Isso leva cerca de 30 a 60 segundos. Pode deixar o app aberto.")}</div>
-      <div style={{ height: 8, background: COR.card2, borderRadius: 999, overflow: "hidden", marginBottom: 14 }}><div style={{ width: (passo === 0 ? 40 : 80) + "%", height: "100%", background: COR.lime, transition: "width .6s" }} /></div>
+      <div style={{ height: 10, background: COR.card2, borderRadius: 999, overflow: "hidden", marginBottom: 14 }} role="progressbar" aria-valuenow={pctInteiro} aria-valuemin={0} aria-valuemax={100}><div style={{ width: pctInteiro + "%", height: "100%", background: COR.lime, transition: "width .5s" }} /></div>
       <button type="button" style={botaoSec} onClick={cancelarGeracao}>{tr("Cancelar")}</button>
+    </div>
+  );
+
+  // Aviso no meio da tela quando o plano fica pronto (depois o app abre a aba Rotina sozinho)
+  const corpoPronto = () => (
+    <div style={{ minHeight: "62vh", display: "flex", alignItems: "center", justifyContent: "center" }} role="status" aria-live="polite" data-testid="rotina-pronta">
+      <div style={{ ...cartao, textAlign: "center", padding: "30px 20px", maxWidth: 360, width: "100%", border: "1px solid " + COR.lime }}>
+        <div style={{ width: 96, height: 96, borderRadius: 48, background: COR.lime, color: COR.grafite, fontSize: 50, display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px" }}>🏆</div>
+        <div style={{ fontWeight: 800, fontSize: 21, lineHeight: 1.3, marginBottom: 8 }}>{tr("Seu treino inteligente e personalizado está pronto")}</div>
+        <div style={{ ...textoSuave, marginBottom: 12 }}>{tr("Abrindo seus treinos… Revise e toque em Salvar rotina para guardar.")}</div>
+        <div style={{ fontSize: 30, fontWeight: 900, color: COR.lime }}>100%</div>
+      </div>
     </div>
   );
 
@@ -716,12 +781,13 @@ export default function RotinaInteligente({ onFechar, i18n, idioma, quota, temIA
         {estado && fase === "perguntas" && corpoPerguntas()}
         {estado && fase === "resumo" && corpoResumo()}
         {fase === "gerando" && corpoGerando()}
+        {fase === "pronto" && corpoPronto()}
         {fase === "proposta" && corpoProposta()}
         {estado && fase === "plano" && corpoPlano()}
         {estado && fase === "checkin" && corpoCheckin()}
         {estado && fase === "analise" && corpoAnalise()}
         {erroSalvar && <div style={erroEstilo}>{tr(erroSalvar)}</div>}
-        {fase !== "inicio" && fase !== "perguntas" && fase !== "gerando" && fase !== "resumo" && (
+        {fase !== "inicio" && fase !== "perguntas" && fase !== "gerando" && fase !== "pronto" && fase !== "resumo" && (
           <button type="button" onClick={() => { setFase("inicio"); rolarTopo(); }} style={{ ...botaoSec, marginTop: 12, background: "transparent" }}>← {tr("Início da Rotina Inteligente")}</button>
         )}
       </div>
