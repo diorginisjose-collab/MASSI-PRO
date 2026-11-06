@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 
 // Identifica um aparelho de academia pela foto e leva ao YouTube para ver a execução.
+// Dois botões: um abre a câmera, o outro abre a galeria do celular.
 // onAnalisar(imagem) recebe { base64, mediaType } e devolve o resultado; quem cobra o crédito é o App.
 export default function IdentificarAparelho({ onFechar, onAnalisar, tr = (x) => x }) {
   const [imagem, setImagem] = useState(null);
@@ -27,7 +28,8 @@ export default function IdentificarAparelho({ onFechar, onAnalisar, tr = (x) => 
   });
 
   const escolher = async (ev) => {
-    const arq = ev.target.files && ev.target.files[0];
+    const entrada = ev.target;
+    const arq = entrada.files && entrada.files[0];
     if (!arq) return;
     setErro(""); setResultado(null);
     try {
@@ -35,6 +37,8 @@ export default function IdentificarAparelho({ onFechar, onAnalisar, tr = (x) => 
       setImagem({ base64: r.base64, mediaType: r.mediaType });
       setPreview(r.preview);
     } catch (e) { setErro(tr("Não foi possível abrir essa imagem. Tente outra foto.")); }
+    // limpa o campo: assim dá para escolher a mesma foto de novo, se precisar
+    try { entrada.value = ""; } catch (e) { /* segue */ }
   };
 
   const analisar = async () => {
@@ -55,6 +59,7 @@ export default function IdentificarAparelho({ onFechar, onAnalisar, tr = (x) => 
 
   const caixa = { position: "fixed", top: 0, right: 0, bottom: 0, left: 0, zIndex: 3000, background: "#101214", color: "#F2F4F6", overflowY: "auto", padding: 18, fontFamily: "system-ui, sans-serif", boxSizing: "border-box" };
   const botao = { width: "100%", border: "none", borderRadius: 12, padding: 12, fontWeight: 800, cursor: "pointer", marginBottom: 10 };
+  const botaoFoto = { ...botao, display: "block", textAlign: "center", background: "rgba(128,128,128,0.2)", boxSizing: "border-box" };
 
   return (
     <div style={caixa} role="dialog" aria-label="Identificar aparelho">
@@ -63,11 +68,15 @@ export default function IdentificarAparelho({ onFechar, onAnalisar, tr = (x) => 
         <button type="button" onClick={onFechar} style={{ border: "none", background: "transparent", color: "inherit", fontSize: 22, cursor: "pointer" }} aria-label="Fechar">×</button>
       </div>
       <div style={{ fontSize: 13.5, lineHeight: 1.5, marginBottom: 12, opacity: 0.9 }}>
-        {tr("Tire uma foto do aparelho. A IA identifica o nome e o grupo muscular, e você pode ver a execução no YouTube. Sugestão educativa: confirme a técnica com um profissional de educação física.")}
+        {tr("Tire uma foto do aparelho ou escolha uma da galeria. A IA identifica o nome e o grupo muscular, e você pode ver a execução no YouTube. Sugestão educativa: confirme a técnica com um profissional de educação física.")}
       </div>
-      <label style={{ ...botao, display: "block", textAlign: "center", background: "rgba(128,128,128,0.2)" }}>
-        📷 {tr("Escolher ou tirar foto")}
-        <input type="file" accept="image/*" capture="environment" onChange={escolher} style={{ display: "none" }} data-testid="escolher-aparelho" />
+      <label style={botaoFoto}>
+        📷 {tr("Tirar foto")}
+        <input type="file" accept="image/*" capture="environment" onChange={escolher} style={{ display: "none" }} data-testid="tirar-foto-aparelho" />
+      </label>
+      <label style={botaoFoto}>
+        🖼️ {tr("Escolher da galeria")}
+        <input type="file" accept="image/*" onChange={escolher} style={{ display: "none" }} data-testid="escolher-aparelho" />
       </label>
       {preview && <img src={preview} alt={tr("Aparelho escolhido")} style={{ width: "100%", borderRadius: 12, marginBottom: 10 }} />}
       {imagem && !resultado && (
