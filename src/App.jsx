@@ -7368,7 +7368,7 @@ function AppMassiPro({ onSolicitarRemount }) {
   const aplicarSemanaRI = (semana) => {
     if (!Array.isArray(semana) || semana.length !== 7) return;
     setRotina(semana);
-    setDiasSelecionados(DIAS_SEMANA.filter((dia, i) => semana[i].foco !== "Descanso"));
+    setDiasSelecionados(DIAS_SEMANA.filter((dia, i) => semana[i].foco !== "Descanso" && semana[i].foco !== "Cardio"));
   };
   const iaNorm = (t) => String(t || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
   const iaGetContexto = async () => {
@@ -7740,7 +7740,7 @@ function AppMassiPro({ onSolicitarRemount }) {
         <FotoAlimentos onFechar={() => setIaTela(null)} i18n={{ tr, trt }} idioma={idioma} quota={MassiIA} temIA={vigente.temIA} onVerPlanos={() => { setIaTela(null); setShowPlanos(true); }} onAbrirDiario={() => setIaTela("diario")} />
       )}
       {iaTela === "rotina" && (
-        <RotinaInteligente onFechar={() => { setIaTela(null); setRiVersao((v) => v + 1); }} i18n={{ tr, trt }} idioma={idioma} quota={MassiIA} temIA={vigente.temIA} onVerPlanos={() => { setIaTela(null); setShowPlanos(true); }} gerarSemana={gerarSemanaPersonalizada} aplicarSemana={aplicarSemanaRI} onAlterado={() => setRiVersao((v) => v + 1)} />
+        <RotinaInteligente onFechar={() => { setIaTela(null); setRiVersao((v) => v + 1); }} i18n={{ tr, trt }} idioma={idioma} quota={MassiIA} temIA={vigente.temIA} onVerPlanos={() => { setIaTela(null); setShowPlanos(true); }} gerarSemana={gerarSemanaPersonalizada} aplicarSemana={aplicarSemanaRI} onAlterado={() => setRiVersao((v) => v + 1)} onPronto={() => { setIaTela(null); setRiVersao((v) => v + 1); setActiveTab("rotina"); }} />
       )}
       {iaTela === "diario" && <DiarioAlimentar onFechar={() => setIaTela(null)} i18n={{ tr, trt }} idioma={idioma} onNovaFoto={() => abrirComConsentimento("foto")} />}
       {!iaTela && !menuAberto && !showPlanos && !infoModal && !onboardingPendente && !maisAberto && !painel && (
