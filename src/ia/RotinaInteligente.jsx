@@ -234,7 +234,10 @@ export default function RotinaInteligente({ onFechar, i18n, idioma, quota, temIA
   const [mostrarErros, setMostrarErros] = useState(false);
   const [salvoEm, setSalvoEm] = useState(null);
   const [proposta, setProposta] = useState(null);
-  const [passo, setPasso] = useState(0);
+  const [partesProntas, setPartesProntas] = useState({ treino: false, alimentar: false });
+  const [prontoOk, setProntoOk] = useState(null); // null = salvando | true | false
+  const [anteriores, setAnteriores] = useState([]); // rotinas que já foram substituídas (histórico)
+  const [historicoSel, setHistoricoSel] = useState(null);
   const [pct, setPct] = useState(0); // progresso da geração, de 0 a 100
   const [erroGeracao, setErroGeracao] = useState("");
   const [checkin, setCheckin] = useState({});
@@ -285,10 +288,20 @@ export default function RotinaInteligente({ onFechar, i18n, idioma, quota, temIA
   // Enquanto espera os primeiros pedaços da IA, a porcentagem anda devagar (o progresso real vem do texto que chega)
   useEffect(() => {
     if (fase !== "gerando") return undefined;
-    const teto = passo === 0 ? 8 : 50;
+    const teto = 10;
     const id = setInterval(() => setPct((p) => (p < teto ? Math.min(teto, p + 0.4) : p)), 800);
     return () => clearInterval(id);
-  }, [fase, passo]);
+  }, [fase]);
+
+  const carregarAnteriores = useCallback(async () => {
+    try {
+      const r = await window.storage.get(RI.RI_CHAVES.anteriores);
+      const l = r && r.value ? JSON.parse(r.value) : [];
+      if (vivoRef.current) setAnteriores(Array.isArray(l) ? l.slice().reverse() : []);
+    } catch (e) { /* sem histórico ainda */ }
+  }, []);
+  const geradoEmAtual = estado && estado.planoTreino ? estado.planoTreino.geradoEm : "";
+  useEffect(() => { carregarAnteriores(); }, [carregarAnteriores, geradoEmAtual]);
 
   const recarregar = useCallback(async () => { const e = await RI.lerEstadoRI(); if (vivoRef.current) setEstado(e); return e; }, []);
   useEffect(() => { recarregar().catch(() => setEstado({ perfil: null, planoTreino: null, planoAlimentar: null, checkins: [], rascunho: null, proposta: null, avaliacoes: [] })); }, [recarregar]);
@@ -338,22 +351,19 @@ export default function RotinaInteligente({ onFechar, i18n, idioma, quota, temIA
   // Quando o plano termina: aparece o aviso "pronto", o plano é ativado, o treino vai para o editor da aba Rotina
   // e o App abre a aba Rotina. Se algo falhar nessa parte, cai nas telas de sempre (proposta / plano).
   const concluirGeracao = async (nova) => {
-    setProposta(nova); setPct(100); setFase("pronto"); rolarTopo();
+    setProposta(nova); setPct(100); setProntoOk(null); setFase("pronto"); rolarTopo();
     let ok = false;
     try {
       await RI.ativarProposta(nova);
       if (aplicarSemana) {
-        aplicarSemana(nova.treino.semana);
+        aplicarSemana(nova.treino.semana); // o app salva sozinho na aba Rotina
         try { await RI.marcarTreinoAplicado(); } catch (e) { /* segue */ }
       }
       ok = true;
     } catch (e) { ok = false; }
-    await new Promise((r) => setTimeout(r, 2800)); // tempo para ler o aviso
     if (!vivoRef.current) return;
-    if (ok) { setProposta(null); if (onAlterado) onAlterado(); }
-    if (ok && onPronto) { onPronto(); return; }
-    await recarregar();
-    setFase(ok ? "plano" : "proposta"); rolarTopo();
+    if (ok) { setProposta(null); if (onAlterado) onAlterado(); await recarregar(); await carregarAnteriores(); }
+    if (vivoRef.current) setProntoOk(ok);
   };
 
   const gerarPlano = async () => {
@@ -370,7 +380,7 @@ export default function RotinaInteligente({ onFechar, i18n, idioma, quota, temIA
       setErroGeracao(uso.motivo === "limite_mensal" ? trt("Você usou os {0} planos e ajustes de IA deste mês. O limite renova no começo do próximo mês.", [uso.limite]) : tr("Seu plano atual não inclui a geração de rotina por IA."));
       setFase("resumo"); return;
     }
-    setFase("gerando"); setPasso(0); setPct(0);
+    setFase("gerando"); setPct(0); setPartesProntas({ treino: false, alimentar: false });
     const ctrl = new AbortController(); ctrlRef.current = ctrl;
     let estourou = false;
     const relogio = setTimeout(() => { estourou = true; ctrl.abort(); }, IA_CONFIG.tempoMaxGeracaoMs);
@@ -390,25 +400,37 @@ export default function RotinaInteligente({ onFechar, i18n, idioma, quota, temIA
       const semana = RI.ajustarSemanaAosDias(gerado.semana, perfil);
       const nutri = RI.calcularNutricao(perfil);
 
-      // Pede uma parte à IA. A porcentagem acompanha o texto que vai chegando (tempo real).
-      // Se a resposta vier incompleta, tenta mais uma vez antes de desistir (o uso do mês só é cobrado se der certo).
-      const pedirParte = async (parte, base, faixa, esperado, higienizar) => {
-        const subir = (txt) => setPct((p) => Math.max(p, Math.min(base + faixa * Math.min(String(txt).length / esperado, 0.97), 99)));
-        for (let tentativa = 0; tentativa < 2; tentativa++) {
-          const bruto = await gerarParteRotina({ parte, contexto: RI.contextoGeracao(parte, perfil, nutri, semana, atual), idioma, onTexto: subir, signal: ctrl.signal });
-          const pronto = higienizar(bruto);
-          if (pronto) return pronto;
-          if (!vivoRef.current) throw new ErroIA("cancelado");
+      // Treino e alimentação são pedidos ao mesmo tempo: o tempo total cai quase pela metade.
+      // A porcentagem acompanha o texto que vai chegando. Se uma resposta vier incompleta, tenta mais uma vez
+      // (o uso do mês só é cobrado se der certo).
+      const fr = { t: 0, a: 0 };
+      const atualizarPct = () => setPct((p) => Math.max(p, Math.min(3 + 92 * (0.25 * fr.t + 0.75 * fr.a), 97)));
+      const pedirParte = async (parte, chave, esperado, higienizar) => {
+        const subir = (txt) => { fr[chave] = Math.min(String(txt).length / esperado, 0.97); atualizarPct(); };
+        try {
+          for (let tentativa = 0; tentativa < 2; tentativa++) {
+            const bruto = await gerarParteRotina({ parte, contexto: RI.contextoGeracao(parte, perfil, nutri, semana, atual), idioma, onTexto: subir, signal: ctrl.signal });
+            const pronto = higienizar(bruto);
+            if (pronto) {
+              fr[chave] = 1; atualizarPct();
+              if (vivoRef.current) setPartesProntas((x) => ({ ...x, [parte]: true }));
+              return pronto;
+            }
+            if (!vivoRef.current) throw new ErroIA("cancelado");
+          }
+          throw new ErroIA("resposta_invalida");
+        } catch (erroParte) {
+          ctrl.abort(); // para a outra parte também: não gasta à toa
+          throw erroParte;
         }
-        throw new ErroIA("resposta_invalida");
       };
-
-      const treinoIA = await pedirParte("treino", 3, 42, 3200, (b) => RI.higienizarTreinoIA(b, semana));
+      setPartesProntas({ treino: false, alimentar: false });
+      const [treinoIA, alim] = await Promise.all([
+        pedirParte("treino", "t", 3200, (b) => RI.higienizarTreinoIA(b, semana)),
+        pedirParte("alimentar", "a", 7000, (b) => RI.higienizarAlimentarIA(b, nutri)),
+      ]);
       if (!vivoRef.current) throw new ErroIA("cancelado");
-      setPct((p) => Math.max(p, 45)); setPasso(1);
-      // 3) alimentação: metas calculadas aqui; a IA monta o cardápio dentro delas e o app confere
-      const alim = await pedirParte("alimentar", 45, 50, 7000, (b) => RI.higienizarAlimentarIA(b, nutri));
-      setPct((p) => Math.max(p, 96));
+      setPct((p) => Math.max(p, 98));
       novaGerada = {
         avaliacaoId: perfil.avaliacaoId, criadaEm: new Date().toISOString(),
         treino: { semana, ia: treinoIA, params, diasPlanejados: RI.diasDeTreino(semana), diasDisponiveis: (perfil.diasDisponiveis || []).length, resumoGerador: gerado.resumo ? (gerado.resumo.dias + " dias de treino · " + (gerado.resumo.sequencia || []).join(" / ")) : "" },
@@ -490,7 +512,7 @@ export default function RotinaInteligente({ onFechar, i18n, idioma, quota, temIA
   // ---------- derivados ----------
   const nutriPrevia = useMemo(() => (fase === "resumo" ? RI.calcularNutricao(RI.limparRespostas(respostas)) : null), [fase, respostas]);
   const diasDesde = estado ? RI.diasDesdeUltimaAtualizacao(estado) : null;
-  const titulos = { inicio: "Minha Rotina Inteligente", perguntas: RI.ETAPAS[Math.min(etapa, RI.ETAPAS.length - 1)].titulo, resumo: "Revise suas respostas", gerando: "Montando seu plano", pronto: "Seu plano está pronto", proposta: "Seu plano está pronto", plano: "Meu plano", checkin: "Check-in", analise: "Como você está indo" };
+  const titulos = { inicio: "Minha Rotina Inteligente", perguntas: RI.ETAPAS[Math.min(etapa, RI.ETAPAS.length - 1)].titulo, resumo: "Revise suas respostas", gerando: "Montando seu plano", pronto: "Seu plano está pronto", proposta: "Seu plano está pronto", historico: "Rotina anterior", plano: "Meu plano", checkin: "Check-in", analise: "Como você está indo" };
 
   // ---------- telas ----------
   const corpoInicio = () => {
@@ -534,11 +556,29 @@ export default function RotinaInteligente({ onFechar, i18n, idioma, quota, temIA
             <div style={{ fontWeight: 800, marginBottom: 4 }}>✅ {tr("Seu plano está ativo")}</div>
             <div style={{ ...textoSuave, marginBottom: 10 }}>{trt("Gerado em {0} · {1} dias de treino por semana{2}", [RI.dataCurta((e.planoTreino.geradoEm || "").slice(0, 10)), RI.diasDeTreino(e.planoTreino.semana), e.planoTreino.aplicadoNaRotina ? "" : " · " + tr("ainda não aplicado na aba Rotina")])}</div>
             {diasDesde !== null && diasDesde >= RI.DIAS_PARA_REAVALIAR && <div style={avisoEstilo}>{trt("Faz {0} dias desde o último registro. Que tal fazer um check-in para ver como você está indo?", [diasDesde])}</div>}
-            <button type="button" style={botaoPrim} onClick={() => { setFase("plano"); rolarTopo(); }}>{tr("Ver meu plano")}</button>
+            {onPronto && <button type="button" style={botaoPrim} onClick={onPronto} data-testid="ir-para-meu-treino">🏋️ {tr("Ir para meu treino")}</button>}
+            <button type="button" style={{ ...botaoSec, width: "100%", marginTop: onPronto ? 8 : 0 }} onClick={() => { setFase("plano"); rolarTopo(); }}>{tr("Ver meu plano")}</button>
             <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
               <button type="button" style={{ ...botaoSec, flex: 1 }} onClick={iniciarCheckin}>{tr("Fazer check-in")}</button>
               <button type="button" style={{ ...botaoSec, flex: 1 }} onClick={() => comecar("reavaliar")}>{tr("Refazer avaliação")}</button>
             </div>
+          </div>
+        )}
+        {e && (e.planoTreino || anteriores.length > 0) && (
+          <div style={cartao} data-testid="historico-rotinas">
+            <div style={{ fontWeight: 800, marginBottom: 8 }}>🗂️ {tr("Histórico de rotinas")}</div>
+            {e.planoTreino && (
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8, padding: "8px 0", borderTop: "1px solid " + COR.borda }}>
+                <div style={{ fontSize: 13.5, lineHeight: 1.35 }}><strong>{tr("Atual")}</strong> · {RI.dataCurta((e.planoTreino.geradoEm || "").slice(0, 10))} · {trt("{0} dias de treino", [RI.diasDeTreino(e.planoTreino.semana)])}</div>
+                <button type="button" style={{ ...botaoSec, padding: "6px 14px", fontSize: 13 }} onClick={() => { setFase("plano"); rolarTopo(); }}>{tr("Abrir")}</button>
+              </div>
+            )}
+            {anteriores.map((p, i) => (
+              <div key={(p.arquivadoEm || "") + i} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8, padding: "8px 0", borderTop: "1px solid " + COR.borda }}>
+                <div style={{ fontSize: 13.5, lineHeight: 1.35 }}>{RI.dataCurta(((p.treino && p.treino.geradoEm) || p.arquivadoEm || "").slice(0, 10))} · {trt("{0} dias de treino", [p.treino ? RI.diasDeTreino(p.treino.semana) : 0])}</div>
+                <button type="button" style={{ ...botaoSec, padding: "6px 14px", fontSize: 13 }} onClick={() => { setHistoricoSel(p); setFase("historico"); rolarTopo(); }} data-testid="abrir-rotina-anterior">{tr("Abrir")}</button>
+              </div>
+            ))}
           </div>
         )}
         {e && !e.planoTreino && (
@@ -618,26 +658,53 @@ export default function RotinaInteligente({ onFechar, i18n, idioma, quota, temIA
   const corpoGerando = () => (
     <div style={{ ...cartao, textAlign: "center" }} role="status" aria-live="polite">
       <div style={{ fontSize: 34 }}>⚙️</div>
-      <div style={{ fontWeight: 800, fontSize: 16, margin: "6px 0" }}>{passo === 0 ? tr("Montando seu treino…") : tr("Montando sua alimentação…")}</div>
-      <div style={{ fontSize: 44, fontWeight: 900, color: COR.lime, lineHeight: 1.1, margin: "6px 0 2px" }} data-testid="porcentagem-rotina">{pctInteiro}%</div>
-      <div style={{ ...textoSuave, marginBottom: 12 }}>{trt("Etapa {0} de {1}", [passo + 1, 2])}</div>
-      <div style={{ ...textoSuave, marginBottom: 14 }}>{tr("Isso leva cerca de 30 a 60 segundos. Pode deixar o app aberto.")}</div>
-      <div style={{ height: 10, background: COR.card2, borderRadius: 999, overflow: "hidden", marginBottom: 14 }} role="progressbar" aria-valuenow={pctInteiro} aria-valuemin={0} aria-valuemax={100}><div style={{ width: pctInteiro + "%", height: "100%", background: COR.lime, transition: "width .5s" }} /></div>
+      <div style={{ fontWeight: 800, fontSize: 16, margin: "6px 0" }}>{tr("Montando seu treino e sua alimentação…")}</div>
+      <div style={{ fontSize: 44, fontWeight: 900, color: COR.lime, lineHeight: 1.1, margin: "6px 0 10px" }} data-testid="porcentagem-rotina">{pctInteiro}%</div>
+      <div style={{ height: 10, background: COR.card2, borderRadius: 999, overflow: "hidden", marginBottom: 12 }} role="progressbar" aria-valuenow={pctInteiro} aria-valuemin={0} aria-valuemax={100}><div style={{ width: pctInteiro + "%", height: "100%", background: COR.lime, transition: "width .5s" }} /></div>
+      <div style={{ display: "flex", justifyContent: "center", gap: 14, fontSize: 13.5, marginBottom: 12 }}>
+        <span style={{ color: partesProntas.treino ? COR.lime : COR.suave, fontWeight: partesProntas.treino ? 800 : 600 }}>{partesProntas.treino ? "✓" : "…"} 🏋️ {tr("Treino")}</span>
+        <span style={{ color: partesProntas.alimentar ? COR.lime : COR.suave, fontWeight: partesProntas.alimentar ? 800 : 600 }}>{partesProntas.alimentar ? "✓" : "…"} 🍽️ {tr("Alimentação")}</span>
+      </div>
+      <div style={{ ...textoSuave, marginBottom: 14 }}>{tr("Isso leva cerca de 30 a 60 segundos e depende da sua internet. Pode deixar o app aberto.")}</div>
       <button type="button" style={botaoSec} onClick={cancelarGeracao}>{tr("Cancelar")}</button>
     </div>
   );
 
-  // Aviso no meio da tela quando o plano fica pronto (depois o app abre a aba Rotina sozinho)
+  // Mensagem no meio da tela quando o plano fica pronto, com os dois caminhos
   const corpoPronto = () => (
     <div style={{ minHeight: "62vh", display: "flex", alignItems: "center", justifyContent: "center" }} role="status" aria-live="polite" data-testid="rotina-pronta">
-      <div style={{ ...cartao, textAlign: "center", padding: "30px 20px", maxWidth: 360, width: "100%", border: "1px solid " + COR.lime }}>
-        <div style={{ width: 96, height: 96, borderRadius: 48, background: COR.lime, color: COR.grafite, fontSize: 50, display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px" }}>🏆</div>
+      <div style={{ ...cartao, textAlign: "center", padding: "28px 18px", maxWidth: 380, width: "100%", border: "1px solid " + COR.lime }}>
+        <div style={{ width: 92, height: 92, borderRadius: 46, background: COR.lime, color: COR.grafite, fontSize: 48, display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 14px" }}>🏆</div>
         <div style={{ fontWeight: 800, fontSize: 21, lineHeight: 1.3, marginBottom: 8 }}>{tr("Seu treino inteligente e personalizado está pronto")}</div>
-        <div style={{ ...textoSuave, marginBottom: 12 }}>{tr("Abrindo seus treinos… Revise e toque em Salvar rotina para guardar.")}</div>
-        <div style={{ fontSize: 30, fontWeight: 900, color: COR.lime }}>100%</div>
+        {prontoOk === null && <div style={{ ...textoSuave, marginBottom: 14 }}>{tr("Salvando na sua rotina…")}</div>}
+        {prontoOk === true && (
+          <>
+            <div style={{ ...textoSuave, marginBottom: 16 }}>{tr("Os exercícios já ficaram salvos na aba Rotina e esta rotina está no seu histórico.")}</div>
+            <button type="button" style={{ ...botaoPrim, marginBottom: 8 }} onClick={() => { if (onPronto) onPronto(); else { setFase("plano"); rolarTopo(); } }} data-testid="pronto-ir-rotina">🏋️ {tr("Ir para minha rotina inteligente")}</button>
+            <button type="button" style={{ ...botaoSec, width: "100%" }} onClick={() => { setFase("plano"); rolarTopo(); }} data-testid="pronto-ver-tudo">🍽️ {tr("Ver toda a rotina: alimentação e outras informações")}</button>
+          </>
+        )}
+        {prontoOk === false && (
+          <>
+            <div style={{ ...avisoEstilo, textAlign: "left" }}>{tr("Não consegui salvar o plano neste aparelho. Toque abaixo para ver o plano e tentar ativar de novo.")}</div>
+            <button type="button" style={botaoPrim} onClick={() => { setFase("proposta"); rolarTopo(); }}>{tr("Ver o plano gerado")}</button>
+          </>
+        )}
       </div>
     </div>
   );
+
+  // Rotina antiga, só para consultar
+  const corpoHistorico = () => {
+    const p = historicoSel;
+    if (!p) return null;
+    return (
+      <div>
+        <div style={avisoEstilo}>{tr("Rotina anterior, só para consultar. Seu plano atual não mudou.")}</div>
+        <VisaoPlano treino={p.treino} alimentar={p.alimentar} tr={tr} />
+      </div>
+    );
+  };
 
   const corpoProposta = () => {
     const p = proposta;
@@ -684,6 +751,7 @@ export default function RotinaInteligente({ onFechar, i18n, idioma, quota, temIA
     return (
       <div>
         {aviso && <div style={avisoEstilo} role="status">{aviso}</div>}
+        {onPronto && <button type="button" style={{ ...botaoPrim, marginBottom: 12 }} onClick={onPronto} data-testid="ir-para-meu-treino-plano">🏋️ {tr("Ir para meu treino")}</button>}
         {diasDesde !== null && diasDesde >= RI.DIAS_PARA_REAVALIAR && <div style={avisoEstilo}>{trt("Faz {0} dias desde o último registro. Que tal fazer um check-in?", [diasDesde])}</div>}
         {!e.planoTreino.aplicadoNaRotina && (
           <div style={cartao}>
@@ -782,6 +850,7 @@ export default function RotinaInteligente({ onFechar, i18n, idioma, quota, temIA
         {estado && fase === "resumo" && corpoResumo()}
         {fase === "gerando" && corpoGerando()}
         {fase === "pronto" && corpoPronto()}
+        {estado && fase === "historico" && corpoHistorico()}
         {fase === "proposta" && corpoProposta()}
         {estado && fase === "plano" && corpoPlano()}
         {estado && fase === "checkin" && corpoCheckin()}
