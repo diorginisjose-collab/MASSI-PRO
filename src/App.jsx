@@ -363,8 +363,8 @@ const DIAS_SEMANA = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"
 
 // Voltar para a mesma aba: quem sai do app (home do celular, troca de app) e volta continua onde estava.
 // Só recomeça no Início se passou muito tempo ou se a pessoa tiver confirmado a saída.
-// Versão deste arquivo. Aparece pequena no canto da tela (abas Início e Rotina) para confirmar qual versão está rodando.
-const APP_VERSAO = "v0711b";
+// Etiqueta desta versão. Aparece pequena no canto da tela (abas Início e Rotina) para confirmar qual versão está rodando.
+const ETIQUETA_BUILD = "v0711c";
 const ABAS_RESTAURAVEIS = ["inicio", "rotina", "cross", "progresso", "historico", "notas", "evolucao", "sobre"];
 const CHAVE_ULTIMA_ABA = "massi-ultima-aba";
 function lerAbaSalva() {
@@ -7890,7 +7890,7 @@ function AppMassiPro({ onSolicitarRemount }) {
         </PainelFerramenta>
       )}
       {!splashVisivel && (activeTab === "inicio" || activeTab === "rotina") && (
-        <div data-testid="versao-app" style={{ position: "fixed", left: 8, bottom: "calc(72px + env(safe-area-inset-bottom, 0px))", zIndex: 40, fontSize: 10, opacity: 0.5, color: "#F2F4F6", pointerEvents: "none", textShadow: "0 1px 2px rgba(0,0,0,0.8)" }}>{APP_VERSAO}</div>
+        <div data-testid="versao-app" style={{ position: "fixed", left: 8, bottom: "calc(72px + env(safe-area-inset-bottom, 0px))", zIndex: 40, fontSize: 10, opacity: 0.5, color: "#F2F4F6", pointerEvents: "none", textShadow: "0 1px 2px rgba(0,0,0,0.8)" }}>{ETIQUETA_BUILD}</div>
       )}
       {confirmarSaidaAberta && (
         <div role="alertdialog" aria-modal="true" aria-label={tr("Sair do app")} data-testid="confirmar-saida" style={{ position: "fixed", top: 0, right: 0, bottom: 0, left: 0, zIndex: 6000, background: "rgba(0,0,0,0.72)", display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
