@@ -364,7 +364,7 @@ const DIAS_SEMANA = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"
 // Voltar para a mesma aba: quem sai do app (home do celular, troca de app) e volta continua onde estava.
 // Só recomeça no Início se passou muito tempo ou se a pessoa tiver confirmado a saída.
 // Etiqueta desta versão. Aparece pequena no canto da tela (abas Início e Rotina) para confirmar qual versão está rodando.
-const ETIQUETA_BUILD = "v0711c";
+const ETIQUETA_BUILD = "v0711d";
 const ABAS_RESTAURAVEIS = ["inicio", "rotina", "cross", "progresso", "historico", "notas", "evolucao", "sobre"];
 const CHAVE_ULTIMA_ABA = "massi-ultima-aba";
 function lerAbaSalva() {
@@ -5198,6 +5198,8 @@ function AppMassiPro({ onSolicitarRemount }) {
     };
   }, []);
   const [showModelos, setShowModelos] = useState(false);
+  const [modoImpressao, setModoImpressao] = useState(false);
+  const [activeTab, setActiveTab] = useState(() => lerAbaSalva() || "inicio");
   useEffect(() => {
     const guardar = () => {
       try {
@@ -5212,8 +5214,6 @@ function AppMassiPro({ onSolicitarRemount }) {
     window.addEventListener("pagehide", guardar);
     return () => { document.removeEventListener("visibilitychange", aoMudarVisibilidade); window.removeEventListener("pagehide", guardar); };
   }, [activeTab]);
-  const [modoImpressao, setModoImpressao] = useState(false);
-  const [activeTab, setActiveTab] = useState(() => lerAbaSalva() || "inicio");
   const [splashVisivel, setSplashVisivel] = useState(() => {
     try {
       const o = JSON.parse(window.localStorage.getItem(CHAVE_ULTIMA_ABA) || "null");
