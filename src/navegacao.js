@@ -26,10 +26,11 @@ export function definirPedidoDeSaida(fn) {
   return () => { if (pedirSaida === fn) pedirSaida = null; };
 }
 
-// Chamada quando a pessoa confirma "Sim, sair". Devolve true se o app foi fechado pelo próprio app (Android).
+// Chamada quando a pessoa confirma "Sim, sair". Devolve true se o app foi fechado pelo próprio app (app Android).
 export function confirmarSaida() {
   saindo = true;
   try { window.localStorage.setItem("massi-ultima-aba", JSON.stringify({ aba: "inicio", em: Date.now(), saiu: true })); } catch (e) { /* segue */ }
+  // App Android (APK): fecha de verdade.
   try {
     const cap = window.Capacitor;
     if (cap && typeof cap.isNativePlatform === "function" && cap.isNativePlatform()) {
@@ -37,10 +38,12 @@ export function confirmarSaida() {
       if (app && typeof app.exitApp === "function") { app.exitApp(); return true; }
     }
   } catch (e) { /* tenta o outro jeito */ }
-  // Navegador / app instalado pelo site: o Android não deixa o site se fechar sozinho; tenta sair do histórico.
-  try { window.history.go(-2); } catch (e) { /* segue */ }
-  try { window.close(); } catch (e) { /* segue */ }
-  setTimeout(() => { saindo = false; }, 1500);
+  // Site ou app instalado pelo Chrome: o Android não deixa o site se fechar sozinho. Tenta o máximo:
+  // volta ao começo do histórico e pede para fechar a janela.
+  try { window.history.go(-Math.max(1, (window.history.length || 1) - 1)); } catch (e) { /* segue */ }
+  setTimeout(() => { try { window.close(); } catch (e) { /* segue */ } }, 150);
+  setTimeout(() => { try { window.close(); } catch (e) { /* segue */ } }, 600);
+  setTimeout(() => { saindo = false; }, 2000);
   return false;
 }
 
@@ -53,7 +56,7 @@ export function iniciarNavegacao() {
     const desfazer = pilha.pop();
     if (desfazer) { desfazer(); return; }
     // Nada para desfazer: recoloca a entrada-base e pergunta se a pessoa quer sair.
-    try { window.history.pushState({ massi: "base" }, ""); } catch (e) { /* segue */ }
+    try { window.history.pushState({ massi: "base" }, ""); } catch (e) { /* sem histórico: segue */ }
     if (pedirSaida) pedirSaida();
   };
   window.addEventListener("popstate", aoVoltar);
