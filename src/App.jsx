@@ -364,7 +364,7 @@ const DIAS_SEMANA = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"
 // Voltar para a mesma aba: quem sai do app (home do celular, troca de app) e volta continua onde estava.
 // Só recomeça no Início se passou muito tempo ou se a pessoa tiver confirmado a saída.
 // Etiqueta desta versão. Aparece pequena no canto da tela (abas Início e Rotina) para confirmar qual versão está rodando.
-const ETIQUETA_BUILD = "v0711d";
+const ETIQUETA_BUILD = "v0711e";
 const ABAS_RESTAURAVEIS = ["inicio", "rotina", "cross", "progresso", "historico", "notas", "evolucao", "sobre"];
 const CHAVE_ULTIMA_ABA = "massi-ultima-aba";
 function lerAbaSalva() {
@@ -5100,6 +5100,7 @@ function AppMassiPro({ onSolicitarRemount }) {
   const [mostrarOutrosTreinos, setMostrarOutrosTreinos] = useState(false);
   const [rolarParaTreino, setRolarParaTreino] = useState(0);
   const diaDestaqueRef = useRef(null);
+  const pedidoRolagemRef = useRef(false);
   const primeiraGravacaoRef = useRef(true);
   const dadosRotinaRef = useRef(null);
   const rotinaRef = useRef(null);
@@ -5146,6 +5147,7 @@ function AppMassiPro({ onSolicitarRemount }) {
   };
   // Abre a aba Rotina e rola até os exercícios do primeiro dia de treino
   const irParaExercicios = () => {
+    pedidoRolagemRef.current = true;
     setMostrarOutrosTreinos(false);
     setActiveTab("rotina");
     setRolarParaTreino((n) => n + 1);
@@ -7488,16 +7490,22 @@ function AppMassiPro({ onSolicitarRemount }) {
     for (let k = 1; k <= 7; k++) { const nome = DIAS_SEMANA[(i0 + k) % 7]; if (diasDoTreino.indexOf(nome) >= 0) { diaDestaque = nome; break; } }
   }
   diaDestaqueRef.current = diaDestaque;
-  // Pedido de rolagem: espera a aba Rotina aparecer e o cartão do dia existir, então vai até o primeiro exercício
+  // Rolagem: só desce até o primeiro exercício quando a pessoa foi DIRECIONADA para lá (Rotina Inteligente ou
+  // Monte seu treino). Ao entrar em qualquer aba pela barra de baixo, a tela fica no topo.
   useEffect(() => {
-    if (!rolarParaTreino || activeTab !== "rotina") return undefined;
+    if (!pedidoRolagemRef.current) {
+      try { window.scrollTo({ top: 0 }); } catch (e) { /* segue */ }
+      return undefined;
+    }
+    if (activeTab !== "rotina") return undefined; // espera chegar na aba Rotina
     let cancelado = false, tentativa = 0;
     const tentar = () => {
       if (cancelado) return;
       const dia = diaDestaqueRef.current;
       const el = dia && dayCardRefs.current && dayCardRefs.current[dia];
-      if (el && el.scrollIntoView) { el.scrollIntoView({ behavior: "smooth", block: "start" }); return; }
+      if (el && el.scrollIntoView) { pedidoRolagemRef.current = false; el.scrollIntoView({ behavior: "smooth", block: "start" }); return; }
       if (++tentativa < 12) setTimeout(tentar, 200);
+      else pedidoRolagemRef.current = false;
     };
     const id = setTimeout(tentar, 350);
     return () => { cancelado = true; clearTimeout(id); };
@@ -19992,7 +20000,7 @@ function DayCard({ entry, onFoco, onPeriodo, onAddExercicio, onRemoveExercicio, 
               {tr(foco)} <span style={styles.selectFocoDiaSeta}>▾</span>
             </button>
           </div>
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 6 }}>
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 6, flex: 1, minWidth: 0 }}>
             <div style={styles.focoTag}>{tr(foco)}</div>
             {!isDescanso && exercicios.length > 0 && (
               <button style={{ ...styles.trocarBtn, fontSize: 11 }} onClick={() => setDuplicarAberto(true)} title={tr("Duplicar esse treino pra outro dia")} ref={refsTour ? refsTour.duplicar : undefined}>
@@ -21098,7 +21106,7 @@ const styles = {
     boxSizing: "border-box",
   },
   dayCardBody: { flex: 1, minWidth: 0, padding: "18px 18px 20px" },
-  dayCardTop: { display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 },
+  dayCardTop: { display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 10, marginBottom: 12 },
   dayName: { fontFamily: monoFont, fontWeight: 800, fontSize: 16, color: INK, marginBottom: 6, letterSpacing: "-0.01em" },
   focoLabel: { fontSize: 11, color: INK, fontWeight: 700, marginBottom: 3, textTransform: "uppercase", letterSpacing: "0.04em" },
   focoTag: {
@@ -21110,7 +21118,11 @@ const styles = {
     padding: "5px 12px",
     borderRadius: 10,
     marginTop: 4,
-    whiteSpace: "nowrap",
+    whiteSpace: "normal",
+    overflowWrap: "anywhere",
+    textAlign: "right",
+    maxWidth: "100%",
+    boxSizing: "border-box",
     letterSpacing: "0.02em",
     textTransform: "uppercase",
   },
