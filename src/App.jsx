@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import GuiaSuplementos from "./suplementos/Suplementos.jsx";
-import { empilhar, removerTopo, iniciarNavegacao } from "./navegacao.js";
+import { empilhar, removerTopo, iniciarNavegacao, definirPedidoDeSaida, confirmarSaida } from "./navegacao.js";
 import logoMImg from "./splash/logo-m.png";
 import halterImg from "./splash/halter.png";
 import ContadorPassos, { compartilharResumo } from "./passos/ContadorPassos.jsx";
@@ -360,6 +360,23 @@ function corIntensidadeMuscular(valor, max) {
   return `rgba(${r},${g},${b},${0.32 + 0.6 * t})`;
 }
 const DIAS_SEMANA = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo"];
+
+// Voltar para a mesma aba: quem sai do app (home do celular, troca de app) e volta continua onde estava.
+// Só recomeça no Início se passou muito tempo ou se a pessoa tiver confirmado a saída.
+// Versão deste arquivo. Aparece pequena no canto da tela (abas Início e Rotina) para confirmar qual versão está rodando.
+const APP_VERSAO = "v0711b";
+const ABAS_RESTAURAVEIS = ["inicio", "rotina", "cross", "progresso", "historico", "notas", "evolucao", "sobre"];
+const CHAVE_ULTIMA_ABA = "massi-ultima-aba";
+function lerAbaSalva() {
+  try {
+    const t = window.localStorage.getItem(CHAVE_ULTIMA_ABA);
+    if (!t) return null;
+    const o = JSON.parse(t);
+    if (!o || o.saiu === true || ABAS_RESTAURAVEIS.indexOf(o.aba) < 0) return null;
+    if (Date.now() - Number(o.em || 0) > 6 * 3600 * 1000) return null;
+    return o.aba;
+  } catch (e) { return null; }
+}
 const DIAS_ABREV = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
 
 // ---- Notificações: período do treino (Manhã/Tarde/Noite) e lembrete de água ----
@@ -5075,6 +5092,17 @@ function AppMassiPro({ onSolicitarRemount }) {
   const [diasSelecionados, setDiasSelecionados] = useState(["Segunda", "Terça", "Quarta"]);
   const [saveState, setSaveState] = useState("idle");
   const [loaded, setLoaded] = useState(false);
+  const [avisoAutoSalvo, setAvisoAutoSalvo] = useState(false);
+  const [questionarioTreinoAberto, setQuestionarioTreinoAberto] = useState(false);
+  const [confirmarSaidaAberta, setConfirmarSaidaAberta] = useState(false);
+  const [avisoPodeFechar, setAvisoPodeFechar] = useState(false);
+  const fechouQuestionarioPeloVoltar = useRef(false);
+  const [mostrarOutrosTreinos, setMostrarOutrosTreinos] = useState(false);
+  const [rolarParaTreino, setRolarParaTreino] = useState(0);
+  const diaDestaqueRef = useRef(null);
+  const primeiraGravacaoRef = useRef(true);
+  const dadosRotinaRef = useRef(null);
+  const rotinaRef = useRef(null);
   const assinaturaEstado = useAssinatura(); // plano atual: Massi Pro / Massi Pro IA / teste grátis
   const vigente = assinaturaVigente(assinaturaEstado);
   const isPremium = vigente.ativa; // qualquer plano ativo (ou em teste grátis) libera o que já era "Premium"
@@ -5110,9 +5138,17 @@ function AppMassiPro({ onSolicitarRemount }) {
     try {
       const plano = gerarSemanaPersonalizada(params);
       aplicarPersonalizado(plano, params);
+      setQuestionarioTreinoAberto(false);
+      irParaExercicios();
     } catch (e) {
       setErroPrimeiro(true);
     }
+  };
+  // Abre a aba Rotina e rola até os exercícios do primeiro dia de treino
+  const irParaExercicios = () => {
+    setMostrarOutrosTreinos(false);
+    setActiveTab("rotina");
+    setRolarParaTreino((n) => n + 1);
   };
   const [erroPrimeiro, setErroPrimeiro] = useState(false);
   const [dadosEdicao, setDadosEdicao] = useState(null);
@@ -5162,10 +5198,28 @@ function AppMassiPro({ onSolicitarRemount }) {
     };
   }, []);
   const [showModelos, setShowModelos] = useState(false);
+  useEffect(() => {
+    const guardar = () => {
+      try {
+        const antes = JSON.parse(window.localStorage.getItem(CHAVE_ULTIMA_ABA) || "null");
+        if (antes && antes.saiu === true && Date.now() - Number(antes.em || 0) < 15000) return; // acabou de confirmar a saída
+        window.localStorage.setItem(CHAVE_ULTIMA_ABA, JSON.stringify({ aba: activeTab, em: Date.now(), saiu: false }));
+      } catch (e) { /* segue */ }
+    };
+    guardar();
+    const aoMudarVisibilidade = () => { if (document.visibilityState === "hidden") guardar(); };
+    document.addEventListener("visibilitychange", aoMudarVisibilidade);
+    window.addEventListener("pagehide", guardar);
+    return () => { document.removeEventListener("visibilitychange", aoMudarVisibilidade); window.removeEventListener("pagehide", guardar); };
+  }, [activeTab]);
   const [modoImpressao, setModoImpressao] = useState(false);
-  const [activeTab, setActiveTab] = useState("inicio");
+  const [activeTab, setActiveTab] = useState(() => lerAbaSalva() || "inicio");
   const [splashVisivel, setSplashVisivel] = useState(() => {
-    try { return !window.sessionStorage.getItem("massi-abertura-vista"); } catch (e) { return true; }
+    try {
+      const o = JSON.parse(window.localStorage.getItem(CHAVE_ULTIMA_ABA) || "null");
+      const voltouLogo = o && o.saiu !== true && Date.now() - Number(o.em || 0) < 30 * 60 * 1000;
+      return !voltouLogo;
+    } catch (e) { return true; }
   });
   const [splashSaindo, setSplashSaindo] = useState(false);
   const [tempoMinimoSplashPassado, setTempoMinimoSplashPassado] = useState(false);
@@ -6293,6 +6347,7 @@ function AppMassiPro({ onSolicitarRemount }) {
     }
     // Recarrega a página: o armazenamento escolhe o perfil ativo só no início, então o perfil novo
     // precisa de um carregamento completo para ler os próprios dados (e aparecer o questionário).
+    try { window.localStorage.removeItem(CHAVE_ULTIMA_ABA); } catch (e) { /* segue */ }
     try { window.location.reload(); } catch (e) { onSolicitarRemount(); }
   };
 
@@ -7368,7 +7423,7 @@ function AppMassiPro({ onSolicitarRemount }) {
   const aplicarSemanaRI = (semana) => {
     if (!Array.isArray(semana) || semana.length !== 7) return;
     setRotina(semana);
-    setDiasSelecionados(DIAS_SEMANA.filter((dia, i) => semana[i].foco !== "Descanso" && semana[i].foco !== "Cardio"));
+    setDiasSelecionados(DIAS_SEMANA.filter((dia, i) => semana[i].foco !== "Descanso"));
   };
   const iaNorm = (t) => String(t || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
   const iaGetContexto = async () => {
@@ -7421,6 +7476,72 @@ function AppMassiPro({ onSolicitarRemount }) {
       Object.keys(campos).forEach((c) => editarExercicio(d.dia, ex.id, c, campos[c]));
       return { ok: true };
     },
+  };
+
+  // Aba Rotina: só o treino de hoje (ou, em dia de descanso, o próximo). Os outros ficam atrás de um botão.
+  const hojeNomeDia = DIAS_SEMANA[(new Date().getDay() + 6) % 7];
+  const diasDoTreino = rotina.filter((d) => diasSelecionados.includes(d.dia)).map((d) => d.dia);
+  const hojeEhDescanso = !diasDoTreino.includes(hojeNomeDia);
+  let diaDestaque = hojeEhDescanso ? null : hojeNomeDia;
+  if (hojeEhDescanso) {
+    const i0 = DIAS_SEMANA.indexOf(hojeNomeDia);
+    for (let k = 1; k <= 7; k++) { const nome = DIAS_SEMANA[(i0 + k) % 7]; if (diasDoTreino.indexOf(nome) >= 0) { diaDestaque = nome; break; } }
+  }
+  diaDestaqueRef.current = diaDestaque;
+  // Pedido de rolagem: espera a aba Rotina aparecer e o cartão do dia existir, então vai até o primeiro exercício
+  useEffect(() => {
+    if (!rolarParaTreino || activeTab !== "rotina") return undefined;
+    let cancelado = false, tentativa = 0;
+    const tentar = () => {
+      if (cancelado) return;
+      const dia = diaDestaqueRef.current;
+      const el = dia && dayCardRefs.current && dayCardRefs.current[dia];
+      if (el && el.scrollIntoView) { el.scrollIntoView({ behavior: "smooth", block: "start" }); return; }
+      if (++tentativa < 12) setTimeout(tentar, 200);
+    };
+    const id = setTimeout(tentar, 350);
+    return () => { cancelado = true; clearTimeout(id); };
+  }, [rolarParaTreino, activeTab]);
+
+  // Salvamento automático: toda mudança na rotina (editar, Monte seu treino, Rotina Inteligente) é guardada sozinha.
+  rotinaRef.current = rotina;
+  dadosRotinaRef.current = { diasSelecionados, rotina };
+  useEffect(() => {
+    if (!loaded) return undefined;
+    if (primeiraGravacaoRef.current) { primeiraGravacaoRef.current = false; return undefined; }
+    const id = setTimeout(async () => {
+      try {
+        const r = await window.storage.set("rotina-treino", JSON.stringify({ diasSelecionados, rotina }));
+        if (r) { setAvisoAutoSalvo(true); setTimeout(() => setAvisoAutoSalvo(false), 2400); }
+      } catch (e) { /* o botão Salvar rotina continua disponível */ }
+    }, 900);
+    return () => clearTimeout(id);
+  }, [rotina, diasSelecionados, loaded]);
+  // Se a pessoa sair do app logo depois de mudar algo, grava na hora (sem esperar o tempinho acima)
+  useEffect(() => {
+    const gravarAgora = () => {
+      if (!loaded || primeiraGravacaoRef.current || !dadosRotinaRef.current) return;
+      try { window.storage.set("rotina-treino", JSON.stringify(dadosRotinaRef.current)); } catch (e) { /* segue */ }
+    };
+    const aoEsconder = () => { if (document.visibilityState === "hidden") gravarAgora(); };
+    document.addEventListener("visibilitychange", aoEsconder);
+    window.addEventListener("pagehide", gravarAgora);
+    return () => { document.removeEventListener("visibilitychange", aoEsconder); window.removeEventListener("pagehide", gravarAgora); };
+  }, [loaded]);
+
+  // Botão Voltar do celular: a página do "Monte seu treino" fecha antes de qualquer saída do app
+  useEffect(() => {
+    if (!questionarioTreinoAberto) return undefined;
+    empilhar(() => { fechouQuestionarioPeloVoltar.current = true; setQuestionarioTreinoAberto(false); });
+    return () => { if (!fechouQuestionarioPeloVoltar.current) removerTopo(); fechouQuestionarioPeloVoltar.current = false; };
+  }, [questionarioTreinoAberto]);
+  // Voltar na tela inicial (sem nada aberto) pergunta se a pessoa quer sair
+  useEffect(() => definirPedidoDeSaida(() => setConfirmarSaidaAberta(true)), []);
+  const sairDoApp = async () => {
+    setConfirmarSaidaAberta(false);
+    try { if (loaded && dadosRotinaRef.current) await window.storage.set("rotina-treino", JSON.stringify(dadosRotinaRef.current)); } catch (e) { /* segue */ }
+    const fechou = confirmarSaida();
+    if (!fechou) { setTimeout(() => { setAvisoPodeFechar(true); setTimeout(() => setAvisoPodeFechar(false), 6000); }, 900); }
   };
 
   const salvar = useCallback(async () => {
@@ -7740,7 +7861,7 @@ function AppMassiPro({ onSolicitarRemount }) {
         <FotoAlimentos onFechar={() => setIaTela(null)} i18n={{ tr, trt }} idioma={idioma} quota={MassiIA} temIA={vigente.temIA} onVerPlanos={() => { setIaTela(null); setShowPlanos(true); }} onAbrirDiario={() => setIaTela("diario")} />
       )}
       {iaTela === "rotina" && (
-        <RotinaInteligente onFechar={() => { setIaTela(null); setRiVersao((v) => v + 1); }} i18n={{ tr, trt }} idioma={idioma} quota={MassiIA} temIA={vigente.temIA} onVerPlanos={() => { setIaTela(null); setShowPlanos(true); }} gerarSemana={gerarSemanaPersonalizada} aplicarSemana={aplicarSemanaRI} onAlterado={() => setRiVersao((v) => v + 1)} onPronto={() => { setIaTela(null); setRiVersao((v) => v + 1); setActiveTab("rotina"); }} />
+        <RotinaInteligente onFechar={() => { setIaTela(null); setRiVersao((v) => v + 1); }} i18n={{ tr, trt }} idioma={idioma} quota={MassiIA} temIA={vigente.temIA} onVerPlanos={() => { setIaTela(null); setShowPlanos(true); }} gerarSemana={gerarSemanaPersonalizada} aplicarSemana={aplicarSemanaRI} onAlterado={() => setRiVersao((v) => v + 1)} onPronto={() => { setIaTela(null); setRiVersao((v) => v + 1); irParaExercicios(); }} />
       )}
       {iaTela === "diario" && <DiarioAlimentar onFechar={() => setIaTela(null)} i18n={{ tr, trt }} idioma={idioma} onNovaFoto={() => abrirComConsentimento("foto")} />}
       {!iaTela && !menuAberto && !showPlanos && !infoModal && !onboardingPendente && !maisAberto && !painel && (
@@ -7767,6 +7888,29 @@ function AppMassiPro({ onSolicitarRemount }) {
           {painel === "academias" && <AcademiasPerto onVerPlanos={() => { setPainel(null); setActiveTab("premium"); }} />}
           {painel === "suplementos" && <GuiaSuplementos estilos={{ card: styles.card, label: styles.tituloDestaque, input: styles.avalInput }} tr={tr} />}
         </PainelFerramenta>
+      )}
+      {!splashVisivel && (activeTab === "inicio" || activeTab === "rotina") && (
+        <div data-testid="versao-app" style={{ position: "fixed", left: 8, bottom: "calc(72px + env(safe-area-inset-bottom, 0px))", zIndex: 40, fontSize: 10, opacity: 0.5, color: "#F2F4F6", pointerEvents: "none", textShadow: "0 1px 2px rgba(0,0,0,0.8)" }}>{APP_VERSAO}</div>
+      )}
+      {confirmarSaidaAberta && (
+        <div role="alertdialog" aria-modal="true" aria-label={tr("Sair do app")} data-testid="confirmar-saida" style={{ position: "fixed", top: 0, right: 0, bottom: 0, left: 0, zIndex: 6000, background: "rgba(0,0,0,0.72)", display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
+          <div style={{ background: "#1B1F23", color: "#F2F4F6", borderRadius: 16, padding: 20, maxWidth: 340, width: "100%", border: "1px solid rgba(255,255,255,0.12)" }}>
+            <div style={{ fontWeight: 800, fontSize: 19, marginBottom: 6 }}>{tr("Tem certeza que deseja sair?")}</div>
+            <div style={{ fontSize: 13.5, opacity: 0.8, lineHeight: 1.45, marginBottom: 16 }}>{tr("Suas alterações já estão salvas neste aparelho.")}</div>
+            <button type="button" onClick={() => setConfirmarSaidaAberta(false)} data-testid="continuar-no-app" style={{ width: "100%", border: "none", borderRadius: 12, padding: 13, background: "#A7FF00", color: "#15181B", fontWeight: 800, fontSize: 15, cursor: "pointer", marginBottom: 8 }}>{tr("Continuar no app")}</button>
+            <button type="button" onClick={sairDoApp} data-testid="sim-sair" style={{ width: "100%", border: "1px solid rgba(255,255,255,0.25)", borderRadius: 12, padding: 12, background: "transparent", color: "inherit", fontWeight: 700, fontSize: 15, cursor: "pointer" }}>{tr("Sim, sair")}</button>
+          </div>
+        </div>
+      )}
+      {avisoPodeFechar && (
+        <div role="status" style={{ position: "fixed", left: "50%", transform: "translateX(-50%)", bottom: 96, zIndex: 6500, background: "#1B1F23", color: "#F2F4F6", border: "1px solid rgba(255,255,255,0.2)", fontWeight: 700, fontSize: 13.5, padding: "10px 16px", borderRadius: 14, maxWidth: "90%", textAlign: "center" }}>
+          {tr("Tudo salvo. Para fechar o app, use o botão início do celular.")}
+        </div>
+      )}
+      {avisoAutoSalvo && (
+        <div role="status" data-testid="aviso-rotina-salva" style={{ position: "fixed", left: "50%", transform: "translateX(-50%)", bottom: 96, zIndex: 3500, background: "rgba(167,255,0,0.96)", color: "#15181B", fontWeight: 800, fontSize: 13.5, padding: "9px 16px", borderRadius: 999, boxShadow: "0 4px 14px rgba(0,0,0,0.4)", maxWidth: "90%", textAlign: "center" }}>
+          ✓ {tr("Rotina salva automaticamente")}
+        </div>
       )}
       {!onboardingPendente && !splashVisivel && (
         <BarraInferior ativa={abaDaBarra(activeTab, maisAberto)} onIr={(aba) => { setMaisAberto(false); setActiveTab(aba); }} onMais={() => setMaisAberto(true)} refMais={tourSobreBtnRef} />
@@ -8260,9 +8404,17 @@ function AppMassiPro({ onSolicitarRemount }) {
           <div ref={tourRotinaIARef}>
             <CartaoRotinaInteligente onAbrir={() => abrirComConsentimento("rotina")} temIA={vigente.temIA} versao={riVersao} tr={tr} />
           </div>
-          <section style={{ ...styles.card, marginBottom: 12 }} data-testid="cartao-primeiro-treino">
-            <div style={{ fontWeight: 900, fontSize: 26, lineHeight: 1.15, letterSpacing: 0.3, color: CROSS_LIME, textShadow: "0 2px 8px rgba(0,0,0,0.55)", marginBottom: 6 }}>{tr("Monte seu treino")}</div>
-            <div style={{ fontSize: 12.5, opacity: 0.75, marginBottom: 10 }}>{tr("Responda rápido. O app monta a semana sem repetir exercícios.")}</div>
+          <button type="button" onClick={() => { setErroPrimeiro(false); setQuestionarioTreinoAberto(true); }} data-testid="abrir-monte-seu-treino" style={{ ...styles.card, display: "block", width: "100%", textAlign: "left", cursor: "pointer", color: "inherit", fontFamily: "inherit", marginBottom: 12, border: "1px solid rgba(198,255,77,0.4)" }}>
+            <span style={{ display: "block", fontWeight: 900, fontSize: 26, lineHeight: 1.15, letterSpacing: 0.3, color: CROSS_LIME, textShadow: "0 2px 8px rgba(0,0,0,0.55)" }}>{tr("Monte seu treino")}</span>
+            <span style={{ display: "block", fontSize: 12.5, opacity: 0.8, marginTop: 6 }}>{tr("Toque para responder rápido. O app monta a semana sem repetir exercícios.")}</span>
+          </button>
+          {questionarioTreinoAberto && (
+            <div style={{ position: "fixed", top: 0, right: 0, bottom: 0, left: 0, zIndex: 3000, background: "#101214", color: "#F2F4F6", overflowY: "auto", padding: 18, paddingBottom: 40, boxSizing: "border-box" }} role="dialog" aria-label={tr("Monte seu treino")} data-testid="pagina-monte-seu-treino">
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+                <div style={{ fontWeight: 900, fontSize: 26, lineHeight: 1.15, color: CROSS_LIME }}>{tr("Monte seu treino")}</div>
+                <button type="button" onClick={() => setQuestionarioTreinoAberto(false)} style={{ border: "none", background: "transparent", color: "inherit", fontSize: 26, cursor: "pointer" }} aria-label={tr("Fechar")}>×</button>
+              </div>
+              <div style={{ fontSize: 12.5, opacity: 0.75, marginBottom: 12 }}>{tr("Responda rápido. O app monta a semana sem repetir exercícios.")}</div>
             <div style={{ fontSize: 12, fontWeight: 700, opacity: 0.8, marginBottom: 6 }}>{tr("Sexo")}</div>
             <div style={styles.chipRow}>
               {[["masculino", tr("Masculino")], ["feminino", tr("Feminino")], ["nd", tr("Prefiro não informar")]].map(([v, l]) => (
@@ -8295,7 +8447,8 @@ function AppMassiPro({ onSolicitarRemount }) {
             </div>
             <button type="button" onClick={montarPrimeiroTreino} data-testid="montar-primeiro-treino" style={{ width: "100%", marginTop: 14, border: "none", borderRadius: 12, padding: 13, background: "linear-gradient(160deg, #A7FF00, #6FCF00)", color: "#15181B", fontWeight: 800, fontSize: 15, cursor: "pointer" }}>{tr("Monte seu treino")}</button>
             {erroPrimeiro && <div role="alert" style={{ color: "#FFB1A8", fontSize: 13, marginTop: 8 }}>{tr("Não consegui montar agora. Tente de novo.")}</div>}
-          </section>
+            </div>
+          )}
           <div ref={tourAparelhoRef} style={{ marginBottom: 12 }}>
             <button type="button" onClick={() => abrirComConsentimento("aparelho")} data-testid="btn-identificar-aparelho" style={{ ...styles.inicioFotoBtn, width: "100%" }}>
               <span style={{ fontSize: 22 }}>🏋️</span>
@@ -8421,11 +8574,23 @@ function AppMassiPro({ onSolicitarRemount }) {
           </section>
           </div>
 
-          <div style={styles.dayList}>
+          {diasDoTreino.length > 0 && (
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, flexWrap: "wrap", margin: "0 0 10px" }} data-testid="resumo-treino-do-dia">
+              <div style={{ fontSize: 14, fontWeight: 800 }}>
+                {mostrarOutrosTreinos ? tr("Todos os treinos da rotina") : hojeEhDescanso ? tr("Hoje é dia de descanso. Próximo treino:") + " " + tr(diaDestaque) : tr("Treino de hoje:") + " " + tr(diaDestaque)}
+              </div>
+              {diasDoTreino.length > 1 && (
+                <button type="button" onClick={() => setMostrarOutrosTreinos((v) => !v)} data-testid="alternar-outros-treinos" style={{ border: "1px solid rgba(198,255,77,0.6)", background: "transparent", color: CROSS_LIME, fontWeight: 800, fontSize: 13, borderRadius: 999, padding: "7px 14px", cursor: "pointer" }}>
+                  {mostrarOutrosTreinos ? tr("Mostrar só o treino de hoje") : tr("Ver outros treinos da rotina") + " (" + (diasDoTreino.length - 1) + ")"}
+                </button>
+              )}
+            </div>
+          )}
+          <div style={{ ...styles.dayList, minWidth: 0, maxWidth: "100%" }}>
             {rotina
-              .filter((d) => diasSelecionados.includes(d.dia))
+              .filter((d) => diasSelecionados.includes(d.dia) && (mostrarOutrosTreinos || d.dia === diaDestaque))
               .map((d, i) => (
-                <div key={d.dia} ref={(el) => (dayCardRefs.current[d.dia] = el)}>
+                <div key={d.dia} ref={(el) => (dayCardRefs.current[d.dia] = el)} style={{ minWidth: 0, maxWidth: "100%" }}>
                 <DayCard
                   entry={d}
                   onFoco={(foco) => mudarFoco(d.dia, foco)}
@@ -16243,7 +16408,24 @@ function ExercicioModal({ exercicio, historicoCarga, onClose, onIniciarDescanso 
                 <div style={styles.videoNote}>{tr("Sem vídeo específico ainda — escolha o exercício parecido no canal.")}</div>
               </>
             )}
-            <p style={styles.modalSubtitle}>{tr("Ainda não tenho o passo a passo desse exercício. Peça pra eu adicionar.")}</p>
+            {!isCanalFuncional && (
+              <>
+                <button
+                  style={styles.videoLinkBtn}
+                  data-testid="ver-execucao-youtube"
+                  onClick={() => window.open("https://www.youtube.com/results?search_query=" + encodeURIComponent(exercicio.name + " execução correta"), "_blank", "noopener,noreferrer")}
+                >
+                  {tr("▶ Ver execução")}</button>
+                <button
+                  style={styles.videoLinkBtn}
+                  data-testid="analise-execucao-youtube"
+                  onClick={() => window.open("https://www.youtube.com/results?search_query=" + encodeURIComponent(exercicio.name + " erros comuns análise de execução"), "_blank", "noopener,noreferrer")}
+                >
+                  {tr("🎥 Análise de execução")}</button>
+                <div style={styles.videoNote}>{tr("Abre o YouTube já pesquisando pelo nome do exercício. Se não houver o mesmo, aparecem vídeos parecidos.")}</div>
+              </>
+            )}
+            {!exercicio.personalizado && <p style={styles.modalSubtitle}>{tr("Ainda não tenho o passo a passo desse exercício. Peça pra eu adicionar.")}</p>}
           </>
         )}
       </div>
@@ -20911,8 +21093,11 @@ const styles = {
     boxShadow: "0 1px 3px rgba(18,21,26,0.06), 0 8px 24px -12px rgba(18,21,26,0.12)",
     overflow: "hidden",
     scrollMarginTop: 40,
+    minWidth: 0,
+    maxWidth: "100%",
+    boxSizing: "border-box",
   },
-  dayCardBody: { flex: 1, padding: "18px 18px 20px" },
+  dayCardBody: { flex: 1, minWidth: 0, padding: "18px 18px 20px" },
   dayCardTop: { display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 },
   dayName: { fontFamily: monoFont, fontWeight: 800, fontSize: 16, color: INK, marginBottom: 6, letterSpacing: "-0.01em" },
   focoLabel: { fontSize: 11, color: INK, fontWeight: 700, marginBottom: 3, textTransform: "uppercase", letterSpacing: "0.04em" },
