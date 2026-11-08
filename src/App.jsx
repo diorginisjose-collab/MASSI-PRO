@@ -364,7 +364,7 @@ const DIAS_SEMANA = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"
 // Voltar para a mesma aba: quem sai do app (home do celular, troca de app) e volta continua onde estava.
 // Só recomeça no Início se passou muito tempo ou se a pessoa tiver confirmado a saída.
 // Etiqueta desta versão. Aparece pequena no canto da tela (abas Início e Rotina) para confirmar qual versão está rodando.
-const ETIQUETA_BUILD = "v0711e";
+const ETIQUETA_BUILD = "v0711f";
 const ABAS_RESTAURAVEIS = ["inicio", "rotina", "cross", "progresso", "historico", "notas", "evolucao", "sobre"];
 const CHAVE_ULTIMA_ABA = "massi-ultima-aba";
 function lerAbaSalva() {
@@ -5216,13 +5216,18 @@ function AppMassiPro({ onSolicitarRemount }) {
     window.addEventListener("pagehide", guardar);
     return () => { document.removeEventListener("visibilitychange", aoMudarVisibilidade); window.removeEventListener("pagehide", guardar); };
   }, [activeTab]);
-  const [splashVisivel, setSplashVisivel] = useState(() => {
+  // Abertura animada: aparece completa em toda abertura nova do app. Só quando o próprio Chrome tirou o app da memória
+  // (document.wasDiscarded) e a pessoa volta logo, aparece uma versão curta, para não ficar tela branca.
+  const [abertura] = useState(() => {
+    let jaVista = false, rapido = false;
+    try { jaVista = !!window.sessionStorage.getItem("massi-abertura-vista"); } catch (e) { /* segue */ }
     try {
       const o = JSON.parse(window.localStorage.getItem(CHAVE_ULTIMA_ABA) || "null");
-      const voltouLogo = o && o.saiu !== true && Date.now() - Number(o.em || 0) < 30 * 60 * 1000;
-      return !voltouLogo;
-    } catch (e) { return true; }
+      rapido = !!(typeof document !== "undefined" && document.wasDiscarded === true && o && o.saiu !== true && Date.now() - Number(o.em || 0) < 30 * 60 * 1000);
+    } catch (e) { /* segue */ }
+    return { mostrar: rapido ? true : !jaVista, rapido };
   });
+  const [splashVisivel, setSplashVisivel] = useState(abertura.mostrar);
   const [splashSaindo, setSplashSaindo] = useState(false);
   const [tempoMinimoSplashPassado, setTempoMinimoSplashPassado] = useState(false);
   const [faseSplash, setFaseSplash] = useState("parado"); // parado -> batimento -> halter -> explosao
@@ -5715,10 +5720,11 @@ function AppMassiPro({ onSolicitarRemount }) {
   useEffect(() => {
     // Abertura: 4 segundos inteiros. A tela só sai quando o app estiver pronto,
     // para nunca aparecer nenhuma tela em branco por baixo.
-    const t1 = setTimeout(() => setFaseSplash("batimento"), 1500);
-    const t4 = setTimeout(() => setFaseSplash("halter"), 3500);
-    const t5 = setTimeout(() => setFaseSplash("explosao"), 8500);
-    const t2 = setTimeout(() => setTempoMinimoSplashPassado(true), 9900);
+    const rapido = abertura.rapido;
+    const t1 = rapido ? null : setTimeout(() => setFaseSplash("batimento"), 1500);
+    const t4 = rapido ? null : setTimeout(() => setFaseSplash("halter"), 3500);
+    const t5 = rapido ? null : setTimeout(() => setFaseSplash("explosao"), 8500);
+    const t2 = setTimeout(() => setTempoMinimoSplashPassado(true), rapido ? 700 : 9900);
     // Rede de segurança: se por algum motivo a checagem de onboarding nunca
     // resolver, não deixa a splash presa pra sempre.
     const t3 = setTimeout(() => setPerfilVerificado(true), 5000);
