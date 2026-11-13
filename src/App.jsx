@@ -5,6 +5,7 @@ import logoMImg from "./splash/logo-m.png";
 import halterImg from "./splash/halter.png";
 import ContadorPassos, { compartilharResumo } from "./passos/ContadorPassos.jsx";
 import ResumoPassosEvolucao from "./passos/ResumoPassosEvolucao.jsx";
+import Evolucao360 from "./evolucao/Evolucao360.jsx";
 import ConsentimentoIA from "./ia/ConsentimentoIA.jsx";
 import IdentificarAparelho from "./ia/IdentificarAparelho.jsx";
 import IlustracaoAparelho from "./ia/IlustracaoAparelho.jsx";
@@ -364,7 +365,7 @@ const DIAS_SEMANA = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"
 // Voltar para a mesma aba: quem sai do app (home do celular, troca de app) e volta continua onde estava.
 // Só recomeça no Início se passou muito tempo ou se a pessoa tiver confirmado a saída.
 // Etiqueta desta versão. Aparece pequena no canto da tela (abas Início e Rotina) para confirmar qual versão está rodando.
-const ETIQUETA_BUILD = "v0711f";
+const ETIQUETA_BUILD = "v0911a";
 const ABAS_RESTAURAVEIS = ["inicio", "rotina", "cross", "progresso", "historico", "notas", "evolucao", "sobre"];
 const CHAVE_ULTIMA_ABA = "massi-ultima-aba";
 function lerAbaSalva() {
@@ -6609,6 +6610,8 @@ function AppMassiPro({ onSolicitarRemount }) {
       calorias,
       volumeTotal: calcularVolumeTreino(diaEntry),
       ativacaoMusculos: ativacaoMuscularExercicios(diaEntry.exercicios),
+      // Carga de cada exercício neste treino (campo novo): permite avisar quando a carga fica parada.
+      cargasExercicios: (diaEntry.exercicios || []).map((e) => ({ n: e && e.name, c: parseFloat(String((e && e.carga) || "").replace(",", ".")) || 0, s: e && e.sets, r: e && e.reps })).filter((x) => x.n),
     };
     registro.duracaoMin = estimarDuracaoMinPorRegistro(registro);
     const inicioHoje = inicioTreinoPorDia[diaEntry.dia];
@@ -9436,6 +9439,7 @@ function ProgressoTab({ historico, rotina, diasSelecionados, refMedidorTour, ref
     <div style={{ color: "#fff" }} data-testid="tela-progresso">
       <div style={{ fontWeight: 900, fontSize: 20, margin: "0 2px 10px" }}>{tr("📈 Minha Evolução")}</div>
       <IndiceMassiCard indice={indice} refTour={refMedidorTour} refMinis={refMinisTour} />
+      <Evolucao360 tr={tr} />
       <section style={cartao}>
         <div style={{ fontWeight: 800, fontSize: 15, marginBottom: 10 }}>{tr("Estatísticas")}</div>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
