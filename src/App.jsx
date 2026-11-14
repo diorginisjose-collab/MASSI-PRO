@@ -13,7 +13,7 @@ import { identificarAparelho } from "./ia/clienteIA.js";
 import { AssistenteIA, FotoAlimentos, DiarioAlimentar, RotinaInteligente, CartaoRotinaInteligente, lerEstadoRI, montarContextoUsuario } from "./ia/index.js";
 import { CalculadoraMassiCard } from "./calculadora/index.js";
 import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from "recharts";
-import { HomeCabecalho, HomeMetaSemana, HomeResumoDia, HomeAcessos, HomeSemana, HomeRecuperacao, HomeMotivacao, passosDaSemana, lerMetaPassos, kcalDeHoje } from "./home/HomePremium.jsx";
+import { HomeReativarIA, HomeCabecalho, HomeMetaSemana, HomeResumoDia, HomeAcessos, HomeSemana, HomeRecuperacao, HomeMotivacao, passosDaSemana, lerMetaPassos, kcalDeHoje } from "./home/HomePremium.jsx";
 
 // ---------------------------------------------------------------
 // Compatibilidade: window.storage só existe dentro do ambiente do
@@ -4940,6 +4940,8 @@ Object.assign(TRAD_TEXTOS.en, {"A MAIS NO MASSI PRO IA": "EXTRA IN MASSI PRO AI"
 Object.assign(TRAD_TEXTOS.es, {"A MAIS NO MASSI PRO IA": "EXTRA EN MASSI PRO IA", "NO MASSI PRO": "EN MASSI PRO", "Abrir Cross": "Abrir Cross", "Antebraços": "Antebrazos", "Apoio": "Apoyo", "Aproveite tudo desbloqueado": "Disfruta todo desbloqueado", "Aqui ficam só os seus WODs. Os treinos da Rotina têm a sua própria visão, ao lado.": "Aquí están solo tus WODs. Los entrenamientos de la Rutina tienen su propia vista, al lado.", "Assine": "Suscríbete", "Assistente de IA": "Asistente de IA", "Barra": "Barra", "Boa distribuição nos últimos 7 dias. 👏": "Buena distribución en los últimos 7 días. 👏", "Bíceps": "Bíceps", "Cada recurso explicado em uma frase.": "Cada función explicada en una frase.", "Combina com seu objetivo: {0}": "Encaja con tu objetivo: {0}", "Começar teste grátis de {0} dias": "Empieza tu prueba gratis de {0} días", "Consistência no Cross": "Constancia en Cross", "Core": "Core", "Corpo no Cross (14 dias)": "Cuerpo en Cross (14 días)", "Crie quantas rotinas quiser e guarde todo o seu histórico de treinos, sem limite.": "Crea todas las rutinas que quieras y guarda todo tu historial de entrenamientos, sin límite.", "Cross": "Cross", "Dietas prontas, relatório mensal, progressão de carga e muito mais — explicado aqui, sem complicação.": "Dietas listas, informe mensual, progresión de carga y mucho más — explicado aquí, sin complicaciones.", "Dietas, relatórios, progressão de carga e, no Pro IA, as funções de IA.": "Dietas, informes, progresión de carga y, en Pro IA, las funciones de IA.", "Diferente do seu último WOD": "Diferente de tu último WOD", "Dúvidas rápidas": "Dudas rápidas", "Equilibra sua semana: reforça {0}": "Equilibra tu semana: refuerza {0}", "⚖️ Equilíbrio dos últimos 7 dias": "⚖️ Equilibrio de los últimos 7 días", "Escolha o plano": "Elige tu plan", "Escolha pelo seu objetivo e nível, veja as refeições com opções para trocar e use como guia do dia a dia.": "Elige según tu objetivo y nivel, mira las comidas con opciones para cambiar y úsalas como guía del día a día.", "Escolhido para o seu nível, tempo e equipamento": "Elegido para tu nivel, tiempo y equipo", "Fazer upgrade para o Pro IA": "Pasar a Pro IA", "Faça alguns WODs para ver o equilíbrio da sua semana.": "Haz algunos WODs para ver el equilibrio de tu semana.", "Foco em músculos descansados: {0}": "Foco en músculos descansados: {0}", "Foto inteligente": "Foto inteligente", "Foto inteligente da refeição": "Foto inteligente de la comida", "Fotografe a refeição e veja a estimativa de calorias e macros.": "Fotografía tu comida y mira la estimación de calorías y macros.", "Gerando imagem…": "Creando imagen…", "Glúteos": "Glúteos", "Inferiores": "Inferiores", "MASSI CROSS": "MASSI CROSS", "MASSI PRO PREMIUM": "MASSI PRO PREMIUM", "Mais funções de IA": "Más funciones de IA", "Mais trabalhado": "Más trabajado", "Mais trabalhado:": "Más trabajado:", "Mais um WOD e eu consigo analisar seu equilíbrio.": "Un WOD más y puedo analizar tu equilibrio.", "Massi Pro": "Massi Pro", "Minha Rotina Inteligente": "Mi Rutina Inteligente", "Muito foco em {0} — o gerador vai dar um respiro.": "Mucho foco en {0} — el generador les dará un respiro.", "Nenhum WOD concluído ainda. Faça um treino na aba Cross e ele aparece aqui, com o mapa do corpo.": "Aún no has completado ningún WOD. Haz un entrenamiento en la pestaña Cross y aparecerá aquí, con el mapa del cuerpo.", "No momento não há teste grátis.": "Por ahora no hay prueba gratis.", "Novas ajudas de IA vão chegando no plano — quem assina já recebe.": "Van llegando nuevas ayudas de IA al plan — quien se suscribe ya las recibe.", "Novas funções de IA": "Nuevas funciones de IA", "Não": "No", "Não. O Massi Pro já traz o app completo, dietas e relatórios. A IA é um extra para quem quer ajuda para montar treino, analisar refeições e tirar dúvidas.": "No. Massi Pro ya trae la app completa, dietas e informes. La IA es un extra para quien quiere ayuda para armar entrenamientos, analizar comidas y resolver dudas.", "Não. O conteúdo é educativo e as estimativas da IA são aproximadas. Para um plano individual, procure um profissional.": "No. El contenido es educativo y las estimaciones de la IA son aproximadas. Para un plan individual, consulta a un profesional.", "O Pro já resolve treino e dieta. O Pro IA soma a inteligência artificial.": "Pro ya resuelve entrenamiento y dieta. Pro IA suma la inteligencia artificial.", "O app substitui nutricionista ou personal?": "¿La app sustituye a un nutricionista o entrenador personal?", "O app sugere a hora de aumentar o peso, com base no que você já treinou.": "La app sugiere cuándo subir el peso, según lo que ya has entrenado.", "O que você ganha": "Lo que ganas", "Ombros": "Hombros", "Onde mais trabalhou": "Dónde más trabajaste", "PLANO ATIVO": "PLAN ACTIVO", "Panturrilhas": "Gemelos", "Por que esse WOD?": "¿Por qué este WOD?", "Posso testar antes de pagar?": "¿Puedo probar antes de pagar?", "Pouco trabalho em {0} nos últimos 7 dias — o gerador vai priorizar.": "Poco trabajo en {0} en los últimos 7 días — el generador lo priorizará.", "Poupa o que você treinou há pouco: {0}": "Cuida lo que entrenaste hace poco: {0}", "Preciso do plano com IA?": "¿Necesito el plan con IA?", "Pro para o app completo, Pro IA para ter a inteligência artificial também.": "Pro para la app completa, Pro IA para tener también la inteligencia artificial.", "Progressão de carga": "Progresión de carga", "Qual plano é o seu?": "¿Cuál es tu plan?", "Quer a IA acompanhando sua evolução? Veja o Massi Pro IA mais abaixo.": "¿Quieres la IA acompañando tu evolución? Mira Massi Pro IA más abajo.", "Remover este WOD?": "¿Eliminar este WOD?", "Responda algumas perguntas e receba treino e alimentação montados para você.": "Responde unas preguntas y recibe entrenamiento y alimentación armados para ti.", "SEU PLANO": "TU PLAN", "Sim": "Sí", "Sim. Você tem {0} dias de teste grátis (um teste por pessoa).": "Sí. Tienes {0} días de prueba gratis (una prueba por persona).", "Sim. Você tem {0} dias de teste grátis.": "Sí. Tienes {0} días de prueba gratis.", "Teste grátis por {0} dias": "Prueba gratis por {0} días", "Tempo": "Tiempo", "Tipo": "Tipo", "Tire dúvidas de treino, execução e alimentação a qualquer hora.": "Resuelve dudas de entrenamiento, ejecución y alimentación a cualquier hora.", "Todas as áreas liberadas: Rotina, Cross, Avaliação, Suplementos e tudo que chegar depois.": "Todas las áreas desbloqueadas: Rutina, Cross, Evaluación, Suplementos y todo lo que venga después.", "Todos os recursos liberados, incluindo a IA. Bom treino!": "Todas las funciones desbloqueadas, incluida la IA. ¡Buen entrenamiento!", "Treine com tudo desbloqueado": "Entrena con todo desbloqueado", "Três passos, sem burocracia.": "Tres pasos, sin burocracia.", "Tríceps": "Tríceps", "Tudo do Massi Pro": "Todo lo de Massi Pro", "Um resumo do seu mês — treinos, evolução e medidas — para guardar ou mostrar ao seu treinador.": "Un resumen de tu mes — entrenamientos, evolución y medidas — para guardar o mostrar a tu entrenador.", "Use tudo sem pressa e veja se combina com a sua rotina.": "Úsalo todo sin prisa y mira si encaja con tu rutina.", "Ver histórico do Cross": "Ver historial de Cross", "Ver mais WODs": "Ver más WODs", "Ver planos e preços": "Ver planes y precios", "Você é": "Eres", "WOD": "WOD", "WODs em 7 dias": "WODs en 7 días", "WODs no total": "WODs en total", "conversas por mês": "conversaciones al mes", "fotos por mês": "fotos al mes", "Último WOD:": "Último WOD:", "último WOD": "último WOD", "✓ concluído": "✓ completado", "✓ seu": "✓ tuyo", "🏅 Desafios do Cross": "🏅 Desafíos de Cross", "🏆 Recordes do Cross": "🏆 Récords de Cross", "📤 Compartilhar resultado": "📤 Compartir resultado", "🔄 Gerar outro": "🔄 Generar otro", "🔒 no Pro IA": "🔒 en Pro IA", "🔥 Histórico do Massi Cross": "🔥 Historial de Massi Cross", "🔥 Massi Cross": "🔥 Massi Cross", "🔥 Onde você mais trabalhou": "🔥 Dónde más trabajaste", "🗺️ Mapa muscular do Cross (últimos 14 dias)": "🗺️ Mapa muscular de Cross (últimos 14 días)", "🏆 Terminei o WOD {0} no Massi Cross em {1}!": "🏆 ¡Terminé el WOD {0} en Massi Cross en {1}!", "há {0} dias": "hace {0} días", "restam {0} dias": "quedan {0} días", "resta 1 dia": "queda 1 día", "membros superiores": "tren superior", "membros inferiores": "tren inferior", "min treinados": "min entrenados", "Tire uma foto da refeição e veja calorias e macros": "Toma una foto de tu comida y mira calorías y macros", "Academias perto de mim": "Gimnasios cerca de mí", "📍 Academias perto de mim": "📍 Gimnasios cerca de mí", "Ache as academias mais próximas pelo GPS e veja se o site delas cita TotalPass ou Wellhub.": "Encuentra los gimnasios más cercanos por GPS y mira si su sitio web menciona TotalPass o Wellhub.", "Veja as mais próximas pelo GPS e se o site de cada uma cita TotalPass ou Wellhub.": "Mira los más cercanos por GPS y si el sitio de cada uno menciona TotalPass o Wellhub.", "buscas por mês": "búsquedas al mes", "Permita o acesso à localização nas configurações do aparelho e tente de novo.": "Permite el acceso a la ubicación en los ajustes del dispositivo e inténtalo de nuevo.", "Não consegui pegar a sua localização. Ligue o GPS e tente de novo.": "No pude obtener tu ubicación. Activa el GPS e inténtalo de nuevo.", "A busca de academias é um recurso do plano Massi Pro IA.": "La búsqueda de gimnasios es una función del plan Massi Pro IA.", "Você já usou todas as buscas de academia deste mês.": "Ya usaste todas las búsquedas de gimnasio de este mes.", "Este recurso não está disponível no seu plano.": "Esta función no está disponible en tu plan.", "Não encontrei academias num raio de 5 km.": "No encontré gimnasios en un radio de 5 km.", "Não consegui buscar agora. Seu crédito foi devolvido — tente de novo em instantes.": "No pude buscar ahora. Tu crédito fue devuelto — inténtalo de nuevo en un momento.", "citado no site": "citado en el sitio", "verificar": "verificar", "não confirmado": "no confirmado", "Localizando você…": "Localizándote…", "Buscando academias…": "Buscando gimnasios…", "🔄 Buscar de novo": "🔄 Buscar de nuevo", "Buscar perto de mim": "Buscar cerca de mí", "buscas restantes neste mês": "búsquedas restantes este mes", "Recurso do plano Massi Pro IA": "Función del plan Massi Pro IA", "Última busca:": "Última búsqueda:", "aberta agora": "abierto ahora", "fechada agora": "cerrado ahora", "Como chegar": "Cómo llegar", "Site": "Sitio web", "Ligar": "Llamar", "O app lê o site de cada academia. “Não confirmado” não quer dizer que ela não aceita — confirme sempre no app do TotalPass ou do Wellhub, no seu plano, antes de ir.": "La app lee el sitio de cada gimnasio. “No confirmado” no significa que no lo acepte — confirma siempre en la app de TotalPass o Wellhub, en tu plan, antes de ir.", "de": "de", "Não consegui confirmar a sua assinatura. Abra o app de novo e tente outra vez.": "No pude confirmar tu suscripción. Vuelve a abrir la app e inténtalo de nuevo.", "Muitas buscas em pouco tempo. Tente de novo mais tarde.": "Demasiadas búsquedas en poco tiempo. Inténtalo de nuevo más tarde.", "Navegação principal": "Navegación principal", "Início": "Inicio", "Treinos": "Entrenamientos", "Progresso": "Progreso", "Mais": "Más", "Histórico": "Historial", "Notas": "Notas", "Suplementos": "Suplementos", "Avaliação": "Evaluación", "Premium": "Premium", "Sobre": "Acerca de", "Configurações": "Ajustes", "Academias": "Gimnasios", "Assistente IA": "Asistente IA", "Passos": "Pasos", "Toque pra registrar": "Toca para registrar", "VER EVOLUÇÃO": "VER EVOLUCIÓN", "Nível {0} de {1}": "Nivel {0} de {1}", "pontos": "puntos", "treinos": "entrenamientos", "🏋️ Meus treinos": "🏋️ Mis entrenamientos", "Último": "Último", "Próximo": "Siguiente", "Na semana": "En la semana", "concluído": "completado", "concluídos": "completados", "hoje": "hoy", "ontem": "ayer", "Nenhum treino registrado ainda. Conclua o primeiro na Rotina e ele aparece aqui.": "Aún no hay entrenamientos registrados. Completa el primero en Rutina y aparecerá aquí.", "Ver treinos": "Ver entrenamientos", "Mais detalhes ▼": "Más detalles ▼", "Menos detalhes ▲": "Menos detalles ▲", "No botão Mais ficam Histórico, Notas, Suplementos, Sobre (com o tutorial completo do app) e as configurações — dá uma olhada quando quiser.": "En el botón Más están Historial, Notas, Suplementos, Acerca de (con el tutorial completo de la app) y los ajustes — échale un vistazo cuando quieras.", "👟 Contador de passos": "👟 Contador de pasos", "💊 Central de suplementos": "💊 Centro de suplementos", "📈 Minha Evolução": "📈 Mi Evolución", "Estatísticas": "Estadísticas", "Medalhas": "Medallas", "Dias seguidos": "Días seguidos", "📏 Peso e medidas": "📏 Peso y medidas", "📜 Histórico completo": "📜 Historial completo", "Foto de perfil": "Foto de perfil"});
 Object.assign(TRAD_TEXTOS.en, {"Bom dia": "Good morning", "Boa tarde": "Good afternoon", "Boa noite": "Good evening", "Perfil e configurações": "Profile and settings", "Meta da semana batida": "Weekly goal reached", "{0} de {1} treinos na semana": "{0} of {1} workouts this week", "Resumo de hoje": "Today's summary", "Treino feito": "Workout done", "Treino": "Workout", "Treino de hoje": "Today's workout", "Semana": "Week", "meta {0}": "goal {0}", "registradas": "logged", "Evolução da semana": "Weekly progress", "vs semana passada": "vs last week", "Volume": "Volume", "Ver rotina": "View routine", "Recuperação": "Recovery", "Sem rotina montada": "No routine set up", "Monte sua rotina para acompanhar a recuperação por grupo muscular.": "Set up your routine to track recovery by muscle group.", "Descansado": "Rested", "Todos os grupos da sua rotina já tiveram pelo menos 2 dias de descanso.": "Every group in your routine has had at least 2 days of rest.", "Em recuperação: {0}": "Recovering: {0}", "O foco de hoje inclui um grupo treinado há pouco. Considere reduzir o volume ou variar.": "Today's focus includes a group trained recently. Consider lowering the volume or varying it.", "Prontos para treinar: {0}.": "Ready to train: {0}.", "Priorize descanso e sono hoje.": "Prioritize rest and sleep today.", "Estimativa pelo seu histórico de treinos. Não é uma medição de saúde.": "Estimate based on your workout history. It is not a health measurement.", "Ver detalhes": "View details", "Conquistas e desafios": "Achievements and challenges", "Próxima conquista": "Next achievement", "Faltam só {0} para a próxima medalha.": "Only {0} left for the next medal.", "Você desbloqueou todas as medalhas. 🏆": "You unlocked every medal. 🏆", "Desafio ativo": "Active challenge", "Nenhum desafio ativo. Escolha um no Cross para acompanhar o progresso aqui.": "No active challenge. Pick one in Cross to track progress here.", "Ver desafios": "View challenges", "Alimentação": "Nutrition"});
 Object.assign(TRAD_TEXTOS.es, {"Bom dia": "Buenos días", "Boa tarde": "Buenas tardes", "Boa noite": "Buenas noches", "Perfil e configurações": "Perfil y ajustes", "Meta da semana batida": "Meta semanal cumplida", "{0} de {1} treinos na semana": "{0} de {1} entrenamientos esta semana", "Resumo de hoje": "Resumen de hoy", "Treino feito": "Entrenamiento hecho", "Treino": "Entrenamiento", "Treino de hoje": "Entrenamiento de hoy", "Semana": "Semana", "meta {0}": "meta {0}", "registradas": "registradas", "Evolução da semana": "Evolución de la semana", "vs semana passada": "vs semana pasada", "Volume": "Volumen", "Ver rotina": "Ver rutina", "Recuperação": "Recuperación", "Sem rotina montada": "Sin rutina armada", "Monte sua rotina para acompanhar a recuperação por grupo muscular.": "Arma tu rutina para seguir la recuperación por grupo muscular.", "Descansado": "Descansado", "Todos os grupos da sua rotina já tiveram pelo menos 2 dias de descanso.": "Todos los grupos de tu rutina tuvieron al menos 2 días de descanso.", "Em recuperação: {0}": "En recuperación: {0}", "O foco de hoje inclui um grupo treinado há pouco. Considere reduzir o volume ou variar.": "El enfoque de hoy incluye un grupo entrenado hace poco. Considera reducir el volumen o variar.", "Prontos para treinar: {0}.": "Listos para entrenar: {0}.", "Priorize descanso e sono hoje.": "Prioriza el descanso y el sueño hoy.", "Estimativa pelo seu histórico de treinos. Não é uma medição de saúde.": "Estimación según tu historial de entrenamientos. No es una medición de salud.", "Ver detalhes": "Ver detalles", "Conquistas e desafios": "Logros y desafíos", "Próxima conquista": "Próximo logro", "Faltam só {0} para a próxima medalha.": "Solo faltan {0} para la próxima medalla.", "Você desbloqueou todas as medalhas. 🏆": "Desbloqueaste todas las medallas. 🏆", "Desafio ativo": "Desafío activo", "Nenhum desafio ativo. Escolha um no Cross para acompanhar o progresso aqui.": "Ningún desafío activo. Elige uno en Cross para seguir el progreso aquí.", "Ver desafios": "Ver desafíos", "Alimentação": "Alimentación"});
+Object.assign(TRAD_TEXTOS.en, {"Treino da IA": "AI workout", "Ainda falta 1 treino na sua rotina": "1 workout left in your routine", "Ainda faltam {0} treinos na sua rotina": "{0} workouts left in your routine", "Ocultar outros treinos": "Hide other workouts", "Ver todos juntos": "Show all together", "Analisar execução": "Analyze form", "Filme sua série e o app identifica o movimento e avalia a técnica": "Film your set and the app identifies the movement and checks your form", "Análise de execução": "Form analysis", "Identificando o movimento… faça 2 repetições.": "Identifying the movement… do 2 reps.", "Movimento:": "Movement:", "Detectar automaticamente": "Detect automatically", "Você não precisa escolher o exercício: faça 2 repetições e o app identifica o movimento. Se errar, escolha o movimento na lista.": "You don't need to pick the exercise: do 2 reps and the app identifies the movement. If it gets it wrong, pick the movement from the list.", "Botão da IA removido. Para reativar, abra a aba Início.": "AI button removed. To bring it back, open the Home tab.", "Reativar botão flutuante da IA": "Bring back the floating AI button", "Solte aqui para remover": "Drop here to remove"});
+Object.assign(TRAD_TEXTOS.es, {"Treino da IA": "Entrenamiento de la IA", "Ainda falta 1 treino na sua rotina": "Falta 1 entrenamiento en tu rutina", "Ainda faltam {0} treinos na sua rotina": "Faltan {0} entrenamientos en tu rutina", "Ocultar outros treinos": "Ocultar otros entrenamientos", "Ver todos juntos": "Ver todos juntos", "Analisar execução": "Analizar ejecución", "Filme sua série e o app identifica o movimento e avalia a técnica": "Filma tu serie y la app identifica el movimiento y evalúa la técnica", "Análise de execução": "Análisis de ejecución", "Identificando o movimento… faça 2 repetições.": "Identificando el movimiento… haz 2 repeticiones.", "Movimento:": "Movimiento:", "Detectar automaticamente": "Detectar automáticamente", "Você não precisa escolher o exercício: faça 2 repetições e o app identifica o movimento. Se errar, escolha o movimento na lista.": "No necesitas elegir el ejercicio: haz 2 repeticiones y la app identifica el movimiento. Si se equivoca, elige el movimiento en la lista.", "Botão da IA removido. Para reativar, abra a aba Início.": "Botón de la IA quitado. Para reactivarlo, abre la pestaña Inicio.", "Reativar botão flutuante da IA": "Reactivar el botón flotante de la IA", "Solte aqui para remover": "Suelta aquí para quitar"});
 const TRAD_NORM = {};
 function trNormalizar(idioma) {
   if (TRAD_NORM[idioma]) return TRAD_NORM[idioma];
@@ -5102,6 +5104,34 @@ function AppMassiPro({ onSolicitarRemount }) {
   const [avisoPodeFechar, setAvisoPodeFechar] = useState(false);
   const fechouQuestionarioPeloVoltar = useRef(false);
   const [mostrarOutrosTreinos, setMostrarOutrosTreinos] = useState(false);
+  const [atalhosOutrosAbertos, setAtalhosOutrosAbertos] = useState(false);
+  const [diaOutroAberto, setDiaOutroAberto] = useState(null);
+  const [analiseLivreAberta, setAnaliseLivreAberta] = useState(false);
+  const [iaBotaoOculto, setIaBotaoOculto] = useState(false);
+  const [avisoIaOculto, setAvisoIaOculto] = useState(false);
+  useEffect(() => {
+    let vivo = true;
+    (async () => {
+      try {
+        const r = await window.storage.get("ia-botao-oculto");
+        if (vivo && r && r.value === "sim") setIaBotaoOculto(true);
+      } catch (e) { /* padrão: botão visível */ }
+    })();
+    return () => { vivo = false; };
+  }, []);
+  useEffect(() => {
+    if (!avisoIaOculto) return undefined;
+    const t = setTimeout(() => setAvisoIaOculto(false), 4000);
+    return () => clearTimeout(t);
+  }, [avisoIaOculto]);
+  const definirIaBotaoOculto = (v) => {
+    setIaBotaoOculto(v);
+    setAvisoIaOculto(!!v);
+    try {
+      const p = window.storage.set("ia-botao-oculto", v ? "sim" : "nao");
+      if (p && p.catch) p.catch(() => {});
+    } catch (e) { /* só não fica salvo */ }
+  };
   const [rolarParaTreino, setRolarParaTreino] = useState(0);
   const diaDestaqueRef = useRef(null);
   const pedidoRolagemRef = useRef(false);
@@ -7436,7 +7466,7 @@ function AppMassiPro({ onSolicitarRemount }) {
   // Rotina Inteligente: coloca a semana do plano no editor da aba Rotina (a rotina salva só muda quando a pessoa toca em Salvar)
   const aplicarSemanaRI = (semana) => {
     if (!Array.isArray(semana) || semana.length !== 7) return;
-    setRotina(semana);
+    setRotina(semana.map((d) => ({ ...d, origem: "ia" }))); // marca o treino como vindo da Rotina Inteligente
     setDiasSelecionados(DIAS_SEMANA.filter((dia, i) => semana[i].foco !== "Descanso"));
   };
   const iaNorm = (t) => String(t || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
@@ -7575,6 +7605,56 @@ function AppMassiPro({ onSolicitarRemount }) {
       setTimeout(() => setSaveState("idle"), 2200);
     }
   }, [diasSelecionados, rotina]);
+
+  const renderDayCard = (d, i, noOverlay) => (
+      <div key={d.dia} ref={noOverlay ? undefined : (el) => (dayCardRefs.current[d.dia] = el)} style={{ minWidth: 0, maxWidth: "100%" }}>
+      <DayCard
+        entry={d}
+        onFoco={(foco) => mudarFoco(d.dia, foco)}
+        onPeriodo={(periodo) => mudarPeriodo(d.dia, periodo)}
+        onAddExercicio={() => addExercicio(d.dia, d.foco)}
+        onRemoveExercicio={(id) => removerExercicio(d.dia, id)}
+        onEditExercicio={(id, campo, valor) => editarExercicio(d.dia, id, campo, valor)}
+        onEditCargaSerie={(id, indiceSerie, valor) => editarCargaSerie(d.dia, id, indiceSerie, valor)}
+        onEditRirSerie={(id, indiceSerie, valor) => editarRIRSerie(d.dia, id, indiceSerie, valor)}
+        onAddExercicioPersonalizado={(nome, maquina) => addExercicioPersonalizado(d.dia, nome, maquina)}
+        onEscolherExercicio={(id, nome) => escolherExercicioEspecifico(d.dia, id, nome)}
+        exerciciosFavoritos={exerciciosFavoritos}
+        onToggleFavorito={alternarFavorito}
+        onDuplicarDia={(diaDestino) => duplicarDia(d.dia, diaDestino)}
+        cargaHistorico={cargaHistorico}
+        rirHistorico={rirHistorico}
+        notasExercicio={notasExercicio}
+        onEditNotaExercicio={editarNotaExercicio}
+        onEditCardio={(campo, valor) => editarCardio(d.dia, campo, valor)}
+        onAdicionarCardioFinal={() => adicionarCardioFinalDia(d.dia)}
+        onRemoverCardioFinal={() => removerCardioFinalDia(d.dia)}
+        onAbrirExercicio={(ex) => setExercicioAberto(ex)}
+        onIniciarDescanso={(descanso, nome) => iniciarDescanso(descanso, nome)}
+        onTrocarExercicio={(id) => trocarExercicio(d.dia, id)}
+        onConcluirTreino={() => setFeedbackPendente(d)}
+        onRegistrarDor={(nome) => setDorPendente({ exercicio: nome, dia: d.dia })}
+        onIniciarGuiado={(d) => {
+          marcarInicioTreino(d.dia);
+          setGuiadoAtivo(d);
+        }}
+        progressao={progressao}
+        dores={dores}
+        recordes={recordes}
+        restricoesFisicas={restricoesFisicas}
+        refsTour={i === 0 ? { maquina: tourMaquinaRef, video: tourVideoRef, guiado: tourGuiadoBtnRef, descanso: tourDescansoRef, cargaSeries: tourCargaSeriesRef, calcBtns: tourCalcBtnsRef, personalizado: tourPersonalizadoRef, duplicar: tourDuplicarRef, foco: tourFocoRef, periodo: tourPeriodoRef, cabecalho: tourCabecalhoRef, trocar: tourTrocarRef, seriesReps: tourSeriesRepsRef, nota: tourNotaRef, adicionar: tourAdicionarRef, cardio: tourCardioRef, concluir: tourConcluirRef } : null}
+      />
+      </div>
+  );
+  const itensOutrosTreinos = atalhosOutrosAbertos
+    ? rotina
+        .filter((d) => diasSelecionados.includes(d.dia) && d.dia !== diaDestaque && d.foco !== "Descanso")
+        .map((d) => {
+          const ativ = d.foco === "Cardio" ? {} : ativacaoMuscularExercicios(d.exercicios);
+          return { dia: d.dia, foco: d.foco, ativacao: ativ, temCorpo: Object.keys(ativ).length > 0 };
+        })
+    : [];
+  const diaOutroEntry = diaOutroAberto ? rotina.find((d) => d.dia === diaOutroAberto) : null;
 
   return (
     <div
@@ -7884,9 +7964,15 @@ function AppMassiPro({ onSolicitarRemount }) {
         <RotinaInteligente onFechar={() => { setIaTela(null); setRiVersao((v) => v + 1); }} i18n={{ tr, trt }} idioma={idioma} quota={MassiIA} temIA={vigente.temIA} onVerPlanos={() => { setIaTela(null); setShowPlanos(true); }} gerarSemana={gerarSemanaPersonalizada} aplicarSemana={aplicarSemanaRI} onAlterado={() => setRiVersao((v) => v + 1)} onPronto={() => { setIaTela(null); setRiVersao((v) => v + 1); irParaExercicios(); }} />
       )}
       {iaTela === "diario" && <DiarioAlimentar onFechar={() => setIaTela(null)} i18n={{ tr, trt }} idioma={idioma} onNovaFoto={() => abrirComConsentimento("foto")} />}
-      {!iaTela && !menuAberto && !showPlanos && !infoModal && !onboardingPendente && !maisAberto && !painel && (
-        <BotaoIAFlutuante onAbrir={() => abrirComConsentimento("assistente")} rotulo={tr("Assistente Massi")} btnRef={tourIaBtnRef} />
+      {!iaTela && !menuAberto && !showPlanos && !infoModal && !onboardingPendente && !maisAberto && !painel && !iaBotaoOculto && (
+        <BotaoIAFlutuante onAbrir={() => abrirComConsentimento("assistente")} rotulo={tr("Assistente Massi")} btnRef={tourIaBtnRef} onOcultar={() => definirIaBotaoOculto(true)} />
       )}
+      {avisoIaOculto && (
+        <div role="status" style={{ position: "fixed", left: 12, right: 12, bottom: "calc(" + (BARRA_ALTURA + 16) + "px + env(safe-area-inset-bottom, 0px))", zIndex: 450, background: "rgba(20,24,27,0.96)", color: "#fff", border: "1px solid rgba(198,255,77,0.5)", borderRadius: 14, padding: "10px 14px", fontSize: 13, textAlign: "center" }}>
+          {tr("Botão da IA removido. Para reativar, abra a aba Início.")}
+        </div>
+      )}
+      {analiseLivreAberta && <AnaliseExecucaoModal tipo={null} auto nomeExercicio={tr("Análise de execução")} dicaGuia="" onFechar={() => setAnaliseLivreAberta(false)} />}
       {maisAberto && (
         <MaisSheet
           onFechar={() => setMaisAberto(false)}
@@ -8412,6 +8498,8 @@ function AppMassiPro({ onSolicitarRemount }) {
           refAtalhosTour={tourAtalhosRef}
           onAbrirDiario={() => abrirItemMenu("ia_diario")}
           onAbrirMenu={() => setMaisAberto(true)}
+          iaOculto={iaBotaoOculto}
+          onReativarIA={() => definirIaBotaoOculto(false)}
         />
       )}
 
@@ -8477,6 +8565,16 @@ function AppMassiPro({ onSolicitarRemount }) {
               <span style={{ textAlign: "left" }}>
                 <span style={{ display: "block", fontWeight: 800, fontSize: 15 }}>{tr("Identificar aparelho")}</span>
                 <span style={{ display: "block", fontSize: 12.5, opacity: 0.8 }}>{tr("Tire uma foto do aparelho e veja como executar no YouTube")}</span>
+              </span>
+            </button>
+          </div>
+
+          <div style={{ marginBottom: 12 }}>
+            <button type="button" onClick={() => setAnaliseLivreAberta(true)} data-testid="btn-analisar-execucao" style={{ ...styles.inicioFotoBtn, width: "100%" }}>
+              <span style={{ fontSize: 22 }}>🎥</span>
+              <span style={{ textAlign: "left" }}>
+                <span style={{ display: "block", fontWeight: 800, fontSize: 15 }}>{tr("Analisar execução")}</span>
+                <span style={{ display: "block", fontSize: 12.5, opacity: 0.8 }}>{tr("Filme sua série e o app identifica o movimento e avalia a técnica")}</span>
               </span>
             </button>
           </div>
@@ -8597,60 +8695,37 @@ function AppMassiPro({ onSolicitarRemount }) {
           </div>
 
           {diasDoTreino.length > 0 && (
+            <>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, flexWrap: "wrap", margin: "0 0 10px" }} data-testid="resumo-treino-do-dia">
               <div style={{ fontSize: 14, fontWeight: 800 }}>
                 {mostrarOutrosTreinos ? tr("Todos os treinos da rotina") : hojeEhDescanso ? tr("Hoje é dia de descanso. Próximo treino:") + " " + tr(diaDestaque) : tr("Treino de hoje:") + " " + tr(diaDestaque)}
               </div>
               {diasDoTreino.length > 1 && (
-                <button type="button" onClick={() => setMostrarOutrosTreinos((v) => !v)} data-testid="alternar-outros-treinos" style={{ border: "1px solid rgba(198,255,77,0.6)", background: "transparent", color: CROSS_LIME, fontWeight: 800, fontSize: 13, borderRadius: 999, padding: "7px 14px", cursor: "pointer" }}>
-                  {mostrarOutrosTreinos ? tr("Mostrar só o treino de hoje") : tr("Ver outros treinos da rotina") + " (" + (diasDoTreino.length - 1) + ")"}
+                <button type="button" onClick={() => { if (mostrarOutrosTreinos) { setMostrarOutrosTreinos(false); } else { setAtalhosOutrosAbertos((v) => !v); } }} data-testid="alternar-outros-treinos" aria-expanded={atalhosOutrosAbertos} style={{ border: "1px solid rgba(198,255,77,0.6)", background: "transparent", color: CROSS_LIME, fontWeight: 800, fontSize: 13, borderRadius: 999, padding: "7px 14px", cursor: "pointer" }}>
+                  {mostrarOutrosTreinos ? tr("Mostrar só o treino de hoje") : atalhosOutrosAbertos ? tr("Ocultar outros treinos") : tr("Ver outros treinos da rotina") + " (" + (diasDoTreino.length - 1) + ")"}
                 </button>
               )}
             </div>
+            {atalhosOutrosAbertos && !mostrarOutrosTreinos && itensOutrosTreinos.length > 0 && (
+              <OutrosTreinosAtalhos itens={itensOutrosTreinos} onAbrir={(dia) => setDiaOutroAberto(dia)} />
+            )}
+            {diaOutroEntry && (
+              <div style={{ position: "fixed", top: 0, right: 0, bottom: 0, left: 0, zIndex: 600, background: "#0F1417", overflowY: "auto", WebkitOverflowScrolling: "touch" }} data-testid="pagina-outro-treino">
+                <div style={{ maxWidth: 520, margin: "0 auto", padding: "14px 12px 40px", boxSizing: "border-box" }}>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8, marginBottom: 12 }}>
+                    <button type="button" onClick={() => setDiaOutroAberto(null)} data-testid="fechar-outro-treino" style={{ border: "none", borderRadius: 10, padding: "10px 14px", background: "#232E33", color: "#EAF0F2", fontWeight: 800, fontSize: 14, cursor: "pointer" }}>{tr("← Voltar")}</button>
+                    <button type="button" onClick={() => { setMostrarOutrosTreinos(true); setDiaOutroAberto(null); }} data-testid="ver-todos-juntos" style={{ border: "1px solid rgba(198,255,77,0.6)", background: "transparent", color: CROSS_LIME, fontWeight: 700, fontSize: 11.5, borderRadius: 999, padding: "5px 10px", cursor: "pointer" }}>{tr("Ver todos juntos")}</button>
+                  </div>
+                  {renderDayCard(diaOutroEntry, 1, true)}
+                </div>
+              </div>
+            )}
+            </>
           )}
           <div style={{ ...styles.dayList, minWidth: 0, maxWidth: "100%" }}>
             {rotina
               .filter((d) => diasSelecionados.includes(d.dia) && (mostrarOutrosTreinos || d.dia === diaDestaque))
-              .map((d, i) => (
-                <div key={d.dia} ref={(el) => (dayCardRefs.current[d.dia] = el)} style={{ minWidth: 0, maxWidth: "100%" }}>
-                <DayCard
-                  entry={d}
-                  onFoco={(foco) => mudarFoco(d.dia, foco)}
-                  onPeriodo={(periodo) => mudarPeriodo(d.dia, periodo)}
-                  onAddExercicio={() => addExercicio(d.dia, d.foco)}
-                  onRemoveExercicio={(id) => removerExercicio(d.dia, id)}
-                  onEditExercicio={(id, campo, valor) => editarExercicio(d.dia, id, campo, valor)}
-                  onEditCargaSerie={(id, indiceSerie, valor) => editarCargaSerie(d.dia, id, indiceSerie, valor)}
-                  onEditRirSerie={(id, indiceSerie, valor) => editarRIRSerie(d.dia, id, indiceSerie, valor)}
-                  onAddExercicioPersonalizado={(nome, maquina) => addExercicioPersonalizado(d.dia, nome, maquina)}
-                  onEscolherExercicio={(id, nome) => escolherExercicioEspecifico(d.dia, id, nome)}
-                  exerciciosFavoritos={exerciciosFavoritos}
-                  onToggleFavorito={alternarFavorito}
-                  onDuplicarDia={(diaDestino) => duplicarDia(d.dia, diaDestino)}
-                  cargaHistorico={cargaHistorico}
-                  rirHistorico={rirHistorico}
-                  notasExercicio={notasExercicio}
-                  onEditNotaExercicio={editarNotaExercicio}
-                  onEditCardio={(campo, valor) => editarCardio(d.dia, campo, valor)}
-                  onAdicionarCardioFinal={() => adicionarCardioFinalDia(d.dia)}
-                  onRemoverCardioFinal={() => removerCardioFinalDia(d.dia)}
-                  onAbrirExercicio={(ex) => setExercicioAberto(ex)}
-                  onIniciarDescanso={(descanso, nome) => iniciarDescanso(descanso, nome)}
-                  onTrocarExercicio={(id) => trocarExercicio(d.dia, id)}
-                  onConcluirTreino={() => setFeedbackPendente(d)}
-                  onRegistrarDor={(nome) => setDorPendente({ exercicio: nome, dia: d.dia })}
-                  onIniciarGuiado={(d) => {
-                    marcarInicioTreino(d.dia);
-                    setGuiadoAtivo(d);
-                  }}
-                  progressao={progressao}
-                  dores={dores}
-                  recordes={recordes}
-                  restricoesFisicas={restricoesFisicas}
-                  refsTour={i === 0 ? { maquina: tourMaquinaRef, video: tourVideoRef, guiado: tourGuiadoBtnRef, descanso: tourDescansoRef, cargaSeries: tourCargaSeriesRef, calcBtns: tourCalcBtnsRef, personalizado: tourPersonalizadoRef, duplicar: tourDuplicarRef, foco: tourFocoRef, periodo: tourPeriodoRef, cabecalho: tourCabecalhoRef, trocar: tourTrocarRef, seriesReps: tourSeriesRepsRef, nota: tourNotaRef, adicionar: tourAdicionarRef, cardio: tourCardioRef, concluir: tourConcluirRef } : null}
-                />
-                </div>
-              ))}
+              .map((d, i) => renderDayCard(d, i))}
           </div>
 
           <div style={{ display: "flex", gap: 8, marginBottom: 14, flexWrap: "wrap" }}>
@@ -9771,7 +9846,7 @@ function HomeMedidorMassi({ indice, nivel, pct }) {
   );
 }
 
-function InicioTab({ onAbrirAssistente, onAbrirPainel, versaoPassos, refPassos, refFoto, onAbrirFoto, perfilAtivoNome, rotina, diasSelecionados, historico, recordes, onIrTreino, onIrAba, t, idioma, refTreinoHojeTour, refMedidorTour, refMinisTour, refAtalhosTour, onAbrirDiario, onAbrirMenu }) {
+function InicioTab({ onAbrirAssistente, onAbrirPainel, versaoPassos, refPassos, refFoto, onAbrirFoto, perfilAtivoNome, rotina, diasSelecionados, historico, recordes, onIrTreino, onIrAba, t, idioma, refTreinoHojeTour, refMedidorTour, refMinisTour, refAtalhosTour, onAbrirDiario, onAbrirMenu, iaOculto, onReativarIA }) {
   const [avaliacoes, setAvaliacoes] = useState([]);
   const [agora, setAgora] = useState(() => new Date());
   const [detalhesAbertos, setDetalhesAbertos] = useState(false);
@@ -10080,6 +10155,7 @@ function InicioTab({ onAbrirAssistente, onAbrirPainel, versaoPassos, refPassos, 
 
       {/* C. Acessos rápidos */}
       <HomeAcessos tr={tr} itens={ferramentas} />
+      {iaOculto && <HomeReativarIA tr={tr} onReativar={() => onReativarIA && onReativarIA()} />}
 
       {/* E. Evolução da semana (mantém o resumo de último/próximo treino) */}
       <HomeSemana tr={tr} trt={trt} locale={localeAtual()} dias={diasSemanaHome} feitos={historicoSemana.length} meta={metaSemanaHome} passada={treinosSemanaPassada} temComparacao={temComparacaoSemana} volume={volumeSemana} volumePassada={volumeSemanaPassada} passosSemana={extrasHome.passosSemana} ultimo={ultimoTreino ? { foco: ultimoTreino.foco || "Treino", quando: quandoUltimo } : null} proximo={proximoTreino} onVerRotina={() => onIrAba("rotina")} />
@@ -15826,8 +15902,23 @@ function webmCorrigir(b) {
   }
 }
 
-function AnaliseExecucaoModal({ tipo, nomeExercicio, dicaGuia, onFechar }) {
+// Ordem de preferência quando dois movimentos parecem iguais (ex.: o mesmo ângulo de joelho).
+const AN_PRIORIDADE_AUTO = ["agachamento", "flexao", "supino", "rosca", "desenvolvimento", "puxada", "remada", "afundo", "terra", "elevacaoLateral", "barraFixa", "mergulho", "tricepsCorda", "tricepsTesta", "tricepsFrances", "extensora", "flexora", "legpress", "panturrilha", "elevacaoFrontal", "remadaCurvada", "remadaAlta", "facePull"];
+function anListaMovimentos() {
+  return Object.keys(AN_EXERCICIOS)
+    .filter((k) => AN_EXERCICIOS[k] && AN_EXERCICIOS[k].titulo)
+    .map((k) => [k, AN_EXERCICIOS[k].titulo])
+    .sort((a, b) => String(a[1]).localeCompare(String(b[1])));
+}
+
+function AnaliseExecucaoModal({ tipo: tipoProp, auto, nomeExercicio, dicaGuia, onFechar }) {
+  // Modo automático (auto, sem tipo): o app descobre sozinho qual movimento está sendo feito.
+  const [tipoSel, setTipoSel] = useState(tipoProp || null);
+  const tipo = tipoSel || tipoProp || "agachamento"; // até identificar, a tela usa os textos genéricos
   const def = AN_EXERCICIOS[tipo];
+  const tipoRef = useRef(tipoProp || null);
+  const autoRef = useRef(!!auto && !tipoProp);
+  const candRef = useRef(null);
   const [etapa, setEtapa] = useState("intro"); // intro | carregando | pronto | contagem | analisando | resumo | erro
   const [erroTxt, setErroTxt] = useState("");
   const [frente, setFrente] = useState(false); // false = câmera traseira, true = frontal
@@ -15969,10 +16060,10 @@ function AnaliseExecucaoModal({ tipo, nomeExercicio, dicaGuia, onFechar }) {
     ctx.save();
     if (frenteRef.current) { ctx.translate(c.width, 0); ctx.scale(-1, 1); }
     ctx.drawImage(v, 0, 0, c.width, c.height);
-    if (lm) anDesenharCorpo(ctx, lm, c.width, c.height, { corOk, destaques, rotulos: m && m.rotulos, prumo: ["agachamento", "afundo", "terra"].indexOf(tipo) >= 0, espelhado: frenteRef.current });
+    if (lm) anDesenharCorpo(ctx, lm, c.width, c.height, { corOk, destaques, rotulos: m && m.rotulos, prumo: ["agachamento", "afundo", "terra"].indexOf(tipoRef.current || tipo) >= 0, espelhado: frenteRef.current });
     ctx.restore();
     if (m) {
-      const txt = def.tipo === "tempo" ? `${Math.round(m.tempo.total)}s` : `${m.reps.length} reps`;
+      const txt = (AN_EXERCICIOS[tipoRef.current || tipo] || def).tipo === "tempo" ? `${Math.round(m.tempo.total)}s` : `${m.reps.length} reps`;
       const fs = Math.max(16, Math.round(c.width / 20));
       ctx.font = `700 ${fs}px sans-serif`;
       const w = ctx.measureText(txt).width + fs;
@@ -16042,6 +16133,61 @@ function AnaliseExecucaoModal({ tipo, nomeExercicio, dicaGuia, onFechar }) {
     setVideoEstado(estado);
   };
 
+  // --- modo automático: roda todos os movimentos de repetição em paralelo e fixa o que contar 2 repetições ---
+  const criarCandidatos = () => {
+    const mapa = {};
+    Object.keys(AN_EXERCICIOS).forEach((k) => {
+      const d = AN_EXERCICIOS[k];
+      if (!d || d.tipo !== "rep" || d.relativo) return;
+      mapa[k] = anCriarMaquina(k, {});
+    });
+    candRef.current = mapa;
+  };
+  const fixarTipo = (k) => {
+    const m = candRef.current && candRef.current[k];
+    tipoRef.current = k;
+    if (m) maquinaRef.current = m; // aproveita as repetições que já foram contadas
+    candRef.current = null;
+    setTipoSel(k);
+  };
+  const analisarCandidatos = (lm, W, H, mundo, t) => {
+    if (!lm) return { aviso: "Não estou vendo você. Enquadre o corpo inteiro.", medida: null, vista: null };
+    let vista = null;
+    try { const az = anAzimute(lm, W, H, mundo); vista = { az, classe: anClasseVista(az) }; } catch (e) { vista = null; }
+    if (etapaRef.current !== "analisando" || !candRef.current) return { aviso: "", medida: null, vista };
+    const mapa = candRef.current;
+    let melhor = null;
+    Object.keys(mapa).forEach((k) => {
+      const m = mapa[k];
+      try {
+        const r = anAnalisarQuadro(AN_EXERCICIOS[k], lm, W, H, mundo);
+        if (r && r.medida) anAtualizar(m, r.medida, t, r.vista);
+      } catch (e) { return; }
+      const n = m.reps.length;
+      if (n < 1) return;
+      const boas = m.reps.filter((x) => x.falhas.length === 0).length;
+      const rank = AN_PRIORIDADE_AUTO.indexOf(k);
+      const score = n * 100 + boas * 10 - (rank < 0 ? 50 : rank) * 0.1;
+      if (!melhor || score > melhor.score) melhor = { k, n, score };
+    });
+    if (melhor && melhor.n >= 2) fixarTipo(melhor.k);
+    return { aviso: "", medida: null, vista };
+  };
+  const escolherMovimento = (v) => {
+    if (!v) {
+      tipoRef.current = null;
+      setTipoSel(null);
+      maquinaRef.current = anCriarMaquina("agachamento", {});
+      criarCandidatos();
+    } else {
+      tipoRef.current = v;
+      candRef.current = null;
+      setTipoSel(v);
+      maquinaRef.current = anCriarMaquina(v, {});
+    }
+    setHud({ reps: 0, boas: 0, msg: "", boa: false, aviso: "", seg: 0 });
+  };
+
   const iniciar = async () => {
     setErroTxt("");
     mudarEtapa("carregando");
@@ -16076,7 +16222,7 @@ function AnaliseExecucaoModal({ tipo, nomeExercicio, dicaGuia, onFechar }) {
     const ctx = c.getContext("2d");
     ctx.clearRect(0, 0, c.width, c.height);
     if (!lm) return;
-    anDesenharCorpo(ctx, lm, c.width, c.height, { corOk, destaques, rotulos, prumo: ["agachamento", "afundo", "terra"].indexOf(tipo) >= 0, espelhado: frenteRef.current });
+    anDesenharCorpo(ctx, lm, c.width, c.height, { corOk, destaques, rotulos, prumo: ["agachamento", "afundo", "terra"].indexOf(tipoRef.current || tipo) >= 0, espelhado: frenteRef.current });
   };
 
   const laco = () => {
@@ -16094,7 +16240,10 @@ function AnaliseExecucaoModal({ tipo, nomeExercicio, dicaGuia, onFechar }) {
     const mundo = res && res.worldLandmarks && res.worldLandmarks[0];
     const agora = Date.now();
     const W = v.videoWidth, H = v.videoHeight;
-    const an = anAnalisarQuadro(def, lm, W, H, mundo);
+    const procurando = autoRef.current && !tipoRef.current;
+    const an = procurando
+      ? analisarCandidatos(lm, W, H, mundo, agora / 1000)
+      : anAnalisarQuadro(AN_EXERCICIOS[tipoRef.current] || def, lm, W, H, mundo);
     const aviso = an.aviso;
     const m = maquinaRef.current;
     if (etapaRef.current === "analisando" && an.medida && m) anAtualizar(m, an.medida, agora / 1000, an.vista);
@@ -16108,13 +16257,14 @@ function AnaliseExecucaoModal({ tipo, nomeExercicio, dicaGuia, onFechar }) {
       const classe = an.vista ? an.vista.classe : "";
       if (m) {
         const boas = m.reps.filter((r) => r.falhas.length === 0).length;
-        setHud({ reps: m.reps.length, boas, msg: m.msg, boa: m.msgBoa, aviso, seg: Math.round(m.tempo.total), vivo: vivo ? vivo.texto : "", vista: classe });
+        setHud({ reps: m.reps.length, boas, msg: procurando && etapaRef.current === "analisando" ? "Identificando o movimento… faça 2 repetições." : m.msg, boa: procurando ? false : m.msgBoa, aviso, seg: Math.round(m.tempo.total), vivo: vivo ? vivo.texto : "", vista: classe });
       } else setHud((h) => ({ ...h, aviso, vista: classe }));
     }
   };
 
   const comecar = () => {
     maquinaRef.current = anCriarMaquina(tipo, anOpcoes(nomeExercicio));
+    if (autoRef.current && !tipoRef.current) criarCandidatos();
     setHud({ reps: 0, boas: 0, msg: "", boa: false, aviso: "", seg: 0 });
     let n = 5;
     setContagem(n);
@@ -16163,7 +16313,7 @@ function AnaliseExecucaoModal({ tipo, nomeExercicio, dicaGuia, onFechar }) {
     <div style={{ position: "fixed", top: 0, right: 0, bottom: 0, left: 0, zIndex: 720, background: cor.fundo, color: cor.texto, overflowY: "auto", WebkitOverflowScrolling: "touch", fontFamily: sansFont }}>
       <div style={{ maxWidth: 520, margin: "0 auto", padding: "38px 12px 32px", boxSizing: "border-box" }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8, marginBottom: 10 }}>
-          <div style={{ fontWeight: 700, fontSize: 16, minWidth: 0, wordBreak: "break-word" }}>🎥 {tr(nomeExercicio)}</div>
+          <div style={{ fontWeight: 700, fontSize: 16, minWidth: 0, wordBreak: "break-word" }}>🎥 {auto && !tipoProp ? (tipoSel ? tr(AN_EXERCICIOS[tipoSel].titulo) : tr("Análise de execução")) : tr(nomeExercicio)}</div>
           <button style={{ ...btn, background: "#232E33", color: cor.texto, padding: "9px 14px" }} onClick={fechar}>{tr("✕ Fechar")}</button>
         </div>
 
@@ -16172,6 +16322,7 @@ function AnaliseExecucaoModal({ tipo, nomeExercicio, dicaGuia, onFechar }) {
             <div style={{ background: cor.card, borderRadius: 12, padding: 14, marginBottom: 12, lineHeight: 1.5, fontSize: 14.5 }}>
               <div style={{ fontWeight: 700, marginBottom: 6 }}>{tr("Como funciona")}</div>
               <div>{tr(def.posicao)}</div>
+              {auto && !tipoProp && <div style={{ marginTop: 8, color: cor.lime, fontWeight: 700 }}>{tr("Você não precisa escolher o exercício: faça 2 repetições e o app identifica o movimento. Se errar, escolha o movimento na lista.")}</div>}
               <div style={{ marginTop: 8 }}>{tr("O app acompanha seus movimentos pela câmera, conta as repetições e avisa o que pode melhorar, com base no passo a passo do exercício.")}</div>
             </div>
             <div style={{ background: cor.card, borderRadius: 12, padding: 14, marginBottom: 12, lineHeight: 1.5, fontSize: 13.5, color: cor.suave }}>
@@ -16235,6 +16386,15 @@ function AnaliseExecucaoModal({ tipo, nomeExercicio, dicaGuia, onFechar }) {
               </div>
             )}
           </div>
+          {auto && !tipoProp && (etapa === "pronto" || etapa === "analisando") && (
+            <div style={{ marginTop: 10, display: "flex", alignItems: "center", gap: 8 }}>
+              <label htmlFor="an-movimento" style={{ fontSize: 13, color: cor.suave, fontWeight: 700 }}>{tr("Movimento:")}</label>
+              <select id="an-movimento" data-testid="select-movimento" value={tipoSel || ""} onChange={(e) => escolherMovimento(e.target.value)} style={{ flex: 1, minWidth: 0, background: cor.card, color: cor.texto, border: "1px solid #33424A", borderRadius: 8, padding: "9px 8px", fontSize: 14 }}>
+                <option value="">{tr("Detectar automaticamente")}</option>
+                {anListaMovimentos().map(([k, t]) => (<option key={k} value={k}>{tr(t)}</option>))}
+              </select>
+            </div>
+          )}
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 10 }}>
             {etapa === "pronto" && <button disabled={!posicaoOk} data-testid="iniciar-analise" style={{ ...btn, flex: 1, background: posicaoOk ? cor.lime : "#3A464C", color: posicaoOk ? "#101619" : "#9AA8AF", cursor: posicaoOk ? "pointer" : "not-allowed" }} onClick={comecar}>{posicaoOk ? tr("▶ Iniciar análise") : tr("Ajuste a posição…")}</button>}
             {etapa === "analisando" && <button style={{ ...btn, flex: 1, background: "#D9503A", color: "#fff" }} onClick={parar}>{tr("■ Terminar e ver resultado")}</button>}
@@ -19467,12 +19627,18 @@ function tourRolarAte(el, soSeFora) {
 const IA_BTN_TAM = 54;
 const IA_BTN_MARGEM = 6;
 let IA_BTN_POS_CACHE = null; // evita o botão "pular" ao reabrir depois de um modal
-function BotaoIAFlutuante({ onAbrir, rotulo, btnRef }) {
+function BotaoIAFlutuante({ onAbrir, rotulo, btnRef, onOcultar }) {
   const elRef = useRef(null);
   const [pos, setPos] = useState(IA_BTN_POS_CACHE); // { x, y } em px, ou null = canto padrão
   const [arrastando, setArrastando] = useState(false);
+  const [segurando, setSegurando] = useState(false); // mostra o X de remover
+  const [sobreX, setSobreX] = useState(false);
   const posRef = useRef(IA_BTN_POS_CACHE);
-  const dragRef = useRef({ ativo: false, moveu: false, offX: 0, offY: 0, startX: 0, startY: 0 });
+  const sobreXRef = useRef(false);
+  const timerRef = useRef(null);
+  const ocultarRef = useRef(onOcultar);
+  ocultarRef.current = onOcultar;
+  const dragRef = useRef({ ativo: false, moveu: false, segurou: false, offX: 0, offY: 0, startX: 0, startY: 0, posIni: null });
 
   const limitar = (x, y) => {
     const reserva = BARRA_ALTURA + 8 + areaSeguraInferiorPx(); // não deixa o botão ficar por cima da barra inferior
@@ -19482,6 +19648,18 @@ function BotaoIAFlutuante({ onAbrir, rotulo, btnRef }) {
       x: Math.min(Math.max(IA_BTN_MARGEM, x), maxX),
       y: Math.min(Math.max(IA_BTN_MARGEM, y), maxY),
     };
+  };
+
+  // O X fica embaixo, no centro da tela, no ponto mais baixo que o botão consegue alcançar.
+  const centroX = () => {
+    const reserva = BARRA_ALTURA + 8 + areaSeguraInferiorPx();
+    return { x: window.innerWidth / 2, y: window.innerHeight - reserva - IA_BTN_MARGEM - IA_BTN_TAM / 2 };
+  };
+  const pertoDoX = (x, y) => {
+    const c = centroX();
+    const dx = x + IA_BTN_TAM / 2 - c.x;
+    const dy = y + IA_BTN_TAM / 2 - c.y;
+    return Math.sqrt(dx * dx + dy * dy) < 52;
   };
 
   // Carrega a posição salva (só se ainda não estiver no cache).
@@ -19525,30 +19703,54 @@ function BotaoIAFlutuante({ onAbrir, rotulo, btnRef }) {
   useEffect(() => {
     const el = elRef.current;
     if (!el) return;
+    const limparTimer = () => { if (timerRef.current) { clearTimeout(timerRef.current); timerRef.current = null; } };
     const iniciar = (cx, cy) => {
       const r = el.getBoundingClientRect();
-      dragRef.current = { ativo: true, moveu: false, offX: cx - r.left, offY: cy - r.top, startX: cx, startY: cy };
+      dragRef.current = { ativo: true, moveu: false, segurou: false, offX: cx - r.left, offY: cy - r.top, startX: cx, startY: cy, posIni: posRef.current };
+      limparTimer();
+      // segurar ~0,4 s sem mover já mostra o X
+      timerRef.current = setTimeout(() => {
+        const d = dragRef.current;
+        if (d.ativo && !d.moveu) { d.segurou = true; setSegurando(true); }
+      }, 400);
     };
     const mover = (cx, cy) => {
       const d = dragRef.current;
       if (!d.ativo) return false;
       if (!d.moveu) {
-        if (Math.abs(cx - d.startX) < 6 && Math.abs(cy - d.startY) < 6) return false;
+        if (!d.segurou && Math.abs(cx - d.startX) < 6 && Math.abs(cy - d.startY) < 6) return false;
         d.moveu = true;
+        limparTimer();
         setArrastando(true);
+        setSegurando(true);
       }
       const l = limitar(cx - d.offX, cy - d.offY);
       posRef.current = l;
       setPos(l);
+      const perto = pertoDoX(l.x, l.y);
+      if (perto !== sobreXRef.current) { sobreXRef.current = perto; setSobreX(perto); }
       return true;
     };
     const terminar = () => {
       const d = dragRef.current;
       if (!d.ativo) return false;
       d.ativo = false;
-      if (!d.moveu) return false;
+      limparTimer();
+      if (!d.moveu && !d.segurou) return false;
       setArrastando(false);
-      if (posRef.current) {
+      setSegurando(false);
+      sobreXRef.current = false;
+      setSobreX(false);
+      const solto = posRef.current;
+      if (d.moveu && solto && pertoDoX(solto.x, solto.y)) {
+        // solto em cima do X: o botão some (volta à posição de antes, pra reaparecer no mesmo lugar)
+        posRef.current = d.posIni;
+        IA_BTN_POS_CACHE = d.posIni;
+        d.moveu = true;
+        if (ocultarRef.current) ocultarRef.current();
+        return true;
+      }
+      if (d.moveu && posRef.current) {
         IA_BTN_POS_CACHE = posRef.current;
         try {
           const p = window.storage.set("ia-botao-pos", JSON.stringify(posRef.current));
@@ -19557,6 +19759,7 @@ function BotaoIAFlutuante({ onAbrir, rotulo, btnRef }) {
           // posição só não fica salva; segue normal
         }
       }
+      d.moveu = true; // o "clique" que sobra depois de segurar/arrastar é ignorado
       return true;
     };
     const tStart = (e) => {
@@ -19586,6 +19789,7 @@ function BotaoIAFlutuante({ onAbrir, rotulo, btnRef }) {
     window.addEventListener("mousemove", mMove);
     window.addEventListener("mouseup", mUp);
     return () => {
+      limparTimer();
       el.removeEventListener("touchstart", tStart);
       el.removeEventListener("touchmove", tMove);
       el.removeEventListener("touchend", tEnd);
@@ -19607,36 +19811,76 @@ function BotaoIAFlutuante({ onAbrir, rotulo, btnRef }) {
   const posEstilo = pos
     ? { left: pos.x, top: pos.y }
     : { right: 16, bottom: "calc(" + (BARRA_ALTURA + 14) + "px + env(safe-area-inset-bottom, 0px))" };
+  const cx = segurando ? centroX() : null;
 
   return (
-    <button
-      ref={(el) => { elRef.current = el; if (btnRef) btnRef.current = el; }}
-      onClick={aoClicar}
-      aria-label={rotulo}
-      title={rotulo}
-      style={{
-        position: "fixed",
-        ...posEstilo,
-        zIndex: 400,
-        width: IA_BTN_TAM,
-        height: IA_BTN_TAM,
-        padding: 0,
-        borderRadius: "50%",
-        border: "none",
-        background: "linear-gradient(135deg, #B7E04A, #7FAE1F)",
-        color: "#10150A",
-        fontSize: 24,
-        cursor: arrastando ? "grabbing" : "grab",
-        boxShadow: arrastando ? "0 10px 26px rgba(0,0,0,0.6)" : "0 6px 18px rgba(0,0,0,0.45)",
-        transform: arrastando ? "scale(1.08)" : "none",
-        touchAction: "none",
-        userSelect: "none",
-        WebkitUserSelect: "none",
-        WebkitTapHighlightColor: "transparent",
-      }}
-    >
-      ✨
-    </button>
+    <>
+      {segurando && cx && (
+        <>
+          <div
+            aria-hidden="true"
+            style={{
+              position: "fixed",
+              left: cx.x - 26,
+              top: cx.y - 26,
+              width: 52,
+              height: 52,
+              borderRadius: "50%",
+              zIndex: 399,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              background: sobreX ? "#E5484D" : "rgba(20,24,27,0.92)",
+              border: "2px solid " + (sobreX ? "#FFB1A8" : "rgba(255,255,255,0.55)"),
+              color: "#fff",
+              fontSize: 24,
+              fontWeight: 900,
+              boxShadow: "0 6px 18px rgba(0,0,0,0.5)",
+              transform: sobreX ? "scale(1.25)" : "scale(1)",
+              transition: "transform 0.12s ease, background 0.12s ease",
+              pointerEvents: "none",
+            }}
+          >
+            ✕
+          </div>
+          <div
+            aria-hidden="true"
+            style={{ position: "fixed", left: 0, right: 0, top: cx.y - 54, zIndex: 399, textAlign: "center", fontSize: 12, fontWeight: 800, color: "#fff", textShadow: "0 1px 4px rgba(0,0,0,0.8)", pointerEvents: "none" }}
+          >
+            {tr("Solte aqui para remover")}
+          </div>
+        </>
+      )}
+      <button
+        ref={(el) => { elRef.current = el; if (btnRef) btnRef.current = el; }}
+        onClick={aoClicar}
+        aria-label={rotulo}
+        title={rotulo}
+        style={{
+          position: "fixed",
+          ...posEstilo,
+          zIndex: 400,
+          width: IA_BTN_TAM,
+          height: IA_BTN_TAM,
+          padding: 0,
+          borderRadius: "50%",
+          border: "none",
+          background: "linear-gradient(135deg, #B7E04A, #7FAE1F)",
+          color: "#10150A",
+          fontSize: 24,
+          cursor: arrastando ? "grabbing" : "grab",
+          boxShadow: arrastando ? "0 10px 26px rgba(0,0,0,0.6)" : "0 6px 18px rgba(0,0,0,0.45)",
+          transform: arrastando ? "scale(1.08)" : "none",
+          opacity: sobreX ? 0.75 : 1,
+          touchAction: "none",
+          userSelect: "none",
+          WebkitUserSelect: "none",
+          WebkitTapHighlightColor: "transparent",
+        }}
+      >
+        ✨
+      </button>
+    </>
   );
 }
 
@@ -20042,6 +20286,72 @@ function CronometroRapidoRotina({ onIniciarDescanso }) {
   );
 }
 
+// Título do foco do dia: ocupa a largura toda do card e a fonte se ajusta sozinha ao tamanho da palavra.
+function TituloFocoAuto({ texto }) {
+  const boxRef = useRef(null);
+  const spanRef = useRef(null);
+  const [tam, setTam] = useState(34);
+  useEffect(() => {
+    const ajustar = () => {
+      const box = boxRef.current, sp = spanRef.current;
+      if (!box || !sp) return;
+      const larg = box.clientWidth;
+      if (!larg) return;
+      let t = 40;
+      sp.style.fontSize = t + "px";
+      while (t > 13 && sp.scrollWidth > larg) { t -= 1; sp.style.fontSize = t + "px"; }
+      setTam(t);
+    };
+    ajustar();
+    const id = setTimeout(ajustar, 250); // de novo depois que a fonte do app termina de carregar
+    window.addEventListener("resize", ajustar);
+    return () => { clearTimeout(id); window.removeEventListener("resize", ajustar); };
+  }, [texto]);
+  return (
+    <div ref={boxRef} style={{ width: "100%", overflow: "hidden" }} data-testid="titulo-foco-dia">
+      <span ref={spanRef} style={{ display: "inline-block", whiteSpace: "nowrap", fontSize: tam, fontWeight: 900, lineHeight: 1.1, fontFamily: guiadoFont, color: HIGHLIGHT, textTransform: "uppercase", letterSpacing: "0.02em" }}>{texto}</span>
+    </div>
+  );
+}
+
+// Miniatura do corpo (frente e costas) com os músculos do treino piscando.
+function MiniCorpoFoco({ ativacao }) {
+  const figura = useFiguraCorpo();
+  return (
+    <div style={{ display: "flex", gap: 4, justifyContent: "center" }} aria-hidden="true">
+      <CorpoSVG lado="frente" figura={figura} ativacao={ativacao} piscando largura={32} altura={74} />
+      <CorpoSVG lado="costas" figura={figura} ativacao={ativacao} piscando largura={32} altura={74} />
+    </div>
+  );
+}
+
+// Atalhos dos outros treinos da rotina (mesmo estilo dos atalhos da aba Início).
+function OutrosTreinosAtalhos({ itens, onAbrir }) {
+  return (
+    <div data-testid="outros-treinos-atalhos" style={{ marginBottom: 12 }}>
+      <div style={{ fontSize: 12, fontWeight: 700, opacity: 0.8, marginBottom: 8 }}>
+        {itens.length === 1 ? tr("Ainda falta 1 treino na sua rotina") : trt("Ainda faltam {0} treinos na sua rotina", [itens.length])}
+      </div>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
+        {itens.map((it) => (
+          <button
+            key={it.dia}
+            type="button"
+            onClick={() => onAbrir(it.dia)}
+            data-testid={"outro-treino-" + it.dia}
+            aria-label={tr(it.dia) + ": " + tr(it.foco)}
+            style={{ minHeight: 132, minWidth: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 6, padding: "8px 4px", borderRadius: 16, border: "1px solid rgba(255,255,255,0.1)", background: "linear-gradient(160deg, rgba(27,32,38,0.96), rgba(17,20,25,0.96))", color: "#fff", cursor: "pointer" }}
+          >
+            {it.temCorpo ? <MiniCorpoFoco ativacao={it.ativacao} /> : <span style={{ fontSize: 34, lineHeight: "74px" }} aria-hidden="true">{it.foco === "Cardio" ? "🏃" : "💪"}</span>}
+            <span style={{ fontSize: 12, fontWeight: 800, lineHeight: 1.15, textAlign: "center", overflowWrap: "anywhere" }}>{tr(it.foco)}</span>
+            <span style={{ fontSize: 11, fontWeight: 700, color: "#C6FF4D" }}>{tr(it.dia)}</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function DayCard({ entry, onFoco, onPeriodo, onAddExercicio, onRemoveExercicio, onEditExercicio, onEditCargaSerie, onEditRirSerie, onAddExercicioPersonalizado, onEscolherExercicio, exerciciosFavoritos, onToggleFavorito, onDuplicarDia, cargaHistorico, rirHistorico, notasExercicio, onEditNotaExercicio, onEditCardio, onAdicionarCardioFinal, onRemoverCardioFinal, onAbrirExercicio, onIniciarDescanso, onTrocarExercicio, onConcluirTreino, onRegistrarDor, onIniciarGuiado, progressao, dores, recordes, restricoesFisicas, refsTour }) {
   const { dia, foco, cardio, exercicios, periodo } = entry;
   const isDescanso = foco === "Descanso";
@@ -20057,16 +20367,25 @@ function DayCard({ entry, onFoco, onPeriodo, onAddExercicio, onRemoveExercicio, 
     <>
     <div style={styles.dayCard}>
       <div style={styles.dayCardBody}>
+        {entry.origem === "ia" && !isDescanso && (
+          <div data-testid="selo-treino-ia" style={{ display: "inline-flex", alignItems: "center", gap: 6, marginBottom: 8, padding: "3px 10px 3px 4px", borderRadius: 999, background: "rgba(198,255,77,0.12)", border: "1px solid rgba(198,255,77,0.45)", fontSize: 11, fontWeight: 800, color: "#C6FF4D" }}>
+            <span style={{ width: 20, height: 20, borderRadius: "50%", background: "linear-gradient(135deg, #B7E04A, #7FAE1F)", color: "#10150A", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 12 }} aria-hidden="true">✨</span>
+            {tr("Treino da IA")}
+          </div>
+        )}
+        <div style={{ marginBottom: 8 }}>
+          <TituloFocoAuto texto={tr(foco)} />
+        </div>
         <div style={styles.dayCardTop}>
-          <div>
-            <div style={styles.dayName}>{tr(dia)}</div>
+          <div style={{ minWidth: 0 }}>
+            <div style={{ ...styles.dayName, fontSize: 24, fontWeight: 900, marginBottom: 4, letterSpacing: "-0.02em" }}>{tr(dia)}</div>
+            <div style={{ width: 30, height: 3, borderRadius: 2, background: HIGHLIGHT, marginBottom: 10 }} aria-hidden="true" />
             <div style={styles.focoLabel}>{tr("Trocar foco do dia:")}</div>
             <button style={styles.selectFocoDia} onClick={() => setModalFocoAberto(true)} ref={refsTour ? refsTour.foco : undefined}>
               {tr(foco)} <span style={styles.selectFocoDiaSeta}>▾</span>
             </button>
           </div>
           <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 6, flex: 1, minWidth: 0 }}>
-            <div style={styles.focoTag}>{tr(foco)}</div>
             {!isDescanso && exercicios.length > 0 && (
               <button style={{ ...styles.trocarBtn, fontSize: 11 }} onClick={() => setDuplicarAberto(true)} title={tr("Duplicar esse treino pra outro dia")} ref={refsTour ? refsTour.duplicar : undefined}>
                 {tr("📋 Duplicar")}</button>
@@ -20075,15 +20394,15 @@ function DayCard({ entry, onFoco, onPeriodo, onAddExercicio, onRemoveExercicio, 
         </div>
 
         {!isDescanso && (
-          <div style={{ marginTop: 8 }} ref={refsTour ? refsTour.periodo : undefined}>
-            <div style={styles.focoLabel}>{tr("🔔 Notificar treino:")}</div>
+          <div style={{ marginTop: 4 }} ref={refsTour ? refsTour.periodo : undefined}>
+            <div style={{ ...styles.focoLabel, fontSize: 10, marginBottom: 2, opacity: 0.8 }}>{tr("🔔 Notificar treino:")}</div>
             <div style={styles.chipRow}>
               {PERIODOS_TREINO.map((p) => (
                 <button
                   key={p}
                   className="chip"
                   onClick={() => onPeriodo(p)}
-                  style={{ ...styles.chip, ...((periodo || "Manhã") === p ? styles.chipActive : {}) }}
+                  style={{ ...styles.chip, fontSize: 11, padding: "4px 9px", minHeight: 28, ...((periodo || "Manhã") === p ? styles.chipActive : {}) }}
                 >
                   {tr(p)} ({tr(HORARIO_POR_PERIODO[p])})
                 </button>
