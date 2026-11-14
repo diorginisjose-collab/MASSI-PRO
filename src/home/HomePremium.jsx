@@ -525,3 +525,20 @@ export function HomeMotivacao({ tr, trt, locale, conquista, desafio, onIrDesafio
     </section>
   );
 }
+
+// ---------------------------------------------------------------------------
+// Botão para reativar o botão flutuante da IA (só aparece quando ele foi removido)
+// ---------------------------------------------------------------------------
+export function HomeReativarIA({ tr, onReativar }) {
+  return (
+    <button
+      type="button"
+      onClick={onReativar}
+      data-testid="home-reativar-ia"
+      style={{ width: "100%", minHeight: 46, marginBottom: 12, display: "flex", alignItems: "center", justifyContent: "center", gap: 8, borderRadius: 14, border: "1px dashed rgba(198,255,77,0.6)", background: "rgba(198,255,77,0.08)", color: LIMAO, fontWeight: 800, fontSize: 13.5, cursor: "pointer" }}
+    >
+      <span aria-hidden="true">✨</span>
+      {tr("Reativar botão flutuante da IA")}
+    </button>
+  );
+}
