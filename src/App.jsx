@@ -4942,6 +4942,8 @@ Object.assign(TRAD_TEXTOS.en, {"Bom dia": "Good morning", "Boa tarde": "Good aft
 Object.assign(TRAD_TEXTOS.es, {"Bom dia": "Buenos días", "Boa tarde": "Buenas tardes", "Boa noite": "Buenas noches", "Perfil e configurações": "Perfil y ajustes", "Meta da semana batida": "Meta semanal cumplida", "{0} de {1} treinos na semana": "{0} de {1} entrenamientos esta semana", "Resumo de hoje": "Resumen de hoy", "Treino feito": "Entrenamiento hecho", "Treino": "Entrenamiento", "Treino de hoje": "Entrenamiento de hoy", "Semana": "Semana", "meta {0}": "meta {0}", "registradas": "registradas", "Evolução da semana": "Evolución de la semana", "vs semana passada": "vs semana pasada", "Volume": "Volumen", "Ver rotina": "Ver rutina", "Recuperação": "Recuperación", "Sem rotina montada": "Sin rutina armada", "Monte sua rotina para acompanhar a recuperação por grupo muscular.": "Arma tu rutina para seguir la recuperación por grupo muscular.", "Descansado": "Descansado", "Todos os grupos da sua rotina já tiveram pelo menos 2 dias de descanso.": "Todos los grupos de tu rutina tuvieron al menos 2 días de descanso.", "Em recuperação: {0}": "En recuperación: {0}", "O foco de hoje inclui um grupo treinado há pouco. Considere reduzir o volume ou variar.": "El enfoque de hoy incluye un grupo entrenado hace poco. Considera reducir el volumen o variar.", "Prontos para treinar: {0}.": "Listos para entrenar: {0}.", "Priorize descanso e sono hoje.": "Prioriza el descanso y el sueño hoy.", "Estimativa pelo seu histórico de treinos. Não é uma medição de saúde.": "Estimación según tu historial de entrenamientos. No es una medición de salud.", "Ver detalhes": "Ver detalles", "Conquistas e desafios": "Logros y desafíos", "Próxima conquista": "Próximo logro", "Faltam só {0} para a próxima medalha.": "Solo faltan {0} para la próxima medalla.", "Você desbloqueou todas as medalhas. 🏆": "Desbloqueaste todas las medallas. 🏆", "Desafio ativo": "Desafío activo", "Nenhum desafio ativo. Escolha um no Cross para acompanhar o progresso aqui.": "Ningún desafío activo. Elige uno en Cross para seguir el progreso aquí.", "Ver desafios": "Ver desafíos", "Alimentação": "Alimentación"});
 Object.assign(TRAD_TEXTOS.en, {"Treino da IA": "AI workout", "Ainda falta 1 treino na sua rotina": "1 workout left in your routine", "Ainda faltam {0} treinos na sua rotina": "{0} workouts left in your routine", "Ocultar outros treinos": "Hide other workouts", "Ver todos juntos": "Show all together", "Analisar execução": "Analyze form", "Filme sua série e o app identifica o movimento e avalia a técnica": "Film your set and the app identifies the movement and checks your form", "Análise de execução": "Form analysis", "Identificando o movimento… faça 2 repetições.": "Identifying the movement… do 2 reps.", "Movimento:": "Movement:", "Detectar automaticamente": "Detect automatically", "Você não precisa escolher o exercício: faça 2 repetições e o app identifica o movimento. Se errar, escolha o movimento na lista.": "You don't need to pick the exercise: do 2 reps and the app identifies the movement. If it gets it wrong, pick the movement from the list.", "Botão da IA removido. Para reativar, abra a aba Início.": "AI button removed. To bring it back, open the Home tab.", "Reativar botão flutuante da IA": "Bring back the floating AI button", "Solte aqui para remover": "Drop here to remove"});
 Object.assign(TRAD_TEXTOS.es, {"Treino da IA": "Entrenamiento de la IA", "Ainda falta 1 treino na sua rotina": "Falta 1 entrenamiento en tu rutina", "Ainda faltam {0} treinos na sua rotina": "Faltan {0} entrenamientos en tu rutina", "Ocultar outros treinos": "Ocultar otros entrenamientos", "Ver todos juntos": "Ver todos juntos", "Analisar execução": "Analizar ejecución", "Filme sua série e o app identifica o movimento e avalia a técnica": "Filma tu serie y la app identifica el movimiento y evalúa la técnica", "Análise de execução": "Análisis de ejecución", "Identificando o movimento… faça 2 repetições.": "Identificando el movimiento… haz 2 repeticiones.", "Movimento:": "Movimiento:", "Detectar automaticamente": "Detectar automáticamente", "Você não precisa escolher o exercício: faça 2 repetições e o app identifica o movimento. Se errar, escolha o movimento na lista.": "No necesitas elegir el ejercicio: haz 2 repeticiones y la app identifica el movimiento. Si se equivoca, elige el movimiento en la lista.", "Botão da IA removido. Para reativar, abra a aba Início.": "Botón de la IA quitado. Para reactivarlo, abre la pestaña Inicio.", "Reativar botão flutuante da IA": "Reactivar el botón flotante de la IA", "Solte aqui para remover": "Suelta aquí para quitar"});
+Object.assign(TRAD_TEXTOS.en, {"Qual é o movimento?": "Which movement is it?"});
+Object.assign(TRAD_TEXTOS.es, {"Qual é o movimento?": "¿Cuál es el movimiento?"});
 const TRAD_NORM = {};
 function trNormalizar(idioma) {
   if (TRAD_NORM[idioma]) return TRAD_NORM[idioma];
@@ -8711,7 +8713,7 @@ function AppMassiPro({ onSolicitarRemount }) {
             )}
             {diaOutroEntry && (
               <div style={{ position: "fixed", top: 0, right: 0, bottom: 0, left: 0, zIndex: 600, background: "#0F1417", overflowY: "auto", WebkitOverflowScrolling: "touch" }} data-testid="pagina-outro-treino">
-                <div style={{ maxWidth: 520, margin: "0 auto", padding: "14px 12px 40px", boxSizing: "border-box" }}>
+                <div style={{ maxWidth: 520, margin: "0 auto", padding: "calc(env(safe-area-inset-top, 0px) + 44px) 12px 40px", boxSizing: "border-box" }}>
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8, marginBottom: 12 }}>
                     <button type="button" onClick={() => setDiaOutroAberto(null)} data-testid="fechar-outro-treino" style={{ border: "none", borderRadius: 10, padding: "10px 14px", background: "#232E33", color: "#EAF0F2", fontWeight: 800, fontSize: 14, cursor: "pointer" }}>{tr("← Voltar")}</button>
                     <button type="button" onClick={() => { setMostrarOutrosTreinos(true); setDiaOutroAberto(null); }} data-testid="ver-todos-juntos" style={{ border: "1px solid rgba(198,255,77,0.6)", background: "transparent", color: CROSS_LIME, fontWeight: 700, fontSize: 11.5, borderRadius: 999, padding: "5px 10px", cursor: "pointer" }}>{tr("Ver todos juntos")}</button>
@@ -15902,7 +15904,69 @@ function webmCorrigir(b) {
   }
 }
 
-// Ordem de preferência quando dois movimentos parecem iguais (ex.: o mesmo ângulo de joelho).
+// --- Identificação automática do movimento: características da postura ao longo do tempo ---
+function anFeatNovo() {
+  return { n: 0, joelho: [999, -999], cotovelo: [999, -999], quadril: [999, -999], ombro: [999, -999], tronco: { soma: 0, n: 0 }, acimaOmbro: 0, acimaCabeca: 0, acimaCotovelo: 0 };
+}
+function anFeatAtualizar(f, lm, W, H) {
+  if (!lm) return;
+  const vis = (i) => (lm[i] && typeof lm[i].visibility === "number" ? lm[i].visibility : 1);
+  const somaE = vis(11) + vis(13) + vis(15) + vis(23) + vis(25) + vis(27);
+  const somaD = vis(12) + vis(14) + vis(16) + vis(24) + vis(26) + vis(28);
+  const L = somaE >= somaD ? [11, 13, 15, 23, 25, 27] : [12, 14, 16, 24, 26, 28]; // lado mais visível
+  const P = (i) => ({ x: lm[i].x * W, y: lm[i].y * H });
+  const ombro = P(L[0]), cot = P(L[1]), pun = P(L[2]), quad = P(L[3]), joe = P(L[4]), tor = P(L[5]);
+  const ang = (a, b, c) => {
+    const v1x = a.x - b.x, v1y = a.y - b.y, v2x = c.x - b.x, v2y = c.y - b.y;
+    const m = Math.sqrt(v1x * v1x + v1y * v1y) * Math.sqrt(v2x * v2x + v2y * v2y);
+    if (!m) return null;
+    return (Math.acos(Math.max(-1, Math.min(1, (v1x * v2x + v1y * v2y) / m))) * 180) / Math.PI;
+  };
+  const mm = (arr, v) => { if (v === null || isNaN(v)) return; if (v < arr[0]) arr[0] = v; if (v > arr[1]) arr[1] = v; };
+  mm(f.joelho, ang(quad, joe, tor));
+  mm(f.cotovelo, ang(ombro, cot, pun));
+  mm(f.quadril, ang(ombro, quad, joe));
+  mm(f.ombro, ang(quad, ombro, cot));
+  const dx = ombro.x - quad.x, dy = quad.y - ombro.y;
+  f.tronco.soma += (Math.atan2(Math.abs(dx), dy) * 180) / Math.PI;
+  f.tronco.n += 1;
+  const compr = Math.sqrt(dx * dx + dy * dy) || 1;
+  if (pun.y < ombro.y) f.acimaOmbro += 1;
+  if (lm[0] && pun.y < lm[0].y * H) f.acimaCabeca += 1;
+  if (pun.y < cot.y - 0.28 * compr) f.acimaCotovelo += 1;
+  f.n += 1;
+}
+// Decide o movimento: { fixar: "chave" } quando há confiança, ou { opcoes: [chaves] } para o usuário escolher.
+function anClassificar(f) {
+  if (!f || f.n < 20) return null;
+  const rom = (a) => (a[1] >= a[0] ? a[1] - a[0] : 0);
+  const rJ = rom(f.joelho), rC = rom(f.cotovelo), rQ = rom(f.quadril), rO = rom(f.ombro);
+  const lean = f.tronco.n ? f.tronco.soma / f.tronco.n : 0;
+  const fr = (v) => v / f.n;
+  const cand = [];
+  if (rJ >= 35) cand.push(["pernas", rJ]);
+  if (rC >= 45) cand.push(["bracos", rC]);
+  if (rO >= 40) cand.push(["ombros", rO]);
+  if (rQ >= 35 && rJ < 35) cand.push(["quadril", rQ]);
+  if (!cand.length) return null;
+  cand.sort((a, b) => b[1] - a[1]);
+  const grupo = cand[0][0];
+  if (grupo === "pernas") {
+    if (rQ >= 35 && lean < 45) return { fixar: "agachamento" };
+    return { opcoes: ["agachamento", "afundo", "legpress", "extensora", "flexora"] };
+  }
+  if (grupo === "bracos") {
+    if (lean >= 55) return { fixar: fr(f.acimaOmbro) > 0.25 ? "supino" : "flexao" };
+    if (fr(f.acimaCabeca) > 0.55) return { opcoes: ["puxada", "barraFixa", "desenvolvimento"] };
+    if (fr(f.acimaOmbro) > 0.2) return { fixar: "desenvolvimento" };
+    if (fr(f.acimaCotovelo) > 0.1) return { fixar: "rosca" };
+    return { opcoes: ["tricepsCorda", "remada", "tricepsFrances", "tricepsTesta", "facePull", "rosca"] };
+  }
+  if (grupo === "ombros") return { opcoes: ["elevacaoLateral", "elevacaoFrontal", "desenvolvimento", "remadaAlta", "aberturaPeito", "aberturaInversa"] };
+  return { opcoes: ["terra", "remadaCurvada"] };
+}
+
+// Ordem de preferência quando precisa sugerir opções.
 const AN_PRIORIDADE_AUTO = ["agachamento", "flexao", "supino", "rosca", "desenvolvimento", "puxada", "remada", "afundo", "terra", "elevacaoLateral", "barraFixa", "mergulho", "tricepsCorda", "tricepsTesta", "tricepsFrances", "extensora", "flexora", "legpress", "panturrilha", "elevacaoFrontal", "remadaCurvada", "remadaAlta", "facePull"];
 function anListaMovimentos() {
   return Object.keys(AN_EXERCICIOS)
@@ -15919,6 +15983,9 @@ function AnaliseExecucaoModal({ tipo: tipoProp, auto, nomeExercicio, dicaGuia, o
   const tipoRef = useRef(tipoProp || null);
   const autoRef = useRef(!!auto && !tipoProp);
   const candRef = useRef(null);
+  const featRef = useRef(anFeatNovo());
+  const opcoesRef = useRef(null);
+  const [opcoesAuto, setOpcoesAuto] = useState(null); // opções para o usuário escolher quando o app não tem certeza
   const [etapa, setEtapa] = useState("intro"); // intro | carregando | pronto | contagem | analisando | resumo | erro
   const [erroTxt, setErroTxt] = useState("");
   const [frente, setFrente] = useState(false); // false = câmera traseira, true = frontal
@@ -16133,7 +16200,7 @@ function AnaliseExecucaoModal({ tipo: tipoProp, auto, nomeExercicio, dicaGuia, o
     setVideoEstado(estado);
   };
 
-  // --- modo automático: roda todos os movimentos de repetição em paralelo e fixa o que contar 2 repetições ---
+  // --- modo automático: roda todos os movimentos de repetição em paralelo e decide pela postura do corpo ---
   const criarCandidatos = () => {
     const mapa = {};
     Object.keys(AN_EXERCICIOS).forEach((k) => {
@@ -16142,12 +16209,17 @@ function AnaliseExecucaoModal({ tipo: tipoProp, auto, nomeExercicio, dicaGuia, o
       mapa[k] = anCriarMaquina(k, {});
     });
     candRef.current = mapa;
+    featRef.current = anFeatNovo();
+    opcoesRef.current = null;
+    setOpcoesAuto(null);
   };
   const fixarTipo = (k) => {
     const m = candRef.current && candRef.current[k];
     tipoRef.current = k;
-    if (m) maquinaRef.current = m; // aproveita as repetições que já foram contadas
+    maquinaRef.current = m || anCriarMaquina(k, {}); // aproveita as repetições que já foram contadas
     candRef.current = null;
+    opcoesRef.current = null;
+    setOpcoesAuto(null);
     setTipoSel(k);
   };
   const analisarCandidatos = (lm, W, H, mundo, t) => {
@@ -16156,21 +16228,26 @@ function AnaliseExecucaoModal({ tipo: tipoProp, auto, nomeExercicio, dicaGuia, o
     try { const az = anAzimute(lm, W, H, mundo); vista = { az, classe: anClasseVista(az) }; } catch (e) { vista = null; }
     if (etapaRef.current !== "analisando" || !candRef.current) return { aviso: "", medida: null, vista };
     const mapa = candRef.current;
-    let melhor = null;
+    try { anFeatAtualizar(featRef.current, lm, W, H); } catch (e) { /* segue sem as características */ }
     Object.keys(mapa).forEach((k) => {
-      const m = mapa[k];
       try {
         const r = anAnalisarQuadro(AN_EXERCICIOS[k], lm, W, H, mundo);
-        if (r && r.medida) anAtualizar(m, r.medida, t, r.vista);
-      } catch (e) { return; }
-      const n = m.reps.length;
-      if (n < 1) return;
-      const boas = m.reps.filter((x) => x.falhas.length === 0).length;
-      const rank = AN_PRIORIDADE_AUTO.indexOf(k);
-      const score = n * 100 + boas * 10 - (rank < 0 ? 50 : rank) * 0.1;
-      if (!melhor || score > melhor.score) melhor = { k, n, score };
+        if (r && r.medida) anAtualizar(mapa[k], r.medida, t, r.vista);
+      } catch (e) { /* esse movimento só não conta neste quadro */ }
     });
-    if (melhor && melhor.n >= 2) fixarTipo(melhor.k);
+    // só decide depois que algum movimento completou 2 repetições
+    if (Object.keys(mapa).some((k) => mapa[k].reps.length >= 2)) {
+      let res = null;
+      try { res = anClassificar(featRef.current); } catch (e) { res = null; }
+      if (res && res.fixar && mapa[res.fixar]) {
+        fixarTipo(res.fixar);
+      } else {
+        let ops = res && res.opcoes ? res.opcoes.filter((k) => mapa[k]) : [];
+        if (!ops.length) ops = AN_PRIORIDADE_AUTO.filter((k) => mapa[k] && mapa[k].reps.length > 0);
+        ops = ops.filter((k) => mapa[k].reps.length > 0).concat(ops.filter((k) => mapa[k].reps.length === 0)).slice(0, 5);
+        if (ops.length && JSON.stringify(ops) !== JSON.stringify(opcoesRef.current)) { opcoesRef.current = ops; setOpcoesAuto(ops); }
+      }
+    }
     return { aviso: "", medida: null, vista };
   };
   const escolherMovimento = (v) => {
@@ -16179,9 +16256,12 @@ function AnaliseExecucaoModal({ tipo: tipoProp, auto, nomeExercicio, dicaGuia, o
       setTipoSel(null);
       maquinaRef.current = anCriarMaquina("agachamento", {});
       criarCandidatos();
+    } else if (candRef.current && candRef.current[v]) {
+      fixarTipo(v);
     } else {
       tipoRef.current = v;
       candRef.current = null;
+      setOpcoesAuto(null);
       setTipoSel(v);
       maquinaRef.current = anCriarMaquina(v, {});
     }
@@ -16386,6 +16466,16 @@ function AnaliseExecucaoModal({ tipo: tipoProp, auto, nomeExercicio, dicaGuia, o
               </div>
             )}
           </div>
+          {auto && !tipoProp && !tipoSel && opcoesAuto && etapa === "analisando" && (
+            <div data-testid="escolha-movimento" style={{ marginTop: 10, background: cor.card, borderRadius: 12, padding: 12 }}>
+              <div style={{ fontWeight: 700, marginBottom: 8 }}>{tr("Qual é o movimento?")}</div>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                {opcoesAuto.map((k) => (
+                  <button key={k} type="button" style={{ ...btn, padding: "10px 12px", fontSize: 14, background: "#232E33", color: cor.texto }} onClick={() => fixarTipo(k)}>{tr(AN_EXERCICIOS[k].titulo)}</button>
+                ))}
+              </div>
+            </div>
+          )}
           {auto && !tipoProp && (etapa === "pronto" || etapa === "analisando") && (
             <div style={{ marginTop: 10, display: "flex", alignItems: "center", gap: 8 }}>
               <label htmlFor="an-movimento" style={{ fontSize: 13, color: cor.suave, fontWeight: 700 }}>{tr("Movimento:")}</label>
