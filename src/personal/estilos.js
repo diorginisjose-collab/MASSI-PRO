@@ -1,0 +1,38 @@
+// Identidade visual do Personal Massi (escuro com verde-limão, igual ao Massi Pro).
+export const COR = {
+  fundo: "#0F1417",
+  cartao: "#161D21",
+  cartao2: "#1B2429",
+  borda: "rgba(255,255,255,0.1)",
+  texto: "#EAF0F2",
+  suave: "#9AA3AE",
+  lima: "#C6FF4D",
+  limaEscuro: "#7FAE1F",
+  erro: "#FF7A70",
+  ok: "#4FCB6B",
+};
+
+export const E = {
+  pagina: { position: "fixed", top: 0, right: 0, bottom: 0, left: 0, zIndex: 600, background: COR.fundo, color: COR.texto, overflowY: "auto", WebkitOverflowScrolling: "touch", fontFamily: "inherit" },
+  miolo: { width: "100%", maxWidth: 560, margin: "0 auto", padding: "calc(env(safe-area-inset-top, 0px) + 14px) 16px calc(env(safe-area-inset-bottom, 0px) + 40px)", boxSizing: "border-box" },
+  topo: { display: "flex", alignItems: "center", gap: 10, marginBottom: 18 },
+  marca: { fontSize: 19, fontWeight: 900, letterSpacing: "0.04em", color: COR.lima, flex: 1, lineHeight: 1.1 },
+  marcaSub: { fontSize: 11.5, fontWeight: 600, color: COR.suave, letterSpacing: 0, marginTop: 2 },
+  btnIcone: { width: 42, height: 42, borderRadius: 12, border: "1px solid " + COR.borda, background: COR.cartao, color: COR.texto, fontSize: 18, fontWeight: 800, cursor: "pointer", flexShrink: 0 },
+  cartao: { background: "linear-gradient(160deg, #1B2429 0%, #141A1E 100%)", border: "1px solid " + COR.borda, borderRadius: 18, padding: 16, marginBottom: 14, boxShadow: "0 6px 18px rgba(0,0,0,0.35)" },
+  h1: { fontSize: 24, fontWeight: 900, margin: "0 0 6px", lineHeight: 1.15 },
+  h2: { fontSize: 16, fontWeight: 800, margin: "0 0 8px" },
+  suave: { fontSize: 13.5, color: COR.suave, lineHeight: 1.45 },
+  rotulo: { display: "block", fontSize: 12.5, fontWeight: 700, color: COR.suave, margin: "12px 0 5px" },
+  campo: { width: "100%", boxSizing: "border-box", minHeight: 46, padding: "10px 12px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.18)", background: "#0F1417", color: COR.texto, fontSize: 16, outline: "none", fontFamily: "inherit" },
+  btn: { width: "100%", minHeight: 48, borderRadius: 14, border: "none", background: "linear-gradient(135deg, #B7E04A, #7FAE1F)", color: "#10150A", fontWeight: 900, fontSize: 16, cursor: "pointer", marginTop: 16 },
+  btnSec: { width: "100%", minHeight: 46, borderRadius: 14, border: "1px solid rgba(198,255,77,0.55)", background: "transparent", color: COR.lima, fontWeight: 800, fontSize: 15, cursor: "pointer", marginTop: 10 },
+  btnLink: { background: "none", border: "none", color: COR.lima, fontWeight: 700, fontSize: 13.5, cursor: "pointer", padding: "10px 0", textDecoration: "underline" },
+  abas: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6, background: "#0F1417", padding: 4, borderRadius: 14, border: "1px solid " + COR.borda, marginBottom: 14 },
+  aba: (ativa) => ({ minHeight: 42, borderRadius: 10, border: "none", cursor: "pointer", fontWeight: 800, fontSize: 14.5, background: ativa ? "linear-gradient(135deg, #B7E04A, #7FAE1F)" : "transparent", color: ativa ? "#10150A" : COR.suave }),
+  erro: { marginTop: 12, padding: "10px 12px", borderRadius: 12, background: "rgba(255,122,112,0.12)", border: "1px solid rgba(255,122,112,0.5)", color: COR.erro, fontSize: 13.5, fontWeight: 700 },
+  aviso: { marginTop: 12, padding: "10px 12px", borderRadius: 12, background: "rgba(198,255,77,0.1)", border: "1px solid rgba(198,255,77,0.4)", color: COR.lima, fontSize: 13.5, fontWeight: 700 },
+  escolha: (ativa) => ({ display: "flex", alignItems: "center", gap: 12, width: "100%", textAlign: "left", padding: "14px 14px", borderRadius: 16, cursor: "pointer", color: COR.texto, border: "1.5px solid " + (ativa ? COR.lima : COR.borda), background: ativa ? "rgba(198,255,77,0.1)" : COR.cartao, marginBottom: 10, fontFamily: "inherit" }),
+  grade: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: 10 },
+  emBreve: { background: COR.cartao, border: "1px dashed " + COR.borda, borderRadius: 16, padding: 14, color: COR.suave },
+};
