@@ -13,6 +13,7 @@ import { identificarAparelho } from "./ia/clienteIA.js";
 import { AssistenteIA, FotoAlimentos, DiarioAlimentar, RotinaInteligente, CartaoRotinaInteligente, lerEstadoRI, montarContextoUsuario } from "./ia/index.js";
 import { CalculadoraMassiCard } from "./calculadora/index.js";
 import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from "recharts";
+import PersonalMassiEntrada from "./personal/index.jsx";
 import { HomeReativarIA, HomeCabecalho, HomeMetaSemana, HomeResumoDia, HomeAcessos, HomeSemana, HomeRecuperacao, HomeMotivacao, passosDaSemana, lerMetaPassos, kcalDeHoje } from "./home/HomePremium.jsx";
 
 // ---------------------------------------------------------------
@@ -5318,6 +5319,13 @@ function AppMassiPro({ onSolicitarRemount }) {
     empilhar(() => { fechouPainelPeloVoltar.current = true; setPainel(null); });
     return () => { if (!fechouPainelPeloVoltar.current) removerTopo(); fechouPainelPeloVoltar.current = false; };
   }, [painelAberto]);
+  const [personalAberto, setPersonalAberto] = useState(false);
+  const fechouPersonalPeloVoltar = useRef(false);
+  useEffect(() => {
+    if (!personalAberto) return undefined;
+    empilhar(() => { fechouPersonalPeloVoltar.current = true; setPersonalAberto(false); });
+    return () => { if (!fechouPersonalPeloVoltar.current) removerTopo(); fechouPersonalPeloVoltar.current = false; };
+  }, [personalAberto]);
   const [onboardingPendente, setOnboardingPendente] = useState(false);
   const [mostrarBoraComecar, setMostrarBoraComecar] = useState(false);
   const tabRowRef = useRef(null);
@@ -7984,6 +7992,7 @@ function AppMassiPro({ onSolicitarRemount }) {
             { id: "suplementos", icone: "💊", nome: "Suplementos", onClick: () => { setMaisAberto(false); setPainel("suplementos"); } },
             { id: "avaliacao", icone: "📏", nome: "Avaliação", onClick: () => { setMaisAberto(false); setActiveTab("evolucao"); } },
             { id: "diario", icone: "🍽️", nome: "Diário alimentar", onClick: () => { setMaisAberto(false); abrirItemMenu("ia_diario"); } },
+            { id: "personal", icone: "🤝", nome: "Personal Massi", onClick: () => { setMaisAberto(false); setPersonalAberto(true); } },
             { id: "premium", icone: "⭐", nome: "Premium", onClick: () => { setMaisAberto(false); setActiveTab("premium"); } },
             { id: "sobre", icone: "ℹ️", nome: "Sobre", onClick: () => { setMaisAberto(false); setActiveTab("sobre"); } },
             { id: "config", icone: "⚙️", nome: "Configurações", onClick: () => { setMaisAberto(false); setMenuAberto(true); } },
@@ -7997,6 +8006,7 @@ function AppMassiPro({ onSolicitarRemount }) {
           {painel === "suplementos" && <GuiaSuplementos estilos={{ card: styles.card, label: styles.tituloDestaque, input: styles.avalInput }} tr={tr} />}
         </PainelFerramenta>
       )}
+      {personalAberto && <PersonalMassiEntrada onFechar={() => setPersonalAberto(false)} />}
       {!splashVisivel && (activeTab === "inicio" || activeTab === "rotina") && (
         <div data-testid="versao-app" style={{ position: "fixed", left: 8, bottom: "calc(72px + env(safe-area-inset-bottom, 0px))", zIndex: 40, fontSize: 10, opacity: 0.5, color: "#F2F4F6", pointerEvents: "none", textShadow: "0 1px 2px rgba(0,0,0,0.8)" }}>{ETIQUETA_BUILD}</div>
       )}
