@@ -14,7 +14,7 @@ export const COR = {
 
 export const E = {
   pagina: { position: "fixed", top: 0, right: 0, bottom: 0, left: 0, zIndex: 600, background: COR.fundo, color: COR.texto, overflowY: "auto", WebkitOverflowScrolling: "touch", fontFamily: "inherit" },
-  miolo: { width: "100%", maxWidth: 560, margin: "0 auto", padding: "calc(env(safe-area-inset-top, 0px) + 14px) 16px calc(env(safe-area-inset-bottom, 0px) + 40px)", boxSizing: "border-box" },
+  miolo: { width: "100%", maxWidth: 560, margin: "0 auto", padding: "calc(env(safe-area-inset-top, 0px) + 46px) 16px calc(env(safe-area-inset-bottom, 0px) + 40px)", boxSizing: "border-box" },
   topo: { display: "flex", alignItems: "center", gap: 10, marginBottom: 18 },
   marca: { fontSize: 19, fontWeight: 900, letterSpacing: "0.04em", color: COR.lima, flex: 1, lineHeight: 1.1 },
   marcaSub: { fontSize: 11.5, fontWeight: 600, color: COR.suave, letterSpacing: 0, marginTop: 2 },
