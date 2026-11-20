@@ -2,17 +2,17 @@
 // Módulo independente: não lê nem altera nenhum dado do Massi Pro atual.
 import React, { useEffect, useRef, useState } from "react";
 import { COR, E } from "./estilos.js";
+import { Avatar, useVoltarDoCelular } from "./ui.jsx";
+import { TelaAlunos, TelaDetalheAluno } from "./Alunos.jsx";
+import { TelaConvite, TelaMeuPersonal } from "./Convites.jsx";
+import { TelaTreinos, EditorTreino } from "./Construtor.jsx";
+import { TelaMeuTreino } from "./MeuTreino.jsx";
+import { listarModelos, salvarModelo, apagarModelo, enviarTreino, novoPrograma, programaDoTreino } from "./treinos.js";
+import { listarDoPersonal, listarDoAluno, normalizarCodigo, TAMANHO_CODIGO } from "./vinculos.js";
 import {
   observarLogin, carregarPerfil, cadastrar, entrar, sair, recuperarSenha,
   salvarPerfil, salvarProfissional, garantirProfissional, criarPerfil, reduzirFoto, mensagemDeErro,
 } from "./dados.js";
-
-function Avatar({ nome, foto, tamanho = 44 }) {
-  const inicial = (nome || "?").trim().charAt(0).toUpperCase() || "?";
-  const base = { width: tamanho, height: tamanho, borderRadius: "50%", flexShrink: 0, border: "2px solid " + COR.lima, overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(198,255,77,0.1)", color: COR.lima, fontWeight: 900, fontSize: tamanho * 0.42 };
-  if (foto) return <div style={base}><img src={foto} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} /></div>;
-  return <div style={base} aria-hidden="true">{inicial}</div>;
-}
 
 function Topo({ aoFechar, titulo, direita }) {
   return (
@@ -30,9 +30,9 @@ function Topo({ aoFechar, titulo, direita }) {
 // ---------------------------------------------------------------------------
 // Entrar e criar conta
 // ---------------------------------------------------------------------------
-function TelaAcesso({ onEntrar, onCadastrar, ocupado, erro, aviso, onRecuperar }) {
-  const [modo, setModo] = useState("entrar");
-  const [tipo, setTipo] = useState(null);
+function TelaAcesso({ onEntrar, onCadastrar, ocupado, erro, aviso, onRecuperar, comConvite }) {
+  const [modo, setModo] = useState(comConvite ? "cadastro" : "entrar");
+  const [tipo, setTipo] = useState(comConvite ? "aluno" : null);
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
@@ -65,7 +65,9 @@ function TelaAcesso({ onEntrar, onCadastrar, ocupado, erro, aviso, onRecuperar }
         <div style={E.suave}>Personal trainers montam e enviam treinos. Alunos recebem, executam e acompanham a evolução. Tudo integrado ao Massi Pro.</div>
       </div>
 
-      <div style={E.abas} role="tablist">
+      {comConvite && <div style={E.aviso} data-testid="aviso-convite">Você recebeu um convite de um personal. Crie sua conta de aluno (ou entre) para continuar.</div>}
+
+      <div style={{ ...E.abas, marginTop: comConvite ? 14 : 0 }} role="tablist">
         <button type="button" role="tab" aria-selected={modo === "entrar"} style={E.aba(modo === "entrar")} onClick={() => { setModo("entrar"); setErroLocal(""); }} data-testid="aba-entrar">Entrar</button>
         <button type="button" role="tab" aria-selected={modo === "cadastro"} style={E.aba(modo === "cadastro")} onClick={() => { setModo("cadastro"); setErroLocal(""); }} data-testid="aba-cadastro">Criar conta</button>
       </div>
@@ -239,53 +241,60 @@ function TelaPerfil({ perfil, aoSalvar, aoVoltar, aoSair }) {
 // ---------------------------------------------------------------------------
 // Painéis iniciais (as próximas fases preenchem estes cartões)
 // ---------------------------------------------------------------------------
-function PainelPersonal({ perfil }) {
-  const itens = [
-    ["👥", "Meus alunos", "Convites, vínculos e acompanhamento de cada aluno."],
-    ["📋", "Construtor de treinos", "Monte treinos A a E e envie direto para o aluno."],
-    ["💬", "Mensagens", "Converse com seus alunos dentro do app."],
-  ];
+function CartaoAcao({ icone, titulo, detalhe, onClick, testid }) {
+  return (
+    <button type="button" onClick={onClick} data-testid={testid} style={{ ...E.cartao, marginBottom: 0, textAlign: "left", cursor: "pointer", color: COR.texto, fontFamily: "inherit", width: "100%", borderColor: "rgba(198,255,77,0.45)" }}>
+      <div style={{ fontSize: 26 }} aria-hidden="true">{icone}</div>
+      <div style={{ fontWeight: 800, margin: "6px 0 4px" }}>{titulo}</div>
+      <div style={{ fontSize: 13, color: COR.suave }}>{detalhe}</div>
+      <div style={{ marginTop: 8, fontSize: 12.5, fontWeight: 800, color: COR.lima }}>Abrir ›</div>
+    </button>
+  );
+}
+function CartaoEmBreve({ icone, titulo, detalhe }) {
+  return (
+    <div style={E.emBreve}>
+      <div style={{ fontSize: 26 }} aria-hidden="true">{icone}</div>
+      <div style={{ fontWeight: 800, color: COR.texto, margin: "6px 0 4px" }}>{titulo}</div>
+      <div style={{ fontSize: 13 }}>{detalhe}</div>
+      <div style={{ marginTop: 8, fontSize: 11.5, fontWeight: 800, color: COR.lima }}>EM BREVE</div>
+    </div>
+  );
+}
+
+function PainelPersonal({ perfil, vinculos, aviso, onAbrirAlunos, onAbrirTreinos }) {
+  const ativos = vinculos.filter((v) => v.status === "ativo").length;
+  const pendentes = vinculos.filter((v) => v.status === "convite").length;
   return (
     <div data-testid="painel-personal">
       <div style={E.cartao}>
         <h1 style={E.h1}>Olá, {perfil.nome.split(" ")[0]}</h1>
-        <div style={E.suave}>Seu painel de Personal Trainer. Sua conta está pronta; os recursos abaixo chegam nas próximas etapas.</div>
+        <div style={E.suave}>Seu painel de Personal Trainer.</div>
+        {aviso && <div style={E.aviso} role="status" data-testid="aviso-painel">{aviso}</div>}
       </div>
       <div style={E.grade}>
-        {itens.map(([ic, t, d]) => (
-          <div key={t} style={E.emBreve}>
-            <div style={{ fontSize: 26 }} aria-hidden="true">{ic}</div>
-            <div style={{ fontWeight: 800, color: COR.texto, margin: "6px 0 4px" }}>{t}</div>
-            <div style={{ fontSize: 13 }}>{d}</div>
-            <div style={{ marginTop: 8, fontSize: 11.5, fontWeight: 800, color: COR.lima }}>EM BREVE</div>
-          </div>
-        ))}
+        <CartaoAcao testid="abrir-alunos" icone="👥" titulo="Meus alunos" detalhe={ativos + (ativos === 1 ? " aluno ativo" : " alunos ativos") + (pendentes ? " · " + pendentes + (pendentes === 1 ? " convite pendente" : " convites pendentes") : "")} onClick={onAbrirAlunos} />
+        <CartaoAcao testid="abrir-treinos" icone="📋" titulo="Construtor de treinos" detalhe="Monte treinos A a E, salve modelos e envie direto para o aluno." onClick={onAbrirTreinos} />
+        <CartaoEmBreve icone="💬" titulo="Mensagens" detalhe="Converse com seus alunos dentro do app." />
       </div>
     </div>
   );
 }
 
-function PainelAluno({ perfil }) {
-  const itens = [
-    ["🔑", "Código de convite", "Digite o código que seu personal enviou para se vincular."],
-    ["🏋️", "Treinos do meu personal", "Os treinos enviados aparecem na sua Rotina do Massi Pro."],
-    ["💬", "Mensagens", "Converse com seu personal dentro do app."],
-  ];
+function PainelAluno({ perfil, vinculos, aviso, onAbrirConvite, onAbrirMeuPersonal, onAbrirMeuTreino }) {
+  const ativos = vinculos.filter((v) => v.status === "ativo");
   return (
     <div data-testid="painel-aluno">
       <div style={E.cartao}>
         <h1 style={E.h1}>Olá, {perfil.nome.split(" ")[0]}</h1>
-        <div style={E.suave}>Seu painel de Aluno. Sua conta está pronta; os recursos abaixo chegam nas próximas etapas.</div>
+        <div style={E.suave}>Seu painel de Aluno.</div>
+        {aviso && <div style={E.aviso} role="status" data-testid="aviso-painel">{aviso}</div>}
       </div>
       <div style={E.grade}>
-        {itens.map(([ic, t, d]) => (
-          <div key={t} style={E.emBreve}>
-            <div style={{ fontSize: 26 }} aria-hidden="true">{ic}</div>
-            <div style={{ fontWeight: 800, color: COR.texto, margin: "6px 0 4px" }}>{t}</div>
-            <div style={{ fontSize: 13 }}>{d}</div>
-            <div style={{ marginTop: 8, fontSize: 11.5, fontWeight: 800, color: COR.lima }}>EM BREVE</div>
-          </div>
-        ))}
+        <CartaoAcao testid="abrir-convite" icone="🔑" titulo="Código de convite" detalhe="Digite o código que seu personal enviou para se vincular." onClick={onAbrirConvite} />
+        <CartaoAcao testid="abrir-meu-personal" icone="🤝" titulo="Meu personal" detalhe={ativos.length ? (ativos.length === 1 ? ativos[0].personalNome : ativos.length + " personais vinculados") : "Nenhum personal vinculado ainda."} onClick={onAbrirMeuPersonal} />
+        <CartaoAcao testid="abrir-meu-treino" icone="🏋️" titulo="Meu treino" detalhe="Veja o treino que seu personal enviou." onClick={onAbrirMeuTreino} />
+        <CartaoEmBreve icone="💬" titulo="Mensagens" detalhe="Converse com seu personal dentro do app." />
       </div>
     </div>
   );
@@ -294,7 +303,7 @@ function PainelAluno({ perfil }) {
 // ---------------------------------------------------------------------------
 // Componente principal
 // ---------------------------------------------------------------------------
-export default function PersonalMassi({ onFechar }) {
+export default function PersonalMassi({ onFechar, conviteInicial, biblioteca }) {
   const [fase, setFase] = useState("carregando"); // carregando | falha | acesso | perfilCarregando | completar | painel | perfil
   const [perfil, setPerfil] = useState(null);
   const [usuario, setUsuario] = useState(null);
@@ -303,6 +312,58 @@ export default function PersonalMassi({ onFechar }) {
   const [aviso, setAviso] = useState("");
   const cadastrandoRef = useRef(false);
   const vivoRef = useRef(true);
+  const [tela, setTela] = useState("inicio"); // inicio | alunos | detalheAluno | convite | meuPersonal
+  const [vinculos, setVinculos] = useState([]);
+  const [alunoAbertoId, setAlunoAbertoId] = useState(null);
+  const [avisoPainel, setAvisoPainel] = useState("");
+  const conviteRef = useRef(normalizarCodigo(conviteInicial)); // código recebido por link; some depois de aceito
+  const [modelos, setModelos] = useState([]);
+  const [editorInicial, setEditorInicial] = useState(null);
+  const [avisoTreinos, setAvisoTreinos] = useState("");
+  const [erroTreinos, setErroTreinos] = useState("");
+  const [ocupadoTreinos, setOcupadoTreinos] = useState(false);
+  const saidaEditorRef = useRef(null);
+
+  const carregarModelos = async () => {
+    if (!perfil) return;
+    try { const l = await listarModelos(perfil.uid); if (vivoRef.current) setModelos(l); } catch (e) { if (vivoRef.current) setErroTreinos(mensagemDeErro(e)); }
+  };
+  const abrirTreinos = () => { setAvisoTreinos(""); setErroTreinos(""); setTela("treinos"); carregarModelos(); };
+  const novoTreino = (vinculoId) => { setEditorInicial({ modeloId: null, programa: novoPrograma({ vinculoId: vinculoId || "" }) }); setTela("editor"); };
+  const editarTreinoEnviado = (treino, vinculoId) => { setEditorInicial({ modeloId: null, programa: programaDoTreino(treino, vinculoId) }); setTela("editor"); };
+  const abrirModelo = (m) => { setEditorInicial({ modeloId: m.categoria === "rascunho" ? m.id : null, programa: m.programa || novoPrograma() }); setTela("editor"); };
+  const executarTreinos = async (fn) => {
+    setErroTreinos(""); setOcupadoTreinos(true);
+    try { await fn(); } catch (e) { setErroTreinos(mensagemDeErro(e)); } finally { if (vivoRef.current) setOcupadoTreinos(false); }
+  };
+  const duplicarModelo = (m) => executarTreinos(async () => {
+    const prog = m.programa || novoPrograma();
+    await salvarModelo(perfil.uid, { id: null, categoria: m.categoria, programa: { ...prog, nome: (prog.nome || m.nome) + " (cópia)" } });
+    await carregarModelos();
+    setAvisoTreinos("Treino duplicado.");
+  });
+  const apagarDaLista = (m) => executarTreinos(async () => { await apagarModelo(perfil.uid, m.id); await carregarModelos(); setAvisoTreinos("Treino apagado da sua lista."); });
+  const salvarDoEditor = ({ id, categoria, programa }) => salvarModelo(perfil.uid, { id, categoria, programa });
+  const enviarDoEditor = async (programa, modeloId) => {
+    const vinc = vinculos.find((v) => v.id === programa.vinculoId && v.status === "ativo");
+    if (!vinc) throw new Error("vinculo-invalido");
+    await enviarTreino(perfil.uid, vinc, programa);
+    if (modeloId) { try { await apagarModelo(perfil.uid, modeloId); } catch (e) { /* o rascunho sobra, sem problema */ } }
+    await carregarModelos();
+    setAvisoTreinos("Treino enviado para " + vinc.alunoNome + ". Ele já pode ver em Meu treino.");
+    setTela("treinos");
+  };
+
+  const recarregarVinculos = async (p) => {
+    const quem = p || perfil;
+    if (!quem) return;
+    try {
+      const lista = quem.tipo === "personal" ? await listarDoPersonal(quem.uid) : await listarDoAluno(quem.uid);
+      if (vivoRef.current) setVinculos(lista);
+    } catch (e) {
+      if (vivoRef.current) setAvisoPainel("Não consegui atualizar a lista agora. " + mensagemDeErro(e));
+    }
+  };
 
   const lerPerfil = async (uid) => {
     setFase("perfilCarregando");
@@ -310,13 +371,20 @@ export default function PersonalMassi({ onFechar }) {
       const p = await carregarPerfil(uid);
       if (!vivoRef.current) return;
       if (!p) { setPerfil(null); setFase("completar"); return; }
+      let final = p;
       if (p.tipo === "personal" && !p.profissional) {
         try { await garantirProfissional(uid); } catch (e) { /* tenta de novo no próximo acesso */ }
         const p2 = await carregarPerfil(uid);
         if (!vivoRef.current) return;
-        setPerfil(p2 || p);
-      } else {
-        setPerfil(p);
+        final = p2 || p;
+      }
+      setPerfil(final);
+      setAvisoPainel("");
+      setTela("inicio");
+      recarregarVinculos(final);
+      if (conviteRef.current.length === TAMANHO_CODIGO) {
+        if (final.tipo === "aluno") setTela("convite");
+        else setAvisoPainel("Esse convite é para alunos. Para aceitar, entre com uma conta de aluno.");
       }
       setFase("painel");
     } catch (e) {
@@ -387,8 +455,20 @@ export default function PersonalMassi({ onFechar }) {
     try { await criarPerfil(usuario.uid, dados); await lerPerfil(usuario.uid); } catch (e) { setErro(mensagemDeErro(e)); } finally { if (vivoRef.current) setOcupado(false); }
   };
   const aoSair = async () => {
-    try { await sair(); } catch (e) { setErro(mensagemDeErro(e)); }
+    try { await sair(); setTela("inicio"); setVinculos([]); setAvisoPainel(""); } catch (e) { setErro(mensagemDeErro(e)); }
   };
+
+  // Voltar: perfil -> painel; telas internas -> painel; no painel fecha o Personal Massi.
+  const voltarInterno = () => {
+    if (fase === "perfil") { setFase("painel"); return; }
+    if (fase === "painel" && tela === "editor") {
+      if (saidaEditorRef.current && saidaEditorRef.current()) return; // o editor pergunta se quer salvar
+      setTela("treinos"); carregarModelos(); return;
+    }
+    if (fase === "painel" && tela !== "inicio") { setTela(tela === "detalheAluno" ? "alunos" : "inicio"); return; }
+    onFechar();
+  };
+  useVoltarDoCelular(fase === "perfil" || (fase === "painel" && tela !== "inicio"), fase + ":" + tela, voltarInterno);
   const tentarDeNovo = () => { setErro(""); setFase("carregando"); iniciarObservador(); };
 
   const direita = perfil && (fase === "painel" || fase === "perfil") ? (
@@ -400,7 +480,7 @@ export default function PersonalMassi({ onFechar }) {
   return (
     <div style={E.pagina} data-testid="personal-massi">
       <div style={E.miolo}>
-        <Topo aoFechar={onFechar} direita={direita} titulo={perfil ? (perfil.tipo === "personal" ? "Painel do Personal" : "Painel do Aluno") : undefined} />
+        <Topo aoFechar={voltarInterno} direita={direita} titulo={perfil ? (perfil.tipo === "personal" ? "Painel do Personal" : "Painel do Aluno") : undefined} />
 
         {(fase === "carregando" || fase === "perfilCarregando") && <div style={{ ...E.cartao, textAlign: "center", color: COR.suave }} data-testid="carregando">Carregando...</div>}
 
@@ -413,9 +493,38 @@ export default function PersonalMassi({ onFechar }) {
           </div>
         )}
 
-        {fase === "acesso" && <TelaAcesso onEntrar={aoEntrar} onCadastrar={aoCadastrar} onRecuperar={aoRecuperar} ocupado={ocupado} erro={erro} aviso={aviso} />}
+        {fase === "acesso" && <TelaAcesso onEntrar={aoEntrar} onCadastrar={aoCadastrar} onRecuperar={aoRecuperar} ocupado={ocupado} erro={erro} aviso={aviso} comConvite={conviteRef.current.length === TAMANHO_CODIGO} />}
         {fase === "completar" && <TelaCompletar onConcluir={aoCompletar} onSair={aoSair} ocupado={ocupado} erro={erro} />}
-        {fase === "painel" && perfil && (perfil.tipo === "personal" ? <PainelPersonal perfil={perfil} /> : <PainelAluno perfil={perfil} />)}
+        {fase === "painel" && perfil && perfil.tipo === "personal" && tela === "inicio" && (
+          <PainelPersonal perfil={perfil} vinculos={vinculos} aviso={avisoPainel} onAbrirAlunos={() => { setAvisoPainel(""); setTela("alunos"); }} onAbrirTreinos={abrirTreinos} />
+        )}
+        {fase === "painel" && perfil && perfil.tipo === "personal" && tela === "alunos" && (
+          <TelaAlunos perfil={perfil} vinculos={vinculos} onRecarregar={() => recarregarVinculos()} onAbrirAluno={(id) => { setAlunoAbertoId(id); setTela("detalheAluno"); }} />
+        )}
+        {fase === "painel" && perfil && perfil.tipo === "personal" && tela === "detalheAluno" && (
+          <TelaDetalheAluno vinculo={vinculos.find((v) => v.id === alunoAbertoId)} perfil={perfil} onRecarregar={() => recarregarVinculos()} onVoltar={() => setTela("alunos")} onMontarTreino={(id) => novoTreino(id)} onEditarTreino={(t, id) => editarTreinoEnviado(t, id)} />
+        )}
+        {fase === "painel" && perfil && perfil.tipo === "personal" && tela === "treinos" && (
+          <TelaTreinos modelos={modelos} alunos={vinculos.filter((v) => v.status === "ativo")} aviso={avisoTreinos} erro={erroTreinos} ocupado={ocupadoTreinos} onNovo={() => novoTreino("")} onAbrir={abrirModelo} onDuplicar={duplicarModelo} onApagar={apagarDaLista} />
+        )}
+        {fase === "painel" && perfil && perfil.tipo === "personal" && tela === "editor" && editorInicial && (
+          <EditorTreino inicial={editorInicial} alunos={vinculos.filter((v) => v.status === "ativo")} biblioteca={biblioteca} aoSalvar={salvarDoEditor} aoEnviar={enviarDoEditor} aoSair={() => { setTela("treinos"); carregarModelos(); }} registrarSaida={(fn) => { saidaEditorRef.current = fn; }} />
+        )}
+        {fase === "painel" && perfil && perfil.tipo === "aluno" && tela === "meuTreino" && (
+          <TelaMeuTreino vinculos={vinculos} biblioteca={biblioteca} />
+        )}
+        {fase === "painel" && perfil && perfil.tipo === "aluno" && tela === "inicio" && (
+          <PainelAluno perfil={perfil} vinculos={vinculos} aviso={avisoPainel} onAbrirConvite={() => { setAvisoPainel(""); setTela("convite"); }} onAbrirMeuPersonal={() => { setAvisoPainel(""); setTela("meuPersonal"); }} onAbrirMeuTreino={() => setTela("meuTreino")} />
+        )}
+        {fase === "painel" && perfil && perfil.tipo === "aluno" && tela === "convite" && (
+          <TelaConvite perfil={perfil} codigoInicial={conviteRef.current} onConcluir={async () => { conviteRef.current = ""; await recarregarVinculos(); setAvisoPainel("Vínculo criado. Seu personal já pode enviar treinos."); setTela("meuPersonal"); }} />
+        )}
+        {fase === "painel" && perfil && perfil.tipo === "aluno" && tela === "meuPersonal" && (
+          <>
+            {avisoPainel && <div style={{ ...E.aviso, marginTop: 0, marginBottom: 14 }} role="status" data-testid="aviso-painel">{avisoPainel}</div>}
+            <TelaMeuPersonal perfil={perfil} vinculos={vinculos} onRecarregar={() => recarregarVinculos()} onVoltar={() => setTela("inicio")} />
+          </>
+        )}
         {fase === "perfil" && perfil && (
           <TelaPerfil perfil={perfil} aoSalvar={() => lerPerfilSilencioso(perfil.uid, setPerfil)} aoVoltar={() => setFase("painel")} aoSair={aoSair} />
         )}
