@@ -5092,6 +5092,9 @@ function LetreiroTopo() {
   );
 }
 
+// Biblioteca do Massi Pro entregue ao Personal Massi (reaproveita os exercícios, guias e vídeos que já existem).
+const BIBLIOTECA_PERSONAL = { LIBRARY, GUIA_EXECUCAO, getVideoUrl };
+
 function AppMassiPro({ onSolicitarRemount }) {
   const [rotina, setRotina] = useState(() =>
     DIAS_SEMANA.map((dia, i) =>
@@ -5326,6 +5329,18 @@ function AppMassiPro({ onSolicitarRemount }) {
     empilhar(() => { fechouPersonalPeloVoltar.current = true; setPersonalAberto(false); });
     return () => { if (!fechouPersonalPeloVoltar.current) removerTopo(); fechouPersonalPeloVoltar.current = false; };
   }, [personalAberto]);
+  const [conviteInicial, setConviteInicial] = useState("");
+  useEffect(() => {
+    // Link de convite do Personal Massi (?convite=CODIGO): abre direto na tela do aluno.
+    try {
+      const c = new URLSearchParams(window.location.search).get("convite");
+      if (c) {
+        setConviteInicial(String(c).slice(0, 32));
+        setPersonalAberto(true);
+        window.history.replaceState(null, "", window.location.pathname + window.location.hash);
+      }
+    } catch (e) { /* sem link de convite */ }
+  }, []);
   const [onboardingPendente, setOnboardingPendente] = useState(false);
   const [mostrarBoraComecar, setMostrarBoraComecar] = useState(false);
   const tabRowRef = useRef(null);
@@ -8006,7 +8021,7 @@ function AppMassiPro({ onSolicitarRemount }) {
           {painel === "suplementos" && <GuiaSuplementos estilos={{ card: styles.card, label: styles.tituloDestaque, input: styles.avalInput }} tr={tr} />}
         </PainelFerramenta>
       )}
-      {personalAberto && <PersonalMassiEntrada onFechar={() => setPersonalAberto(false)} />}
+      {personalAberto && <PersonalMassiEntrada onFechar={() => { setPersonalAberto(false); setConviteInicial(""); }} conviteInicial={conviteInicial} biblioteca={BIBLIOTECA_PERSONAL} />}
       {!splashVisivel && (activeTab === "inicio" || activeTab === "rotina") && (
         <div data-testid="versao-app" style={{ position: "fixed", left: 8, bottom: "calc(72px + env(safe-area-inset-bottom, 0px))", zIndex: 40, fontSize: 10, opacity: 0.5, color: "#F2F4F6", pointerEvents: "none", textShadow: "0 1px 2px rgba(0,0,0,0.8)" }}>{ETIQUETA_BUILD}</div>
       )}
