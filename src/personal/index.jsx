@@ -26,11 +26,11 @@ class Limite extends React.Component {
   }
 }
 
-export default function PersonalMassiEntrada({ onFechar }) {
+export default function PersonalMassiEntrada({ onFechar, conviteInicial, biblioteca }) {
   return (
     <Limite onFechar={onFechar}>
       <React.Suspense fallback={<div style={caixa}>Carregando...</div>}>
-        <PersonalMassi onFechar={onFechar} />
+        <PersonalMassi onFechar={onFechar} conviteInicial={conviteInicial} biblioteca={biblioteca} />
       </React.Suspense>
     </Limite>
   );
