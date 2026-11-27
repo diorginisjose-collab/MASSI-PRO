@@ -5,6 +5,8 @@ import { Avatar, Etiqueta, BotaoPerigo, textoConsentimento } from "./ui.jsx";
 import { criarConvite, cancelarConvite, encerrarVinculo, removerEncerrado, formatarCodigo, linkDoConvite, dataCurta } from "./vinculos.js";
 import { mensagemDeErro } from "./dados.js";
 import { listarTreinos, treinoAtual, dataBR } from "./treinos.js";
+import { listarConclusoes, lerResumo } from "./conclusao.js";
+import { ListaConclusoes } from "./Historico.jsx";
 
 async function copiar(texto) {
   try {
@@ -51,7 +53,7 @@ function CartaoConvite({ codigo, nomePersonal, onCancelar, ocupado, destaque }) 
   );
 }
 
-export function TelaAlunos({ perfil, vinculos, onRecarregar, onAbrirAluno }) {
+export function TelaAlunos({ perfil, vinculos, resumos, onRecarregar, onAbrirAluno }) {
   const [novo, setNovo] = useState(null);
   const [ocupado, setOcupado] = useState(false);
   const [erro, setErro] = useState("");
@@ -97,6 +99,7 @@ export function TelaAlunos({ perfil, vinculos, onRecarregar, onAbrirAluno }) {
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ fontWeight: 800, fontSize: 15.5 }}>{v.alunoNome}</div>
               <div style={E.suave}>Aluno desde {dataCurta(v.aceitoEm)} · {textoConsentimento(v.consent)}</div>
+              {resumos && resumos[v.id] && resumos[v.id].alertaDesconforto && <div style={{ marginTop: 6 }} data-testid={"alerta-" + v.id}><Etiqueta texto="Atenção: desconforto relatado" cor="aviso" /></div>}
             </div>
             <span aria-hidden="true" style={{ color: COR.suave, fontSize: 20 }}>›</span>
           </button>
@@ -131,6 +134,17 @@ export function TelaDetalheAluno({ vinculo, perfil, onRecarregar, onVoltar, onMo
     return () => { vivo = false; };
   }, [vinculo && vinculo.id]);
   const atual = treinos ? treinoAtual(treinos) : null;
+  const compartilha = !!(vinculo && vinculo.consent && vinculo.consent.historico);
+  const [conclusoes, setConclusoes] = useState(null);
+  const [resumo, setResumo] = useState(null);
+  useEffect(() => {
+    let vivo = true;
+    if (vinculo && vinculo.status === "ativo" && compartilha) {
+      listarConclusoes(vinculo.id, 8).then((l) => { if (vivo) setConclusoes(l); }).catch(() => { if (vivo) setConclusoes([]); });
+      lerResumo(vinculo.id).then((r) => { if (vivo) setResumo(r); }).catch(() => {});
+    }
+    return () => { vivo = false; };
+  }, [vinculo && vinculo.id, compartilha]);
   if (!vinculo) return <div style={E.emBreve}>Aluno não encontrado.</div>;
   const encerrar = async () => {
     setErro(""); setOcupado(true);
@@ -170,7 +184,25 @@ export function TelaDetalheAluno({ vinculo, perfil, onRecarregar, onVoltar, onMo
         )}
         <button type="button" style={E.btn} onClick={() => onMontarTreino(vinculo.id)} data-testid="btn-montar-treino">Montar novo treino para {vinculo.alunoNome.split(" ")[0]}</button>
       </div>
-      <div style={E.emBreve}>Frequência, evolução de cargas, metas e observações chegam nas próximas etapas.</div>
+      {resumo && resumo.alertaDesconforto && (
+        <div style={E.erro} role="alert" data-testid="alerta-ficha">
+          Atenção: no último treino com check-in, {vinculo.alunoNome.split(" ")[0]} relatou desconforto{resumo.alertaTexto ? ": " + resumo.alertaTexto : ""}{resumo.alertaEm ? " (" + dataBR(resumo.alertaEm) + ")" : ""}. Considere conversar com ele antes do próximo treino. O app não altera o treino sozinho.
+        </div>
+      )}
+      <div style={{ ...E.cartao, marginTop: resumo && resumo.alertaDesconforto ? 12 : 0 }} data-testid="treinos-concluidos">
+        <div style={E.h2}>Últimos treinos concluídos</div>
+        {!compartilha ? (
+          <div style={E.suave} data-testid="historico-nao-compartilhado">Este aluno não compartilha o histórico de treinos com você.</div>
+        ) : conclusoes === null ? (
+          <div style={E.suave}>Carregando...</div>
+        ) : (
+          <div>
+            {resumo && <div style={{ ...E.suave, marginBottom: 8 }} data-testid="resumo-ficha">{resumo.treinosSemana || 0} {(resumo.treinosSemana || 0) === 1 ? "treino" : "treinos"} nos últimos 7 dias{resumo.metaSemanal ? " (meta " + resumo.metaSemanal + ", adesão " + resumo.aderenciaPct + "%)" : ""} · última atividade {dataBR(resumo.ultimaAtividade)}</div>}
+            {conclusoes.length === 0 ? <div style={E.suave} data-testid="sem-concluidos">Nenhum treino concluído ainda.</div> : <ListaConclusoes itens={conclusoes} />}
+          </div>
+        )}
+      </div>
+      <div style={E.emBreve}>Evolução de cargas, metas e observações chegam nas próximas etapas.</div>
       <div style={{ marginTop: 14 }}>
         <BotaoPerigo testid="btn-encerrar" rotulo="Encerrar vínculo" aviso="Tem certeza? Você perde o acesso aos dados deste aluno na hora." confirmar="Encerrar" aoConfirmar={encerrar} ocupado={ocupado} />
         {erro && <div style={E.erro} role="alert">{erro}</div>}
