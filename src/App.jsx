@@ -13,7 +13,7 @@ import { identificarAparelho } from "./ia/clienteIA.js";
 import { AssistenteIA, FotoAlimentos, DiarioAlimentar, RotinaInteligente, CartaoRotinaInteligente, lerEstadoRI, montarContextoUsuario } from "./ia/index.js";
 import { CalculadoraMassiCard } from "./calculadora/index.js";
 import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from "recharts";
-import PersonalMassiEntrada from "./personal/index.jsx";
+import PersonalMassiEntrada, { CheckinEntrada } from "./personal/index.jsx";
 import { HomeReativarIA, HomeCabecalho, HomeMetaSemana, HomeResumoDia, HomeAcessos, HomeSemana, HomeRecuperacao, HomeMotivacao, passosDaSemana, lerMetaPassos, kcalDeHoje } from "./home/HomePremium.jsx";
 
 // ---------------------------------------------------------------
@@ -5330,6 +5330,12 @@ function AppMassiPro({ onSolicitarRemount }) {
     return () => { if (!fechouPersonalPeloVoltar.current) removerTopo(); fechouPersonalPeloVoltar.current = false; };
   }, [personalAberto]);
   const [conviteInicial, setConviteInicial] = useState("");
+  // Começar um treino enviado pelo personal: usa o mesmo treino guiado da Rotina (cargas, histórico e Progresso).
+  const iniciarTreinoPersonal = (entrada) => {
+    setPersonalAberto(false);
+    marcarInicioTreino(entrada.dia);
+    setGuiadoAtivo(entrada);
+  };
   useEffect(() => {
     // Link de convite do Personal Massi (?convite=CODIGO): abre direto na tela do aluno.
     try {
@@ -5761,6 +5767,7 @@ function AppMassiPro({ onSolicitarRemount }) {
   const [buscaExercicio, setBuscaExercicio] = useState("");
   const [avisoSemTreinar, setAvisoSemTreinar] = useState(null);
   const [guiadoAtivo, setGuiadoAtivo] = useState(null); // dia inteiro (entry) em modo guiado
+  const [checkinPersonal, setCheckinPersonal] = useState(null); // check-in depois de concluir um treino do Personal Massi
   const [arLivreAberto, setArLivreAberto] = useState(false); // modal do treino ao ar livre (corrida/caminhada)
   const [inicioTreinoPorDia, setInicioTreinoPorDia] = useState({}); // { "Segunda": { data: "2026-09-13", timestamp: 172839xxx } }
   const [progressao, setProgressao] = useState({}); // { [nomeExercicio]: contagem }
@@ -6672,6 +6679,7 @@ function AppMassiPro({ onSolicitarRemount }) {
       cargasExercicios: (diaEntry.exercicios || []).map((e) => ({ n: e && e.name, c: parseFloat(String((e && e.carga) || "").replace(",", ".")) || 0, s: e && e.sets, r: e && e.reps })).filter((x) => x.n),
     };
     registro.duracaoMin = estimarDuracaoMinPorRegistro(registro);
+    if (diaEntry.personalRef) registro.personal = diaEntry.personalRef; // treino enviado pelo Personal Massi (mesmo histórico, sem duplicar)
     const inicioHoje = inicioTreinoPorDia[diaEntry.dia];
     const hoje = registro.data;
     if (inicioHoje && inicioHoje.data === hoje) {
@@ -6694,6 +6702,7 @@ function AppMassiPro({ onSolicitarRemount }) {
     } else {
       setMensagemSucesso("Treino concluído, mas não consegui salvar no histórico agora. Tentei algumas vezes — evita fechar o app até conseguir se puder.");
     }
+    if (diaEntry.personalRef) setCheckinPersonal({ registro, entry: diaEntry }); // abre o "Como foi seu treino?"
 
     // Progressão automática de carga: soma 1 na contagem de cada exercício desse treino
     const novaProgressao = { ...progressao };
@@ -8021,7 +8030,8 @@ function AppMassiPro({ onSolicitarRemount }) {
           {painel === "suplementos" && <GuiaSuplementos estilos={{ card: styles.card, label: styles.tituloDestaque, input: styles.avalInput }} tr={tr} />}
         </PainelFerramenta>
       )}
-      {personalAberto && <PersonalMassiEntrada onFechar={() => { setPersonalAberto(false); setConviteInicial(""); }} conviteInicial={conviteInicial} biblioteca={BIBLIOTECA_PERSONAL} />}
+      {personalAberto && <PersonalMassiEntrada onFechar={() => { setPersonalAberto(false); setConviteInicial(""); }} conviteInicial={conviteInicial} biblioteca={BIBLIOTECA_PERSONAL} aoComecarTreino={iniciarTreinoPersonal} />}
+      {checkinPersonal && <CheckinEntrada dados={checkinPersonal} onFechar={() => setCheckinPersonal(null)} />}
       {!splashVisivel && (activeTab === "inicio" || activeTab === "rotina") && (
         <div data-testid="versao-app" style={{ position: "fixed", left: 8, bottom: "calc(72px + env(safe-area-inset-bottom, 0px))", zIndex: 40, fontSize: 10, opacity: 0.5, color: "#F2F4F6", pointerEvents: "none", textShadow: "0 1px 2px rgba(0,0,0,0.8)" }}>{ETIQUETA_BUILD}</div>
       )}
