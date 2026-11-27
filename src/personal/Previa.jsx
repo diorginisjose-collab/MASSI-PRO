@@ -24,7 +24,7 @@ export function GuiaDoExercicio({ nome, biblioteca }) {
   );
 }
 
-export function PreviaPrograma({ programa, biblioteca, rodape }) {
+export function PreviaPrograma({ programa, biblioteca, rodape, acaoDia }) {
   return (
     <div data-testid="previa-programa">
       <div style={E.cartao}>
@@ -43,6 +43,7 @@ export function PreviaPrograma({ programa, biblioteca, rodape }) {
             <span style={{ width: 34, height: 34, borderRadius: 10, background: "linear-gradient(135deg,#B7E04A,#7FAE1F)", color: "#10150A", fontWeight: 900, display: "flex", alignItems: "center", justifyContent: "center" }}>{d.letra}</span>
             <div style={{ fontSize: 16, fontWeight: 800 }}>{d.titulo || "Treino " + d.letra}</div>
           </div>
+          {acaoDia && <div style={{ marginBottom: 8 }}>{acaoDia(d)}</div>}
           {d.grupos && d.grupos.length > 0 && <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 8 }}>{d.grupos.map((g) => <Etiqueta key={g} texto={g} cor="suave" />)}</div>}
           {(d.exercicios || []).map((e, i) => (
             <div key={e.id || i} style={{ padding: "10px 0", borderTop: "1px solid " + COR.borda }}>
