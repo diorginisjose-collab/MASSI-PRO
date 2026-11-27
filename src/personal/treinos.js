@@ -21,8 +21,8 @@ export function gerarId() {
   for (let i = 0; i < 10; i++) s += alfabeto[bytes[i] % alfabeto.length];
   return s;
 }
-export function hojeISO() {
-  const d = new Date();
+export function hojeISO(data) {
+  const d = data || new Date();
   return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
 }
 export function dataBR(iso) {
@@ -152,4 +152,35 @@ export async function enviarTreino(uid, vinculo, programa) {
 export function programaDoTreino(treino, vinculoId) {
   const c = treino.conteudo || {};
   return novoPrograma({ nome: treino.titulo || "", vinculoId, frequencia: c.frequencia || 3, inicio: treino.inicio || hojeISO(), validade: treino.validade || "", orientacoes: c.orientacoes || "", dias: JSON.parse(JSON.stringify(c.dias || [])) });
+}
+
+// Transforma um dia do treino do personal na "entrada de treino" que o Massi Pro já sabe executar
+// (treino guiado, cargas por série, histórico e Progresso). Nada é duplicado: é o mesmo fluxo de sempre.
+export function entradaDoDia(treino, dia, vinculo) {
+  const c = treino.conteudo || {};
+  return {
+    dia: "Treino " + dia.letra + " (Personal)",
+    foco: dia.titulo || "Treino " + dia.letra,
+    cardio: null,
+    origem: "personal",
+    personalRef: {
+      vinculoId: vinculo.id,
+      treinoId: treino.id,
+      versao: treino.versao || 1,
+      letra: dia.letra,
+      titulo: treino.titulo || "",
+      personalNome: vinculo.personalNome || "",
+      frequencia: c.frequencia || 0,
+    },
+    exercicios: (dia.exercicios || []).map((e) => ({
+      id: e.id,
+      name: e.nome,
+      sets: Number(e.series) || 3,
+      reps: String(e.reps || "10"),
+      carga: e.carga || "",
+      cargas: [],
+      descanso: Number(e.descanso) || 60,
+      concluido: false,
+    })),
+  };
 }
