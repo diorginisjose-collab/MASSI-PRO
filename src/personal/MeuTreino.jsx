@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { COR, E } from "./estilos.js";
 import { Etiqueta } from "./ui.jsx";
 import { PreviaPrograma } from "./Previa.jsx";
-import { listarTreinos, treinoAtual, dataBR } from "./treinos.js";
+import { listarTreinos, treinoAtual, entradaDoDia } from "./treinos.js";
 import { dataCurta } from "./vinculos.js";
 import { mensagemDeErro } from "./dados.js";
 
@@ -12,7 +12,7 @@ function programaDoDocumento(t) {
   return { nome: t.titulo, frequencia: c.frequencia || 3, inicio: t.inicio || "", validade: t.validade || "", orientacoes: c.orientacoes || "", dias: c.dias || [] };
 }
 
-export function TelaMeuTreino({ vinculos, biblioteca }) {
+export function TelaMeuTreino({ vinculos, biblioteca, aoComecarTreino }) {
   const ativos = vinculos.filter((v) => v.status === "ativo");
   const [dados, setDados] = useState({}); // { vinculoId: [treinos] }
   const [carregando, setCarregando] = useState(true);
@@ -49,7 +49,7 @@ export function TelaMeuTreino({ vinculos, biblioteca }) {
             {!atual ? (
               <div style={E.emBreve} data-testid="sem-treino">Seu personal ainda não enviou um treino.</div>
             ) : (
-              <PreviaPrograma programa={programaDoDocumento(atual)} biblioteca={biblioteca} rodape={<div style={{ marginTop: 10 }}><Etiqueta texto={"Versão " + atual.versao} /> <span style={E.suave}>enviada em {dataCurta(atual.criadoEm)}</span></div>} />
+              <PreviaPrograma programa={programaDoDocumento(atual)} biblioteca={biblioteca} acaoDia={aoComecarTreino ? (d) => (d.exercicios && d.exercicios.length ? <button type="button" style={{ ...E.btn, marginTop: 4, minHeight: 52, fontSize: 17 }} onClick={() => aoComecarTreino(entradaDoDia(atual, d, v))} data-testid={"comecar-" + d.letra}>Começar treino {d.letra}</button> : null) : undefined} rodape={<div style={{ marginTop: 10 }}><Etiqueta texto={"Versão " + atual.versao} /> <span style={E.suave}>enviada em {dataCurta(atual.criadoEm)}</span></div>} />
             )}
             {antigas.length > 0 && (
               <div>
