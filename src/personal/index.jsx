@@ -3,6 +3,7 @@
 import React from "react";
 
 const PersonalMassi = React.lazy(() => import("./PersonalMassi.jsx"));
+const CheckinTreino = React.lazy(() => import("./CheckinTreino.jsx"));
 
 const caixa = { position: "fixed", top: 0, right: 0, bottom: 0, left: 0, zIndex: 600, background: "#0F1417", color: "#EAF0F2", display: "flex", alignItems: "center", justifyContent: "center", padding: 24, textAlign: "center", fontFamily: "inherit" };
 
@@ -26,11 +27,22 @@ class Limite extends React.Component {
   }
 }
 
-export default function PersonalMassiEntrada({ onFechar, conviteInicial, biblioteca }) {
+export default function PersonalMassiEntrada({ onFechar, conviteInicial, biblioteca, aoComecarTreino }) {
   return (
     <Limite onFechar={onFechar}>
       <React.Suspense fallback={<div style={caixa}>Carregando...</div>}>
-        <PersonalMassi onFechar={onFechar} conviteInicial={conviteInicial} biblioteca={biblioteca} />
+        <PersonalMassi onFechar={onFechar} conviteInicial={conviteInicial} biblioteca={biblioteca} aoComecarTreino={aoComecarTreino} />
+      </React.Suspense>
+    </Limite>
+  );
+}
+
+// Check-in "Como foi seu treino?": aparece depois que o aluno conclui um treino enviado pelo personal.
+export function CheckinEntrada({ dados, onFechar }) {
+  return (
+    <Limite onFechar={onFechar}>
+      <React.Suspense fallback={<div style={caixa}>Carregando...</div>}>
+        <CheckinTreino dados={dados} aoFechar={onFechar} />
       </React.Suspense>
     </Limite>
   );
