@@ -1,9 +1,11 @@
+// PERSONAL MASSI - fase 6 (ajuste): "Minha semana" no topo de cada personal.
 // PERSONAL MASSI - fase 5: lista de treinos concluídos (usada pelo aluno e na ficha do aluno para o personal).
 import React, { useEffect, useState } from "react";
 import { COR, E } from "./estilos.js";
 import { Etiqueta } from "./ui.jsx";
-import { listarConclusoes, ROTULO_DIFICULDADE, ROTULO_COMPLETOU } from "./conclusao.js";
-import { dataBR } from "./treinos.js";
+import { listarConclusoes, lerResumo, ROTULO_DIFICULDADE, ROTULO_COMPLETOU } from "./conclusao.js";
+import { dataBR, hojeISO } from "./treinos.js";
+import { resumirSemana } from "./semana.js";
 import { mensagemDeErro } from "./dados.js";
 
 export function ListaConclusoes({ itens }) {
@@ -36,14 +38,45 @@ export function ListaConclusoes({ itens }) {
   );
 }
 
+
+export function CartaoMinhaSemana({ vinculo, conclusoes, meta }) {
+  const compartilha = !!(vinculo.consent && vinculo.consent.historico);
+  if (!compartilha) {
+    return <div style={E.emBreve} data-testid={"semana-privada-" + vinculo.id}>Você não compartilha o histórico com este personal, então o resumo da semana não é enviado nem calculado aqui. Seu histórico completo continua na aba Progresso.</div>;
+  }
+  const r = resumirSemana(conclusoes, meta, hojeISO());
+  return (
+    <div style={E.cartao} data-testid={"minha-semana-" + vinculo.id}>
+      <div style={E.h2}>Minha semana (últimos 7 dias)</div>
+      <div style={{ fontSize: 15, marginTop: 6 }} data-testid="semana-treinos">
+        <strong>{r.treinos}</strong> {r.treinos === 1 ? "treino concluído" : "treinos concluídos"}{r.meta ? " de " + r.meta + " da meta (" + r.aderenciaPct + "%)" : ""}
+      </div>
+      <div style={{ ...E.suave, marginTop: 6 }}>
+        {r.minutos ? r.minutos + " min de treino · " : ""}
+        {r.dificuldadeMedia !== null ? "Dificuldade média " + String(r.dificuldadeMedia).replace(".", ",") + " de 5 (" + r.respostasCheckin + (r.respostasCheckin === 1 ? " resposta" : " respostas") + ")" : "Sem respostas de check-in na semana"}
+        {r.desconfortos ? " · " + r.desconfortos + (r.desconfortos === 1 ? " treino com desconforto" : " treinos com desconforto") : ""}
+      </div>
+      {r.treinos === 0 && <div style={{ ...E.suave, marginTop: 6 }}>Nenhum treino do seu personal concluído nesta semana.</div>}
+    </div>
+  );
+}
+
 export function TelaHistoricoAluno({ vinculos }) {
   const ativos = vinculos.filter((v) => v.status === "ativo");
   const [dados, setDados] = useState({});
+  const [metas, setMetas] = useState({});
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState("");
   const carregar = async () => {
     setErro(""); setCarregando(true);
-    try { const acc = {}; for (const v of ativos) acc[v.id] = await listarConclusoes(v.id, 30); setDados(acc); } catch (e) { setErro(mensagemDeErro(e)); } finally { setCarregando(false); }
+    try {
+      const acc = {}; const ms = {};
+      for (const v of ativos) {
+        acc[v.id] = await listarConclusoes(v.id, 30);
+        try { const r = await lerResumo(v.id); ms[v.id] = r && r.metaSemanal ? r.metaSemanal : 0; } catch (e) { ms[v.id] = 0; }
+      }
+      setDados(acc); setMetas(ms);
+    } catch (e) { setErro(mensagemDeErro(e)); } finally { setCarregando(false); }
   };
   useEffect(() => { carregar(); }, []);
   return (
@@ -59,6 +92,7 @@ export function TelaHistoricoAluno({ vinculos }) {
       {!carregando && ativos.map((v) => (
         <div key={v.id}>
           <div style={{ ...E.h2, margin: "6px 2px 8px" }}>Personal {v.personalNome}</div>
+          <CartaoMinhaSemana vinculo={v} conclusoes={dados[v.id] || []} meta={metas[v.id]} />
           {(dados[v.id] || []).length === 0 ? <div style={E.emBreve} data-testid="sem-conclusoes">Nenhum treino enviado ao seu personal ainda.</div> : <ListaConclusoes itens={dados[v.id]} />}
         </div>
       ))}
