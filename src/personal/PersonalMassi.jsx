@@ -1,3 +1,4 @@
+// PERSONAL MASSI - fase 6 (ajuste): mensagens, não lidas e Central de Acompanhamento.
 // PERSONAL MASSI - fase 2: cadastro, login, perfil e painéis iniciais.
 // Módulo independente: não lê nem altera nenhum dado do Massi Pro atual.
 import React, { useEffect, useRef, useState } from "react";
@@ -8,6 +9,9 @@ import { TelaConvite, TelaMeuPersonal } from "./Convites.jsx";
 import { TelaTreinos, EditorTreino } from "./Construtor.jsx";
 import { TelaMeuTreino } from "./MeuTreino.jsx";
 import { TelaHistoricoAluno } from "./Historico.jsx";
+import { TelaMensagens } from "./Mensagens.jsx";
+import { TelaCentral } from "./Central.jsx";
+import { contarNaoLidasDeVarios } from "./mensagens.js";
 import { listarResumos, esvaziarFila } from "./conclusao.js";
 import { listarModelos, salvarModelo, apagarModelo, enviarTreino, novoPrograma, programaDoTreino } from "./treinos.js";
 import { listarDoPersonal, listarDoAluno, normalizarCodigo, TAMANHO_CODIGO } from "./vinculos.js";
@@ -243,6 +247,8 @@ function TelaPerfil({ perfil, aoSalvar, aoVoltar, aoSair }) {
 // ---------------------------------------------------------------------------
 // Painéis iniciais (as próximas fases preenchem estes cartões)
 // ---------------------------------------------------------------------------
+function temNova(m) { return !!m && Object.keys(m).some((k) => m[k]); }
+
 function CartaoAcao({ icone, titulo, detalhe, onClick, testid }) {
   return (
     <button type="button" onClick={onClick} data-testid={testid} style={{ ...E.cartao, marginBottom: 0, textAlign: "left", cursor: "pointer", color: COR.texto, fontFamily: "inherit", width: "100%", borderColor: "rgba(198,255,77,0.45)" }}>
@@ -264,7 +270,7 @@ function CartaoEmBreve({ icone, titulo, detalhe }) {
   );
 }
 
-function PainelPersonal({ perfil, vinculos, aviso, onAbrirAlunos, onAbrirTreinos }) {
+function PainelPersonal({ perfil, vinculos, aviso, naoLidas, onAbrirAlunos, onAbrirTreinos, onAbrirCentral, onAbrirMensagens }) {
   const ativos = vinculos.filter((v) => v.status === "ativo").length;
   const pendentes = vinculos.filter((v) => v.status === "convite").length;
   return (
@@ -277,13 +283,14 @@ function PainelPersonal({ perfil, vinculos, aviso, onAbrirAlunos, onAbrirTreinos
       <div style={E.grade}>
         <CartaoAcao testid="abrir-alunos" icone="👥" titulo="Meus alunos" detalhe={ativos + (ativos === 1 ? " aluno ativo" : " alunos ativos") + (pendentes ? " · " + pendentes + (pendentes === 1 ? " convite pendente" : " convites pendentes") : "")} onClick={onAbrirAlunos} />
         <CartaoAcao testid="abrir-treinos" icone="📋" titulo="Construtor de treinos" detalhe="Monte treinos A a E, salve modelos e envie direto para o aluno." onClick={onAbrirTreinos} />
-        <CartaoEmBreve icone="💬" titulo="Mensagens" detalhe="Converse com seus alunos dentro do app." />
+        <CartaoAcao testid="abrir-central" icone="📈" titulo="Central de Acompanhamento" detalhe="Quem está treinando, quem está pendente e quem ainda não tem registros." onClick={onAbrirCentral} />
+        <CartaoAcao testid="abrir-mensagens" icone="💬" titulo={"Mensagens" + (temNova(naoLidas) ? " · nova" : "")} detalhe="Converse com seus alunos dentro do app." onClick={onAbrirMensagens} />
       </div>
     </div>
   );
 }
 
-function PainelAluno({ perfil, vinculos, aviso, onAbrirConvite, onAbrirMeuPersonal, onAbrirMeuTreino, onAbrirHistorico }) {
+function PainelAluno({ perfil, vinculos, aviso, naoLidas, onAbrirConvite, onAbrirMeuPersonal, onAbrirMeuTreino, onAbrirHistorico, onAbrirMensagens }) {
   const ativos = vinculos.filter((v) => v.status === "ativo");
   return (
     <div data-testid="painel-aluno">
@@ -297,7 +304,7 @@ function PainelAluno({ perfil, vinculos, aviso, onAbrirConvite, onAbrirMeuPerson
         <CartaoAcao testid="abrir-meu-personal" icone="🤝" titulo="Meu personal" detalhe={ativos.length ? (ativos.length === 1 ? ativos[0].personalNome : ativos.length + " personais vinculados") : "Nenhum personal vinculado ainda."} onClick={onAbrirMeuPersonal} />
         <CartaoAcao testid="abrir-meu-treino" icone="🏋️" titulo="Meu treino" detalhe="Veja o treino que seu personal enviou." onClick={onAbrirMeuTreino} />
         <CartaoAcao testid="abrir-historico" icone="📊" titulo="Meu histórico" detalhe="Treinos concluídos e o que você respondeu no check-in." onClick={onAbrirHistorico} />
-        <CartaoEmBreve icone="💬" titulo="Mensagens" detalhe="Converse com seu personal dentro do app." />
+        <CartaoAcao testid="abrir-mensagens" icone="💬" titulo={"Mensagens" + (temNova(naoLidas) ? " · nova" : "")} detalhe="Converse com seu personal dentro do app." onClick={onAbrirMensagens} />
       </div>
     </div>
   );
@@ -318,6 +325,9 @@ export default function PersonalMassi({ onFechar, conviteInicial, biblioteca, ao
   const [tela, setTela] = useState("inicio"); // inicio | alunos | detalheAluno | convite | meuPersonal
   const [vinculos, setVinculos] = useState([]);
   const [resumos, setResumos] = useState({});
+  const [naoLidas, setNaoLidas] = useState({});
+  const [conversaInicialId, setConversaInicialId] = useState(null);
+  const [alunoVeioDaCentral, setAlunoVeioDaCentral] = useState(false);
   const [alunoAbertoId, setAlunoAbertoId] = useState(null);
   const [avisoPainel, setAvisoPainel] = useState("");
   const conviteRef = useRef(normalizarCodigo(conviteInicial)); // código recebido por link; some depois de aceito
@@ -365,6 +375,7 @@ export default function PersonalMassi({ onFechar, conviteInicial, biblioteca, ao
       const lista = quem.tipo === "personal" ? await listarDoPersonal(quem.uid) : await listarDoAluno(quem.uid);
       if (vivoRef.current) setVinculos(lista);
       if (quem.tipo === "personal") { const r = await listarResumos(lista); if (vivoRef.current) setResumos(r); }
+      try { const nl = await contarNaoLidasDeVarios(lista, quem.tipo === "personal" ? "personal" : "aluno"); if (vivoRef.current) setNaoLidas(nl); } catch (e) { /* o aviso de mensagem nova some, o resto segue */ }
     } catch (e) {
       if (vivoRef.current) setAvisoPainel("Não consegui atualizar a lista agora. " + mensagemDeErro(e));
     }
@@ -471,7 +482,8 @@ export default function PersonalMassi({ onFechar, conviteInicial, biblioteca, ao
       if (saidaEditorRef.current && saidaEditorRef.current()) return; // o editor pergunta se quer salvar
       setTela("treinos"); carregarModelos(); return;
     }
-    if (fase === "painel" && tela !== "inicio") { setTela(tela === "detalheAluno" ? "alunos" : "inicio"); return; }
+    if (fase === "painel" && tela === "mensagens" && conversaInicialId && perfil && perfil.tipo === "personal") { setConversaInicialId(null); setTela("detalheAluno"); return; }
+    if (fase === "painel" && tela !== "inicio") { setTela(tela === "detalheAluno" ? (alunoVeioDaCentral ? "central" : "alunos") : "inicio"); return; }
     onFechar();
   };
   useVoltarDoCelular(fase === "perfil" || (fase === "painel" && tela !== "inicio"), fase + ":" + tela, voltarInterno);
@@ -502,13 +514,19 @@ export default function PersonalMassi({ onFechar, conviteInicial, biblioteca, ao
         {fase === "acesso" && <TelaAcesso onEntrar={aoEntrar} onCadastrar={aoCadastrar} onRecuperar={aoRecuperar} ocupado={ocupado} erro={erro} aviso={aviso} comConvite={conviteRef.current.length === TAMANHO_CODIGO} />}
         {fase === "completar" && <TelaCompletar onConcluir={aoCompletar} onSair={aoSair} ocupado={ocupado} erro={erro} />}
         {fase === "painel" && perfil && perfil.tipo === "personal" && tela === "inicio" && (
-          <PainelPersonal perfil={perfil} vinculos={vinculos} aviso={avisoPainel} onAbrirAlunos={() => { setAvisoPainel(""); setTela("alunos"); }} onAbrirTreinos={abrirTreinos} />
+          <PainelPersonal perfil={perfil} vinculos={vinculos} aviso={avisoPainel} naoLidas={naoLidas} onAbrirAlunos={() => { setAvisoPainel(""); setTela("alunos"); }} onAbrirTreinos={abrirTreinos} onAbrirCentral={() => { setAvisoPainel(""); recarregarVinculos(); setTela("central"); }} onAbrirMensagens={() => { setConversaInicialId(null); setTela("mensagens"); }} />
         )}
         {fase === "painel" && perfil && perfil.tipo === "personal" && tela === "alunos" && (
-          <TelaAlunos perfil={perfil} vinculos={vinculos} resumos={resumos} onRecarregar={() => recarregarVinculos()} onAbrirAluno={(id) => { setAlunoAbertoId(id); setTela("detalheAluno"); }} />
+          <TelaAlunos perfil={perfil} vinculos={vinculos} resumos={resumos} naoLidas={naoLidas} onRecarregar={() => recarregarVinculos()} onAbrirAluno={(id) => { setAlunoVeioDaCentral(false); setAlunoAbertoId(id); setTela("detalheAluno"); }} />
         )}
         {fase === "painel" && perfil && perfil.tipo === "personal" && tela === "detalheAluno" && (
-          <TelaDetalheAluno vinculo={vinculos.find((v) => v.id === alunoAbertoId)} perfil={perfil} onRecarregar={() => recarregarVinculos()} onVoltar={() => setTela("alunos")} onMontarTreino={(id) => novoTreino(id)} onEditarTreino={(t, id) => editarTreinoEnviado(t, id)} />
+          <TelaDetalheAluno vinculo={vinculos.find((v) => v.id === alunoAbertoId)} perfil={perfil} naoLida={!!naoLidas[alunoAbertoId]} onMensagens={(id) => { setConversaInicialId(id); setTela("mensagens"); }} onRecarregar={() => recarregarVinculos()} onVoltar={() => setTela(alunoVeioDaCentral ? "central" : "alunos")} onMontarTreino={(id) => novoTreino(id)} onEditarTreino={(t, id) => editarTreinoEnviado(t, id)} />
+        )}
+        {fase === "painel" && perfil && perfil.tipo === "personal" && tela === "central" && (
+          <TelaCentral vinculos={vinculos} resumos={resumos} naoLidas={naoLidas} onRecarregar={() => recarregarVinculos()} onAbrirAluno={(id) => { setAlunoVeioDaCentral(true); setAlunoAbertoId(id); setTela("detalheAluno"); }} />
+        )}
+        {fase === "painel" && perfil && tela === "mensagens" && (
+          <TelaMensagens key={conversaInicialId || "lista"} vinculos={vinculos} perfil={perfil} papel={perfil.tipo === "personal" ? "personal" : "aluno"} vinculoInicialId={conversaInicialId} onNaoLidasMudou={(m) => setNaoLidas((prev) => ({ ...prev, ...m }))} />
         )}
         {fase === "painel" && perfil && perfil.tipo === "personal" && tela === "treinos" && (
           <TelaTreinos modelos={modelos} alunos={vinculos.filter((v) => v.status === "ativo")} aviso={avisoTreinos} erro={erroTreinos} ocupado={ocupadoTreinos} onNovo={() => novoTreino("")} onAbrir={abrirModelo} onDuplicar={duplicarModelo} onApagar={apagarDaLista} />
@@ -523,7 +541,7 @@ export default function PersonalMassi({ onFechar, conviteInicial, biblioteca, ao
           <TelaHistoricoAluno vinculos={vinculos} />
         )}
         {fase === "painel" && perfil && perfil.tipo === "aluno" && tela === "inicio" && (
-          <PainelAluno perfil={perfil} vinculos={vinculos} aviso={avisoPainel} onAbrirConvite={() => { setAvisoPainel(""); setTela("convite"); }} onAbrirMeuPersonal={() => { setAvisoPainel(""); setTela("meuPersonal"); }} onAbrirMeuTreino={() => setTela("meuTreino")} onAbrirHistorico={() => setTela("historico")} />
+          <PainelAluno perfil={perfil} vinculos={vinculos} aviso={avisoPainel} naoLidas={naoLidas} onAbrirMensagens={() => { setConversaInicialId(null); setTela("mensagens"); }} onAbrirConvite={() => { setAvisoPainel(""); setTela("convite"); }} onAbrirMeuPersonal={() => { setAvisoPainel(""); setTela("meuPersonal"); }} onAbrirMeuTreino={() => setTela("meuTreino")} onAbrirHistorico={() => setTela("historico")} />
         )}
         {fase === "painel" && perfil && perfil.tipo === "aluno" && tela === "convite" && (
           <TelaConvite perfil={perfil} codigoInicial={conviteRef.current} onConcluir={async () => { conviteRef.current = ""; await recarregarVinculos(); setAvisoPainel("Vínculo criado. Seu personal já pode enviar treinos."); setTela("meuPersonal"); }} />
