@@ -1,3 +1,4 @@
+// PERSONAL MASSI - fase 6 (ajuste): aviso de mensagem nova na lista e botão de mensagens na ficha.
 // PERSONAL MASSI - fase 3: telas do personal (lista de alunos, convites e ficha básica).
 import React, { useEffect, useState } from "react";
 import { COR, E } from "./estilos.js";
@@ -7,6 +8,7 @@ import { mensagemDeErro } from "./dados.js";
 import { listarTreinos, treinoAtual, dataBR } from "./treinos.js";
 import { listarConclusoes, lerResumo } from "./conclusao.js";
 import { ListaConclusoes } from "./Historico.jsx";
+import { Bolinha } from "./Mensagens.jsx";
 
 async function copiar(texto) {
   try {
@@ -53,7 +55,7 @@ function CartaoConvite({ codigo, nomePersonal, onCancelar, ocupado, destaque }) 
   );
 }
 
-export function TelaAlunos({ perfil, vinculos, resumos, onRecarregar, onAbrirAluno }) {
+export function TelaAlunos({ perfil, vinculos, resumos, naoLidas, onRecarregar, onAbrirAluno }) {
   const [novo, setNovo] = useState(null);
   const [ocupado, setOcupado] = useState(false);
   const [erro, setErro] = useState("");
@@ -101,6 +103,7 @@ export function TelaAlunos({ perfil, vinculos, resumos, onRecarregar, onAbrirAlu
               <div style={E.suave}>Aluno desde {dataCurta(v.aceitoEm)} · {textoConsentimento(v.consent)}</div>
               {resumos && resumos[v.id] && resumos[v.id].alertaDesconforto && <div style={{ marginTop: 6 }} data-testid={"alerta-" + v.id}><Etiqueta texto="Atenção: desconforto relatado" cor="aviso" /></div>}
             </div>
+            {naoLidas && naoLidas[v.id] && <Bolinha testid={"nova-" + v.id} />}
             <span aria-hidden="true" style={{ color: COR.suave, fontSize: 20 }}>›</span>
           </button>
         ))
@@ -124,7 +127,7 @@ export function TelaAlunos({ perfil, vinculos, resumos, onRecarregar, onAbrirAlu
   );
 }
 
-export function TelaDetalheAluno({ vinculo, perfil, onRecarregar, onVoltar, onMontarTreino, onEditarTreino }) {
+export function TelaDetalheAluno({ vinculo, perfil, naoLida, onRecarregar, onVoltar, onMontarTreino, onEditarTreino, onMensagens }) {
   const [ocupado, setOcupado] = useState(false);
   const [erro, setErro] = useState("");
   const [treinos, setTreinos] = useState(null); // null = carregando
@@ -162,6 +165,11 @@ export function TelaDetalheAluno({ vinculo, perfil, onRecarregar, onVoltar, onMo
           </div>
         </div>
       </div>
+      {onMensagens && (
+        <button type="button" style={{ ...E.btnSec, marginTop: 0, marginBottom: 14, display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }} onClick={() => onMensagens(vinculo.id)} data-testid="btn-mensagens-aluno">
+          Mensagens com {vinculo.alunoNome.split(" ")[0]}{naoLida && <Bolinha testid="ficha-nova" />}
+        </button>
+      )}
       <div style={E.cartao}>
         <div style={E.h2}>O que este aluno compartilha com você</div>
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap", margin: "6px 0 8px" }}>
