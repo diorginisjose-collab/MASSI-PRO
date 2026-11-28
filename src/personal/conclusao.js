@@ -1,3 +1,4 @@
+// PERSONAL MASSI - fase 6 (ajuste): o resumo agora guarda as datas dos últimos treinos, para a Central contar a semana sem ficar desatualizada.
 // PERSONAL MASSI - fase 5: treinos concluídos, check-in e resumo para o painel do personal.
 // O treino é executado pelo treino guiado do próprio Massi Pro (que já grava histórico e Progresso).
 // Aqui só vai para a nuvem um RESUMO, e somente se o aluno liberou o histórico para aquele personal.
@@ -95,6 +96,7 @@ export async function atualizarResumo(vinculoId, conclusao, meta) {
     ultimaAtividade: lista.length ? lista[0].data : conclusao.data,
     treinosSemana: semana,
     treinosTotal: lista.length,
+    datas: lista.slice(0, 14).map((c) => c.data).filter((d) => typeof d === "string"),
     atualizadoEm: F.serverTimestamp(),
   };
   const metaSemanal = Number(meta && meta.frequencia) || atual.metaSemanal || 0;
